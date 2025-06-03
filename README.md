@@ -1,2 +1,9 @@
-# gameg3
-Jogo 2d para G3 de práticas de programção usanto Pygame
+# Game G3
+
+> Jogo 2d em desenvolvimento para o projeto final da disciplina Práticas de Programação
+
+---
+
+## Status do Projeto
+
+⚠️ **Em Desenvolvimento**
