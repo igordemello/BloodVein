@@ -16,7 +16,7 @@ class Inimigo:
 
 
 clock = time.Clock()
- 
+
 
 pos_x = 950
 hp = 100
@@ -32,30 +32,30 @@ mapa_joguinho = [
 'GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG',#
 'GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG',
 'GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG',
-'GGGGGGGGGGGGWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWGGGGGGGGGGGG',
-'GGGGGGGGGGGGWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWGGGGGGGGGGGG',
-'GGGGGGGGGGGGWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWGGGGGGGGGGGG',
-'GGGGGGGGGGGGWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWGGGGGGGGGGGG',
-'GGGGGGGGGGGGWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWGGGGGGGGGGGG',
-'GGGGGGGGGGGGWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWGGGGGGGGGGGG',
-'GGGGGGGGGGGGWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWGGGGGGGGGGGG',
-'GGGGGGGGGGGGWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWGGGGGGGGGGGG',
-'GGGGGGGGGGGGWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWGGGGGGGGGGGG',
-'GGGGGGGGGGGGWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWGGGGGGGGGGGG',
-'GGGGGGGGGGGGWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWGGGGGGGGGGGG',
-'GGGGGGGGGGGGWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWGGGGGGGGGGGG',
-'GGGGGGGGGGGGWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWGGGGGGGGGGGG',
-'GGGGGGGGGGGGWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWGGGGGGGGGGGG',
-'GGGGGGGGGGGGWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWGGGGGGGGGGGG',
-'GGGGGGGGGGGGWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWGGGGGGGGGGGG',
-'GGGGGGGGGGGGWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWGGGGGGGGGGGG',
-'GGGGGGGGGGGGWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWGGGGGGGGGGGG',
-'GGGGGGGGGGGGWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWGGGGGGGGGGGG',
-'GGGGGGGGGGGGWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWGGGGGGGGGGGG',
-'GGGGGGGGGGGGWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWGGGGGGGGGGGG',
-'GGGGGGGGGGGGWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWGGGGGGGGGGGG',
-'GGGGGGGGGGGGWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWGGGGGGGGGGGG',
-'GGGGGGGGGGGGWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWGGGGGGGGGGGG',
+'GGGGGGGWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWGGGGGGG',
+'GGGGGGGWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWGGGGGGG',
+'GGGGGGGWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWGGGGGGG',
+'GGGGGGGWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWGGGGGGG',
+'GGGGGGGWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWGGGGGGG',
+'GGGGGGGWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWGGGGGGG',
+'GGGGGGGWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWGGGGGGG',
+'GGGGGGGWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWGGGGGGG',
+'GGGGGGGWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWGGGGGGG',
+'GGGGGGGWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWGGGGGGG',
+'GGGGGGGWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWGGGGGGG',
+'GGGGGGGWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWGGGGGGG',
+'GGGGGGGWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWGGGGGGG',
+'GGGGGGGWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWGGGGGGG',
+'GGGGGGGWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWGGGGGGG',
+'GGGGGGGWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWGGGGGGG',
+'GGGGGGGWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWGGGGGGG',
+'GGGGGGGWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWGGGGGGG',
+'GGGGGGGWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWGGGGGGG',
+'GGGGGGGWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWGGGGGGG',
+'GGGGGGGWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWGGGGGGG',
+'GGGGGGGWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWGGGGGGG',
+'GGGGGGGWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWGGGGGGG',
+'GGGGGGGWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWGGGGGGG',
 'GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG',
 'GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG'
 ]
@@ -71,15 +71,15 @@ screen = display.set_mode((1920, 1080))
 
 frame_a = 1
 time_frame_a = 0
-ini_x = 0 
-ini_y = 0
+ini_x = 300
+ini_y = 700
 
 radius = 70 #controla a distância da arma pro jogador
 angle_offset = 0
 orbital_size = (40, 20)
 hitboxArma = (70,100)
- 
 
+atacou = False
 
 
 
@@ -88,23 +88,26 @@ while True:
         if ev.type == QUIT:
             quit()
             sys.exit()
-      
+        if ev.type == MOUSEBUTTONDOWN:
+            if ev.button == 1:
+                atacou = True
+
     keys = key.get_pressed()
     #código pra arma
     mouse_x, mouse_y = mouse.get_pos()
-    dx = mouse_x - (pos_x + 25)
-    dy = mouse_y - (pos_y + 25)
+    dx = mouse_x - (pos_x + 32)
+    dy = mouse_y - (pos_y + 32)
     orbita_angle = math.atan2(dy, dx)
 
-    dx = mouse_x - (pos_x + 25)
-    dy = mouse_y - (pos_y + 25)
+    dx = mouse_x - (pos_x + 32)
+    dy = mouse_y - (pos_y + 32)
     angle = math.atan2(dy, dx)
 
     # Orbital preso a uma órbita fixa, apontando na direção do mouse
-    orbital_x = pos_x + 25 + math.cos(angle) * radius
-    orbital_y = pos_y + 25 + math.sin(angle) * radius
-    orbital2_x = pos_x + 25 + math.cos(angle) * (radius+15)
-    orbital2_y = pos_y + 25 + math.sin(angle) * (radius+15)
+    orbital_x = pos_x + 32 + math.cos(angle) * radius
+    orbital_y = pos_y + 32 + math.sin(angle) * radius
+    orbital2_x = pos_x + 32 + math.cos(angle) * (radius+15)
+    orbital2_y = pos_y + 32 + math.sin(angle) * (radius+15)
 
     orbital_rect = Rect(0, 0, *orbital_size)
     orbital_rect.center = (orbital_x, orbital_y)
@@ -116,8 +119,8 @@ while True:
     antigo_y = pos_y
     clock.tick(60)
     dt = clock.get_time()
-            
-    
+
+
     for i in range(len(mapa_joguinho)):
         for j in range(len(mapa_joguinho[i])):
             tile = mapa_joguinho[i][j]
@@ -131,16 +134,17 @@ while True:
     draw.rect(screen,(0,0,0), (0,0,1920,192))
     vida = draw.rect(screen,(255,5,5), (32,32, 100*(hp/20), 50))
 
-    
+
     hp -= 0.05*rate
     #inimigo:
-    #inimigoHitbox = Rect(ini_x, ini_y, 200, 200)
-    #inimigo = Rect(ini_x+75, (ini_y+75), 50, 50)
+    inimigoHitbox = Rect(ini_x, ini_y, 200, 200)
+    inimigo = Rect(ini_x+75, (ini_y+75), 50, 50)
 
 
-    personagem = Rect(pos_x,pos_y,32,32)
+    personagem = Rect(pos_x,pos_y,64,96)
     '''
     faz o inimigo ir atras
+
     if pos_x not in range(ini_x, ini_x+50):
         if pos_x > ini_x+150:
             ini_x += 2
@@ -153,9 +157,9 @@ while True:
             ini_y -= 2
     '''
 
-    
-    #inimigoHitbox = draw.rect(screen, (255,0,0),(inimigoHitbox),1)
-    #inimigo = draw.rect(screen, (255,0,0),(inimigo))
+
+    inimigoHitbox = draw.rect(screen, (255,0,0),(inimigoHitbox),1)
+    inimigo = draw.rect(screen, (255,0,0),(inimigo))
     personagem = draw.rect(screen, (0,255,0),(personagem))
 
     #arminha denovo
@@ -176,21 +180,21 @@ while True:
     if keys[K_d]:
         pos_x = pos_x + 0.3*dt
 
-          
+
     if keys[K_a]:
         pos_x = pos_x - 0.3*dt
-        
+
     if keys[K_w]:
         pos_y = pos_y - 0.3*dt
-                  
+
     if keys[K_s]:
         pos_y = pos_y + 0.3*dt
 
-   
 
-    
-    coli_pers = Rect(pos_x, pos_y, 32, 32)
-    
+
+
+    coli_pers = Rect(pos_x, pos_y, 64, 64)
+
     colideInimigo = Rect(ini_x+75, ini_y+75, 50, 50)
 
     hitboxInimigo = Rect(ini_x, ini_y, 200, 75)
@@ -214,7 +218,12 @@ while True:
     elif coli_pers.colliderect(hitboxInimigo4):
         pass
 
+    #algo estranho: de vez em quando ele entende como ataque mesmo nao estando exatamente na hitbox
+    if atacou:
+        if colideInimigo.colliderect(rotated_rect2):
+            print("gg")
+            atacou = False
 
 
-    
+
     display.update()
