@@ -81,7 +81,8 @@ hitboxArma = (70,100)
 
 atacou = False
 
-
+tiles_solidos = ['G']
+tiles_colliders = []
 
 while True:
     for ev in event.get():
@@ -95,10 +96,6 @@ while True:
     keys = key.get_pressed()
     #código pra arma
     mouse_x, mouse_y = mouse.get_pos()
-    dx = mouse_x - (pos_x + 32)
-    dy = mouse_y - (pos_y + 32)
-    orbita_angle = math.atan2(dy, dx)
-
     dx = mouse_x - (pos_x + 32)
     dy = mouse_y - (pos_y + 32)
     angle = math.atan2(dy, dx)
@@ -117,13 +114,17 @@ while True:
     #-------------------------------------------------------------------
     antigo_x = pos_x
     antigo_y = pos_y
+
     clock.tick(60)
     dt = clock.get_time()
 
-
+    tiles_colliders.clear()
     for i in range(len(mapa_joguinho)):
         for j in range(len(mapa_joguinho[i])):
             tile = mapa_joguinho[i][j]
+            if tile in tiles_solidos:
+                tile_rect = Rect(j*32,i*32,32,32)
+                tiles_colliders.append(tile_rect)
             if tile == "G":
                 draw.rect(screen, (120,120,120),((j*32,i*32,32,32)))
             if tile == "W":
@@ -142,20 +143,19 @@ while True:
 
 
     personagem = Rect(pos_x,pos_y,64,96)
-    '''
-    faz o inimigo ir atras
-
-    if pos_x not in range(ini_x, ini_x+50):
-        if pos_x > ini_x+150:
-            ini_x += 2
-        elif pos_x < ini_x:
-            ini_x -= 2
-    if pos_y not in range(ini_y, ini_y+50):
-        if pos_y > ini_y+150:
-            ini_y += 2
-        elif pos_y < ini_y:
-            ini_y -= 2
-    '''
+    
+    
+    # if pos_x not in range(ini_x, ini_x+50):
+    #     if pos_x > ini_x+150:
+    #         ini_x += 2
+    #     elif pos_x < ini_x:
+    #         ini_x -= 2
+    # if pos_y not in range(ini_y, ini_y+50):
+    #     if pos_y > ini_y+150:
+    #         ini_y += 2
+    #     elif pos_y < ini_y:
+    #         ini_y -= 2
+    
 
 
     inimigoHitbox = draw.rect(screen, (255,0,0),(inimigoHitbox),1)
@@ -193,7 +193,7 @@ while True:
 
 
 
-    coli_pers = Rect(pos_x, pos_y, 64, 64)
+    coli_pers = Rect(pos_x, pos_y, 64, 96)
 
     colideInimigo = Rect(ini_x+75, ini_y+75, 50, 50)
 
@@ -208,6 +208,14 @@ while True:
     if coli_pers.colliderect(colideInimigo):
         pos_x = antigo_x
         pos_y = antigo_y
+
+    #colisão com o mapa:
+    for collider in tiles_colliders:
+        if coli_pers.colliderect(collider):
+            pos_x = antigo_x
+            pos_y = antigo_y
+
+
     #colisão da hitbox
     if coli_pers.colliderect(hitboxInimigo):
         pass
