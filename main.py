@@ -3,17 +3,6 @@ import sys
 from pygame.locals import QUIT
 import math
 
-'''
-class Inimigo:
-    def __init__(self, ini_x, ini_y):
-        self.ini_x = ini_x
-        self.ini_y = ini_y
-    def hitbox(ini_x,ini_y,pos_x,pos_y):
-        inimigoHitbox = Rect(ini_x, ini_y, 200, 200)
-        inimigo = Rect(ini_x+75, (ini_y+75), 50, 50) 
-        personagem = Rect(pos_x,pos_y,50,50)
-'''
-
 
 clock = time.Clock()
 
@@ -46,6 +35,7 @@ ini_y = 700
 radius = 70 #controla a distância da arma pro jogador
 angle_offset = 0
 orbital_size = (40, 20)
+
 hitboxArma = (70,100)
 
 atacou = False
@@ -72,17 +62,35 @@ while True:
     # Orbital preso a uma órbita fixa, apontando na direção do mouse
     orbital_x = pos_x + 32 + math.cos(angle) * radius
     orbital_y = pos_y + 32 + math.sin(angle) * radius
-    orbital2_x = pos_x + 32 + math.cos(angle) * (radius+15)
-    orbital2_y = pos_y + 32 + math.sin(angle) * (radius+15)
 
     orbital_rect = Rect(0, 0, *orbital_size)
     orbital_rect.center = (orbital_x, orbital_y)
+
+    #hitbox do orbital
+    orbital2_x = pos_x + 32 + math.cos(angle) * (radius+15)
+    orbital2_y = pos_y + 32 + math.sin(angle) * (radius+15)
+
     orbital_rect2 = Rect(0, 0, *orbital_size)
     orbital_rect2.center = (orbital2_x, orbital2_y)
+
+    #inimigo orbital
+    dx_ini = (pos_x+32) - (ini_x+32)
+    dy_ini = (pos_y+32) - (ini_y+32)
+    anguloIni = math.atan2(dy_ini,dx_ini)
+
+    iniOrb_x = ini_x + 32 + math.cos(anguloIni) *(radius+15)
+    iniOrb_y = ini_y + 32 + math.sin(anguloIni) *(radius+15)
+
+    iniOrb_rect = Rect(0,0,*(orbital_size))
+    iniOrb_rect.center = (iniOrb_x, iniOrb_y)
+    
+
 
     #-------------------------------------------------------------------
     antigo_x = pos_x
     antigo_y = pos_y
+    iniOld_x = ini_x
+    iniOld_y = ini_y
 
     clock.tick(60)
     dt = clock.get_time()
@@ -106,30 +114,33 @@ while True:
 
 
     hp -= 0.05*rate
-    #inimigo:
-    inimigoHitbox = Rect(ini_x, ini_y, 200, 200)
-    inimigo = Rect(ini_x+75, (ini_y+75), 50, 50)
+
 
 
     personagem = Rect(pos_x,pos_y,64,96)
     
+    #desenha inimigo
+    inimigo = Rect(ini_x,ini_y,64,64)
+
+    #colocar um range máximo que ele precisa ficar do jogador
+    if pos_x not in range(ini_x, ini_x+25):
+         if pos_x > ini_x+100:
+             ini_x += 2
+         elif pos_x < ini_x:
+             ini_x -= 2
+    if pos_y not in range(ini_y, ini_y+25):
+         if pos_y > ini_y+100:
+             ini_y += 2
+         elif pos_y < ini_y:
+             ini_y -= 2
     
-    # if pos_x not in range(ini_x, ini_x+50):
-    #     if pos_x > ini_x+150:
-    #         ini_x += 2
-    #     elif pos_x < ini_x:
-    #         ini_x -= 2
-    # if pos_y not in range(ini_y, ini_y+50):
-    #     if pos_y > ini_y+150:
-    #         ini_y += 2
-    #     elif pos_y < ini_y:
-    #         ini_y -= 2
+
     
 
 
-    inimigoHitbox = draw.rect(screen, (255,0,0),(inimigoHitbox),1)
-    inimigo = draw.rect(screen, (255,0,0),(inimigo))
+
     personagem = draw.rect(screen, (0,255,0),(personagem))
+    inimigo = draw.rect(screen,(255,0,0),inimigo)
 
     #arminha denovo
     orbital_surf = Surface(orbital_size, SRCALPHA)
@@ -142,9 +153,17 @@ while True:
     draw.rect(orbital_surf2, (255, 0, 0), orbital_surf2.get_rect(), width=1)  # apenas borda vermelha
     rotated_surf2 = transform.rotate(orbital_surf2, -math.degrees(angle))
     rotated_rect2 = rotated_surf2.get_rect(center=orbital_rect2.center)
+
+    #esse daqui é a hitbox do ataque do inimigo
+    iniOrb_surf = Surface(hitboxArma, SRCALPHA)
+    draw.rect(iniOrb_surf, (255,0,0), iniOrb_surf.get_rect(), width=1 )
+    iniRot_surf = transform.rotate(iniOrb_surf, -math.degrees(anguloIni))
+    iniRot_rect = iniRot_surf.get_rect(center=iniOrb_rect.center)
+
     #se usa esse rotated rect2 pra colisão da hitbox da espada
     screen.blit(rotated_surf, rotated_rect)
     screen.blit(rotated_surf2, rotated_rect2)
+    screen.blit(iniRot_surf, iniRot_rect)
     #---------------------------------------------------------------------
     if keys[K_d]:
         pos_x = pos_x + 0.3*dt
@@ -163,21 +182,18 @@ while True:
 
 
     coli_pers = Rect(pos_x, pos_y, 64, 96)
-
-    colideInimigo = Rect(ini_x+75, ini_y+75, 50, 50)
-
-    hitboxInimigo = Rect(ini_x, ini_y, 200, 75)
-    hitboxInimigo2 = Rect(ini_x, ini_y, 75, 200)
-    hitboxInimigo3 = Rect(ini_x+125, ini_y, 75, 200)
-    hitboxInimigo4 = Rect(ini_x, ini_y+125, 200, 75)
-
-
+    
+    colideInimigo = Rect(ini_x, ini_y, 64, 64)
 
     #colisão do inimigo
     if coli_pers.colliderect(colideInimigo):
         pos_x = antigo_x
         pos_y = antigo_y
-
+    if colideInimigo.colliderect(coli_pers):
+        ini_x = iniOld_x
+        ini_y = iniOld_y
+    
+        
     #colisão com o mapa:
     for collider in tiles_colliders:
         if coli_pers.colliderect(collider):
@@ -185,22 +201,16 @@ while True:
             pos_y = antigo_y
 
 
-    #colisão da hitbox
-    if coli_pers.colliderect(hitboxInimigo):
-        pass
-    elif coli_pers.colliderect(hitboxInimigo2):
-        pass
-    elif coli_pers.colliderect(hitboxInimigo3):
-        pass
-    elif coli_pers.colliderect(hitboxInimigo4):
-        pass
-
     #algo estranho: de vez em quando ele entende como ataque mesmo nao estando exatamente na hitbox
     if atacou:
         if colideInimigo.colliderect(rotated_rect2):
             print("gg")
             atacou = False
-
+            hp+=10
+            if hp > 100:
+                hp = 100
+            
+    
 
 
     display.update()
