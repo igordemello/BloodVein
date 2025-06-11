@@ -3,17 +3,6 @@ import sys
 from pygame.locals import QUIT
 import math
 
-'''
-class Inimigo:
-    def __init__(self, ini_x, ini_y):
-        self.ini_x = ini_x
-        self.ini_y = ini_y
-    def hitbox(ini_x,ini_y,pos_x,pos_y):
-        inimigoHitbox = Rect(ini_x, ini_y, 200, 200)
-        inimigo = Rect(ini_x+75, (ini_y+75), 50, 50) 
-        personagem = Rect(pos_x,pos_y,50,50)
-'''
-
 
 clock = time.Clock()
 
