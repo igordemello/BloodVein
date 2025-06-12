@@ -15,13 +15,15 @@ SCREEN = display.set_mode((1920, 1080))
 
 
 #Instâncias das classes que foram criadas:
-inimigoQuad = Inimigo(300,700,64,64)
-player = Player(950,600,64,96)
+inimigoQuad = Inimigo(400,700,32*2,48*2)
+player = Player(950,600,32*2,48*2)
 hud = Hud(player)
-mapa = Mapa("mapa/mapa.txt")
+mapa = Mapa("mapas/mapateste.tmx",SCREEN,SCREEN.get_width(),SCREEN.get_height())
 colisao = Colisao(mapa, player, [inimigoQuad])
-
-while True:
+# i=1
+# while i==1:
+#     i+=1
+while True:  
     for ev in event.get():
         if ev.type == QUIT:
             quit()
@@ -34,9 +36,13 @@ while True:
     mouse_pos = mouse.get_pos()
     clock.tick(60)
     dt = clock.get_time()
+    SCREEN.fill((255,255,255))
 
-    mapa.desenhar(SCREEN)
+    
     hud.desenhar(SCREEN)
+    
+    mapa.desenhar()
+   
 
     player.desenhar(SCREEN,mouse_pos)
     player.atualizar(dt,keys)
@@ -55,5 +61,6 @@ while True:
             player.hp += 10
             if player.hp > 100:
                 player.hp = 100
+
 
     display.update()

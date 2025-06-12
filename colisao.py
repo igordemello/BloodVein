@@ -15,8 +15,13 @@ class Colisao:
 
     #underline na frente = função privada
     def _colisao_player_mapa(self):
+        #print(self.mapa.get_colliders())
         for collider in self.mapa.get_colliders():
+            # print(collider)
+            #print(self.player.get_hitbox().colliderect(collider))
+            #print(f'Hitbox do player: {self.player.get_hitbox()}')
             if self.player.get_hitbox().colliderect(collider):
+                #print('bateu')
                 self.player.voltar_posicao()
 
     def _colisao_player_inimigos(self):
