@@ -31,6 +31,7 @@ while True:
         if ev.type == MOUSEBUTTONDOWN:
             if ev.button == 1:
                 player.atacou = True
+        
 
     keys = key.get_pressed()
     mouse_pos = mouse.get_pos()

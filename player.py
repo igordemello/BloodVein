@@ -23,18 +23,55 @@ class Player():
 
         self.atacou = False
 
+        #controles para o dash
+        self.dash_cooldown = 0  
+        self.dash_duration = 0  
+        self.dash_cooldown_max = 1000 
+        self.dash_duration_max = 150  
+        self.is_dashing = False 
+        self.last_dash_time = 0 
+
+    def _dash(self, dt, teclas, direcao):
+        current_time = time.get_ticks()
+
+        if (current_time - self.last_dash_time > self.dash_cooldown_max and 
+            not self.is_dashing and teclas[K_SPACE]):
+            
+            self.last_dash_time = current_time
+            self.is_dashing = True
+            self.dash_duration = 0
+
+        if self.is_dashing:
+            oldv = self.velocidade
+            self.velocidade = 0.7
+            if direcao == 'd': self.x += self.velocidade * dt
+            elif direcao == 'a': self.x -= self.velocidade * dt
+            elif direcao == 'w': self.y -= self.velocidade * dt
+            elif direcao == 's': self.y += self.velocidade * dt
+            self.velocidade = oldv
+            
+
+            self.dash_duration += dt
+            if self.dash_duration >= self.dash_duration_max:
+                self.is_dashing = False
+
+
     def atualizar(self, dt, teclas):
         self.old_x = self.x
         self.old_y = self.y
 
         if teclas[K_d]:
             self.x += self.velocidade * dt
+            self._dash(dt, teclas, 'd')
         if teclas[K_a]:
             self.x -= self.velocidade * dt
+            self._dash(dt, teclas, 'a')
         if teclas[K_w]:
             self.y -= self.velocidade * dt
+            self._dash(dt, teclas, 'w')
         if teclas[K_s]:
             self.y += self.velocidade * dt
+            self._dash(dt, teclas, 's')
 
         self.hp -= 0.05 * self.rate
 

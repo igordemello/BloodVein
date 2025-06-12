@@ -49,7 +49,6 @@ class Mapa:
                 for y in range(self.tmx_data.height):
                     for x in range(self.tmx_data.width):
                         gid = layer.data[y][x]
-                        print(gid)
                         if gid in tiles_solidos:
                             rect = Rect(
                                 x * tile_w * self.escala + offset_x,
