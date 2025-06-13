@@ -13,6 +13,7 @@ from colisao import Colisao
 clock = time.Clock()
 SCREEN = display.set_mode((1920, 1080))
 
+#fala galera aqui é o arthur
 
 #Instâncias das classes que foram criadas:
 inimigoQuad = Inimigo(400,700,32*2,48*2)
