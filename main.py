@@ -37,7 +37,7 @@ while True:
     mouse_pos = mouse.get_pos()
     clock.tick(60)
     dt = clock.get_time()
-    SCREEN.fill((255,255,255))
+    SCREEN.fill((115,115,115))
 
     
     hud.desenhar(SCREEN)

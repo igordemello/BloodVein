@@ -7,12 +7,22 @@ import pygame.font
 class Hud:
     def __init__(self, player):
         self.player = player
+        self.braco_fundo = image.load('assets/UI/HDEmptyHealthUI.png')
+        self.braco_cima = image.load('assets/UI/HDFillHealthUI.png')
 
     def desenhar(self, tela):
-        draw.rect(tela, (0,0,0), (0,0, 1920, 184))
+        draw.rect(tela,(0,0,0),(0,0,1920,184))
 
-        vida_largura = 100 * (self.player.hp / 20)
+        largura_total = self.braco_cima.get_width()
+        altura_total = self.braco_cima.get_height()
 
-        draw.rect(tela, (255, 0, 0), (32, 32, vida_largura, 50))
+        proporcao = max(0, min(1, self.player.hp / 100))
 
+        largura_visivel = int(largura_total * proporcao)
+
+        tela.blit(self.braco_fundo, (0, 30))
+
+        if largura_visivel > 0:
+            barra_cheia_cortada = self.braco_cima.subsurface((0, 0, largura_visivel, altura_total))
+            tela.blit(barra_cheia_cortada, (0, 30))
 
