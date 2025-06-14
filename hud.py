@@ -9,8 +9,10 @@ class Hud:
         self.player = player
         self.braco_fundo = image.load('assets/UI/HDEmptyHealthUI.png')
         self.braco_cima = image.load('assets/UI/HDFillHealthUI.png')
+        self.fundo = image.load('assets/UI/tela_fundo1.jpeg')
 
     def desenhar(self, tela):
+        tela.blit(self.fundo,(0,0))
         draw.rect(tela,(0,0,0),(0,0,1920,184))
 
         largura_total = self.braco_cima.get_width()
