@@ -14,6 +14,7 @@ from inimigos.orb import Orb
 clock = time.Clock()
 SCREEN = display.set_mode((1920, 1080))
 
+#fala galera aqui é o arthur
 
 #Instâncias das classes que foram criadas:
 orb = Orb(400,700,64,64)
