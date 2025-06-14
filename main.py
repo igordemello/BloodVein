@@ -59,12 +59,15 @@ while True:
     #algo estranho: de vez em quando ele entende como ataque mesmo nao estando exatamente na hitbox
     if player.atacou:
         _, hitbox_espada = player.get_rotated_rect_ataque(mouse_pos)
+        if not orb.get_hitbox().colliderect(hitbox_espada):
+            player.atacou = False
         if orb.get_hitbox().colliderect(hitbox_espada):
             print("gg")
             player.atacou = False
             player.hp += 10
             if player.hp > 100:
                 player.hp = 100
+            orb.hp -= 20
 
 
     display.update()

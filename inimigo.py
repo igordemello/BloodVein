@@ -5,7 +5,7 @@ import math
 
 
 class Inimigo:
-    def __init__(self,x,y,largura,altura,velocidade=2):
+    def __init__(self,x,y,largura,altura,hp,velocidade=2):
         self.x = x
         self.y = y
         self.largura = largura
@@ -20,9 +20,16 @@ class Inimigo:
         self.old_x = x
         self.old_y = y
 
+        self.hp = hp
+        self.vivo = True
+
     def atualizar(self, player_pos):
         self.old_x = self.x
         self.old_y = self.y
+
+        if self.hp <= 0:
+            self.vivo = False
+            return
 
         player_x = player_pos[0]
         player_y = player_pos[1]
@@ -39,9 +46,16 @@ class Inimigo:
             elif player_y < self.y:
                 self.y -= self.velocidade
 
+
+        print(self.hp)
+
+
+
     def desenhar(self, tela, player_pos):
+
         corpo = Rect(self.x, self.y, self.largura, self.altura) #substituir por sprite futuramente
         draw.rect(tela, (255,0,0), corpo)
+
 
         rot_rect, rot_surf = self.get_hitbox_ataque(player_pos)
         tela.blit(rot_surf, rot_rect)

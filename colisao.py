@@ -27,6 +27,9 @@ class Colisao:
 
     def _colisao_player_inimigos(self):
         for inimigo in self.inimigos:
+            if inimigo.hp <= 0:
+                inimigo.vivo = False
+                return
             if self.player.get_hitbox().colliderect(inimigo.get_hitbox()):
                 self.player.voltar_posicao()
             if inimigo.get_hitbox().colliderect(self.player.get_hitbox()):

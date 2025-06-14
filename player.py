@@ -4,15 +4,18 @@ from pygame.locals import QUIT
 import math
 
 class Player():
-    def __init__(self, x, y, largura, altura, hp=100, velocidade=0.3):
+    def __init__(self, x, y, largura, altura, hp=100, st=100,velocidade=0.3):
         self.x = x
         self.y = y
         self.largura = largura
         self.altura = altura
 
+        self.ultimo_uso = 0
         self.hp = hp
         self.velocidade = velocidade
         self.rate = 1
+
+        self.st = st #stamina
 
         self.old_x = x
         self.old_y = y
@@ -29,7 +32,9 @@ class Player():
         self.dash_cooldown_max = 1000 
         self.dash_duration_max = 150  
         self.is_dashing = False 
-        self.last_dash_time = 0 
+        self.last_dash_time = 0
+
+        self.parado_desde = 0
 
     def _dash(self, dt, teclas, direcao):
         current_time = time.get_ticks()
@@ -55,8 +60,20 @@ class Player():
             if self.dash_duration >= self.dash_duration_max:
                 self.is_dashing = False
 
+            self.st -= 3.5
+        self.ultimo_uso = current_time
+
 
     def atualizar(self, dt, teclas):
+        current_time = time.get_ticks()
+        cooldown = 2500
+
+        if teclas[K_w] or teclas[K_a] or teclas[K_s] or teclas[K_d]:
+            self.parado_desde = current_time  # reseta o tempo parado
+        else:
+            if current_time - self.parado_desde >= cooldown:
+                self.st += 0.4 * dt  # começa a recuperar
+
         self.old_x = self.x
         self.old_y = self.y
 
@@ -74,6 +91,15 @@ class Player():
             self._dash(dt, teclas, 's')
 
         self.hp -= 0.05 * self.rate
+
+        if self.hp < 0:
+            self.hp = 0
+        if self.st < 0:
+            self.st = 0
+        if self.st > 100:
+            self.st = 100
+
+
 
     def calcular_angulo(self, mouse_pos):
         mouse_x, mouse_y = mouse_pos
@@ -119,6 +145,8 @@ class Player():
         # Hitbox do ataque
         rotated_surf2, rotated_rect2 = self.get_rotated_rect_ataque(mouse_pos)
         tela.blit(rotated_surf2, rotated_rect2)
+
+
 
     def get_hitbox(self):
         return Rect(self.x, self.y, self.largura, self.altura)
