@@ -20,10 +20,10 @@ SCREEN = display.set_mode((1920, 1080))
 orb = Orb(400,700,64,64)
 player = Player(950,600,32*2,48*2)
 hud = Hud(player)
-mapa = Mapa("mapas/mapateste.tmx",SCREEN,SCREEN.get_width(),SCREEN.get_height())
+mapa = Mapa("mapas/sala_2.tmx",SCREEN,SCREEN.get_width(),SCREEN.get_height())
 colisao = Colisao(mapa, player, [orb])
 # i=1
-# while i==1:
+# while i==1:A
 #     i+=1
 while True:  
     for ev in event.get():
