@@ -33,7 +33,7 @@ class Mapa:
 
     def get_colliders(self):
         colliders = []
-        tiles_solidos = [1, 3]
+        tiles_solidos = [20, 21]
 
         tile_w = self.tmx_data.tilewidth
         tile_h = self.tmx_data.tileheight

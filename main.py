@@ -19,7 +19,7 @@ SCREEN = display.set_mode((1920, 1080))
 inimigoQuad = Inimigo(400,700,32*2,48*2)
 player = Player(950,600,32*2,48*2)
 hud = Hud(player)
-mapa = Mapa("mapas/mapateste.tmx",SCREEN,SCREEN.get_width(),SCREEN.get_height())
+mapa = Mapa("mapas/sala_2.tmx",SCREEN,SCREEN.get_width(),SCREEN.get_height())
 colisao = Colisao(mapa, player, [inimigoQuad])
 # i=1
 # while i==1:
