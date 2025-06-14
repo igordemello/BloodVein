@@ -5,8 +5,5 @@
   <properties>
    <property name="collision" type="bool" value="true"/>
   </properties>
-  <objectgroup draworder="index" id="2">
-   <object id="1" name="colisor" x="0" y="0" width="32" height="32"/>
-  </objectgroup>
  </tile>
 </tileset>

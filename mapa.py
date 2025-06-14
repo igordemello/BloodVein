@@ -33,7 +33,6 @@ class Mapa:
 
     def get_colliders(self):
         colliders = []
-        tiles_solidos = [20, 21]
 
         tile_w = self.tmx_data.tilewidth
         tile_h = self.tmx_data.tileheight
@@ -45,18 +44,15 @@ class Mapa:
         offset_x, offset_y = mapa_rect.topleft
 
         for layer in self.tmx_data.visible_layers:
-            if hasattr(layer, "tiles"):
-                for y in range(self.tmx_data.height):
-                    for x in range(self.tmx_data.width):
-                        gid = layer.data[y][x]
-                        if gid in tiles_solidos:
-                            rect = Rect(
-                                x * tile_w * self.escala + offset_x,
-                                y * tile_h * self.escala + offset_y,
-                                tile_w * self.escala,
-                                tile_h * self.escala
-                            )
-                            colliders.append(rect)
-        # print(colliders)
+            if isinstance(layer, pytmx.TiledObjectGroup):
+                if layer.name == "colisor":
+                    for obj in layer:
+                        rect = Rect(
+                            obj.x * self.escala + offset_x,
+                            obj.y * self.escala + offset_y,
+                            obj.width * self.escala,
+                            obj.height * self.escala
+                        )
+                        colliders.append(rect)
         return colliders
 
