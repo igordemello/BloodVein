@@ -24,8 +24,7 @@ sala_atual = Sala("mapas/umaporta_1.tmx",SCREEN, player)
 
 fonte = font.SysFont("Arial", 24)
 
-while True:  
-
+while True:
     keys = key.get_pressed()
     mouse_pos = mouse.get_pos()
     clock.tick(60)

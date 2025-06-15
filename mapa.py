@@ -21,11 +21,16 @@ class Mapa:
 
         tile_w = self.tmx_data.tilewidth
         tile_h = self.tmx_data.tileheight
-        for layer in self.tmx_data.visible_layers:
+        for layer in self.tmx_data:
             if hasattr(layer, "tiles"):
                 if layer.name == "closedoor" and porta_liberada:
                     continue
-                for x, y, tile_img in layer.tiles():
+                # print(layer)
+                for x, y, gid in layer:
+                    # print(f"{layer.name} - ({x},{y}) GID: {gid}")
+                    tile_img = self.tmx_data.get_tile_image_by_gid(gid)
+                    # if tile_img is None:
+                        # print(f"Tile sem imagem no GID {gid}")
                     if tile_img:
                         tile_img = transform.scale(tile_img, (tile_w * self.escala, tile_h * self.escala))
                         mapa_surface.blit(tile_img, (x * tile_w * self.escala, y * tile_h * self.escala))
