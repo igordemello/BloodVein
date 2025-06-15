@@ -23,6 +23,32 @@ class Inimigo:
         self.hp = hp
         self.vivo = True
 
+        self.spritesheet = None
+        self.frame_width = 32
+        self.frame_height = 32
+        self.total_frames = 1
+        self.usar_indices = [0]
+        self.frames = []
+        self.frame_index = 0
+        self.frame_time = 0
+        self.animation_speed = 0.10
+
+    def carregar_sprites(self):
+        if self.spritesheet:
+            self.frames = [self.get_frame(i) for i in self.usar_indices]
+
+    def get_frame(self, index):
+        rect = Rect(index * self.frame_width, 0, self.frame_width, self.frame_height)
+        frame = Surface((self.frame_width, self.frame_height), SRCALPHA)
+        frame.blit(self.spritesheet, (0, 0), rect)
+        return transform.scale(frame, (self.largura, self.altura))
+
+    def atualizar_animacao(self):
+        self.frame_time += self.animation_speed
+        if self.frame_time >= 1:
+            self.frame_time = 0
+            self.frame_index = (self.frame_index + 1) % len(self.frames)
+
     def atualizar(self, player_pos):
         self.old_x = self.x
         self.old_y = self.y
@@ -46,6 +72,8 @@ class Inimigo:
             elif player_y < self.y:
                 self.y -= self.velocidade
 
+        self.atualizar_animacao()
+
 
         
 
@@ -53,8 +81,16 @@ class Inimigo:
 
     def desenhar(self, tela, player_pos):
 
-        corpo = Rect(self.x, self.y, self.largura, self.altura) #substituir por sprite futuramente
-        draw.rect(tela, (255,0,0), corpo)
+        if not self.frames:
+            corpo = Rect(self.x, self.y, self.largura, self.altura) #substituir por sprite futuramente
+            draw.rect(tela, (255,0,0), corpo)
+        else:
+            frame = self.frames[self.frame_index]
+            tela.blit(frame, (self.x, self.y))
+
+        #desenho da vida do inimigo
+        draw.rect(tela, (255, 200, 200), (self.x - 20, self.y + 70, 100, 10))
+        draw.rect(tela, (255, 0, 0), (self.x - 20, self.y + 70, self.hp, 10))
 
 
         rot_rect, rot_surf = self.get_hitbox_ataque(player_pos)

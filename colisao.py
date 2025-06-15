@@ -13,6 +13,7 @@ class Colisao:
         self._colisao_player_mapa()
         self._colisao_player_inimigos()
         #self._colisao_inimgos_mapa()
+        self._colisao_inimigos_inimigos()
 
     #underline na frente = função privada
     def _colisao_player_mapa(self):
@@ -42,3 +43,13 @@ class Colisao:
     #         for inimigo in self.inimigos:
     #             if inimigo.get_hitbox().colliderect(collider):
     #                 inimigo.voltar_posicao()
+
+    def _colisao_inimigos_inimigos(self):
+        for inimigo in self.inimigos:
+            for inimigo2 in self.inimigos:
+                if inimigo == inimigo2:
+                    continue
+                if inimigo.get_hitbox().colliderect(inimigo2.get_hitbox()):
+                    inimigo.voltar_posicao()
+                if inimigo2.get_hitbox().colliderect(inimigo.get_hitbox()):
+                    inimigo2.voltar_posicao()

@@ -33,9 +33,6 @@ class Sala:
         self.mapa.desenhar(self.porta_liberada)
         for inimigo in self.inimigos:
             if inimigo.vivo:
-                if isinstance(inimigo, Orb):
-                    inimigo.desenhaOrb(tela, (self.player.x,self.player.y))
-                else:
                     inimigo.desenhar(tela, (self.player.x,self.player.y))
         
         if self.porta_liberada:
