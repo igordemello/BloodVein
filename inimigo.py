@@ -47,7 +47,7 @@ class Inimigo:
                 self.y -= self.velocidade
 
 
-        print(self.hp)
+        
 
 
 

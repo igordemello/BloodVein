@@ -9,31 +9,18 @@ from botao import Botao
 from mapa import Mapa
 from colisao import Colisao
 from inimigos.orb import Orb
-
+from sala import Sala
 
 clock = time.Clock()
 SCREEN = display.set_mode((1920, 1080))
 
-#fala galera aqui é o arthur
-
 #Instâncias das classes que foram criadas:
-orb = Orb(400,700,64,64)
 player = Player(950,600,32*2,48*2)
 hud = Hud(player)
-mapa = Mapa("mapas/sala_2.tmx",SCREEN,SCREEN.get_width(),SCREEN.get_height())
-colisao = Colisao(mapa, player, [orb])
-# i=1
-# while i==1:A
-#     i+=1
+mapa = Mapa("mapas/umaporta_1.tmx",SCREEN,SCREEN.get_width(),SCREEN.get_height())
+sala_atual = Sala("mapas/umaporta_1.tmx",SCREEN, player)
+
 while True:  
-    for ev in event.get():
-        if ev.type == QUIT:
-            quit()
-            sys.exit()
-        if ev.type == MOUSEBUTTONDOWN:
-            if ev.button == 1:
-                player.atacou = True
-        
 
     keys = key.get_pressed()
     mouse_pos = mouse.get_pos()
@@ -41,33 +28,27 @@ while True:
     dt = clock.get_time()
     SCREEN.fill((115,115,115))
 
-    
+
+    for ev in event.get():
+        if ev.type == QUIT:
+            quit()
+            sys.exit()
+        if ev.type == MOUSEBUTTONDOWN:
+            if ev.button == 1:
+                player.ataque_espada(sala_atual.inimigos,mouse_pos)
+        
+
     hud.desenhar(SCREEN)
     
-    mapa.desenhar()
-   
+    sala_atual.atualizar(dt, keys)
+    sala_atual.desenhar(SCREEN)
 
     player.desenhar(SCREEN,mouse_pos)
     player.atualizar(dt,keys)
-    
-    orb.desenhaOrb(SCREEN,(player.x,player.y))
-    orb.atualizar((player.x,player.y))
 
-
-    colisao.checar_colisoes()
-    
-    #algo estranho: de vez em quando ele entende como ataque mesmo nao estando exatamente na hitbox
-    if player.atacou:
-        _, hitbox_espada = player.get_rotated_rect_ataque(mouse_pos)
-        if not orb.get_hitbox().colliderect(hitbox_espada):
-            player.atacou = False
-        if orb.get_hitbox().colliderect(hitbox_espada):
-            print("gg")
-            player.atacou = False
-            player.hp += 10
-            if player.hp > 100:
-                player.hp = 100
-            orb.hp -= 20
+    if sala_atual.pode_trocar_de_sala() and keys[K_e]:
+        sala_atual = Sala("mapas/umaporta_2.tmx", SCREEN, player)
+        player.x, player.y = 1000, 500
 
 
     display.update()

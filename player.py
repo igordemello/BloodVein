@@ -154,3 +154,17 @@ class Player():
     def voltar_posicao(self):
         self.x = self.old_x
         self.y = self.old_y
+
+
+    def ataque_espada(self,inimigos,mouse_pos):
+        self.atacou = True
+        _, hitbox_espada = self.get_rotated_rect_ataque(mouse_pos)
+        for inimigo in inimigos:
+            if not inimigo.get_hitbox().colliderect(hitbox_espada):
+                self.atacou = False
+            if inimigo.get_hitbox().colliderect(hitbox_espada):
+                self.atacou = False
+                self.hp += 10
+                if self.hp > 100:
+                    self.hp = 100
+                inimigo.hp -= 20

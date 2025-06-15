@@ -14,7 +14,7 @@ class Mapa:
         self.tela_width = tela_width
         self.tela_heigth = tela_heigth
 
-    def desenhar(self):
+    def desenhar(self,porta_liberada):
         largura = self.tmx_data.width * self.tmx_data.tilewidth * self.escala
         altura = self.tmx_data.height * self.tmx_data.tileheight * self.escala
         mapa_surface = Surface((largura, altura), SRCALPHA)
@@ -23,6 +23,8 @@ class Mapa:
         tile_h = self.tmx_data.tileheight
         for layer in self.tmx_data.visible_layers:
             if hasattr(layer, "tiles"):
+                if layer.name == "closedoor" and porta_liberada:
+                    continue
                 for x, y, tile_img in layer.tiles():
                     if tile_img:
                         tile_img = transform.scale(tile_img, (tile_w * self.escala, tile_h * self.escala))
@@ -56,3 +58,27 @@ class Mapa:
                         colliders.append(rect)
         return colliders
 
+    def get_rangesdoors(self):
+        rangesdoors = []
+        tile_w = self.tmx_data.tilewidth
+        tile_h = self.tmx_data.tileheight
+
+        largura_total = self.tmx_data.width * tile_w * self.escala
+        altura_total = self.tmx_data.height * tile_h * self.escala
+        mapa_rect = Rect(0, 0, largura_total, altura_total)
+        mapa_rect.center = (self.tela_width // 2, (self.tela_heigth + 184) // 2)
+        offset_x, offset_y = mapa_rect.topleft
+
+        for layer in self.tmx_data.visible_layers:
+            if isinstance(layer, pytmx.TiledObjectGroup):
+                if layer.name == "rangedoor":
+                    for obj in layer:
+                        rect = Rect(
+                            obj.x * self.escala + offset_x,
+                            obj.y * self.escala + offset_y,
+                            obj.width * self.escala,
+                            obj.height * self.escala
+                        )
+                        rangesdoors.append(rect)
+
+        return rangesdoors
