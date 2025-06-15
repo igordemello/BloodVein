@@ -4,7 +4,7 @@ from pygame.locals import QUIT
 import math
 
 class Player():
-    def __init__(self, x, y, largura, altura, hp=100, st=100,velocidade=0.3):
+    def __init__(self, x, y, largura, altura, hp=100, st=100,velocidade=0.3,sprite='hero.png'):
         self.x = x
         self.y = y
         self.largura = largura
@@ -36,17 +36,23 @@ class Player():
 
         self.parado_desde = 0
 
+        self.sprite = transform.scale(image.load(sprite),(32*2,48*2))
+
     def _dash(self, dt, teclas, direcao):
         current_time = time.get_ticks()
 
         if (current_time - self.last_dash_time > self.dash_cooldown_max and 
-            not self.is_dashing and teclas[K_SPACE]):
+            not self.is_dashing and teclas[K_SPACE] and self.st >=3.5):
             
             self.last_dash_time = current_time
             self.is_dashing = True
             self.dash_duration = 0
 
         if self.is_dashing:
+            if self.st < 3.5:
+                self.is_dashing = False
+                return
+
             oldv = self.velocidade
             self.velocidade = 0.7
             if direcao == 'd': self.x += self.velocidade * dt
@@ -124,8 +130,9 @@ class Player():
         return rotated_surf2, rotated_rect2
 
     def desenhar(self, tela, mouse_pos):
-        corpo = Rect(self.x, self.y, self.largura, self.altura)
-        draw.rect(tela, (0, 255, 0), corpo)
+        tela.blit(self.sprite,(self.x,self.y))
+        # corpo = Rect(self.x, self.y, self.largura, self.altura)
+        # draw.rect(tela, (0, 255, 0), corpo)
 
         angle = self.calcular_angulo(mouse_pos)
 
