@@ -169,14 +169,15 @@ class Player():
         self.atacou = True
         _, hitbox_espada = self.get_rotated_rect_ataque(mouse_pos)
         for inimigo in inimigos:
-            if not inimigo.get_hitbox().colliderect(hitbox_espada):
-                self.atacou = False
-            if inimigo.get_hitbox().colliderect(hitbox_espada):
-                self.atacou = False
-                self.hp += 10
-                if self.hp > 100:
-                    self.hp = 100
-                inimigo.hp -= 20
-                for i in range(10):
-                    inimigo.old_x = inimigo.x
+            if inimigo.vivo:
+                if not inimigo.get_hitbox().colliderect(hitbox_espada):
+                    self.atacou = False
+                if inimigo.get_hitbox().colliderect(hitbox_espada):
+                    self.atacou = False
+                    self.hp += 10
+                    if self.hp > 100:
+                        self.hp = 100
+                    inimigo.hp -= 20
+                    for i in range(10):
+                        inimigo.old_x = inimigo.x
                     
