@@ -16,7 +16,7 @@ class Player():
         self.rate = 1
 
         self.st = st #stamina
-        self.cooldown_st = 3000
+        self.cooldown_st = 5000
 
         self.old_x = x
         self.old_y = y
@@ -100,7 +100,7 @@ class Player():
         self.hp -= 0.05 * self.rate
         
         if current_time - self.last_dash_time >= self.cooldown_st:
-            self.st += 0.1 * self.rate
+            self.st += 0.7 * self.rate
 
         if self.hp < 0:
             self.hp = 0

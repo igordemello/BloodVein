@@ -23,7 +23,7 @@ class Mapa:
         tile_h = self.tmx_data.tileheight
         for layer in self.tmx_data:
             if hasattr(layer, "tiles"):
-                if layer.name == "closedoor" and porta_liberada:
+                if layer.name[:2] == "cd" and porta_liberada:
                     continue
                 # print(layer)
                 for x, y, gid in layer:

@@ -37,7 +37,7 @@
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 </data>
  </layer>
- <layer id="4" name="closedoor" width="15" height="8">
+ <layer id="4" name="cd0" width="15" height="8">
   <data encoding="csv">
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -60,6 +60,6 @@
   <object id="10" x="160.364" y="102.182" width="24.7273" height="24.3636"/>
  </objectgroup>
  <objectgroup id="7" name="rangedoor">
-  <object id="11" x="421" y="104.364" width="27.1818" height="19"/>
+  <object id="11" x="434.636" y="104.364" width="13.5454" height="19"/>
  </objectgroup>
 </map>
