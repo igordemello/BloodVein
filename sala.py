@@ -6,6 +6,9 @@ from mapa import Mapa
 from inimigos.orb import Orb
 from colisao import Colisao
 
+init()
+fonte = font.SysFont("Arial", 24)
+
 class Sala:
     def __init__(self, caminho_mapa, tela, player):
         self.mapa = Mapa(caminho_mapa,tela,tela.get_width(),tela.get_height())
@@ -38,6 +41,12 @@ class Sala:
         if self.porta_liberada:
             for range in self.ranges_doors:
                 draw.rect(tela, (0, 255, 255), range, width=2)
+
+        if self.pode_trocar_de_sala():
+            texto = fonte.render(f"Aperte E para trocar de sala", True, (255, 255, 255))
+            texto_rect = texto.get_rect(center=(960,1050))
+            tela.blit(texto, texto_rect)
+
 
     def pode_trocar_de_sala(self):
         return self.porta_liberada and any(self.player.get_hitbox().colliderect(rangee) for rangee in self.ranges_doors)

@@ -11,6 +11,8 @@ from colisao import Colisao
 from inimigos.orb import Orb
 from sala import Sala
 
+init()
+
 clock = time.Clock()
 SCREEN = display.set_mode((1920, 1080))
 
@@ -19,6 +21,8 @@ player = Player(950,600,32*2,48*2)
 hud = Hud(player)
 mapa = Mapa("mapas/umaporta_1.tmx",SCREEN,SCREEN.get_width(),SCREEN.get_height())
 sala_atual = Sala("mapas/umaporta_1.tmx",SCREEN, player)
+
+fonte = font.SysFont("Arial", 24)
 
 while True:  
 
@@ -50,5 +54,9 @@ while True:
         sala_atual = Sala("mapas/umaporta_2.tmx", SCREEN, player)
         player.x, player.y = 1000, 500
 
+    # mostrar o fps:
+    # fps = int(clock.get_fps())
+    # texto_fps = fonte.render(f"FPS: {fps}", True, (255, 255, 255))
+    # SCREEN.blit(texto_fps, (10, 10))
 
     display.update()
