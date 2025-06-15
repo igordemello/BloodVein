@@ -72,13 +72,13 @@ class Player():
 
     def atualizar(self, dt, teclas):
         current_time = time.get_ticks()
-        cooldown = 2500
+        # cooldown = 2500
 
-        if teclas[K_w] or teclas[K_a] or teclas[K_s] or teclas[K_d]:
-            self.parado_desde = current_time  # reseta o tempo parado
-        else:
-            if current_time - self.parado_desde >= cooldown:
-                self.st += 0.4 * dt  # começa a recuperar
+        # if teclas[K_w] or teclas[K_a] or teclas[K_s] or teclas[K_d]:
+        #     self.parado_desde = current_time  # reseta o tempo parado
+        # else:
+        #     if current_time - self.parado_desde >= cooldown:
+        #         self.st += 0.4 * dt  # começa a recuperar
 
         self.old_x = self.x
         self.old_y = self.y
@@ -97,6 +97,8 @@ class Player():
             self._dash(dt, teclas, 's')
 
         self.hp -= 0.05 * self.rate
+        
+        self.st += 0.025 * self.rate
 
         if self.hp < 0:
             self.hp = 0
