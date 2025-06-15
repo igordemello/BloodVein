@@ -168,3 +168,6 @@ class Player():
                 if self.hp > 100:
                     self.hp = 100
                 inimigo.hp -= 20
+                for i in range(10):
+                    inimigo.old_x = inimigo.x
+                    
