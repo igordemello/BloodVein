@@ -136,10 +136,21 @@ class Player():
 
     def desenhar(self, tela, mouse_pos):
         tela.blit(self.sprite,(self.x,self.y))
+        
         # corpo = Rect(self.x, self.y, self.largura, self.altura)
         # draw.rect(tela, (0, 255, 0), corpo)
 
         angle = self.calcular_angulo(mouse_pos)
+        centro_jogador = (self.x + 32, self.y + 32)
+
+        base_x = centro_jogador[0] + math.cos(angle) * self.radius
+        base_y = centro_jogador[1] + math.sin(angle) * self.radius
+
+        angulo_espada = math.degrees(angle) - 270
+
+        espada_rotacionada = transform.rotate(self.sword, -angulo_espada)
+        rect_espada = espada_rotacionada.get_rect(center=(base_x, base_y))
+
 
         orbital_x = self.x + 32 + math.cos(angle) * self.radius
         orbital_y = self.y + 32 + math.sin(angle) * self.radius
@@ -152,8 +163,9 @@ class Player():
         rotated_surf = transform.rotate(orbital_surf, -math.degrees(angle))
         rotated_rect = rotated_surf.get_rect(center=orbital_rect.center)
 
-        #tela.blit(rotated_surf, rotated_rect)
-        tela.blit(self.sword,(rotated_rect))
+        
+        tela.blit(espada_rotacionada, rect_espada)
+
 
         # Hitbox do ataque
         rotated_surf2, rotated_rect2 = self.get_rotated_rect_ataque(mouse_pos)
