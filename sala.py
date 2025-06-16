@@ -17,7 +17,7 @@ class Sala:
         self.porta_liberada = False
         self.player = player
         self.ranges_doors = self.mapa.get_rangesdoors() 
-        self.proxima_sala = "mapas/umaporta_2.tmx"
+        self.proxima_sala = f"mapas/sala_{1}.tmx"
 
     def atualizar(self,dt,teclas):
         for inimigo in self.inimigos:

@@ -38,6 +38,7 @@ class Player():
         self.parado_desde = 0
 
         self.sprite = transform.scale(image.load(sprite),(32*2,48*2))
+        self.sword = transform.scale(image.load('espada.png'),(20*2,54*2))
 
     def _dash(self, dt, teclas, direcao):
         current_time = time.get_ticks()
@@ -151,7 +152,8 @@ class Player():
         rotated_surf = transform.rotate(orbital_surf, -math.degrees(angle))
         rotated_rect = rotated_surf.get_rect(center=orbital_rect.center)
 
-        tela.blit(rotated_surf, rotated_rect)
+        #tela.blit(rotated_surf, rotated_rect)
+        tela.blit(self.sword,(rotated_rect))
 
         # Hitbox do ataque
         rotated_surf2, rotated_rect2 = self.get_rotated_rect_ataque(mouse_pos)
@@ -182,4 +184,3 @@ class Player():
                     inimigo.hp -= 20
                     for i in range(10):
                         inimigo.old_x = inimigo.x
-                    

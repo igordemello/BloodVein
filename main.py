@@ -19,9 +19,8 @@ SCREEN = display.set_mode((1920, 1080))
 #Instâncias das classes que foram criadas:
 player = Player(950,600,32*2,48*2)
 hud = Hud(player)
-mapa = Mapa("mapas/umaporta_1.tmx",SCREEN,SCREEN.get_width(),SCREEN.get_height())
-sala_atual = Sala("mapas/umaporta_1.tmx",SCREEN, player)
-
+sala_atual = Sala("mapas/sala_1.tmx",SCREEN, player)
+num_sala = 1
 fonte = font.SysFont("Arial", 24)
 
 while True:
@@ -30,7 +29,7 @@ while True:
     clock.tick(60)
     dt = clock.get_time()
     SCREEN.fill((115,115,115))
-
+    
 
     for ev in event.get():
         if ev.type == QUIT:
@@ -50,7 +49,8 @@ while True:
     player.atualizar(dt,keys)
 
     if sala_atual.pode_trocar_de_sala() and keys[K_e]:
-        sala_atual = Sala("mapas/umaporta_2.tmx", SCREEN, player)
+        num_sala += 1
+        sala_atual = Sala(f"mapas/sala_{num_sala}.tmx", SCREEN, player)
         player.x, player.y = 1000, 500
 
     # mostrar o fps:
