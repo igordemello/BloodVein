@@ -2,19 +2,30 @@ from pygame import *
 import sys
 from pygame.locals import QUIT
 import math
+from efeito import *
 
 class Player():
-    def __init__(self, x, y, largura, altura, hp=100, st=100,velocidade=0.3,sprite='hero.png'):
+    def __init__(self, x, y, largura, altura, hp=100, st=100,velocidadeMov=0.3,sprite='hero.png'):
         self.x = x
         self.y = y
         self.largura = largura
         self.altura = altura
 
         self.ultimo_uso = 0
+        #atributos
         self.hp = hp
-        self.velocidade = velocidade
-        self.rate = 1
+        self.hpMax = 100 #atualmente não funciona muito bem quando aumentado porque o sprite não mostra nada acima de 100 de HP
+        self.velocidadeMov = velocidadeMov
+        self.rate = 1 #decaimento
+        self.dano = 20
+        self.velocidadeAtk = 1 #analisar esses valores depois com mais cuidado, depois da animação estar pronta, pq vai afetar a velocidade e a duração da animação
+        self.revives = 0 #quantidade de vezes que o jogador pode reviver
+        self.custoDash = 3.5
 
+        #itens
+        
+        self.itens = dict()
+        
         self.st = st #stamina
         self.cooldown_st = 5000
 
@@ -44,31 +55,31 @@ class Player():
         current_time = time.get_ticks()
 
         if (current_time - self.last_dash_time > self.dash_cooldown_max and 
-            not self.is_dashing and teclas[K_SPACE] and self.st >=3.5):
+            not self.is_dashing and teclas[K_SPACE] and self.st >=self.custoDash):
             
             self.last_dash_time = current_time
             self.is_dashing = True
             self.dash_duration = 0
 
         if self.is_dashing:
-            if self.st < 3.5:
+            if self.st < self.custoDash:
                 self.is_dashing = False
                 return
 
-            oldv = self.velocidade
-            self.velocidade = 0.7
-            if direcao == 'd': self.x += self.velocidade * dt
-            elif direcao == 'a': self.x -= self.velocidade * dt
-            elif direcao == 'w': self.y -= self.velocidade * dt
-            elif direcao == 's': self.y += self.velocidade * dt
-            self.velocidade = oldv
+            oldv = self.velocidadeMov
+            self.velocidadeMov = self.velocidadeMov*2.5 #velocidadeMov do dash
+            if direcao == 'd': self.x += self.velocidadeMov * dt
+            elif direcao == 'a': self.x -= self.velocidadeMov * dt
+            elif direcao == 'w': self.y -= self.velocidadeMov * dt
+            elif direcao == 's': self.y += self.velocidadeMov * dt
+            self.velocidadeMov = oldv
             
 
             self.dash_duration += dt
             if self.dash_duration >= self.dash_duration_max:
                 self.is_dashing = False
 
-            self.st -= 3.5
+            self.st -= self.custoDash
         self.ultimo_uso = current_time
 
 
@@ -86,16 +97,16 @@ class Player():
         self.old_y = self.y
 
         if teclas[K_d]:
-            self.x += self.velocidade * dt
+            self.x += self.velocidadeMov * dt
             self._dash(dt, teclas, 'd')
         if teclas[K_a]:
-            self.x -= self.velocidade * dt
+            self.x -= self.velocidadeMov * dt
             self._dash(dt, teclas, 'a')
         if teclas[K_w]:
-            self.y -= self.velocidade * dt
+            self.y -= self.velocidadeMov * dt
             self._dash(dt, teclas, 'w')
         if teclas[K_s]:
-            self.y += self.velocidade * dt
+            self.y += self.velocidadeMov * dt
             self._dash(dt, teclas, 's')
 
         self.hp -= 0.05 * self.rate
@@ -110,6 +121,17 @@ class Player():
         if self.st > 100:
             self.st = 100
 
+
+    def adicionarItem(self,item : Item ) :
+        item.aplicar_em(self)
+        if item not in self.itens : 
+            self.itens[item] = 1
+        else:
+            self.itens += 1
+
+    
+
+ 
 
 
     def calcular_angulo(self, mouse_pos):
@@ -190,10 +212,10 @@ class Player():
                     self.atacou = False
                 if inimigo.get_hitbox().colliderect(hitbox_espada):
                     self.atacou = False
-                    self.hp += 10
-                    if self.hp > 100:
-                        self.hp = 100
-                    inimigo.hp -= 20
+                    self.hp += self.dano/2
+                    if self.hp > self.hpMax:
+                        self.hp = self.hpMax
+                    inimigo.hp -= self.dano
 
                     #knockback   
                     dx = inimigo.x - self.x
