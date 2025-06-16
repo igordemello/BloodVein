@@ -12,6 +12,11 @@ class Inimigo:
         self.altura = altura
         self.velocidade = velocidade
 
+        self.knockback_x = 0
+        self.knockback_y = 0
+        self.knockback_time = 0
+        self.knockback_duration = 200
+
         self.radius = 70
         self.hitbox_arma = (70, 100)
         self.orbital_size = (40, 20)
@@ -50,6 +55,12 @@ class Inimigo:
             self.frame_index = (self.frame_index + 1) % len(self.frames)
 
     def atualizar(self, player_pos):
+
+        now = time.get_ticks()
+        if now - self.knockback_time < self.knockback_duration:
+            self.x += self.knockback_x
+            self.y += self.knockback_y
+            return
         self.old_x = self.x
         self.old_y = self.y
 
@@ -61,12 +72,12 @@ class Inimigo:
         player_y = player_pos[1]
 
         #colocar um range máximo que ele precisa ficar do jogador
-        if player_x not in range(self.x, self.x+25):
+        if int(player_x) not in range(int(self.x), int(self.x+25)):
             if player_x > self.x+100:
                 self.x += self.velocidade
             elif player_x < self.x:
                 self.x -= self.velocidade
-        if player_y not in range(self.y, self.y+25):
+        if player_y not in range(int(self.y), int(self.y+25)):
             if player_y > self.y+100:
                 self.y += self.velocidade
             elif player_y < self.y:

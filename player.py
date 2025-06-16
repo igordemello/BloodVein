@@ -194,5 +194,18 @@ class Player():
                     if self.hp > 100:
                         self.hp = 100
                     inimigo.hp -= 20
-                    for i in range(10):
-                        inimigo.old_x = inimigo.x
+
+                #knockback   
+                dx = inimigo.x - self.x
+                dy = inimigo.y - self.y
+                dist = math.hypot(dx, dy)
+                if dist != 0:
+                    dx /= dist
+                    dy /= dist
+
+                knockback_strength = 4
+                inimigo.knockback_x = dx * knockback_strength
+                inimigo.knockback_y = dy * knockback_strength
+                inimigo.knockback_time = time.get_ticks()
+                                
+                   
