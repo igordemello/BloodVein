@@ -11,12 +11,13 @@ class Hud:
         self.bracoHp_cima = transform.scale(image.load('assets/UI/HDFillHealthUI - Rotacionada.png'), (192,576))
         self.bracoSt_fundo = transform.scale(image.load('assets/UI/HDEmptyManaUI - Rotacionada.png'), (192,576))
         self.bracoSt_cima = transform.scale(image.load('assets/UI/HDFillManaUI - Rotacionada.png'), (192,576))
+        self.hud = image.load('assets/UI/Hud.png')
         self.fundo = image.load('assets/UI/tela_fundo1.png')
         self.fundo = transform.scale(self.fundo, (1920,1080))
 
     def desenhar(self, tela):
         tela.blit(self.fundo,(0,0))
-        draw.rect(tela,(0,0,0),(0,0,1920,184))
+        tela.blit(self.hud,(0,0))
         #HP:
         larguraHp_total = (self.bracoHp_cima.get_width())
         alturaHp_total = self.bracoHp_cima.get_height() - 100

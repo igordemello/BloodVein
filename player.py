@@ -163,7 +163,7 @@ class Player():
         rotated_surf = transform.rotate(orbital_surf, -math.degrees(angle))
         rotated_rect = rotated_surf.get_rect(center=orbital_rect.center)
 
-        
+         
         tela.blit(espada_rotacionada, rect_espada)
 
 
