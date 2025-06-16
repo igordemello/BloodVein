@@ -121,18 +121,15 @@ class Player():
         if self.st > 100:
             self.st = 100
 
-
+    #tem que fazer uma possibilidade de pegar o item mais de uma vez e ficar incrementando
     def adicionarItem(self,item : Item ) :
         item.aplicar_em(self)
         if item not in self.itens : 
             self.itens[item] = 1
         else:
-            self.itens += 1
+            pass
 
     
-
- 
-
 
     def calcular_angulo(self, mouse_pos):
         mouse_x, mouse_y = mouse_pos

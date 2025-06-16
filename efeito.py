@@ -64,10 +64,11 @@ class Revives(Efeito):
 
     
 class Item:
-    def __init__(self, nome: str, descricao: str, efeitos: list):
+    def __init__(self, nome: str, descricao: str, usos: int, efeitos: list):
         self.nome = nome
         self.descricao = descricao
         self.efeitos = efeitos  
+        self.usos = usos
 
     def aplicar_em(self, jogador):
         for efeito in self.efeitos:

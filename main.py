@@ -30,7 +30,7 @@ conjIt = ConjuntoItens()
 #exemplo de como seria para adicionar um item pro jogador
 #player.adicionarItem(conjIt.itens["Sapato de Sangue"])
 
-while (2==2):
+while ("Fred"=="Fred"):
     keys = key.get_pressed()
     mouse_pos = mouse.get_pos()
     clock.tick(60)
@@ -46,7 +46,7 @@ while (2==2):
             if ev.button == 1:
                 player.ataque_espada(sala_atual.inimigos,mouse_pos)
         
-
+    
     hud.desenhar(SCREEN)
     
     sala_atual.atualizar(dt, keys)
