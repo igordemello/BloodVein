@@ -24,7 +24,7 @@ class Sala:
             if inimigo.vivo:
                 inimigo.atualizar((self.player.x,self.player.y))
         
-        self.colisao.checar_colisoes(self.player,self.inimigos, teclas)
+        self.colisao.checar_colisoes(self.player,self.inimigos, teclas,dt)
 
         if not any(inimigo.vivo for inimigo in self.inimigos):
             self.porta_liberada = True
@@ -40,6 +40,10 @@ class Sala:
             texto = fonte.render(f"Aperte E para trocar de sala", True, (255, 255, 255))
             texto_rect = texto.get_rect(center=(960,1050))
             tela.blit(texto, texto_rect)
+        
+        for collider in self.mapa.get_colliders():
+            draw.rect(tela, (255,0,0), collider['rect'], 1)  # Desenha hitbox
+        draw.rect(tela, (0,255,0), self.player.player_rect, 2)  # Player em verde
 
 
     def pode_trocar_de_sala(self):

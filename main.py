@@ -30,7 +30,7 @@ fonte = font.SysFont("Arial", 24)
 # while "Fred" == "Fred":
 i = 1
 while i == 1:
-    i+=1
+    # i+=1
     keys = key.get_pressed()
     mouse_pos = mouse.get_pos()
     clock.tick(60)
@@ -80,8 +80,8 @@ while i == 1:
         player.x, player.y = 1000, 500
 
     # mostrar o fps:
-    # fps = int(clock.get_fps())
-    # texto_fps = fonte.render(f"FPS: {fps}", True, (255, 255, 255))
-    # SCREEN.blit(texto_fps, (10, 10))
+    fps = int(clock.get_fps())
+    texto_fps = fonte.render(f"FPS: {fps}", True, (255, 255, 255))
+    SCREEN.blit(texto_fps, (10, 10))
 
     display.update()

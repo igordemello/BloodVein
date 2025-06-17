@@ -132,6 +132,8 @@ class Player():
         self.old_x = self.x
         self.old_y = self.y
 
+        self.x,self.y = self.player_rect.topleft
+
         # if teclas[K_d]:
         #     self.x += self.velocidadeMov * dt
         #     self._dash(dt, teclas, 'd')
