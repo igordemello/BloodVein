@@ -10,8 +10,6 @@ from mapa import Mapa
 from colisao import Colisao
 from inimigos.orb import Orb
 from sala import Sala
-from efeito import *
-from itensDic import *
 
 init()
 
@@ -24,13 +22,8 @@ hud = Hud(player)
 sala_atual = Sala("mapas/sala_1.tmx",SCREEN, player)
 num_sala = 1
 fonte = font.SysFont("Arial", 24)
-# instancia o conjunto itens (que possui todos os itens do jogo)
-conjIt = ConjuntoItens()
 
-#exemplo de como seria para adicionar um item pro jogador
-#player.adicionarItem(conjIt.itens["Sapato de Sangue"])
-
-while ("Fred"=="Fred"):
+while True:
     keys = key.get_pressed()
     mouse_pos = mouse.get_pos()
     clock.tick(60)
@@ -44,9 +37,9 @@ while ("Fred"=="Fred"):
             sys.exit()
         if ev.type == MOUSEBUTTONDOWN:
             if ev.button == 1:
-                player.ataque_espada(sala_atual.inimigos,mouse_pos)
+                player.ataque_espada(sala_atual.inimigos,mouse_pos,dt)
         
-    
+
     hud.desenhar(SCREEN)
     
     sala_atual.atualizar(dt, keys)
@@ -59,11 +52,10 @@ while ("Fred"=="Fred"):
         num_sala += 1
         sala_atual = Sala(f"mapas/sala_{num_sala}.tmx", SCREEN, player)
         player.x, player.y = 1000, 500
-    
-    '''
-    mostrar o fps:
-    fps = int(clock.get_fps())
-    texto_fps = fonte.render(f"FPS: {fps}", True, (255, 255, 255))
-    SCREEN.blit(texto_fps, (10, 10))
-    '''
+
+    # mostrar o fps:
+    # fps = int(clock.get_fps())
+    # texto_fps = fonte.render(f"FPS: {fps}", True, (255, 255, 255))
+    # SCREEN.blit(texto_fps, (10, 10))
+
     display.update()

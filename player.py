@@ -49,7 +49,17 @@ class Player():
         self.parado_desde = 0
 
         self.sprite = transform.scale(image.load(sprite),(32*2,48*2))
-        self.sword = transform.scale(image.load('espada.png'),(20*2,54*2))
+        self.sword = transform.scale(image.load('assets/Player/Sword_Attack.png'),(320*2,54*2))
+
+        clock = time.Clock()
+        self.dt = clock.get_time()
+        self.frame_sword = 0
+        self.time_frame_sword = 0
+        self.sword_frame_duration = 50
+        self.total_frames_espada = 5
+        self.anima_espada = False
+
+        
 
     def _dash(self, dt, teclas, direcao):
         current_time = time.get_ticks()
@@ -84,6 +94,8 @@ class Player():
 
 
     def atualizar(self, dt, teclas):
+        self.dt = dt
+
         current_time = time.get_ticks()
         # cooldown = 2500
 
@@ -121,6 +133,8 @@ class Player():
         if self.st > 100:
             self.st = 100
 
+        self.atualizar_animacao_espada(dt)
+
     #tem que fazer uma possibilidade de pegar o item mais de uma vez e ficar incrementando
     def adicionarItem(self,item : Item ) :
         item.aplicar_em(self)
@@ -129,7 +143,16 @@ class Player():
         else:
             pass
 
-    
+    def atualizar_animacao_espada(self, dt):
+        if self.anima_espada:
+            self.time_frame_sword += dt
+            if self.time_frame_sword > self.sword_frame_duration:
+                self.frame_sword += 1
+                self.time_frame_sword = 0
+                if self.frame_sword >= self.total_frames_espada:
+                    self.anima_espada = False
+                    self.frame_sword = 0
+
 
     def calcular_angulo(self, mouse_pos):
         mouse_x, mouse_y = mouse_pos
@@ -162,8 +185,8 @@ class Player():
         angle = self.calcular_angulo(mouse_pos)
         centro_jogador = (self.x + 32, self.y + 32)
 
-        base_x = centro_jogador[0] + math.cos(angle) * self.radius
-        base_y = centro_jogador[1] + math.sin(angle) * self.radius
+        base_x =  centro_jogador[0] + math.cos(angle) * self.radius
+        base_y = 10 + centro_jogador[1] + math.sin(angle) * self.radius
 
         angulo_espada = math.degrees(angle) - 270
 
@@ -182,8 +205,20 @@ class Player():
         rotated_surf = transform.rotate(orbital_surf, -math.degrees(angle))
         rotated_rect = rotated_surf.get_rect(center=orbital_rect.center)
 
-         
+        
+        frame_largura = 128
+        frame_altura = 108
+        sword_frame_rect = Rect(self.frame_sword * frame_largura, 0, frame_largura, frame_altura)
+
+        espada_frame = self.sword.subsurface(sword_frame_rect)
+        espada_rotacionada = transform.rotate(espada_frame, -math.degrees(angle) - 90)
+        rect_espada = espada_rotacionada.get_rect(center=(base_x, base_y))
+
         tela.blit(espada_rotacionada, rect_espada)
+
+        if self.anima_espada:
+            tela.blit(espada_rotacionada, rect_espada.topleft)
+
 
 
         # Hitbox do ataque
@@ -200,8 +235,21 @@ class Player():
         self.y = self.old_y
 
 
-    def ataque_espada(self,inimigos,mouse_pos):
+    def ataque_espada(self,inimigos,mouse_pos, dt):
+        if not self.anima_espada:
+            self.anima_espada = True
+            self.frame_sword = 0
+            self.time_frame_sword = 0
+
         self.atacou = True
+        self.time_frame_sword += self.dt
+        if self.time_frame_sword > 150:
+            self.frame_sword += 1
+            self.time_frame_sword = 0
+        if self.frame_sword >= 5:
+            self.frame_sword = 0      
+
+
         _, hitbox_espada = self.get_rotated_rect_ataque(mouse_pos)
         for inimigo in inimigos:
             if inimigo.vivo:
