@@ -32,6 +32,12 @@ class DanoUsuario(Efeito):
         else:
             jogador.dano = jogador.dano*self.valor
 
+class DarDano(Efeito):
+    def __init__(self, valor):
+        self.valor = valor
+    def aplicar(self, jogador):
+        jogador.hp -= self.valor
+
 class VidaMaxima(Efeito): #atualmente não funciona muito bem porque o sprite não mostra nada acima de 100 de HP
     def __init__(self, valor):
         self.valor = valor
@@ -63,17 +69,48 @@ class Revives(Efeito):
         jogador.revives += self.valor
 
     
-class Item:
-    def __init__(self, nome: str, descricao: str, usos: int, efeitos: list):
+class Item: #mudar o nome depois pra ItemPassivo
+    def __init__(self, nome: str, descricao: str, efeitos: list,id : int):
         self.nome = nome
         self.descricao = descricao
-        self.efeitos = efeitos  
-        self.usos = usos
+        self.efeitos = efeitos
+        self.id = id
 
     def aplicar_em(self, jogador):
         for efeito in self.efeitos:
             efeito.aplicar(jogador)
 
+class ItemAtivo:
+    def __init__(self, nome: str, descricao: str, usos: int, efeitos: list, afetaIni : bool, id: int,listaInimigos = None, player = None):
+        self.nome = nome
+        self.descricao = descricao
+        self.efeitos = efeitos
+        self.usos = usos
+        self.listaInimigos = listaInimigos
+        self.player = player
+        self.afetaIni = afetaIni
+        self.id = id
 
-    
+    def aplicar_em(self):
+        if self.afetaIni:
+            for efeito in self.efeitos:
+                for inimigo in self.listaInimigos:
+                    efeito.aplicar(inimigo)
+        else:
+            for efeito in self.efeitos:
+                efeito.aplicar(self.player)
 
+
+
+'''    
+exemplo de um item ativo que afeta inimigos
+ItemAtivo(
+            nome="Cu",
+            descricao="Cu",
+            usos=2,
+            efeitos=[
+                DarDano(100)
+            ],
+            afetaIni=True,
+        )
+'''

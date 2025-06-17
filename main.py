@@ -10,6 +10,7 @@ from mapa import Mapa
 from colisao import Colisao
 from inimigos.orb import Orb
 from sala import Sala
+from itensDic import *
 
 init()
 
@@ -23,12 +24,16 @@ sala_atual = Sala("mapas/sala_1.tmx",SCREEN, player)
 num_sala = 1
 fonte = font.SysFont("Arial", 24)
 
-while True:
+#exemplo de como seria para adicionar um item pro jogador
+#player.adicionarItem(conjIt.itens["Sapato de Sangue"])
+
+while "Fred" == "Fred":
     keys = key.get_pressed()
     mouse_pos = mouse.get_pos()
     clock.tick(60)
     dt = clock.get_time()
     SCREEN.fill((115,115,115))
+    current_time = time.get_ticks()
     
 
     for ev in event.get():
@@ -38,6 +43,24 @@ while True:
         if ev.type == MOUSEBUTTONDOWN:
             if ev.button == 1:
                 player.ataque_espada(sala_atual.inimigos,mouse_pos,dt)
+        if ev.type == KEYDOWN:
+            if ev.key == K_q and current_time - player.ativo_ultimo_uso > 2500: #tecla de usar item ativo
+                player.ativo_ultimo_uso = current_time
+                player.usarItemAtivo(sala_atual)
+            if ev.key == K_PERIOD:
+                item_id = int(input("Digite o ID do item para debug: "))
+                conjunto = ConjuntoItens()
+                encontrado = False
+                for item_nome, item in conjunto.itens.items():
+                    if hasattr(item, 'id') and item.id == item_id:
+                        if isinstance(item, Item):
+                            player.adicionarItem(item=item)
+                        elif isinstance(item, ItemAtivo):
+                            player.adicionarItem(itemAt=item)
+                        print(f"Item '{item_nome}' (ID {item_id}) adicionado ao jogador.")
+                        encontrado = True
+                        break
+
         
 
     hud.desenhar(SCREEN)

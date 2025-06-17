@@ -3,6 +3,10 @@ import sys
 from pygame.locals import QUIT
 import math
 from efeito import *
+import time as t
+from sala import *
+
+
 
 class Player():
     def __init__(self, x, y, largura, altura, hp=100, st=100,velocidadeMov=0.3,sprite='hero.png'):
@@ -25,7 +29,7 @@ class Player():
         #itens
         
         self.itens = dict()
-        
+        self.itemAtivo = None
         self.st = st #stamina
         self.cooldown_st = 5000
 
@@ -47,6 +51,8 @@ class Player():
         self.last_dash_time = 0
 
         self.parado_desde = 0
+
+        self.ativo_ultimo_uso = 0
 
         self.sprite = transform.scale(image.load(sprite),(32*2,48*2))
         self.sword = transform.scale(image.load('assets/Player/Sword_Attack.png'),(320*2,54*2))
@@ -92,6 +98,17 @@ class Player():
             self.st -= self.custoDash
         self.ultimo_uso = current_time
 
+    def usarItemAtivo(self, sala_atual : Sala):
+        if isinstance(self.itemAtivo, ItemAtivo):
+            if self.itemAtivo.afetaIni:
+                self.itemAtivo.listaInimigos = sala_atual.inimigos
+            self.itemAtivo.aplicar_em()
+            self.itemAtivo.usos -= 1
+            if self.itemAtivo.usos == 0:
+                self.itemAtivo = None
+        else:
+            print("Não tem item ativo")
+
 
     def atualizar(self, dt, teclas):
         self.dt = dt
@@ -121,6 +138,9 @@ class Player():
             self.y += self.velocidadeMov * dt
             self._dash(dt, teclas, 's')
 
+
+
+
         self.hp -= 0.05 * self.rate
         
         if current_time - self.last_dash_time >= self.cooldown_st:
@@ -136,12 +156,16 @@ class Player():
         self.atualizar_animacao_espada(dt)
 
     #tem que fazer uma possibilidade de pegar o item mais de uma vez e ficar incrementando
-    def adicionarItem(self,item : Item ) :
-        item.aplicar_em(self)
-        if item not in self.itens : 
-            self.itens[item] = 1
+    def adicionarItem(self,item : Item = None, itemAt : ItemAtivo = None) :
+        if item is not None:
+            item.aplicar_em(self)
+            if item not in self.itens : #tentar entender essa merda que o fred fez depois
+                self.itens[item] = 1
+            else:
+                pass
         else:
-            pass
+            self.itemAtivo = itemAt
+
 
     def atualizar_animacao_espada(self, dt):
         if self.anima_espada:
@@ -223,7 +247,7 @@ class Player():
 
         # Hitbox do ataque
         rotated_surf2, rotated_rect2 = self.get_rotated_rect_ataque(mouse_pos)
-        tela.blit(rotated_surf2, rotated_rect2)
+        #tela.blit(rotated_surf2, rotated_rect2)
 
 
 
@@ -256,11 +280,12 @@ class Player():
                 if not inimigo.get_hitbox().colliderect(hitbox_espada):
                     self.atacou = False
                 if inimigo.get_hitbox().colliderect(hitbox_espada):
+                    t.sleep(0.05)
                     self.atacou = False
                     self.hp += self.dano/2
                     if self.hp > self.hpMax:
                         self.hp = self.hpMax
-                    inimigo.hp -= self.dano
+                    inimigo.hp -= self.dano*inimigo.multDanoRecebido
 
                     #knockback   
                     dx = inimigo.x - self.x
