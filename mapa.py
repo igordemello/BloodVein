@@ -62,14 +62,14 @@ class Mapa:
                         )
 
 
-                        surface = Surface((rect.width, rect.height), SRCALPHA)
-                        surface.fill((255, 255, 255, 255))  # branco opaco
-                        maska = mask.from_surface(surface)
+                        # surface = Surface((rect.width, rect.height), SRCALPHA)
+                        # surface.fill((255, 255, 255, 255))  # branco opaco
+                        # maska = mask.from_surface(surface)
 
                         # Guarda rect + mask em forma de dicionário
                         colliders.append({
                             "rect": rect,
-                            "mask": maska
+                            # "mask": maska
                         })
         return colliders
 

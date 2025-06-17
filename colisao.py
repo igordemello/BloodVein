@@ -40,10 +40,9 @@ class Colisao:
         can_move_x = True
         for collider in self.mapa.get_colliders():
             if new_rect.colliderect(collider['rect']):  # Simples colisão AABB primeiro
-                if self.checar_mask_collision(new_rect, self.player.player_mask,
-                                            collider['rect'], collider['mask']):
-                    can_move_x = False
-                    break
+                # if self.checar_mask_collision(new_rect, self.player.player_mask, collider['rect'], collider['mask']):
+                can_move_x = False
+                break
         
         # Testa movimento em Y
         new_rect.x = self.player.player_rect.x  # Reseta X
@@ -51,10 +50,9 @@ class Colisao:
         can_move_y = True
         for collider in self.mapa.get_colliders():
             if new_rect.colliderect(collider['rect']):
-                if self.checar_mask_collision(new_rect, self.player.player_mask,
-                                            collider['rect'], collider['mask']):
-                    can_move_y = False
-                    break
+                # if self.checar_mask_collision(new_rect, self.player.player_mask, collider['rect'], collider['mask']):
+                can_move_y = False
+                break
 
         # Aplica movimento
         final_x = self.player.player_rect.x + (dx if can_move_x else 0)

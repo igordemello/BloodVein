@@ -67,10 +67,10 @@ class Player():
 
         self.player_img = self.sprite
         self.player_rect = self.player_img.get_rect(topleft=(self.x,self.y))
-        self.player_mask = mask.from_surface(self.player_img)
+        # self.player_mask = mask.from_surface(self.player_img)
         self.dx = 0
         self.dy = 0
-        self.speedforcollision = 1
+        
 
         
 

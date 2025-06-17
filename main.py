@@ -15,7 +15,7 @@ from itensDic import *
 init()
 
 clock = time.Clock()
-SCREEN = display.set_mode((1920, 1080))
+SCREEN = display.set_mode((1920, 1080), vsync=1)
 
 #Instâncias das classes que foram criadas:
 player = Player(950,600,32*2,48*2)
