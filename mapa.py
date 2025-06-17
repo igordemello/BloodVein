@@ -60,7 +60,17 @@ class Mapa:
                             obj.width * self.escala,
                             obj.height * self.escala
                         )
-                        colliders.append(rect)
+
+
+                        surface = Surface((rect.width, rect.height), SRCALPHA)
+                        surface.fill((255, 255, 255, 255))  # branco opaco
+                        maska = mask.from_surface(surface)
+
+                        # Guarda rect + mask em forma de dicionário
+                        colliders.append({
+                            "rect": rect,
+                            "mask": maska
+                        })
         return colliders
 
     def get_rangesdoors(self):

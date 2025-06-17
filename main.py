@@ -27,7 +27,10 @@ fonte = font.SysFont("Arial", 24)
 #exemplo de como seria para adicionar um item pro jogador
 #player.adicionarItem(conjIt.itens["Sapato de Sangue"])
 
-while "Fred" == "Fred":
+# while "Fred" == "Fred":
+i = 1
+while i == 1:
+    i+=1
     keys = key.get_pressed()
     mouse_pos = mouse.get_pos()
     clock.tick(60)

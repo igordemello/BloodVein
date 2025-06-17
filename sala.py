@@ -24,7 +24,7 @@ class Sala:
             if inimigo.vivo:
                 inimigo.atualizar((self.player.x,self.player.y))
         
-        self.colisao.checar_colisoes()
+        self.colisao.checar_colisoes(self.player,self.inimigos, teclas)
 
         if not any(inimigo.vivo for inimigo in self.inimigos):
             self.porta_liberada = True
@@ -35,9 +35,6 @@ class Sala:
             if inimigo.vivo:
                     inimigo.desenhar(tela, (self.player.x,self.player.y))
         
-        # if self.porta_liberada:
-        #     for range in self.ranges_doors:
-        #         draw.rect(tela, (0, 255, 255), range, width=2)
 
         if self.pode_trocar_de_sala():
             texto = fonte.render(f"Aperte E para trocar de sala", True, (255, 255, 255))

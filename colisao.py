@@ -9,22 +9,49 @@ class Colisao:
         self.player = player
         self.inimigos = inimigos
 
-    def checar_colisoes(self):
-        self._colisao_player_mapa()
+    def checar_colisoes(self,player,inimigos, teclas):
+        self._colisao_player_mapa(teclas)
         self._colisao_player_inimigos()
         #self._colisao_inimgos_mapa()
         self._colisao_inimigos_inimigos()
 
+    def checar_mask_collision(self, r1,m1,r2,m2):
+        if not r1.colliderect(r2):
+            return False
+        offset = (r2.x - r1.x, r2.y - r1.y)
+        return m1.overlap(m2, offset)
+
     #underline na frente = função privada
-    def _colisao_player_mapa(self):
-        #print(self.mapa.get_colliders())
-        for collider in self.mapa.get_colliders():
-            # print(collider)
-            #print(self.player.get_hitbox().colliderect(collider))
-            #print(f'Hitbox do player: {self.player.get_hitbox()}')
-            if self.player.get_hitbox().colliderect(collider):
-                #print('bateu')
-                self.player.voltar_posicao()
+    def _colisao_player_mapa(self,keys):
+        dx = dy = 0
+
+        if  keys[K_a]:
+            dx = -self.player.speedforcollision
+        if keys[K_d]:
+            dx = self.player.speedforcollision
+        if keys[K_w]:
+            dy = -self.player.speedforcollision
+        if keys[K_s]:
+            dy = self.player.speedforcollision
+
+        
+        colliders_and_masks = self.mapa.get_colliders()
+        for collider_and_mask in colliders_and_masks:
+            collider_rect = collider_and_mask['rect']
+            collider_mask = collider_and_mask['mask']
+            print(collider_rect)
+            print(collider_mask)
+
+            temp_rect = self.player.player_rect.move(dx, 0)
+            if not self.checar_mask_collision(temp_rect, self.player.player_mask, collider_rect, collider_mask):
+                self.player.mov_player(temp_rect)
+
+            temp_rect = self.player.player_rect.move(0, dy)
+            if not self.checar_mask_collision(temp_rect, self.player.player_mask, collider_rect, collider_mask):
+                self.player.mov_player(temp_rect)
+
+            
+        
 
     def _colisao_player_inimigos(self):
         for inimigo in self.inimigos:

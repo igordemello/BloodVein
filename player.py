@@ -65,6 +65,13 @@ class Player():
         self.total_frames_espada = 5
         self.anima_espada = False
 
+        self.player_img = self.sprite
+        self.player_rect = self.player_img.get_rect(topleft=(self.x,self.y))
+        self.player_mask = mask.from_surface(self.player_img)
+        self.dx = 0
+        self.dy = 0
+        self.speedforcollision = 1
+
         
 
     def _dash(self, dt, teclas, direcao):
@@ -125,18 +132,18 @@ class Player():
         self.old_x = self.x
         self.old_y = self.y
 
-        if teclas[K_d]:
-            self.x += self.velocidadeMov * dt
-            self._dash(dt, teclas, 'd')
-        if teclas[K_a]:
-            self.x -= self.velocidadeMov * dt
-            self._dash(dt, teclas, 'a')
-        if teclas[K_w]:
-            self.y -= self.velocidadeMov * dt
-            self._dash(dt, teclas, 'w')
-        if teclas[K_s]:
-            self.y += self.velocidadeMov * dt
-            self._dash(dt, teclas, 's')
+        # if teclas[K_d]:
+        #     self.x += self.velocidadeMov * dt
+        #     self._dash(dt, teclas, 'd')
+        # if teclas[K_a]:
+        #     self.x -= self.velocidadeMov * dt
+        #     self._dash(dt, teclas, 'a')
+        # if teclas[K_w]:
+        #     self.y -= self.velocidadeMov * dt
+        #     self._dash(dt, teclas, 'w')
+        # if teclas[K_s]:
+        #     self.y += self.velocidadeMov * dt
+        #     self._dash(dt, teclas, 's')
 
 
 
@@ -200,8 +207,11 @@ class Player():
 
         return rotated_surf2, rotated_rect2
 
+    def mov_player(self,rect):
+        self.player_rect.topleft = rect.topleft
+
     def desenhar(self, tela, mouse_pos):
-        tela.blit(self.sprite,(self.x,self.y))
+        tela.blit(self.sprite,(self.player_rect.topleft))
         
         # corpo = Rect(self.x, self.y, self.largura, self.altura)
         # draw.rect(tela, (0, 255, 0), corpo)
