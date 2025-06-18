@@ -194,7 +194,11 @@ class Player():
         return math.atan2(dy, dx)
 
     def get_rotated_rect_ataque(self, mouse_pos):
-        angle = self.calcular_angulo(mouse_pos)
+        if not hasattr(self, '_last_sword_angle') or self._last_mouse_pos != mouse_pos:
+            self._last_sword_angle = self.calcular_angulo(mouse_pos)
+            self._last_mouse_pos = mouse_pos
+        angle = self._last_sword_angle
+
 
         orbital2_x = self.x + 32 + math.cos(angle) * (self.radius + 15)
         orbital2_y = self.y + 32 + math.sin(angle) * (self.radius + 15)

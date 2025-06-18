@@ -43,6 +43,7 @@ class Sala:
             texto_rect = texto.get_rect(center=(960,1050))
             tela.blit(texto, texto_rect)
         
+        #tirar isso depois
         for collider in self.mapa.get_colliders():
             draw.rect(tela, (255,0,0), collider['rect'], 1)  # Desenha hitbox
         draw.rect(tela, (0,255,0), self.player.player_rect, 2)  # Player em verde

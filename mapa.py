@@ -14,36 +14,53 @@ class Mapa:
         self.tela_width = tela_width
         self.tela_heigth = tela_heigth
         self.colliders = self.get_colliders()
-
         self.gid_cache = {}
 
-    def desenhar(self,porta_liberada):
+        # Inicializar o cache do mapa
+        self.mapa_cache = None
+        self._last_porta_state = None
+        self._cache_surface = None
+
+
+    def desenhar(self, porta_liberada):
+        # Verificar se precisa recriar o cache
+        if self.mapa_cache is None or self._last_porta_state != porta_liberada:
+            self._last_porta_state = porta_liberada
+            self._recriar_cache(porta_liberada)
+        
+        # Usar o cache existente
+        rect_mapa = self.mapa_cache.get_rect(center=(self.tela_width // 2, (self.tela_heigth+184) // 2))
+        self.tela.blit(self.mapa_cache, rect_mapa)
+
+
+    def _recriar_cache(self, porta_liberada):
         largura = self.tmx_data.width * self.tmx_data.tilewidth * self.escala
         altura = self.tmx_data.height * self.tmx_data.tileheight * self.escala
-        mapa_surface = Surface((largura, altura), SRCALPHA)
+        self.mapa_cache = Surface((largura, altura), SRCALPHA)
 
         tile_w = self.tmx_data.tilewidth
         tile_h = self.tmx_data.tileheight
+        
         for layer in self.tmx_data:
             if hasattr(layer, "tiles"):
                 if layer.name[:2] == "cd" and porta_liberada:
                     continue
-                # print(layer)
+                    
                 for x, y, gid in layer:
-                    # print(f"{layer.name} - ({x},{y}) GID: {gid}")
                     tile_img = self.tmx_data.get_tile_image_by_gid(gid)
-                    # if tile_img is None:
-                        # print(f"Tile sem imagem no GID {gid}")
                     if tile_img:
                         if gid not in self.gid_cache:
-                            if tile_img:
-                                self.gid_cache[gid] = transform.scale(tile_img,
-                                                                      (tile_w * self.escala, tile_h * self.escala))
+                            scaled_img = transform.scale(tile_img, 
+                                                      (tile_w * self.escala, 
+                                                       tile_h * self.escala))
+                            self.gid_cache[gid] = scaled_img
+                            
                         tile_img = self.gid_cache.get(gid)
-                        mapa_surface.blit(tile_img, (x * tile_w * self.escala, y * tile_h * self.escala))
+                        self.mapa_cache.blit(tile_img, 
+                                           (x * tile_w * self.escala, 
+                                            y * tile_h * self.escala))
 
-        rectmapa = mapa_surface.get_rect(center=(self.tela_width // 2, (self.tela_heigth+184) // 2))
-        self.tela.blit(mapa_surface, rectmapa)
+
 
     def get_colliders(self):
         colliders = []

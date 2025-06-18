@@ -34,11 +34,16 @@ class Colisao:
 
         # Cria rect temporário para teste
         new_rect = self.player.player_rect.copy()
+
+
         
         # Testa movimento em X
+        area_interesse = Rect( new_rect.x - 100, new_rect.y - 100, new_rect.width + 200, new_rect.height + 200)
         new_rect.x += dx
         can_move_x = True
         for collider in self.mapa.colliders:
+            if not area_interesse.colliderect(collider['rect']):
+                continue  # Ignora colliders fora da área
             if new_rect.colliderect(collider['rect']):  # Simples colisão AABB primeiro
                 # if self.checar_mask_collision(new_rect, self.player.player_mask, collider['rect'], collider['mask']):
                 can_move_x = False

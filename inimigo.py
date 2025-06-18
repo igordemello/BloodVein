@@ -107,13 +107,22 @@ class Inimigo:
         
 
     def get_hitbox_ataque(self, player_pos):
-        player_x = player_pos[0]
-        player_y = player_pos[1]
+        if not hasattr(self, '_last_angle') or self._last_pos != player_pos:
+            player_x, player_y = player_pos
+            dx = (player_x+32) - (self.x+32)
+            dy = (player_y+32) - (self.y+32)
+            self._last_angle = math.atan2(dy,dx)
+            self._last_pos = player_pos
+    
+
+        #player_x = player_pos[0]
+        #player_y = player_pos[1]
 
         #inimigo orbital
-        dx = (player_x+32) - (self.x+32)
-        dy = (player_y+32) - (self.y+32)
-        angulo = math.atan2(dy,dx)
+        #dx = (player_x+32) - (self.x+32)
+        #dy = (player_y+32) - (self.y+32)
+        
+        angulo = self._last_angle
 
         orb_x = self.x + 32 + math.cos(angulo) * (self.radius+15)
         orb_y = self.y + 32 + math.sin(angulo) * (self.radius+15)

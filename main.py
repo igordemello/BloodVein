@@ -15,7 +15,9 @@ from itensDic import *
 init()
 
 clock = time.Clock()
-SCREEN = display.set_mode((1920, 1080), vsync=1)
+SCREEN = SCREEN = display.set_mode((1920, 1080), vsync=1, flags=HWSURFACE | DOUBLEBUF) # mudei para funcionar em hardware fudido
+fps_font = font.SysFont("Arial", 24)
+fps_text = fps_font.render("FPS: 60", True, (255, 255, 255))
 
 #Instâncias das classes que foram criadas:
 player = Player(950,600,32*2,48*2)
@@ -33,7 +35,7 @@ while i == 1:
     # i+=1
     keys = key.get_pressed()
     mouse_pos = mouse.get_pos()
-    clock.tick(60)
+    clock.tick(120)
     dt = clock.get_time()
     SCREEN.fill((115,115,115))
     current_time = time.get_ticks()
@@ -80,8 +82,9 @@ while i == 1:
         player.x, player.y = 1000, 500
 
     # mostrar o fps:
-    fps = int(clock.get_fps())
-    texto_fps = fonte.render(f"FPS: {fps}", True, (255, 255, 255))
-    SCREEN.blit(texto_fps, (10, 10))
-
+    if time.get_ticks() % 500 < 16:  # Atualiza ~30 vezes por segundo
+        fps = int(clock.get_fps())
+        fps_text = fps_font.render(f"FPS: {fps}", True, (255, 255, 255))
+    
+    SCREEN.blit(fps_text, (10, 10))
     display.update()
