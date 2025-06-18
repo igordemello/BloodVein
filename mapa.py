@@ -13,6 +13,9 @@ class Mapa:
         self.tela = tela
         self.tela_width = tela_width
         self.tela_heigth = tela_heigth
+        self.colliders = self.get_colliders()
+
+        self.gid_cache = {}
 
     def desenhar(self,porta_liberada):
         largura = self.tmx_data.width * self.tmx_data.tilewidth * self.escala
@@ -32,7 +35,11 @@ class Mapa:
                     # if tile_img is None:
                         # print(f"Tile sem imagem no GID {gid}")
                     if tile_img:
-                        tile_img = transform.scale(tile_img, (tile_w * self.escala, tile_h * self.escala))
+                        if gid not in self.gid_cache:
+                            if tile_img:
+                                self.gid_cache[gid] = transform.scale(tile_img,
+                                                                      (tile_w * self.escala, tile_h * self.escala))
+                        tile_img = self.gid_cache.get(gid)
                         mapa_surface.blit(tile_img, (x * tile_w * self.escala, y * tile_h * self.escala))
 
         rectmapa = mapa_surface.get_rect(center=(self.tela_width // 2, (self.tela_heigth+184) // 2))

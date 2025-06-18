@@ -19,6 +19,8 @@ class Sala:
         self.ranges_doors = self.mapa.get_rangesdoors() 
         self.proxima_sala = f"mapas/sala_{1}.tmx"
 
+        self.colliders = self.mapa.get_colliders()
+
     def atualizar(self,dt,teclas):
         for inimigo in self.inimigos:
             if inimigo.vivo:

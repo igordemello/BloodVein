@@ -9,8 +9,8 @@ class Hud:
         self.player = player
         self.bracoHp_fundo = transform.scale(image.load('assets/UI/HDEmptyHealthUI - Rotacionada.png').convert_alpha(), (192,576))
         self.bracoHp_cima = transform.scale(image.load('assets/UI/HDFillHealthUI - Rotacionada.png').convert_alpha(), (192,576))
-        self.bracoSt_fundo = transform.scale(image.load('assets/UI/HDEmptyManaUI - Rotacionada.png').convert_alpha(), (192,576))
-        self.bracoSt_cima = transform.scale(image.load('assets/UI/HDFillManaUI - Rotacionada.png').convert_alpha(), (192,576))
+        self.bracoSt_fundo = transform.flip(transform.scale(image.load('assets/UI/HDEmptyManaUI - Rotacionada.png').convert_alpha(), (192,576)), True , False)
+        self.bracoSt_cima = transform.flip(transform.scale(image.load('assets/UI/HDFillManaUI - Rotacionada.png').convert_alpha(), (192,576)), True, False)
         self.hud = image.load('assets/UI/Hud.png')
         self.fundo = image.load('assets/UI/tela_fundo1.png')
         self.fundo = transform.scale(self.fundo, (1920,1080))
@@ -37,7 +37,6 @@ class Hud:
 
         #STAMINA/MANA:
         braco_stamina = self.bracoSt_fundo
-        braco_stamina = transform.flip(braco_stamina, True, False)
         larguraSt_total = (self.bracoSt_cima.get_width())
         alturaSt_total = self.bracoSt_cima.get_height() - 70
 
@@ -52,5 +51,4 @@ class Hud:
             y_corte = self.bracoSt_cima.get_height() - altura_visivelSt
 
             barra_cheia_cortada = self.bracoSt_cima.subsurface((0, y_corte, larguraSt_total, altura_visivelSt)).copy()
-            barra_cheia_cortada = transform.flip(barra_cheia_cortada, True, False)
             tela.blit(barra_cheia_cortada, (1715, 510 + y_corte))

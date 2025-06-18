@@ -39,6 +39,7 @@ class Inimigo:
         self.frame_time = 0
         self.animation_speed = 0.10
 
+
     def carregar_sprites(self):
         if self.spritesheet:
             self.frames = [self.get_frame(i) for i in self.usar_indices]
@@ -73,16 +74,10 @@ class Inimigo:
         player_y = player_pos[1]
 
         #colocar um range máximo que ele precisa ficar do jogador
-        if int(player_x) not in range(int(self.x), int(self.x+25)):
-            if player_x > self.x+100:
-                self.x += self.velocidade
-            elif player_x < self.x:
-                self.x -= self.velocidade
-        if player_y not in range(int(self.y), int(self.y+25)):
-            if player_y > self.y+100:
-                self.y += self.velocidade
-            elif player_y < self.y:
-                self.y -= self.velocidade
+        if abs(player_x - self.x) > 10:
+            self.x += self.velocidade if player_x > self.x else -self.velocidade
+        if abs(player_y - self.y) > 10:
+            self.y += self.velocidade if player_y > self.y else -self.velocidade
 
         self.atualizar_animacao()
 

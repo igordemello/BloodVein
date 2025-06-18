@@ -38,7 +38,7 @@ class Colisao:
         # Testa movimento em X
         new_rect.x += dx
         can_move_x = True
-        for collider in self.mapa.get_colliders():
+        for collider in self.mapa.colliders:
             if new_rect.colliderect(collider['rect']):  # Simples colisão AABB primeiro
                 # if self.checar_mask_collision(new_rect, self.player.player_mask, collider['rect'], collider['mask']):
                 can_move_x = False
@@ -48,7 +48,7 @@ class Colisao:
         new_rect.x = self.player.player_rect.x  # Reseta X
         new_rect.y += dy
         can_move_y = True
-        for collider in self.mapa.get_colliders():
+        for collider in self.mapa.colliders:
             if new_rect.colliderect(collider['rect']):
                 # if self.checar_mask_collision(new_rect, self.player.player_mask, collider['rect'], collider['mask']):
                 can_move_y = False
@@ -75,7 +75,7 @@ class Colisao:
     # colisão entre o inimigo e o mapa, porém atualmente a IA de seguir o personagem não prevê esse tipo de coisa,
     # então o inimigo fica agarrado. Descomentar no checar_colisoes quando descomentar aqui
     # def _colisao_inimgos_mapa(self):
-    #     for collider in self.mapa.get_colliders():
+    #     for collider in self.mapa.colliders:
     #         for inimigo in self.inimigos:
     #             if inimigo.get_hitbox().colliderect(collider):
     #                 inimigo.voltar_posicao()
