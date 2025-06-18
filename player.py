@@ -30,6 +30,8 @@ class Player():
         
         self.itens = {}
         self.itemAtivo = None
+        self.salaAtivoUsado = None
+
         self.st = st #stamina
         self.cooldown_st = 5000
 
@@ -109,6 +111,8 @@ class Player():
         if isinstance(self.itemAtivo, ItemAtivo):
             if self.itemAtivo.afetaIni:
                 self.itemAtivo.listaInimigos = sala_atual.inimigos
+            else:
+                self.itemAtivo.player = self
             self.itemAtivo.aplicar_em()
             self.itemAtivo.usos -= 1
             if self.itemAtivo.usos == 0:

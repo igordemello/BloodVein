@@ -52,7 +52,8 @@ class ConjuntoItens :
            nome="Água Benta",
            descricao="Duplica a velocidade do decaimento e duplica o seu dano",
            efeitos=[
-              DanoUsuario(2,"*")
+              DanoUsuario(2,"*"),
+              DecaimentoVida(2)
            ],
             id=6,
         ),
@@ -61,7 +62,7 @@ class ConjuntoItens :
            descricao="Sua vida não decaí mais, mas ela é reduzida pela metade",
            efeitos=[
               VidaMaxima(-50),
-              DecaimentoVida(0.75)
+              DecaimentoVida(0)
            ],
             id=7
         ),
@@ -79,7 +80,7 @@ class ConjuntoItens :
             descricao="Aumenta seu dano temporariamente na sala atual",
             usos = 2,
             efeitos=[
-                DanoUsuario(20)
+                DanoUsuario(20, "+")
             ],
             afetaIni=False,
             id=9,
@@ -89,7 +90,7 @@ class ConjuntoItens :
             descricao="Aumenta sua velocidade nesta sala",
             usos=3,
             efeitos=[
-                VelocidadeMovimento(1)
+                VelocidadeMovimento(0.25)
             ],
             afetaIni=False,
             id=10,

@@ -35,7 +35,7 @@ while i == 1:
     # i+=1
     keys = key.get_pressed()
     mouse_pos = mouse.get_pos()
-    clock.tick(120)
+    clock.tick(60)
     dt = clock.get_time()
     SCREEN.fill((115,115,115))
     current_time = time.get_ticks()
@@ -79,6 +79,11 @@ while i == 1:
     if sala_atual.pode_trocar_de_sala() and keys[K_e]:
         num_sala += 1
         sala_atual = Sala(f"mapas/sala_{num_sala}.tmx", SCREEN, player)
+
+        if not player.itemAtivo.afetaIni:
+            player.itemAtivo.player = player
+            player.itemAtivo.remover_efeitos()
+
         player.x, player.y = 1000, 500
 
     # mostrar o fps:

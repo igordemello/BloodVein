@@ -21,6 +21,8 @@ class Efeito(ABC):
     @abstractmethod
     def aplicar(self,jogador):
         pass
+    def remover(self,jogador): #tem que colocar isso em outras funçõoes também
+        pass
 
 class DanoUsuario(Efeito):
     def __init__(self, valor,tipoInc=str):
@@ -31,6 +33,11 @@ class DanoUsuario(Efeito):
             jogador.dano += self.valor
         else:
             jogador.dano = jogador.dano*self.valor
+    def remover(self,jogador):
+        if self.tipoInc == "+":
+            jogador.dano -= self.valor
+        else:
+            jogador.dano /= self.valor
 
 class DarDano(Efeito):
     def __init__(self, valor):
@@ -55,6 +62,8 @@ class VelocidadeMovimento(Efeito):
         self.valor = valor
     def aplicar(self, jogador):
         jogador.velocidadeMov += self.valor
+    def remover(self, jogador):
+        jogador.velocidadeMov -= self.valor
 
 class DecaimentoVida(Efeito):
     def __init__(self, valor):
@@ -99,6 +108,12 @@ class ItemAtivo:
         else:
             for efeito in self.efeitos:
                 efeito.aplicar(self.player)
+
+    def remover_efeitos(self):
+        if not self.afetaIni:
+            for efeito in self.efeitos:
+                efeito.remover(self.player)
+
 
 
 
