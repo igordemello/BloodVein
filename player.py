@@ -43,7 +43,7 @@ class Player():
         self.old_x = x
         self.old_y = y
 
-        self.radius = 70
+        self.radius = 80
         self.orbital_size = (40, 20)
         self.hitbox_arma = (70, 100)
 
@@ -235,10 +235,11 @@ class Player():
         # draw.rect(tela, (0, 255, 0), corpo)
 
         angle = self.calcular_angulo(mouse_pos)
-        centro_jogador = (self.x + 32, self.y + 32)
 
-        base_x =  centro_jogador[0] + math.cos(angle) * self.radius
-        base_y = 10 + centro_jogador[1] + math.sin(angle) * self.radius
+        centro_jogador = (self.player_rect.topleft[0]+32,self.player_rect.topleft[1]+32)
+
+        base_x =  centro_jogador[0] + math.cos(angle) * self.radius #<------------
+        base_y = 10 + centro_jogador[1] + math.sin(angle) * self.radius#<------------
 
         angulo_espada = math.degrees(angle) - 270
 
@@ -246,8 +247,8 @@ class Player():
         rect_espada = espada_rotacionada.get_rect(center=(base_x, base_y))
 
 
-        orbital_x = self.x + 32 + math.cos(angle) * self.radius
-        orbital_y = self.y + 32 + math.sin(angle) * self.radius
+        orbital_x = self.x + 32 + math.cos(angle) * (self.radius)
+        orbital_y = self.y + 32 + math.sin(angle) * (self.radius)
 
         orbital_rect = Rect(0, 0, *self.orbital_size)
         orbital_rect.center = (orbital_x, orbital_y)
@@ -266,7 +267,7 @@ class Player():
         espada_rotacionada = transform.rotate(espada_frame, -math.degrees(angle) - 90)
         rect_espada = espada_rotacionada.get_rect(center=(base_x, base_y))
 
-        tela.blit(espada_rotacionada, rect_espada)
+        tela.blit(espada_rotacionada, rect_espada) #<----------
 
         if self.anima_espada:
             tela.blit(espada_rotacionada, rect_espada.topleft)
