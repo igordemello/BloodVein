@@ -28,7 +28,7 @@ class Player():
 
         #itens
         
-        self.itens = dict()
+        self.itens = {}
         self.itemAtivo = None
         self.st = st #stamina
         self.cooldown_st = 5000
@@ -54,8 +54,8 @@ class Player():
 
         self.ativo_ultimo_uso = 0
 
-        self.sprite = transform.scale(image.load(sprite),(32*2,48*2))
-        self.sword = transform.scale(image.load('assets/Player/Sword_Attack.png'),(320*2,54*2))
+        self.sprite = transform.scale(image.load(sprite).convert_alpha(),(32*2,48*2))
+        self.sword = transform.scale(image.load('assets/Player/Sword_Attack.png').convert_alpha(),(320*2,54*2))
 
         clock = time.Clock()
         self.dt = clock.get_time()

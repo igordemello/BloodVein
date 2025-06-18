@@ -7,7 +7,7 @@ from inimigo import Inimigo
 class Orb(Inimigo):
     def __init__(self, x, y, largura, altura, hp=100,velocidade=2):
         super().__init__(x, y, largura, altura, hp,velocidade)
-        self.spritesheet = image.load('./assets/Enemies/EyeOrbSprite.png')
+        self.spritesheet = image.load('./assets/Enemies/EyeOrbSprite.png').convert_alpha()
 
         self.frame_width = 32
         self.frame_height = 32

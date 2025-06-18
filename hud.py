@@ -7,10 +7,10 @@ import pygame.font
 class Hud:
     def __init__(self, player):
         self.player = player
-        self.bracoHp_fundo = transform.scale(image.load('assets/UI/HDEmptyHealthUI - Rotacionada.png'), (192,576))
-        self.bracoHp_cima = transform.scale(image.load('assets/UI/HDFillHealthUI - Rotacionada.png'), (192,576))
-        self.bracoSt_fundo = transform.scale(image.load('assets/UI/HDEmptyManaUI - Rotacionada.png'), (192,576))
-        self.bracoSt_cima = transform.scale(image.load('assets/UI/HDFillManaUI - Rotacionada.png'), (192,576))
+        self.bracoHp_fundo = transform.scale(image.load('assets/UI/HDEmptyHealthUI - Rotacionada.png').convert_alpha(), (192,576))
+        self.bracoHp_cima = transform.scale(image.load('assets/UI/HDFillHealthUI - Rotacionada.png').convert_alpha(), (192,576))
+        self.bracoSt_fundo = transform.scale(image.load('assets/UI/HDEmptyManaUI - Rotacionada.png').convert_alpha(), (192,576))
+        self.bracoSt_cima = transform.scale(image.load('assets/UI/HDFillManaUI - Rotacionada.png').convert_alpha(), (192,576))
         self.hud = image.load('assets/UI/Hud.png')
         self.fundo = image.load('assets/UI/tela_fundo1.png')
         self.fundo = transform.scale(self.fundo, (1920,1080))
