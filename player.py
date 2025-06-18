@@ -31,6 +31,7 @@ class Player():
         self.itens = {}
         self.itemAtivo = None
         self.salaAtivoUsado = None
+        self.itemAtivoEsgotado = None
 
         self.st = st #stamina
         self.cooldown_st = 5000
@@ -115,10 +116,13 @@ class Player():
                 self.itemAtivo.player = self
             self.itemAtivo.aplicar_em()
             self.itemAtivo.usos -= 1
+            print(self.itemAtivo.usos)
             if self.itemAtivo.usos == 0:
+                self.itemAtivoEsgotado = self.itemAtivo
                 self.itemAtivo = None
         else:
             print("Não tem item ativo")
+
 
 
     def atualizar(self, dt, teclas):

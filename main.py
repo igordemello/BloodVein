@@ -79,10 +79,18 @@ while i == 1:
     if sala_atual.pode_trocar_de_sala() and keys[K_e]:
         num_sala += 1
         sala_atual = Sala(f"mapas/sala_{num_sala}.tmx", SCREEN, player)
+        
+        if player.itemAtivo is not None:
+            if not player.itemAtivo.afetaIni:
+                player.itemAtivo.player = player
+                player.itemAtivo.remover_efeitos()
 
-        if not player.itemAtivo.afetaIni:
-            player.itemAtivo.player = player
-            player.itemAtivo.remover_efeitos()
+        if player.itemAtivoEsgotado is not None:
+            if not player.itemAtivoEsgotado.afetaIni:
+                player.itemAtivoEsgotado.player = player
+                player.itemAtivoEsgotado.remover_efeitos()
+            player.itemAtivoEsgotado = None
+
 
         player.x, player.y = 1000, 500
 

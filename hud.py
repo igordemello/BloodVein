@@ -3,6 +3,7 @@ import sys
 from pygame.locals import QUIT
 import math
 import pygame.font
+from player import Player
 
 class Hud:
     def __init__(self, player):
@@ -34,6 +35,12 @@ class Hud:
 
             barra_cheia_cortada = self.bracoHp_cima.subsurface((0, y_corte, larguraHp_total, altura_visivelHp)).copy()
             tela.blit(barra_cheia_cortada, (15, 510 + y_corte))
+
+        #Itens ativos:
+        if self.player.itemAtivo is not None:
+            for x in range(0,self.player.itemAtivo.usos):
+                draw.rect(tela, (0,255,0), (50+(x*25),150,20,10))
+
 
         #STAMINA/MANA:
         braco_stamina = self.bracoSt_fundo
