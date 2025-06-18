@@ -11,7 +11,8 @@ fonte = font.SysFont("Arial", 24)
 
 class Sala:
     def __init__(self, caminho_mapa, tela, player):
-        self.mapa = Mapa(caminho_mapa,tela,tela.get_width(),tela.get_height())
+        self.tela = tela
+        self.mapa = Mapa(caminho_mapa,self.tela,self.tela.get_width(),self.tela.get_height())
         self.inimigos = [Orb(400,700,64,64)]
         self.colisao = Colisao(self.mapa, player, self.inimigos)
         self.porta_liberada = False
@@ -24,7 +25,7 @@ class Sala:
     def atualizar(self,dt,teclas):
         for inimigo in self.inimigos:
             if inimigo.vivo:
-                inimigo.atualizar((self.player.x,self.player.y))
+                inimigo.atualizar((self.player.x,self.player.y), self.tela)
         
         self.colisao.checar_colisoes(self.player,self.inimigos, teclas,dt)
 

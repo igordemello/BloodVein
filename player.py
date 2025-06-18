@@ -33,8 +33,12 @@ class Player():
         self.salaAtivoUsado = None
         self.itemAtivoEsgotado = None
 
-        self.st = st #stamina
+        #stamina
+        self.st = st 
         self.cooldown_st = 5000
+
+        #almas
+        self.almas = 0
 
         self.old_x = x
         self.old_y = y

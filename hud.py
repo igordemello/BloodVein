@@ -5,6 +5,8 @@ import math
 import pygame.font
 from player import Player
 
+
+
 class Hud:
     def __init__(self, player):
         self.player = player
@@ -17,6 +19,8 @@ class Hud:
         self.fundo = transform.scale(self.fundo, (1920,1080))
 
     def desenhar(self, tela):
+        almas_font = font.SysFont("Arial", 48)
+        almas_texto = almas_font.render(f"{self.player.almas}x", True, (255, 255, 255))
         tela.blit(self.fundo,(0,0))
         tela.blit(self.hud,(0,0))
         #HP:
@@ -36,11 +40,15 @@ class Hud:
             barra_cheia_cortada = self.bracoHp_cima.subsurface((0, y_corte, larguraHp_total, altura_visivelHp)).copy()
             tela.blit(barra_cheia_cortada, (15, 510 + y_corte))
 
-        #Itens ativos:
+        #Desenha usos dos Itens ativos:
         if self.player.itemAtivo is not None:
             for x in range(0,self.player.itemAtivo.usos):
                 draw.rect(tela, (0,255,0), (50+(x*25),150,20,10))
 
+
+        #Desenha número de almas
+        draw.rect(tela, (173,216,250), (1700, 75, 50,50))
+        tela.blit(almas_texto,(1650,70))
 
         #STAMINA/MANA:
         braco_stamina = self.bracoSt_fundo

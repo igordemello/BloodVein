@@ -2,6 +2,7 @@ from pygame import *
 import sys
 from pygame.locals import QUIT
 import math
+from random import randint
 
 
 class Inimigo:
@@ -56,7 +57,8 @@ class Inimigo:
             self.frame_time = 0
             self.frame_index = (self.frame_index + 1) % len(self.frames)
 
-    def atualizar(self, player_pos):
+
+    def atualizar(self, player_pos,tela):
 
         now = time.get_ticks()
         if now - self.knockback_time < self.knockback_duration:
@@ -65,7 +67,7 @@ class Inimigo:
             return
         self.old_x = self.x
         self.old_y = self.y
-
+        #inimigo morrendo
         if self.hp <= 0:
             self.vivo = False
             return
@@ -80,6 +82,8 @@ class Inimigo:
             self.y += self.velocidade if player_y > self.y else -self.velocidade
 
         self.atualizar_animacao()
+
+
 
 
         
