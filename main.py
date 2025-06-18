@@ -76,10 +76,11 @@ while i == 1:
     player.desenhar(SCREEN,mouse_pos)
     player.atualizar(dt,keys)
 
+    #print(player.salaAtivoUsado, '+asdfasdasdasd')
     if sala_atual.pode_trocar_de_sala() and keys[K_e]:
-        num_sala += 1
-        sala_atual = Sala(f"mapas/sala_{num_sala}.tmx", SCREEN, player)
+        
         if player.itemAtivo is not None and player.salaAtivoUsado == sala_atual:
+ 
             if not player.itemAtivo.afetaIni:
                 player.itemAtivo.player = player
                 player.itemAtivo.remover_efeitos()
@@ -89,6 +90,9 @@ while i == 1:
                 player.itemAtivoEsgotado.player = player
                 player.itemAtivoEsgotado.remover_efeitos()
             player.itemAtivoEsgotado = None
+
+        num_sala += 1
+        sala_atual = Sala(f"mapas/sala_{num_sala}.tmx", SCREEN, player)
 
 
         player.x, player.y = 1000, 500
