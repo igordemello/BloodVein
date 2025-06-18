@@ -116,6 +116,7 @@ class Player():
                 self.itemAtivo.player = self
             self.itemAtivo.aplicar_em()
             self.itemAtivo.usos -= 1
+            self.salaAtivoUsado = sala_atual
             print(self.itemAtivo.usos)
             if self.itemAtivo.usos == 0:
                 self.itemAtivoEsgotado = self.itemAtivo
