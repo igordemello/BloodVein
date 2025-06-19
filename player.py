@@ -317,6 +317,7 @@ class Player():
                     self.atacou = False
                 if inimigo.get_hitbox().colliderect(hitbox_espada):
                     #t.sleep(0.05) hitstop
+                    inimigo.anima_hit = True
                     self.atacou = False
                     inimigo.foi_atingido = False
 
