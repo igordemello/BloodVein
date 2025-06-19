@@ -14,6 +14,9 @@ class Hud:
         self.bracoHp_cima = transform.scale(image.load('assets/UI/HDFillHealthUI - Rotacionada.png').convert_alpha(), (192,576))
         self.bracoSt_fundo = transform.flip(transform.scale(image.load('assets/UI/HDEmptyManaUI - Rotacionada.png').convert_alpha(), (192,576)), True , False)
         self.bracoSt_cima = transform.flip(transform.scale(image.load('assets/UI/HDFillManaUI - Rotacionada.png').convert_alpha(), (192,576)), True, False)
+
+        self.almaIcon = transform.scale(image.load('assets/Itens/alma.png').convert_alpha(), (96,96))
+
         self.hud = image.load('assets/UI/Hud.png')
         self.fundo = image.load('assets/UI/tela_fundo1.png')
         self.fundo = transform.scale(self.fundo, (1920,1080))
@@ -51,7 +54,8 @@ class Hud:
 
 
         #Desenha número de almas
-        draw.rect(tela, (173,216,250), (1700, 75, 50,50))
+        #draw.rect(tela, (173,216,250), (1700, 75, 50,50))
+        tela.blit(self.almaIcon, (1700, 40))
         tela.blit(almas, almas_rect)
 
         #STAMINA/MANA:

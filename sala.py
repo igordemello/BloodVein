@@ -20,6 +20,14 @@ class Sala:
         self.ranges_doors = self.mapa.get_rangesdoors() 
         self.proxima_sala = f"mapas/sala_{1}.tmx"
 
+        self.almaspritesheet = image.load('./assets/Itens/almaSpriteSheet.png').convert_alpha()
+
+        self.frames_alma = [self.almaspritesheet.subsurface(Rect(i * 32, 0, 32, 32)) for i in range(4)]
+
+        self.frame_alma_idx = 0
+        self.tempo_anterior_alma = time.get_ticks()
+        self.duracao_frame_alma = 200
+
         self.colliders = self.mapa.get_colliders()
 
     def atualizar(self,dt,teclas):
@@ -41,12 +49,13 @@ class Sala:
                     inimigo.desenhar(tela, (self.player.x,self.player.y))
 
             elif not getattr(inimigo, "alma_coletada", True):
-                    alma = Rect(inimigo.x, inimigo.y, 32, 32)
+                    pos = (inimigo.x+16, inimigo.y+16)
 
-                    draw.rect(self.tela, (0, 0, 255), alma)
-
-                    if self.player.get_hitbox().colliderect(alma):
-                        self.player.almas += 1 #quantidade de almas deveria ser modular pelo tipo de inimigo
+                    self.desenha_alma(pos)
+                    alma_hitbox = Rect(0, 0, 50, 50)
+                    alma_hitbox.center = pos
+                    if self.player.get_hitbox().colliderect(alma_hitbox):
+                        self.player.almas += 1
                         inimigo.alma_coletada = True
 
         if self.pode_trocar_de_sala():
@@ -62,3 +71,15 @@ class Sala:
 
     def pode_trocar_de_sala(self):
         return self.porta_liberada and any(self.player.get_hitbox().colliderect(rangee) for rangee in self.ranges_doors)
+
+    def desenha_alma(self,pos):
+        tempo_atual = time.get_ticks()
+        if tempo_atual - self.tempo_anterior_alma >= self.duracao_frame_alma:
+            self.tempo_anterior_alma = tempo_atual
+            self.frame_alma_idx = (self.frame_alma_idx + 1) % len(self.frames_alma)
+
+        frame = self.frames_alma[self.frame_alma_idx]
+        frame = transform.scale(frame, (64, 64))
+        rect = frame.get_rect(center=pos)
+        self.tela.blit(frame, rect)
+

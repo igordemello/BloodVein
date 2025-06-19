@@ -42,29 +42,10 @@ class Inimigo:
         self.frame_time = 0
         self.animation_speed = 0.10
 
-        self.sprite_hit = image.load("assets/Enemies/orbTomandoDano.png").convert_alpha()
-        self.frames_hit = []
-        self.total_frames_hit = 4
-        self.hit_frame_duration = 100 
-        self.frame_hit_index = 0
-        self.time_last_hit_frame = 0
-        self.anima_hit = False
-        self.carregar_hit_sprites()
-
 
     def carregar_sprites(self):
         if self.spritesheet:
             self.frames = [self.get_frame(i) for i in self.usar_indices]
-
-
-    def carregar_hit_sprites(self):
-        for i in range(self.total_frames_hit):
-            rect = Rect(i * self.frame_width, 0, self.frame_width, self.frame_height)
-            frame = Surface((self.frame_width, self.frame_height), SRCALPHA)
-            frame.blit(self.sprite_hit, (0, 0), rect)
-            frame = transform.scale(frame, (self.largura, self.altura))
-            self.frames_hit.append(frame)
-    
 
     def get_frame(self, index):
         rect = Rect(index * self.frame_width, 0, self.frame_width, self.frame_height)
@@ -80,16 +61,7 @@ class Inimigo:
 
 
     def atualizar(self, player_pos,tela):
-        if self.anima_hit:
-            now = time.get_ticks()
-            if now - self.time_last_hit_frame > self.hit_frame_duration:
-                self.time_last_hit_frame = now
-                self.frame_hit_index += 1
-                if self.frame_hit_index >= len(self.frames_hit):
-                    self.frame_hit_index = 0
-                    self.anima_hit = False
-                    return  
-        
+
         now = time.get_ticks()
         if now - self.knockback_time < self.knockback_duration:
             self.x += self.knockback_x
@@ -124,25 +96,22 @@ class Inimigo:
 
 
     def desenhar(self, tela, player_pos):
-        if self.anima_hit:
-            frame = self.frames_hit[self.frame_hit_index]
-        elif self.frames:
-            frame = self.frames[self.frame_index]
-        else:
-            corpo = Rect(self.x, self.y, self.largura, self.altura)
-            draw.rect(tela, (255,0,0), corpo)
-            frame = None
 
-        if frame:
+        if not self.frames:
+            corpo = Rect(self.x, self.y, self.largura, self.altura) #substituir por sprite futuramente
+            draw.rect(tela, (255,0,0), corpo)
+        else:
+            frame = self.frames[self.frame_index]
             tela.blit(frame, (self.x, self.y))
 
-        # vida
+        #desenho da vida do inimigo
         draw.rect(tela, (255, 200, 200), (self.x - 20, self.y + 70, 100, 10))
         draw.rect(tela, (255, 0, 0), (self.x - 20, self.y + 70, self.hp, 10))
 
+
         rot_rect, rot_surf = self.get_hitbox_ataque(player_pos)
         tela.blit(rot_surf, rot_rect)
-            
+
 
     def get_hitbox_ataque(self, player_pos):
         if not hasattr(self, '_last_angle') or self._last_pos != player_pos:
