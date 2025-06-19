@@ -15,7 +15,7 @@ from itensDic import *
 init()
 
 clock = time.Clock()
-SCREEN = SCREEN = display.set_mode((1920, 1080), vsync=1, flags=HWSURFACE | DOUBLEBUF) # mudei para funcionar em hardware fudido
+SCREEN = display.set_mode((1920, 1080), vsync=1, flags=HWSURFACE | DOUBLEBUF) # mudei para funcionar em hardware fudido
 fps_font = font.SysFont("Arial", 24)
 fps_text = fps_font.render("FPS: 60", True, (255, 255, 255))
 
