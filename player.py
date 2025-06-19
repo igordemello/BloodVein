@@ -9,7 +9,7 @@ from sala import *
 
 
 class Player():
-    def __init__(self, x, y, largura, altura, hp=100, st=100,velocidadeMov=0.3,sprite='hero.png'):
+    def __init__(self, x, y, largura, altura, hp=100, st=100,velocidadeMov=0.5,sprite='hero.png'):
         self.x = x
         self.y = y
         self.largura = largura
@@ -33,14 +33,14 @@ class Player():
         self.tempo_atingido = 0 #pra iniciar o "flash" de dano
 
         #itens
-        
+
         self.itens = {}
         self.itemAtivo = None
         self.salaAtivoUsado = None
         self.itemAtivoEsgotado = None
 
         #stamina
-        self.st = st 
+        self.st = st
         self.cooldown_st = 5000
 
         #almas
@@ -49,6 +49,11 @@ class Player():
         self.old_x = x
         self.old_y = y
 
+        #efeito de slide
+        self.vx = 0
+        self.vy = 0
+        self.atrito = 0.92
+
         self.radius = 80
         self.orbital_size = (40, 20)
         self.hitbox_arma = (70, 100)
@@ -56,11 +61,11 @@ class Player():
         self.atacou = False
 
         #controles para o dash
-        self.dash_cooldown = 0  
-        self.dash_duration = 0  
-        self.dash_cooldown_max = 1000 
-        self.dash_duration_max = 150  
-        self.is_dashing = False 
+        self.dash_cooldown = 0
+        self.dash_duration = 0
+        self.dash_cooldown_max = 1000
+        self.dash_duration_max = 150
+        self.is_dashing = False
         self.last_dash_time = 0
         self.dash_direcao = None
 
@@ -87,16 +92,16 @@ class Player():
         # self.player_mask = mask.from_surface(self.player_img)
         self.dx = 0
         self.dy = 0
-        
 
-        
+
+
 
     def _dash(self, dt, teclas, direcao):
         current_time = time.get_ticks()
 
-        if (current_time - self.last_dash_time > self.dash_cooldown_max and 
+        if (current_time - self.last_dash_time > self.dash_cooldown_max and
             not self.is_dashing and teclas[K_SPACE] and self.st >=self.custoDash):
-            
+
             self.last_dash_time = current_time
             self.is_dashing = True
             self.dash_direcao = direcao
@@ -147,7 +152,7 @@ class Player():
 
 
         self.hp -= 0.05 * self.rate
-        
+
         if current_time - self.last_dash_time >= self.cooldown_st:
             self.st += 0.7 * self.rate
 
@@ -209,19 +214,23 @@ class Player():
 
         return rotated_surf2, rotated_rect2
 
-    def mover(self, pode_mover_x, pode_mover_y, dx, dy):
-        # Aplica movimento se for possível
-        if pode_mover_x:
+    def mover(self, pode_x, pode_y, dx, dy):
+        if pode_x:
             self.player_rect.x += dx
-        if pode_mover_y:
+        else:
+            self.vx = 0
+
+        if pode_y:
             self.player_rect.y += dy
+        else:
+            self.vy = 0
 
     def desenhar(self, tela, mouse_pos):
         if self.foi_atingido and time.get_ticks() - self.tempo_atingido < 250:
             tela.blit(self.sprite_dano, self.player_rect.topleft)
         else:
             tela.blit(self.sprite,(self.player_rect.topleft))
-        
+
         # corpo = Rect(self.x, self.y, self.largura, self.altura)
         # draw.rect(tela, (0, 255, 0), corpo)
 
@@ -249,7 +258,7 @@ class Player():
         rotated_surf = transform.rotate(orbital_surf, -math.degrees(angle))
         rotated_rect = rotated_surf.get_rect(center=orbital_rect.center)
 
-        
+
         frame_largura = 128
         frame_altura = 108
         sword_frame_rect = Rect(self.frame_sword * frame_largura, 0, frame_largura, frame_altura)
@@ -298,7 +307,7 @@ class Player():
             self.frame_sword += 1
             self.time_frame_sword = 0
         if self.frame_sword >= 5:
-            self.frame_sword = 0      
+            self.frame_sword = 0
 
 
         _, hitbox_espada = self.get_rotated_rect_ataque(mouse_pos)
@@ -307,7 +316,7 @@ class Player():
                 if not inimigo.get_hitbox().colliderect(hitbox_espada):
                     self.atacou = False
                 if inimigo.get_hitbox().colliderect(hitbox_espada):
-                    t.sleep(0.05)
+                    #t.sleep(0.05) hitstop
                     self.atacou = False
                     inimigo.foi_atingido = False
 
@@ -316,7 +325,7 @@ class Player():
                         self.hp = self.hpMax
                     inimigo.hp -= self.dano*inimigo.multDanoRecebido
 
-                    #knockback   
+                    #knockback
                     dx = inimigo.x - self.x
                     dy = inimigo.y - self.y
                     dist = math.hypot(dx, dy)
@@ -339,4 +348,3 @@ class Player():
         #pra fazer o "pisco"
         self.foi_atingido = True
         self.tempo_atingido = time.get_ticks()
-                   
