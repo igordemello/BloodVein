@@ -13,20 +13,16 @@ class Colisao:
         self.entidades.append(entidade)
 
     def remover_entidades_menos_player(self):
-        for ent in self.entidades:
-            from player import Player
-            if isinstance(ent,Player):
-                continue
-            else:
-                self.entidades.remove(ent)
+        from player import Player
+        self.entidades = [ent for ent in self.entidades if isinstance(ent, Player)]
 
     def checar_colisoes(self,dt):
         for entidade in self.entidades:
             self._colisao_entidade_mapa(entidade, dt)
 
-        for i, ent1 in enumerate(self.entidades):
-            for ent2 in self.entidades[i+1:]:
-                self._colisao_entidade_entidade(ent1, ent2)
+        # for i, ent1 in enumerate(self.entidades):
+        #     for ent2 in self.entidades[i+1:]:
+        #         self._colisao_entidade_entidade(ent1, ent2)
 
     def _colisao_entidade_mapa(self,entidade,dt):
         vx, vy = entidade.get_velocidade()
