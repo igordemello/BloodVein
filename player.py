@@ -41,7 +41,7 @@ class Player():
 
         #stamina
         self.st = st
-        self.cooldown_st = 5000
+        self.cooldown_st = 3000
 
         #almas
         self.almas = 0
@@ -63,7 +63,7 @@ class Player():
         #controles para o dash
         self.dash_cooldown = 0
         self.dash_duration = 0
-        self.dash_cooldown_max = 1000
+        self.dash_cooldown_max = 500
         self.dash_duration_max = 150
         self.is_dashing = False
         self.last_dash_time = 0
