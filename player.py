@@ -138,7 +138,22 @@ class Player():
 
         self.x,self.y = self.player_rect.topleft
 
-        #dash:
+
+        speed = self.velocidadeMov * dt
+        if teclas[K_a]: self.vx -= speed
+        if teclas[K_d]: self.vx += speed
+        if teclas[K_w]: self.vy -= speed
+        if teclas[K_s]: self.vy += speed
+
+        self.vx *= self.atrito
+        self.vy *= self.atrito
+
+        max_vel = self.velocidadeMov * 10
+        self.vx = max(-max_vel, min(self.vx, max_vel))
+        self.vy = max(-max_vel, min(self.vy, max_vel))
+
+
+        #dash
         if teclas[K_d]:
             self._dash(dt, teclas, 'd')
         elif teclas[K_a]:
@@ -147,6 +162,19 @@ class Player():
             self._dash(dt, teclas, 'w')
         elif teclas[K_s]:
             self._dash(dt, teclas, 's')
+
+
+        if self.is_dashing:
+            dash_speed = self.velocidadeMov * dt * 2.5
+            direcao = self.dash_direcao
+            if direcao == 'a': self.vx = -dash_speed
+            elif direcao == 'd': self.vx = dash_speed
+            elif direcao == 'w': self.vy = -dash_speed
+            elif direcao == 's': self.vy = dash_speed
+
+            self.dash_duration += dt
+            if self.dash_duration >= self.dash_duration_max:
+                self.is_dashing = False
 
 
 
@@ -214,16 +242,7 @@ class Player():
 
         return rotated_surf2, rotated_rect2
 
-    def mover(self, pode_x, pode_y, dx, dy):
-        if pode_x:
-            self.player_rect.x += dx
-        else:
-            self.vx = 0
 
-        if pode_y:
-            self.player_rect.y += dy
-        else:
-            self.vy = 0
 
     def desenhar(self, tela, mouse_pos):
         if self.foi_atingido and time.get_ticks() - self.tempo_atingido < 250:
@@ -290,9 +309,22 @@ class Player():
         # )
         return rect
 
-    def voltar_posicao(self):
-        self.x = self.old_x
-        self.y = self.old_y
+    def get_velocidade(self):
+        return (self.vx, self.vy)
+
+    def set_velocidade_x(self, vx):
+        self.vx = vx
+
+    def set_velocidade_y(self, vy):
+        self.vy = vy
+
+    def mover_se(self, pode_x, pode_y, dx, dy):
+        if pode_x:
+            self.player_rect.x += dx
+        if pode_y:
+            self.player_rect.y += dy
+
+        self.x, self.y = self.player_rect.topleft
 
 
     def ataque_espada(self,inimigos,mouse_pos, dt):

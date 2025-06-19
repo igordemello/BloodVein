@@ -14,7 +14,12 @@ class Sala:
         self.tela = tela
         self.mapa = Mapa(caminho_mapa,self.tela,self.tela.get_width(),self.tela.get_height())
         self.inimigos = [Orb(400,700,64,64)]
-        self.colisao = Colisao(self.mapa, player, self.inimigos)
+
+        self.colisao = Colisao(self.mapa)
+        self.colisao.adicionar_entidade(player)
+        # for inimigo in self.inimigos:
+        #     self.colisao.adicionar_entidade(inimigo)
+
         self.porta_liberada = False
         self.player = player
         self.ranges_doors = self.mapa.get_rangesdoors() 
@@ -29,7 +34,7 @@ class Sala:
                 #da o dano no jogador
                 inimigo.dar_dano = lambda val=inimigo.dano: self.player.tomar_dano(val)
         
-        self.colisao.checar_colisoes(self.player,self.inimigos, teclas,dt)
+        self.colisao.checar_colisoes(dt)
 
         if not any(inimigo.vivo for inimigo in self.inimigos):
             self.porta_liberada = True
