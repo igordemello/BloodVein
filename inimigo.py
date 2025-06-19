@@ -82,7 +82,7 @@ class Inimigo:
         if abs(player_y - self.y) > 10:
             self.y += self.velocidade if player_y > self.y else -self.velocidade
 
-        #checa se deu dano ao jogador
+
         rot_rect, _ = self.get_hitbox_ataque((player_x, player_y))
         player_hitbox = Rect(player_x, player_y, 64, 64)  # ou use player.get_hitbox()
 
@@ -91,6 +91,12 @@ class Inimigo:
                 self.dar_dano()
 
         self.atualizar_animacao()
+
+
+
+
+
+
 
 
     def desenhar(self, tela, player_pos):
