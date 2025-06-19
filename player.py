@@ -24,7 +24,7 @@ class Player():
         self.dano = 20
         self.velocidadeAtk = 1 #analisar esses valores depois com mais cuidado, depois da animação estar pronta, pq vai afetar a velocidade e a duração da animação
         self.revives = 0 #quantidade de vezes que o jogador pode reviver
-        self.custoDash = 3.5
+        self.custoDash = 2.75
 
         #itens
         
@@ -56,6 +56,7 @@ class Player():
         self.dash_duration_max = 150  
         self.is_dashing = False 
         self.last_dash_time = 0
+        self.dash_direcao = None
 
         self.parado_desde = 0
 
@@ -73,7 +74,7 @@ class Player():
         self.anima_espada = False
 
         self.player_img = self.sprite
-        self.player_rect = self.player_img.get_rect(topleft=(self.x,self.y))
+        self.player_rect = self.get_hitbox()
         # self.player_mask = mask.from_surface(self.player_img)
         self.dx = 0
         self.dy = 0
@@ -89,26 +90,10 @@ class Player():
             
             self.last_dash_time = current_time
             self.is_dashing = True
+            self.dash_direcao = direcao
             self.dash_duration = 0
 
         if self.is_dashing:
-            if self.st < self.custoDash:
-                self.is_dashing = False
-                return
-
-            oldv = self.velocidadeMov
-            self.velocidadeMov = self.velocidadeMov*2.5 #velocidadeMov do dash
-            if direcao == 'd': self.x += self.velocidadeMov * dt
-            elif direcao == 'a': self.x -= self.velocidadeMov * dt
-            elif direcao == 'w': self.y -= self.velocidadeMov * dt
-            elif direcao == 's': self.y += self.velocidadeMov * dt
-            self.velocidadeMov = oldv
-            
-
-            self.dash_duration += dt
-            if self.dash_duration >= self.dash_duration_max:
-                self.is_dashing = False
-
             self.st -= self.custoDash
         self.ultimo_uso = current_time
 
@@ -133,31 +118,21 @@ class Player():
         self.dt = dt
 
         current_time = time.get_ticks()
-        # cooldown = 2500
-
-        # if teclas[K_w] or teclas[K_a] or teclas[K_s] or teclas[K_d]:
-        #     self.parado_desde = current_time  # reseta o tempo parado
-        # else:
-        #     if current_time - self.parado_desde >= cooldown:
-        #         self.st += 0.4 * dt  # começa a recuperar
 
         self.old_x = self.x
         self.old_y = self.y
 
         self.x,self.y = self.player_rect.topleft
 
-        # if teclas[K_d]:
-        #     self.x += self.velocidadeMov * dt
-        #     self._dash(dt, teclas, 'd')
-        # if teclas[K_a]:
-        #     self.x -= self.velocidadeMov * dt
-        #     self._dash(dt, teclas, 'a')
-        # if teclas[K_w]:
-        #     self.y -= self.velocidadeMov * dt
-        #     self._dash(dt, teclas, 'w')
-        # if teclas[K_s]:
-        #     self.y += self.velocidadeMov * dt
-        #     self._dash(dt, teclas, 's')
+        #dash:
+        if teclas[K_d]:
+            self._dash(dt, teclas, 'd')
+        elif teclas[K_a]:
+            self._dash(dt, teclas, 'a')
+        elif teclas[K_w]:
+            self._dash(dt, teclas, 'w')
+        elif teclas[K_s]:
+            self._dash(dt, teclas, 's')
 
 
 
@@ -225,8 +200,12 @@ class Player():
 
         return rotated_surf2, rotated_rect2
 
-    def mov_player(self,rect):
-        self.player_rect.topleft = rect.topleft
+    def mover(self, pode_mover_x, pode_mover_y, dx, dy):
+        # Aplica movimento se for possível
+        if pode_mover_x:
+            self.player_rect.x += dx
+        if pode_mover_y:
+            self.player_rect.y += dy
 
     def desenhar(self, tela, mouse_pos):
         tela.blit(self.sprite,(self.player_rect.topleft))
@@ -281,7 +260,14 @@ class Player():
 
 
     def get_hitbox(self):
-        return Rect(self.x, self.y, self.largura, self.altura)
+        rect =  Rect(self.player_img.get_rect(topleft=(self.x,self.y)))
+        # return Rect(
+        #     rect.x + 20,
+        #     rect.y + 10,
+        #     rect.width -40,
+        #     rect.height - 20
+        # )
+        return rect
 
     def voltar_posicao(self):
         self.x = self.old_x
