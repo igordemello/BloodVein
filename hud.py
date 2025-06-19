@@ -20,7 +20,11 @@ class Hud:
 
     def desenhar(self, tela):
         almas_font = font.SysFont("Arial", 48)
-        almas_texto = almas_font.render(f"{self.player.almas}x", True, (255, 255, 255))
+        almas = almas_font.render(f"{self.player.almas}x", True, (255, 255, 255))
+        almas_rect = almas.get_rect()
+        almas_rect.right = 1690  # ponto fixo da direita (ajuste como preferir)
+        almas_rect.top = 70
+
         tela.blit(self.fundo,(0,0))
         tela.blit(self.hud,(0,0))
         #HP:
@@ -48,7 +52,7 @@ class Hud:
 
         #Desenha número de almas
         draw.rect(tela, (173,216,250), (1700, 75, 50,50))
-        tela.blit(almas_texto,(1650,70))
+        tela.blit(almas, almas_rect)
 
         #STAMINA/MANA:
         braco_stamina = self.bracoSt_fundo

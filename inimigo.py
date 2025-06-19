@@ -7,6 +7,7 @@ from random import randint
 
 class Inimigo:
     def __init__(self,x,y,largura,altura,hp,velocidade=2,dano=0):
+        self.alma_coletada = None
         self.x = x
         self.y = y
         self.largura = largura
@@ -71,6 +72,7 @@ class Inimigo:
         #inimigo morrendo
         if self.hp <= 0:
             self.vivo = False
+            self.alma_coletada = False
             return
 
         player_x = player_pos[0]
@@ -91,12 +93,6 @@ class Inimigo:
                 self.dar_dano()
 
         self.atualizar_animacao()
-
-
-
-
-
-
 
 
     def desenhar(self, tela, player_pos):

@@ -39,7 +39,15 @@ class Sala:
         for inimigo in self.inimigos:
             if inimigo.vivo:
                     inimigo.desenhar(tela, (self.player.x,self.player.y))
-        
+
+            elif not getattr(inimigo, "alma_coletada", True):
+                    alma = Rect(inimigo.x, inimigo.y, 32, 32)
+
+                    draw.rect(self.tela, (0, 0, 255), alma)
+
+                    if self.player.get_hitbox().colliderect(alma):
+                        self.player.almas += 1 #quantidade de almas deveria ser modular pelo tipo de inimigo
+                        inimigo.alma_coletada = True
 
         if self.pode_trocar_de_sala():
             texto = fonte.render(f"Aperte E para trocar de sala", True, (255, 255, 255))

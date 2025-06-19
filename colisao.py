@@ -11,7 +11,7 @@ class Colisao:
 
     def checar_colisoes(self,player,inimigos, teclas,dt):
         self._colisao_player_mapa(teclas,dt)
-        self._colisao_player_inimigos()
+        #self._colisao_player_inimigos()
         #self._colisao_inimgos_mapa()
         self._colisao_inimigos_inimigos()
 
