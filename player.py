@@ -26,6 +26,12 @@ class Player():
         self.revives = 0 #quantidade de vezes que o jogador pode reviver
         self.custoDash = 2.75
 
+        self.ultimo_dano = 0 #pra cuidar do cooldown
+        self.invencibilidade = 1500 #tempo que o jogador nao toma dano depois de tomar dano
+
+        self.foi_atingido = False
+        self.tempo_atingido = 0 #pra iniciar o "flash" de dano
+
         #itens
         
         self.itens = {}
@@ -64,6 +70,9 @@ class Player():
 
         self.sprite = transform.scale(image.load(sprite).convert_alpha(),(32*2,48*2))
         self.sword = transform.scale(image.load('assets/Player/Sword_Attack.png').convert_alpha(),(320*2,54*2))
+
+        self.sprite_dano = self.sprite.copy()
+        self.sprite_dano.fill((255, 255, 255), special_flags=BLEND_RGB_ADD)
 
         clock = time.Clock()
         self.dt = clock.get_time()
@@ -208,7 +217,10 @@ class Player():
             self.player_rect.y += dy
 
     def desenhar(self, tela, mouse_pos):
-        tela.blit(self.sprite,(self.player_rect.topleft))
+        if self.foi_atingido and time.get_ticks() - self.tempo_atingido < 250:
+            tela.blit(self.sprite_dano, self.player_rect.topleft)
+        else:
+            tela.blit(self.sprite,(self.player_rect.topleft))
         
         # corpo = Rect(self.x, self.y, self.largura, self.altura)
         # draw.rect(tela, (0, 255, 0), corpo)
@@ -297,7 +309,9 @@ class Player():
                 if inimigo.get_hitbox().colliderect(hitbox_espada):
                     t.sleep(0.05)
                     self.atacou = False
-                    self.hp += self.dano/2
+                    inimigo.foi_atingido = False
+
+                    self.hp += self.dano/3 #dar uma olhada melhor em qual vai ser a versao final desse valor
                     if self.hp > self.hpMax:
                         self.hp = self.hpMax
                     inimigo.hp -= self.dano*inimigo.multDanoRecebido
@@ -314,5 +328,15 @@ class Player():
                     inimigo.knockback_x = dx * knockback_strength
                     inimigo.knockback_y = dy * knockback_strength
                     inimigo.knockback_time = time.get_ticks()
-                                
+
+
+    def tomar_dano(self, valor):
+        now = time.get_ticks()
+        if now - self.ultimo_dano < self.invencibilidade:
+            return
+        self.ultimo_dano = now
+        self.hp -= valor
+        #pra fazer o "pisco"
+        self.foi_atingido = True
+        self.tempo_atingido = time.get_ticks()
                    

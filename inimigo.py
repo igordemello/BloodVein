@@ -6,7 +6,7 @@ from random import randint
 
 
 class Inimigo:
-    def __init__(self,x,y,largura,altura,hp,velocidade=2):
+    def __init__(self,x,y,largura,altura,hp,velocidade=2,dano=0):
         self.x = x
         self.y = y
         self.largura = largura
@@ -29,6 +29,7 @@ class Inimigo:
         self.hp = hp
         self.multDanoRecebido = 1 #isso multiplica o dano que o jogador causa, serve pra fazer bleed e pro parry
         self.vivo = True
+        self.dano = dano
 
         self.spritesheet = None
         self.frame_width = 32
@@ -81,13 +82,15 @@ class Inimigo:
         if abs(player_y - self.y) > 10:
             self.y += self.velocidade if player_y > self.y else -self.velocidade
 
+        #checa se deu dano ao jogador
+        rot_rect, _ = self.get_hitbox_ataque((player_x, player_y))
+        player_hitbox = Rect(player_x, player_y, 64, 64)  # ou use player.get_hitbox()
+
+        if rot_rect.colliderect(player_hitbox):
+            if hasattr(self, "dar_dano") and callable(self.dar_dano):
+                self.dar_dano()
+
         self.atualizar_animacao()
-
-
-
-
-        
-
 
 
     def desenhar(self, tela, player_pos):

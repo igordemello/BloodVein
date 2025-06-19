@@ -26,6 +26,8 @@ class Sala:
         for inimigo in self.inimigos:
             if inimigo.vivo:
                 inimigo.atualizar((self.player.x,self.player.y), self.tela)
+                #da o dano no jogador
+                inimigo.dar_dano = lambda val=inimigo.dano: self.player.tomar_dano(val)
         
         self.colisao.checar_colisoes(self.player,self.inimigos, teclas,dt)
 
