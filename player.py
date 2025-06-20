@@ -15,6 +15,10 @@ class Player():
         self.animacoes = {
             "baixo": self.carregar_animacao("assets/Player/vampira_andando_frente.png"),
             "cima": self.carregar_animacao("assets/Player/vampira_andando_tras.png"),
+            "D_cima": self.carregar_animacao("assets/Player/dash_frente.png"),
+            "D_baixo": self.carregar_animacao("assets/Player/dash_costas.png"),
+            "D_direita": self.carregar_animacao("assets/Player/dash _lado.png"),
+            "D_esquerda": [transform.flip(img, True, False) for img in self.carregar_animacao("assets/Player/dash _lado.png")],
             "direita": self.carregar_animacao("assets/Player/LADOANDAR-Sheet.png"),
             "esquerda": [transform.flip(img, True, False) for img in self.carregar_animacao("assets/Player/LADOANDAR-Sheet.png")],
                         }
@@ -165,26 +169,28 @@ class Player():
 
 
         speed = self.velocidadeMov * dt
+        move_input = False
+
         if teclas[K_a]: 
             self.vx -= speed 
             self.anim_direcao = "esquerda"
-            self.sprite_dano = self.frame_atual
-            self.player_img = self.frame_atual
+            move_input = True
+
         if teclas[K_d]:
             self.vx += speed
             self.anim_direcao = "direita"
-            self.sprite_dano = self.frame_atual
-            self.player_img = self.frame_atual
+            move_input = True
+
         if teclas[K_w]: 
             self.vy -= speed
             self.anim_direcao = "cima"
-            self.sprite_dano = self.frame_atual
-            self.player_img = self.frame_atual
+            move_input = True
+
         if teclas[K_s]: 
             self.vy += speed
             self.anim_direcao = "baixo"
-            self.sprite_dano = self.frame_atual
-            self.player_img = self.frame_atual
+            move_input = True
+
 
         self.vx *= self.atrito
         self.vy *= self.atrito
@@ -192,15 +198,6 @@ class Player():
         max_vel = self.velocidadeMov * 10
         self.vx = max(-max_vel, min(self.vx, max_vel))
         self.vy = max(-max_vel, min(self.vy, max_vel))
-
-                
-        if any((teclas[K_w], teclas[K_a], teclas[K_s], teclas[K_d])):
-            self.tempo_animacao += dt
-            if self.tempo_animacao > self.tempo_por_frame:
-                self.tempo_animacao = 0
-                self.anim_frame = (self.anim_frame + 1) % len(self.animacoes[self.anim_direcao])
-        else:
-            self.anim_frame = 0  
 
 
         #dash
@@ -217,15 +214,31 @@ class Player():
         if self.is_dashing:
             dash_speed = self.velocidadeMov * dt * 2.5
             direcao = self.dash_direcao
-            if direcao == 'a': self.vx = -dash_speed
-            elif direcao == 'd': self.vx = dash_speed
-            elif direcao == 'w': self.vy = -dash_speed
-            elif direcao == 's': self.vy = dash_speed
+            if direcao == 'a': 
+                self.vx = -dash_speed
+                self.anim_direcao = "D_esquerda"
+            elif direcao == 'd': 
+                self.vx = dash_speed
+                self.anim_direcao = "D_direita"
+            elif direcao == 'w': 
+                self.vy = -dash_speed
+                self.anim_direcao = "D_cima"
+            elif direcao == 's': 
+                self.vy = dash_speed
+                self.anim_direcao = "D_baixo"
 
             self.dash_duration += dt
             if self.dash_duration >= self.dash_duration_max:
                 self.is_dashing = False
 
+        #animação de merda
+        if self.is_dashing or move_input:
+            self.tempo_animacao += dt
+            if self.tempo_animacao > self.tempo_por_frame:
+                self.tempo_animacao = 0
+                self.anim_frame = (self.anim_frame + 1) % len(self.animacoes[self.anim_direcao])
+        elif not self.is_dashing:
+            self.anim_frame = 0
 
 
 
@@ -242,7 +255,14 @@ class Player():
             self.st = 100
 
         self.atualizar_animacao_espada(dt)
-        self.frame_atual = self.animacoes[self.anim_direcao][self.anim_frame]
+        
+        if self.anim_direcao in self.animacoes:
+            animacao = self.animacoes[self.anim_direcao]
+            self.anim_frame %= len(animacao)
+            self.frame_atual = animacao[self.anim_frame]
+        else:
+            self.frame_atual = self.animacoes["baixo"][0]  # fallback
+
         self.player_rect = self.get_hitbox()
 
 
