@@ -51,6 +51,31 @@ class Inimigo:
         self.anima_hit = False
         self.carregar_hit_sprites()
 
+        self.vy = 0
+        self.vx = 0
+        self.dx = 0
+        self.dy = 0
+
+        self.rect = self.get_hitbox()
+
+
+    def get_velocidade(self):
+        return (self.vx, self.vy)
+
+    def set_velocidade_x(self, vx):
+        self.vx = vx
+
+    def set_velocidade_y(self, vy):
+        self.vy = vy
+
+    def mover_se(self, pode_x, pode_y, dx, dy):
+        if pode_x:
+            self.rect.x += dx
+        if pode_y:
+            self.rect.y += dy
+
+        self.x, self.y = self.rect.topleft
+
     def carregar_sprites(self):
         if self.spritesheet:
             self.frames = [self.get_frame(i) for i in self.usar_indices]
@@ -75,6 +100,16 @@ class Inimigo:
             self.frame_time = 0
             self.frame_index = (self.frame_index + 1) % len(self.frames)
 
+    def aplicar_knockback(self, direcao_x, direcao_y, intensidade):
+        angulo = math.atan2(direcao_y, direcao_x)
+        self.knockback_x = math.cos(angulo) * intensidade
+        self.knockback_y = math.sin(angulo) * intensidade
+        self.knockback_time = time.get_ticks()
+
+        # Aplica a velocidade do knockback, que será tratada com colisão
+        self.set_velocidade_x(self.knockback_x)
+        self.set_velocidade_y(self.knockback_y)
+
     def atualizar(self, player_pos, tela):
         if self.anima_hit:
             now = time.get_ticks()
@@ -87,26 +122,38 @@ class Inimigo:
                     return
 
         now = time.get_ticks()
+        
         if now - self.knockback_time < self.knockback_duration:
-            self.x += self.knockback_x
-            self.y += self.knockback_y
+            # O knockback ainda está ativo → não atualiza perseguição
             return
+        else:
+            # Knockback acabou → zera velocidade
+            self.knockback_x = 0
+            self.knockback_y = 0
+            self.set_velocidade_x(0)
+            self.set_velocidade_y(0)
         self.old_x = self.x
         self.old_y = self.y
         # inimigo morrendo
         if self.hp <= 0:
             self.vivo = False
             self.alma_coletada = False
+            self.vx = 0
+            self.vy = 0
+            self.rect.topleft = (self.x, self.y)
             return
 
         player_x = player_pos[0]
         player_y = player_pos[1]
 
+        self.vx = 0
+        self.vy = 0
+
         # colocar um range máximo que ele precisa ficar do jogador
         if abs(player_x - self.x) > 70:
-            self.x += self.velocidade if player_x > self.x else -self.velocidade
+            self.vx = self.velocidade if player_x > self.x else -self.velocidade
         if abs(player_y - self.y) > 70:
-            self.y += self.velocidade if player_y > self.y else -self.velocidade
+            self.vy = self.velocidade if player_y > self.y else -self.velocidade
 
         rot_rect, _ = self.get_hitbox_ataque((player_x, player_y))
         player_hitbox = Rect(player_x, player_y, 64, 64)  # ou use player.get_hitbox()
@@ -115,6 +162,7 @@ class Inimigo:
             if hasattr(self, "dar_dano") and callable(self.dar_dano):
                 self.dar_dano()
 
+        self.x,self.y = self.rect.topleft
         self.atualizar_animacao()
 
     def desenhar(self, tela, player_pos):
@@ -176,7 +224,5 @@ class Inimigo:
     def get_hitbox(self):
         return Rect(self.x, self.y, self.largura, self.altura)
 
-    def voltar_posicao(self):
-        self.x = self.old_x
-        self.y = self.old_y
+
 

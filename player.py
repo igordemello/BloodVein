@@ -358,18 +358,11 @@ class Player():
                         self.hp = self.hpMax
                     inimigo.hp -= self.dano*inimigo.multDanoRecebido
 
+
                     #knockback
                     dx = inimigo.x - self.x
                     dy = inimigo.y - self.y
-                    dist = math.hypot(dx, dy)
-                    if dist != 0:
-                        dx /= dist
-                        dy /= dist
-
-                    knockback_strength = 4
-                    inimigo.knockback_x = dx * knockback_strength
-                    inimigo.knockback_y = dy * knockback_strength
-                    inimigo.knockback_time = time.get_ticks()
+                    inimigo.aplicar_knockback(dx, dy, intensidade=4)
 
 
     def tomar_dano(self, valor):

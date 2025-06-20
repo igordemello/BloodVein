@@ -17,8 +17,8 @@ class Sala:
 
         self.colisao = Colisao(self.mapa)
         self.colisao.adicionar_entidade(player)
-        # for inimigo in self.inimigos:
-        #     self.colisao.adicionar_entidade(inimigo)
+        for inimigo in self.inimigos:
+            self.colisao.adicionar_entidade(inimigo)
 
         self.porta_liberada = False
         self.player = player
