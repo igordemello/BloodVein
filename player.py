@@ -10,6 +10,21 @@ from sala import *
 
 class Player():
     def __init__(self, x, y, largura, altura, hp=100, st=100,velocidadeMov=0.5,sprite='hero.png'):
+
+        #animações
+        self.animacoes = {
+            "baixo": self.carregar_animacao("assets/Player/vampira_andando_frente.png"),
+            "cima": self.carregar_animacao("assets/Player/vampira_andando_tras.png"),
+            "direita": self.carregar_animacao("assets/Player/LADOANDAR-Sheet.png"),
+            "esquerda": [transform.flip(img, True, False) for img in self.carregar_animacao("assets/Player/LADOANDAR-Sheet.png")],
+                        }
+        self.anim_direcao = "baixo"
+        self.anim_frame = 0
+        self.tempo_animacao = 0
+        self.tempo_por_frame = 20
+        self.frame_atual = self.animacoes[self.anim_direcao][self.anim_frame]
+
+
         self.x = x
         self.y = y
         self.largura = largura
@@ -73,10 +88,9 @@ class Player():
 
         self.ativo_ultimo_uso = 0
 
-        self.sprite = transform.scale(image.load(sprite).convert_alpha(),(32*2,48*2))
         self.sword = transform.scale(image.load('assets/Player/Sword_Attack.png').convert_alpha(),(320*2,54*2))
 
-        self.sprite_dano = self.sprite.copy()
+        self.sprite_dano = self.frame_atual.copy()
         self.sprite_dano.fill((255, 255, 255), special_flags=BLEND_RGB_ADD)
 
         clock = time.Clock()
@@ -87,13 +101,24 @@ class Player():
         self.total_frames_espada = 5
         self.anima_espada = False
 
-        self.player_img = self.sprite
+        self.player_img = self.frame_atual
         self.player_rect = self.get_hitbox()
         # self.player_mask = mask.from_surface(self.player_img)
         self.dx = 0
         self.dy = 0
 
 
+    def carregar_animacao(self, caminho):
+        frame_largura = 32  
+        frame_altura = 48
+        escala = 2  
+        folha = transform.scale(image.load(caminho).convert_alpha(), (image.load(caminho).convert_alpha().get_width()*escala, image.load(caminho).convert_alpha().get_height()*escala))
+        num_frames = folha.get_width() // (frame_largura * escala)
+
+        return [
+            folha.subsurface((i * frame_largura * escala, 0, frame_largura * escala, frame_altura * escala))
+            for i in range(num_frames)
+        ]
 
 
     def _dash(self, dt, teclas, direcao):
@@ -140,10 +165,26 @@ class Player():
 
 
         speed = self.velocidadeMov * dt
-        if teclas[K_a]: self.vx -= speed
-        if teclas[K_d]: self.vx += speed
-        if teclas[K_w]: self.vy -= speed
-        if teclas[K_s]: self.vy += speed
+        if teclas[K_a]: 
+            self.vx -= speed 
+            self.anim_direcao = "esquerda"
+            self.sprite_dano = self.frame_atual
+            self.player_img = self.frame_atual
+        if teclas[K_d]:
+            self.vx += speed
+            self.anim_direcao = "direita"
+            self.sprite_dano = self.frame_atual
+            self.player_img = self.frame_atual
+        if teclas[K_w]: 
+            self.vy -= speed
+            self.anim_direcao = "cima"
+            self.sprite_dano = self.frame_atual
+            self.player_img = self.frame_atual
+        if teclas[K_s]: 
+            self.vy += speed
+            self.anim_direcao = "baixo"
+            self.sprite_dano = self.frame_atual
+            self.player_img = self.frame_atual
 
         self.vx *= self.atrito
         self.vy *= self.atrito
@@ -151,6 +192,15 @@ class Player():
         max_vel = self.velocidadeMov * 10
         self.vx = max(-max_vel, min(self.vx, max_vel))
         self.vy = max(-max_vel, min(self.vy, max_vel))
+
+                
+        if any((teclas[K_w], teclas[K_a], teclas[K_s], teclas[K_d])):
+            self.tempo_animacao += dt
+            if self.tempo_animacao > self.tempo_por_frame:
+                self.tempo_animacao = 0
+                self.anim_frame = (self.anim_frame + 1) % len(self.animacoes[self.anim_direcao])
+        else:
+            self.anim_frame = 0  
 
 
         #dash
@@ -192,6 +242,9 @@ class Player():
             self.st = 100
 
         self.atualizar_animacao_espada(dt)
+        self.frame_atual = self.animacoes[self.anim_direcao][self.anim_frame]
+        self.player_rect = self.get_hitbox()
+
 
     #tem que fazer uma possibilidade de pegar o item mais de uma vez e ficar incrementando
     def adicionarItem(self,item : Item = None, itemAt : ItemAtivo = None) :
@@ -243,12 +296,13 @@ class Player():
         return rotated_surf2, rotated_rect2
 
 
-
     def desenhar(self, tela, mouse_pos):
+        frame = self.frame_atual.copy()
         if self.foi_atingido and time.get_ticks() - self.tempo_atingido < 250:
-            tela.blit(self.sprite_dano, self.player_rect.topleft)
+            frame.fill((255, 255, 255), special_flags=BLEND_RGB_ADD)
+            tela.blit(frame, self.player_rect.topleft)
         else:
-            tela.blit(self.sprite,(self.player_rect.topleft))
+            tela.blit(self.frame_atual, self.player_rect.topleft)
 
         # corpo = Rect(self.x, self.y, self.largura, self.altura)
         # draw.rect(tela, (0, 255, 0), corpo)
@@ -300,7 +354,7 @@ class Player():
 
 
     def get_hitbox(self):
-        rect =  Rect(self.player_img.get_rect(topleft=(self.x,self.y)))
+        rect = Rect(self.player_img.get_rect(topleft=(self.x,self.y)))
         # return Rect(
         #     rect.x + 20,
         #     rect.y + 10,
