@@ -47,10 +47,21 @@ class Hud:
             barra_cheia_cortada = self.bracoHp_cima.subsurface((0, y_corte, larguraHp_total, altura_visivelHp)).copy()
             tela.blit(barra_cheia_cortada, (15, 510 + y_corte))
 
+        #desenhar itens:
+        for i, (item, qtd) in enumerate(self.player.itens.items()):
+            x = 200 + (i % 6) * 75  # 6 itens por linha
+            y = 25 + (i // 6) * 64
+
+            sprite = transform.scale(item.sprite, (64, 64))
+            tela.blit(sprite, (x, y))
+
         #Desenha usos dos Itens ativos:
         if self.player.itemAtivo is not None:
             for x in range(0,self.player.itemAtivo.usos):
                 draw.rect(tela, (0,255,0), (50+(x*25),150,20,10))
+
+            sprite = transform.scale(self.player.itemAtivo.sprite, (96, 96))
+            tela.blit(sprite, (60, 40))
 
 
         #Desenha número de almas
