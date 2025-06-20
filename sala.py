@@ -63,10 +63,7 @@ class Sala:
                         self.player.almas += 1
                         inimigo.alma_coletada = True
 
-        if self.pode_trocar_de_sala():
-            texto = fonte.render(f"Aperte E para trocar de sala", True, (255, 255, 255))
-            texto_rect = texto.get_rect(center=(960,1050))
-            tela.blit(texto, texto_rect)
+        
         
         #debug visual das colisões do player e do mapa:
         # for collider in self.mapa.get_colliders():

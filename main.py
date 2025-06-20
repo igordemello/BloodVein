@@ -77,7 +77,7 @@ while i == 1:
     player.atualizar(dt,keys)
 
     #print(player.salaAtivoUsado, '+asdfasdasdasd')
-    if sala_atual.pode_trocar_de_sala() and keys[K_e]:
+    if sala_atual.pode_trocar_de_sala():
         
         if player.itemAtivo is not None and player.salaAtivoUsado == sala_atual:
  

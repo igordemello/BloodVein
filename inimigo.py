@@ -150,9 +150,9 @@ class Inimigo:
         self.vy = 0
 
         # colocar um range máximo que ele precisa ficar do jogador
-        if abs(player_x - self.x) > 70:
+        if abs(player_x - self.x) > 100:
             self.vx = self.velocidade if player_x > self.x else -self.velocidade
-        if abs(player_y - self.y) > 70:
+        if abs(player_y - self.y) > 100:
             self.vy = self.velocidade if player_y > self.y else -self.velocidade
 
         rot_rect, _ = self.get_hitbox_ataque((player_x, player_y))
