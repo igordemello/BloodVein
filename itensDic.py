@@ -106,15 +106,15 @@ class ConjuntoItens:
                 sprite=image.load("assets\itens\AranhaDeBrinquedo.png").convert_alpha(),
                 id=10,
             ),
-            "Dentadura": ItemAtivo(
-                nome="Dentadura",
+            "Bomba": ItemAtivo(
+                nome="Bomba",
                 descricao="Dá dano em todos os inimigos nesta sala",
                 usos=2,
                 efeitos=[
                     DarDano(20)
                 ],
                 afetaIni=True,
-                sprite=image.load("assets\itens\Dentadura.png").convert_alpha(),
+                sprite=image.load("assets\itens\Bomba.png").convert_alpha(),
                 id=11,
             )
 

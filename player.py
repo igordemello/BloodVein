@@ -52,7 +52,7 @@ class Player():
         #efeito de slide
         self.vx = 0
         self.vy = 0
-        self.atrito = 0.92
+        self.atrito = 0.85
 
         self.radius = 80
         self.orbital_size = (40, 20)
