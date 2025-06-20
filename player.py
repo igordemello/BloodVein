@@ -5,11 +5,12 @@ import math
 from efeito import *
 import time as t
 from sala import *
-
+from random import randint
+from itensDic import ConjuntoItens
 
 
 class Player():
-    def __init__(self, x, y, largura, altura, hp=100, st=100,velocidadeMov=0.5,sprite='hero.png'):
+    def __init__(self, x, y, largura, altura,hp=100, st=100, velocidadeMov=0.5, sprite='hero.png'):
         self.x = x
         self.y = y
         self.largura = largura
@@ -374,3 +375,7 @@ class Player():
         #pra fazer o "pisco"
         self.foi_atingido = True
         self.tempo_atingido = time.get_ticks()
+
+
+
+

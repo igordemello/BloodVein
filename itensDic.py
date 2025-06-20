@@ -119,3 +119,4 @@ class ConjuntoItens:
             )
 
         }
+        self.itens_por_id = {item.id: item for item in self.itens.values()}

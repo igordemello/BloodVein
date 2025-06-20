@@ -2,6 +2,8 @@ from pygame import *
 import sys
 from pygame.locals import QUIT
 import math
+
+from bau import Bau
 from hud import Hud
 from inimigo import Inimigo
 from player import Player
@@ -19,13 +21,16 @@ SCREEN = display.set_mode((1920, 1080), vsync=1, flags=HWSURFACE | DOUBLEBUF) # 
 fps_font = font.SysFont("Arial", 24)
 fps_text = fps_font.render("FPS: 60", True, (255, 255, 255))
 
+jogo_pausado = False
+
 #Instâncias das classes que foram criadas:
+conjunto = ConjuntoItens()
 player = Player(950,600,32*2,48*2)
 hud = Hud(player)
 sala_atual = Sala("mapas/sala_1.tmx",SCREEN, player)
 num_sala = 1
 fonte = font.SysFont("Arial", 24)
-
+bau = Bau(conjunto)
 #exemplo de como seria para adicionar um item pro jogador
 #player.adicionarItem(conjIt.itens["Sapato de Sangue"])
 
@@ -52,9 +57,11 @@ while i == 1:
             if ev.key == K_q and current_time - player.ativo_ultimo_uso > 2500: #tecla de usar item ativo
                 player.ativo_ultimo_uso = current_time
                 player.usarItemAtivo(sala_atual)
+            if ev.key == K_MINUS:
+                jogo_pausado = not jogo_pausado
+
             if ev.key == K_PERIOD:
                 item_id = int(input("Digite o ID do item para debug: "))
-                conjunto = ConjuntoItens()
                 encontrado = False
                 for item_nome, item in conjunto.itens.items():
                     if hasattr(item, 'id') and item.id == item_id:
@@ -66,15 +73,14 @@ while i == 1:
                         encontrado = True
                         break
 
-        
-
     hud.desenhar(SCREEN)
-    
-    sala_atual.atualizar(dt, keys)
     sala_atual.desenhar(SCREEN)
-
-    player.desenhar(SCREEN,mouse_pos)
-    player.atualizar(dt,keys)
+    player.desenhar(SCREEN, mouse_pos) #probleminha, a espada continua sendo atualizado, pq ele é desenhado assim no futuro
+    if not jogo_pausado:
+        sala_atual.atualizar(dt, keys)
+        player.atualizar(dt,keys)
+    else:
+        bau.bauEscolherItens(SCREEN)
 
     #print(player.salaAtivoUsado, '+asdfasdasdasd')
     if sala_atual.pode_trocar_de_sala():
