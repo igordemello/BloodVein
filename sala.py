@@ -5,12 +5,13 @@ import math
 from mapa import Mapa
 from inimigos.orb import Orb
 from colisao import Colisao
+import gerenciador_andar
 
 init()
 fonte = font.SysFont("Arial", 24)
 
 class Sala:
-    def __init__(self, caminho_mapa, tela, player):
+    def __init__(self, caminho_mapa, tela, player, gerenciador_andar):
         self.tela = tela
         self.mapa = Mapa(caminho_mapa,self.tela,self.tela.get_width(),self.tela.get_height())
         self.inimigos = [Orb(400,700,64,64)]
@@ -23,7 +24,6 @@ class Sala:
         self.porta_liberada = False
         self.player = player
         self.ranges_doors = self.mapa.get_rangesdoors() 
-        self.proxima_sala = f"mapas/sala_{1}.tmx"
 
         self.almaspritesheet = image.load('./assets/Itens/almaSpriteSheet.png').convert_alpha()
 
@@ -34,6 +34,9 @@ class Sala:
         self.duracao_frame_alma = 200
 
         self.colliders = self.mapa.get_colliders()
+
+        self.gerenciador_andar = gerenciador_andar
+        self.proxima_sala = self.gerenciador_andar.ir_para_proxima_sala(0)
 
     def atualizar(self,dt,teclas):
         for inimigo in self.inimigos:
@@ -46,6 +49,9 @@ class Sala:
 
         if not any(inimigo.vivo for inimigo in self.inimigos):
             self.porta_liberada = True
+        
+        if self.pode_trocar_de_sala():
+             self._trocar_de_sala()
 
     def desenhar(self, tela):
         self.mapa.desenhar(self.porta_liberada)
@@ -72,7 +78,17 @@ class Sala:
 
 
     def pode_trocar_de_sala(self):
-        return self.porta_liberada and any(self.player.get_hitbox().colliderect(rangee) for rangee in self.ranges_doors)
+        return self.porta_liberada and any(self.player.get_hitbox().colliderect(rangee['colisor']) for rangee in self.ranges_doors)
+    
+
+    def _trocar_de_sala(self):
+        for idx, porta in enumerate(self.ranges_doors):  
+            if self.player.get_hitbox().colliderect(porta['colisor']):
+                codigo_porta = porta['codigoporta'] 
+                nova_sala = self.gerenciador_andar.ir_para_proxima_sala(idx)
+                if nova_sala:
+                    self.mapa = Mapa(nova_sala, self.tela, self.tela.get_width(), self.tela.get_height())
+                    print(f"idx: {idx} - Trocando para: {nova_sala} - codigo porta: {codigo_porta}")
 
     def desenha_alma(self,pos):
         tempo_atual = time.get_ticks()

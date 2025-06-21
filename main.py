@@ -2,7 +2,6 @@ from pygame import *
 import sys
 from pygame.locals import QUIT
 import math
-
 from bau import Bau
 from hud import Hud
 from inimigo import Inimigo
@@ -13,6 +12,7 @@ from colisao import Colisao
 from inimigos.orb import Orb
 from sala import Sala
 from itensDic import *
+from gerenciador_andar import GerenciadorAndar
 
 init()
 
@@ -27,19 +27,23 @@ jogo_pausado = False
 conjunto = ConjuntoItens()
 player = Player(950,600,32*2,48*2)
 hud = Hud(player)
-sala_atual = Sala("mapas/sala_1.tmx",SCREEN, player)
+andar = GerenciadorAndar("data/andar1.json")
+sala_atual = Sala(andar.get_arquivo_atual(),SCREEN, player, andar)
 num_sala = 1
 fonte = font.SysFont("Arial", 24)
 bau = Bau(conjunto)
+
 #exemplo de como seria para adicionar um item pro jogador
 #player.adicionarItem(conjIt.itens["Sapato de Sangue"])
+
+
 
 # while "Fred" == "Fred":
 i = 1
 while i == 1:
     # i+=1
     keys = key.get_pressed()
-    mouse_pos = mouse.get_pos()
+    mouse_pos = mouse.get_pos() 
     clock.tick(60)
     dt = clock.get_time()
     SCREEN.fill((115,115,115))
@@ -97,11 +101,14 @@ while i == 1:
                 player.itemAtivoEsgotado.remover_efeitos()
             player.itemAtivoEsgotado = None
 
-        num_sala += 1
-        sala_atual = Sala(f"mapas/sala_{num_sala}.tmx", SCREEN, player)
+        for idx, porta in enumerate(sala_atual.ranges_doors):  # 'ranges_doors' já contém as portas detectadas
+            if player.get_hitbox().colliderect(porta['colisor']):
+                nova_sala = andar.ir_para_proxima_sala(idx)  # Passa o índice da porta
+                if nova_sala:
+                    # Atualiza apenas o mapa da sala atual
+                    sala_atual = Sala(nova_sala, SCREEN, player, andar)
+                    print(f"Transição para: {nova_sala}")
 
-
-        player.x, player.y = 1000, 500
 
     # mostrar o fps:
     if time.get_ticks() % 500 < 16:  # Atualiza ~30 vezes por segundo

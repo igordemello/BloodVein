@@ -1,0 +1,120 @@
+{
+    "directed": false,
+    "multigraph": false,
+    "graph": {},
+    "nodes": [
+        {
+            "tipo": "comum",
+            "visitada": false,
+            "arquivotmx": "mapas/2-1.tmx",
+            "salaanterior": null,
+            "p0": "sala1",
+            "p1": "sala2",
+            "conexoes": [
+                "sala1",
+                "sala2"
+            ],
+            "id": "sala0"
+        },
+        {
+            "tipo": "comum",
+            "visitada": false,
+            "arquivotmx": "mapas/3-3.tmx",
+            "salaanterior": null,
+            "p0": "sala0",
+            "p1": "sala3",
+            "p2": "sala6",
+            "conexoes": [
+                "sala0",
+                "sala3",
+                "sala6"
+            ],
+            "id": "sala1"
+        },
+        {
+            "tipo": "comum",
+            "visitada": false,
+            "arquivotmx": "mapas/3-3.tmx",
+            "salaanterior": null,
+            "p0": "sala0",
+            "p1": "sala4",
+            "p2": "sala5",
+            "conexoes": [
+                "sala0",
+                "sala4",
+                "sala5"
+            ],
+            "id": "sala2"
+        },
+        {
+            "tipo": "spawn",
+            "visitada": true,
+            "arquivotmx": "mapas/1-5.tmx",
+            "salaanterior": null,
+            "p0": "sala1",
+            "conexoes": [
+                "sala1"
+            ],
+            "id": "sala3"
+        },
+        {
+            "tipo": "boss",
+            "visitada": false,
+            "arquivotmx": "mapas/1-1.tmx",
+            "salaanterior": null,
+            "p0": "sala2",
+            "conexoes": [
+                "sala2"
+            ],
+            "id": "sala4"
+        },
+        {
+            "tipo": "comum",
+            "visitada": false,
+            "arquivotmx": "mapas/1-5.tmx",
+            "salaanterior": null,
+            "p0": "sala2",
+            "conexoes": [
+                "sala2"
+            ],
+            "id": "sala5"
+        },
+        {
+            "tipo": "comum",
+            "visitada": false,
+            "arquivotmx": "mapas/1-1.tmx",
+            "salaanterior": null,
+            "p0": "sala1",
+            "conexoes": [
+                "sala1"
+            ],
+            "id": "sala6"
+        }
+    ],
+    "links": [
+        {
+            "source": "sala0",
+            "target": "sala1"
+        },
+        {
+            "source": "sala0",
+            "target": "sala2"
+        },
+        {
+            "source": "sala1",
+            "target": "sala3"
+        },
+        {
+            "source": "sala1",
+            "target": "sala6"
+        },
+        {
+            "source": "sala2",
+            "target": "sala4"
+        },
+        {
+            "source": "sala2",
+            "target": "sala5"
+        }
+    ]
+}

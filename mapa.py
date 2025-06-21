@@ -110,7 +110,7 @@ class Mapa:
 
         for layer in self.tmx_data.visible_layers:
             if isinstance(layer, pytmx.TiledObjectGroup):
-                if layer.name == "rangedoor":
+                if layer.name[:2] == "cd":
                     for obj in layer:
                         rect = Rect(
                             obj.x * self.escala + offset_x,
@@ -118,6 +118,6 @@ class Mapa:
                             obj.width * self.escala,
                             obj.height * self.escala
                         )
-                        rangesdoors.append(rect)
+                        rangesdoors.append({'colisor':rect,'codigoporta':layer.name})
 
         return rangesdoors
