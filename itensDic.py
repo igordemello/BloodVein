@@ -91,6 +91,26 @@ class ConjuntoItens:
                 raridade="lendaria",
                 id=8,
             ),
+            "Máscara da Comédia": Item(
+                nome="Máscara da Comédia",
+                descricao="Todos os seus status recebem um leve aumento",
+                efeitos=[ #aumenta um pouco de tudo
+                    Revives(1)
+                ],
+                sprite=image.load("assets\itens\Máscara_da_Comédia.png").convert_alpha(),
+                raridade="rara",
+                id=9,
+            ),
+            "Máscara da Tragédia": Item(
+                nome="Máscara da Tragédia",
+                descricao="diminui todos os status mas aumenta absurdamente sua força",
+                efeitos=[ #diminui tudo mas aumenta o dano
+                    Revives(1) 
+                ],
+                sprite=image.load("assets\itens\Máscara_da_Tragedia.png").convert_alpha(),
+                raridade="rara",
+                id=10,
+            ),
             #Itens Ativos:
             "Crucifixo Invertido": ItemAtivo(
                 nome="Crucifixo Invertido",
@@ -102,7 +122,7 @@ class ConjuntoItens:
                 afetaIni=False,
                 sprite=image.load("assets\itens\ChapeuDeBruxa.png").convert_alpha(),
                 raridade="comum",
-                id=9,
+                id=11,
             ),
             "Aranha de brinquedo": ItemAtivo(
                 nome="Aranha de brinquedo",
@@ -114,7 +134,7 @@ class ConjuntoItens:
                 afetaIni=False,
                 sprite=image.load("assets\itens\AranhaDeBrinquedo.png").convert_alpha(),
                 raridade="comum",
-                id=10,
+                id=12,
             ),
             "Bomba": ItemAtivo(
                 nome="Bomba",
@@ -126,7 +146,7 @@ class ConjuntoItens:
                 afetaIni=True,
                 sprite=image.load("assets\itens\Bomba.png").convert_alpha(),
                 raridade="comum",
-                id=11,
+                id=13,
             )
 
         }
