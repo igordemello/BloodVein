@@ -41,7 +41,6 @@ class Sala:
         self.bau = Bau(self.itensDisp)
 
         self.gerenciador_andar = gerenciador_andar
-        self.proxima_sala = self.gerenciador_andar.ir_para_proxima_sala(0)
 
     def atualizar(self,dt,teclas):
         for inimigo in self.inimigos:
@@ -55,7 +54,7 @@ class Sala:
         if not any(inimigo.vivo for inimigo in self.inimigos):
             self.porta_liberada = True
         
-        if self.pode_trocar_de_sala():
+        if self.pode_trocar_de_sala() and teclas[K_e]:
              self._trocar_de_sala()
 
     def desenhar(self, tela):
@@ -87,13 +86,13 @@ class Sala:
     
 
     def _trocar_de_sala(self):
-        for idx, porta in enumerate(self.ranges_doors):  
+        for porta in self.ranges_doors:  
             if self.player.get_hitbox().colliderect(porta['colisor']):
                 codigo_porta = porta['codigoporta'] 
-                nova_sala = self.gerenciador_andar.ir_para_proxima_sala(idx)
+                nova_sala = self.gerenciador_andar.ir_para_proxima_sala(codigo_porta)
                 if nova_sala:
                     self.mapa = Mapa(nova_sala, self.tela, self.tela.get_width(), self.tela.get_height())
-                    print(f"idx: {idx} - Trocando para: {nova_sala} - codigo porta: {codigo_porta}")
+                    print(f"Trocando para: {nova_sala} - codigo porta: {codigo_porta}")
 
     def desenha_alma(self,pos):
         tempo_atual = time.get_ticks()

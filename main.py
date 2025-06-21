@@ -108,13 +108,6 @@ while i == 1:
                 player.itemAtivoEsgotado.remover_efeitos()
             player.itemAtivoEsgotado = None
 
-        for idx, porta in enumerate(sala_atual.ranges_doors):  # 'ranges_doors' já contém as portas detectadas
-            if player.get_hitbox().colliderect(porta['colisor']):
-                nova_sala = andar.ir_para_proxima_sala(idx)  # Passa o índice da porta
-                if nova_sala:
-                    # Atualiza apenas o mapa da sala atual
-                    sala_atual = Sala(nova_sala, SCREEN, player, andar)
-                    print(f"Transição para: {nova_sala}")
 
 
     # mostrar o fps:

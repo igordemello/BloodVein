@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="right-down" width="15" height="8" tilewidth="32" tileheight="32" infinite="0" nextlayerid="22" nextobjectid="69">
+<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="right-down" width="15" height="8" tilewidth="32" tileheight="32" infinite="0" nextlayerid="22" nextobjectid="70">
  <tileset firstgid="1" source="Sprite_sheet_tiles.tsx"/>
  <layer id="11" name="chao e paredes" width="15" height="8">
   <data encoding="csv">
@@ -98,6 +98,6 @@
   <object id="65" x="388.106" y="26.8706" width="22.7958" height="13.5875"/>
  </objectgroup>
  <objectgroup id="21" name="cd2">
-  <object id="66" x="388.403" y="216.046" width="22.7958" height="13.5875"/>
+  <object id="69" x="387.289" y="216.286" width="22.0457" height="13.7041"/>
  </objectgroup>
 </map>
