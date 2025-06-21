@@ -19,7 +19,7 @@
         {
             "tipo": "comum",
             "visitada": false,
-            "arquivotmx": "mapas/3-3.tmx",
+            "arquivotmx": "mapas/3-5.tmx",
             "salaanterior": null,
             "p0": "sala0",
             "p1": "sala3",
@@ -82,7 +82,7 @@
         {
             "tipo": "comum",
             "visitada": false,
-            "arquivotmx": "mapas/1-1.tmx",
+            "arquivotmx": "mapas/1-2.tmx",
             "salaanterior": null,
             "p0": "sala1",
             "conexoes": [
