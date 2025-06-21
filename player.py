@@ -41,6 +41,7 @@ class Player():
         self.hpMax = 100 #atualmente não funciona muito bem quando aumentado porque o sprite não mostra nada acima de 100 de HP
         self.velocidadeMov = velocidadeMov
         self.rate = 1 #decaimento
+        self.rateSt = 1
         self.dano = 20
         self.velocidadeAtk = 1 #analisar esses valores depois com mais cuidado, depois da animação estar pronta, pq vai afetar a velocidade e a duração da animação
         self.revives = 0 #quantidade de vezes que o jogador pode reviver
@@ -273,7 +274,7 @@ class Player():
         self.hp -= 0.05 * self.rate
 
         if current_time - self.last_dash_time >= self.cooldown_st:
-            self.st += 0.7 * self.rate
+            self.st += 0.7 * self.rateSt
 
         if self.hp < 0:
             self.hp = 0
