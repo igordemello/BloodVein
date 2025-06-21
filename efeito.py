@@ -79,11 +79,12 @@ class Revives(Efeito):
 
     
 class Item: #mudar o nome depois pra ItemPassivo
-    def __init__(self, nome: str, descricao: str, efeitos: list,sprite,id : int):
+    def __init__(self, nome: str, descricao: str, efeitos: list,sprite,raridade : str,id : int):
         self.nome = nome
         self.descricao = descricao
         self.efeitos = efeitos
         self.sprite = sprite
+        self.raridade = raridade
         self.id = id
 
     def aplicar_em(self, jogador):
@@ -91,7 +92,7 @@ class Item: #mudar o nome depois pra ItemPassivo
             efeito.aplicar(jogador)
 
 class ItemAtivo:
-    def __init__(self, nome: str, descricao: str, usos: int, efeitos: list, afetaIni : bool, sprite,id: int,listaInimigos = None, player = None):
+    def __init__(self, nome: str, descricao: str, usos: int, efeitos: list, afetaIni : bool, sprite,raridade : str,id: int,listaInimigos = None, player = None):
         self.nome = nome
         self.descricao = descricao
         self.efeitos = efeitos
@@ -100,6 +101,7 @@ class ItemAtivo:
         self.player = player
         self.afetaIni = afetaIni
         self.sprite = sprite
+        self.raridade = raridade
         self.id = id
 
     def aplicar_em(self):

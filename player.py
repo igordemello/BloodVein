@@ -25,7 +25,7 @@ class Player():
         self.anim_direcao = "baixo"
         self.anim_frame = 0
         self.tempo_animacao = 0
-        self.tempo_por_frame = 20
+        self.tempo_por_frame = 100
         self.frame_atual = self.animacoes[self.anim_direcao][self.anim_frame]
 
 
@@ -267,15 +267,15 @@ class Player():
 
 
     #tem que fazer uma possibilidade de pegar o item mais de uma vez e ficar incrementando
-    def adicionarItem(self,item : Item = None, itemAt : ItemAtivo = None) :
-        if item is not None:
+    def adicionarItem(self,item) :
+        if isinstance(item, Item):
             item.aplicar_em(self)
             if item not in self.itens : #tentar entender essa merda que o fred fez depois
                 self.itens[item] = 1
             else:
                 pass
         else:
-            self.itemAtivo = itemAt
+            self.itemAtivo = item
 
 
     def atualizar_animacao_espada(self, dt):
