@@ -23,7 +23,7 @@ class ConjuntoItens:
                 nome="Sapato de Sangue",
                 descricao="Aumenta sua velocidade",
                 efeitos=[
-                    VelocidadeMovimento(0.5)
+                    VelocidadeMovimento(0.3)
                 ],
                 sprite=image.load("assets\itens\Botasdesangue.png").convert_alpha(),
                 raridade="comum",
@@ -95,7 +95,12 @@ class ConjuntoItens:
                 nome="Máscara da Comédia",
                 descricao="Todos os seus status recebem um leve aumento",
                 efeitos=[ #aumenta um pouco de tudo
-                    Revives(1)
+                    DanoUsuario(10, "+"),
+                    VidaMaxima(20),
+                    VelocidadeAtaque(-0.2),
+                    VelocidadeMovimento(0.1),
+                    DecaimentoVida(0.75),
+                    stamina_cooldown(2750),
                 ],
                 sprite=image.load("assets\itens\Máscara_da_Comédia.png").convert_alpha(),
                 raridade="rara",
@@ -105,7 +110,12 @@ class ConjuntoItens:
                 nome="Máscara da Tragédia",
                 descricao="diminui todos os status mas aumenta absurdamente sua força",
                 efeitos=[ #diminui tudo mas aumenta o dano
-                    Revives(1) 
+                    DanoUsuario(75, "+"),
+                    VidaMaxima(-15),
+                    VelocidadeAtaque(-0.2),
+                    VelocidadeMovimento(-0.1),
+                    DecaimentoVida(1.4),
+                    stamina_cooldown(-800),
                 ],
                 sprite=image.load("assets\itens\Máscara_da_Tragedia.png").convert_alpha(),
                 raridade="rara",

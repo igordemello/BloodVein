@@ -11,6 +11,7 @@ velocidade de ataque ✓
 velocidade de movimento ✓
 decaimento de vida ✓
 revives ✓
+stamina
 debuffVeneno
 tempo de invencibilidade (A)
 velocidade de movimento DOS INIMIGOS (A)
@@ -21,7 +22,7 @@ class Efeito(ABC):
     @abstractmethod
     def aplicar(self,jogador):
         pass
-    def remover(self,jogador): #tem que colocar isso em outras funçõoes também
+    def remover(self,jogador): 
         pass
 
 class DanoUsuario(Efeito):
@@ -38,6 +39,14 @@ class DanoUsuario(Efeito):
             jogador.dano -= self.valor
         else:
             jogador.dano /= self.valor
+
+class stamina_cooldown(Efeito):
+    def __init__(self, valor):
+        self.valor = valor
+    def aplicar(self,jogador):
+        jogador.cooldown_st -= self.valor
+
+
 
 class DarDano(Efeito):
     def __init__(self, valor):
