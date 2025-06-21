@@ -16,6 +16,7 @@ class ConjuntoItens:
                     DanoUsuario(20, "+"),
                 ],
                 sprite=image.load("assets\itens\ChapeuDeBruxa.png").convert_alpha(),
+                raridade = "comum",
                 id=1,
             ),
             "Sapato de Sangue": Item(
@@ -25,6 +26,7 @@ class ConjuntoItens:
                     VelocidadeMovimento(0.5)
                 ],
                 sprite=image.load("assets\itens\Botasdesangue.png").convert_alpha(),
+                raridade="comum",
                 id=2,
             ),
             "Luva de Titã": Item(
@@ -34,6 +36,7 @@ class ConjuntoItens:
                     VelocidadeAtaque(1)  #temporário, nada disso funciona
                 ],
                 sprite=image.load("assets\itens\LuvaDeTita.png").convert_alpha(),
+                raridade="comum",
                 id=3,
             ),
             "Seringa de Sangue": Item(
@@ -43,6 +46,7 @@ class ConjuntoItens:
                     DecaimentoVida(0.75)  #transforma em 75%
                 ],
                 sprite=image.load("assets\itens\SeringaDeSangue.png").convert_alpha(),
+                raridade="rara",
                 id=4,
             ),
             "Varinha mágica": Item(
@@ -52,6 +56,7 @@ class ConjuntoItens:
                     DanoUsuario(1.5, "*")
                 ],
                 sprite=image.load("assets\itens\ChapeuDeBruxa.png").convert_alpha(),
+                raridade="rara",
                 id=5,
             ),
             "Água Benta": Item(
@@ -62,6 +67,7 @@ class ConjuntoItens:
                     DecaimentoVida(2)
                 ],
                 sprite=image.load("assets\itens\AguaBenta.png").convert_alpha(),
+                raridade="rara",
                 id=6,
             ),
             "Coração Humano": Item(
@@ -72,6 +78,7 @@ class ConjuntoItens:
                     DecaimentoVida(0)
                 ],
                 sprite=image.load("assets\itens\ChapeuDeBruxa.png").convert_alpha(),
+                raridade="lendaria",
                 id=7
             ),
             "Caixão do Papa Vamp": Item(
@@ -81,6 +88,7 @@ class ConjuntoItens:
                     Revives(1)
                 ],
                 sprite=image.load("assets\itens\ChapeuDeBruxa.png").convert_alpha(),
+                raridade="lendaria",
                 id=8,
             ),
             #Itens Ativos:
@@ -93,6 +101,7 @@ class ConjuntoItens:
                 ],
                 afetaIni=False,
                 sprite=image.load("assets\itens\ChapeuDeBruxa.png").convert_alpha(),
+                raridade="comum",
                 id=9,
             ),
             "Aranha de brinquedo": ItemAtivo(
@@ -104,6 +113,7 @@ class ConjuntoItens:
                 ],
                 afetaIni=False,
                 sprite=image.load("assets\itens\AranhaDeBrinquedo.png").convert_alpha(),
+                raridade="comum",
                 id=10,
             ),
             "Bomba": ItemAtivo(
@@ -115,6 +125,7 @@ class ConjuntoItens:
                 ],
                 afetaIni=True,
                 sprite=image.load("assets\itens\Bomba.png").convert_alpha(),
+                raridade="comum",
                 id=11,
             )
 

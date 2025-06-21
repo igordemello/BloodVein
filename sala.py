@@ -2,6 +2,9 @@ from pygame import *
 import sys
 from pygame.locals import QUIT
 import math
+
+from bau import Bau
+from itensDic import ConjuntoItens
 from mapa import Mapa
 from inimigos.orb import Orb
 from colisao import Colisao
@@ -32,8 +35,10 @@ class Sala:
         self.frame_alma_idx = 0
         self.tempo_anterior_alma = time.get_ticks()
         self.duracao_frame_alma = 200
-
+        self.itensDisp = ConjuntoItens()
         self.colliders = self.mapa.get_colliders()
+
+        self.bau = Bau(self.itensDisp)
 
         self.gerenciador_andar = gerenciador_andar
         self.proxima_sala = self.gerenciador_andar.ir_para_proxima_sala(0)

@@ -15,14 +15,19 @@ class Player():
         self.animacoes = {
             "baixo": self.carregar_animacao("assets/Player/vampira_andando_frente.png"),
             "cima": self.carregar_animacao("assets/Player/vampira_andando_tras.png"),
+            "D_cima": self.carregar_animacao("assets/Player/dash_frente.png"),
+            "D_baixo": self.carregar_animacao("assets/Player/dash_costas.png"),
+            "D_direita": self.carregar_animacao("assets/Player/dash _lado.png"),
+            "D_esquerda": [transform.flip(img, True, False) for img in self.carregar_animacao("assets/Player/dash _lado.png")],
             "direita": self.carregar_animacao("assets/Player/LADOANDAR-Sheet.png"),
             "esquerda": [transform.flip(img, True, False) for img in self.carregar_animacao("assets/Player/LADOANDAR-Sheet.png")],
                         }
         self.anim_direcao = "baixo"
         self.anim_frame = 0
         self.tempo_animacao = 0
-        self.tempo_por_frame = 20
+        self.tempo_por_frame = 100
         self.frame_atual = self.animacoes[self.anim_direcao][self.anim_frame]
+        self.rastros = [] #animação legal para o dash
 
 
         self.x = x
@@ -46,6 +51,7 @@ class Player():
 
         self.foi_atingido = False
         self.tempo_atingido = 0 #pra iniciar o "flash" de dano
+
 
         #itens
 
@@ -165,26 +171,28 @@ class Player():
 
 
         speed = self.velocidadeMov * dt
+        move_input = False
+
         if teclas[K_a]: 
             self.vx -= speed 
             self.anim_direcao = "esquerda"
-            self.sprite_dano = self.frame_atual
-            self.player_img = self.frame_atual
+            move_input = True
+
         if teclas[K_d]:
             self.vx += speed
             self.anim_direcao = "direita"
-            self.sprite_dano = self.frame_atual
-            self.player_img = self.frame_atual
+            move_input = True
+
         if teclas[K_w]: 
             self.vy -= speed
             self.anim_direcao = "cima"
-            self.sprite_dano = self.frame_atual
-            self.player_img = self.frame_atual
+            move_input = True
+
         if teclas[K_s]: 
             self.vy += speed
             self.anim_direcao = "baixo"
-            self.sprite_dano = self.frame_atual
-            self.player_img = self.frame_atual
+            move_input = True
+
 
         self.vx *= self.atrito
         self.vy *= self.atrito
@@ -192,15 +200,6 @@ class Player():
         max_vel = self.velocidadeMov * 10
         self.vx = max(-max_vel, min(self.vx, max_vel))
         self.vy = max(-max_vel, min(self.vy, max_vel))
-
-                
-        if any((teclas[K_w], teclas[K_a], teclas[K_s], teclas[K_d])):
-            self.tempo_animacao += dt
-            if self.tempo_animacao > self.tempo_por_frame:
-                self.tempo_animacao = 0
-                self.anim_frame = (self.anim_frame + 1) % len(self.animacoes[self.anim_direcao])
-        else:
-            self.anim_frame = 0  
 
 
         #dash
@@ -215,17 +214,59 @@ class Player():
 
 
         if self.is_dashing:
+            
+            #os rastros do dash
+            self.rastros.append({
+                "imagem": self.frame_atual.copy(),
+                "pos": self.player_rect.topleft,
+                "tempo": 200  # duração em milissegundos
+                })
+
             dash_speed = self.velocidadeMov * dt * 2.5
             direcao = self.dash_direcao
-            if direcao == 'a': self.vx = -dash_speed
-            elif direcao == 'd': self.vx = dash_speed
-            elif direcao == 'w': self.vy = -dash_speed
-            elif direcao == 's': self.vy = dash_speed
+            if direcao == 'a': 
+                self.vx = -dash_speed
+                self.anim_direcao = "D_esquerda"
+            elif direcao == 'd': 
+                self.vx = dash_speed
+                self.anim_direcao = "D_direita"
+            elif direcao == 'w': 
+                self.vy = -dash_speed
+                self.anim_direcao = "D_cima"
+            elif direcao == 's': 
+                self.vy = dash_speed
+                self.anim_direcao = "D_baixo"
+
 
             self.dash_duration += dt
             if self.dash_duration >= self.dash_duration_max:
                 self.is_dashing = False
+                self.anim_frame = 0
 
+                # Dash funciona bonitinho quando acaba
+                if self.dash_direcao == 'a':
+                    self.anim_direcao = 'esquerda'
+                elif self.dash_direcao == 'd':
+                    self.anim_direcao = 'direita'
+                elif self.dash_direcao == 'w':
+                    self.anim_direcao = 'cima'
+                elif self.dash_direcao == 's':
+                    self.anim_direcao = 'baixo'
+
+
+
+        for rastro in self.rastros:
+            rastro["tempo"] -= dt
+            self.rastros = [r for r in self.rastros if r["tempo"] > 0]
+
+        #animação de merda
+        if self.is_dashing or move_input:
+            self.tempo_animacao += dt
+            if self.tempo_animacao > self.tempo_por_frame:
+                self.tempo_animacao = 0
+                self.anim_frame = (self.anim_frame + 1) % len(self.animacoes[self.anim_direcao])
+        else:
+            self.anim_frame = 0
 
 
 
@@ -242,20 +283,27 @@ class Player():
             self.st = 100
 
         self.atualizar_animacao_espada(dt)
-        self.frame_atual = self.animacoes[self.anim_direcao][self.anim_frame]
+        
+        if self.anim_direcao in self.animacoes:
+            animacao = self.animacoes[self.anim_direcao]
+            self.anim_frame %= len(animacao)
+            self.frame_atual = animacao[self.anim_frame]
+        else:
+            self.frame_atual = self.animacoes["baixo"][0]  # fallback
+
         self.player_rect = self.get_hitbox()
 
 
     #tem que fazer uma possibilidade de pegar o item mais de uma vez e ficar incrementando
-    def adicionarItem(self,item : Item = None, itemAt : ItemAtivo = None) :
-        if item is not None:
+    def adicionarItem(self,item) :
+        if isinstance(item, Item):
             item.aplicar_em(self)
             if item not in self.itens : #tentar entender essa merda que o fred fez depois
                 self.itens[item] = 1
             else:
                 pass
         else:
-            self.itemAtivo = itemAt
+            self.itemAtivo = item
 
 
     def atualizar_animacao_espada(self, dt):
@@ -297,6 +345,13 @@ class Player():
 
 
     def desenhar(self, tela, mouse_pos):
+
+        for rastro in self.rastros:
+            imagem = rastro["imagem"].copy()
+            alpha = max(0, int(255 * (rastro["tempo"] / 200)))  # vai de 255 até 0
+            imagem.set_alpha(alpha)
+            tela.blit(imagem, rastro["pos"])
+
         frame = self.frame_atual.copy()
         if self.foi_atingido and time.get_ticks() - self.tempo_atingido < 250:
             frame.fill((255, 255, 255), special_flags=BLEND_RGB_ADD)

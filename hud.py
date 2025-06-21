@@ -58,7 +58,7 @@ class Hud:
         #Desenha usos dos Itens ativos:
         if self.player.itemAtivo is not None:
             for x in range(0,self.player.itemAtivo.usos):
-                draw.rect(tela, (0,255,0), (50+(x*25),150,20,10))
+                draw.rect(tela, (0,255,0), (50+(x*25),144,20,8))
 
             sprite = transform.scale(self.player.itemAtivo.sprite, (96, 96))
             tela.blit(sprite, (60, 40))
