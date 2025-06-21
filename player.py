@@ -237,7 +237,7 @@ class Player():
             if self.tempo_animacao > self.tempo_por_frame:
                 self.tempo_animacao = 0
                 self.anim_frame = (self.anim_frame + 1) % len(self.animacoes[self.anim_direcao])
-        elif not self.is_dashing:
+        else:
             self.anim_frame = 0
 
 
