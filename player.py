@@ -76,7 +76,7 @@ class Player():
         self.vy = 0
         self.atrito = 0.92
 
-        self.radius = 80
+        self.radius = 90
         self.orbital_size = (40, 20)
         self.hitbox_arma = (70, 100)
 
@@ -116,11 +116,11 @@ class Player():
 
 
     def carregar_animacao(self, caminho):
-        frame_largura = 32  
+        frame_largura = 32
         frame_altura = 48
-        escala = 2  
+        escala = 2.7 #2.7 experimentando / 2 original
         folha = transform.scale(image.load(caminho).convert_alpha(), (image.load(caminho).convert_alpha().get_width()*escala, image.load(caminho).convert_alpha().get_height()*escala))
-        num_frames = folha.get_width() // (frame_largura * escala)
+        num_frames = int(folha.get_width() // (frame_largura * escala))
 
         return [
             folha.subsurface((i * frame_largura * escala, 0, frame_largura * escala, frame_altura * escala))
@@ -174,8 +174,8 @@ class Player():
         speed = self.velocidadeMov * dt
         move_input = False
 
-        if teclas[K_a]: 
-            self.vx -= speed 
+        if teclas[K_a]:
+            self.vx -= speed
             self.anim_direcao = "esquerda"
             move_input = True
 
@@ -184,12 +184,12 @@ class Player():
             self.anim_direcao = "direita"
             move_input = True
 
-        if teclas[K_w]: 
+        if teclas[K_w]:
             self.vy -= speed
             self.anim_direcao = "cima"
             move_input = True
 
-        if teclas[K_s]: 
+        if teclas[K_s]:
             self.vy += speed
             self.anim_direcao = "baixo"
             move_input = True
@@ -215,7 +215,7 @@ class Player():
 
 
         if self.is_dashing:
-            
+
             #os rastros do dash
             self.rastros.append({
                 "imagem": self.frame_atual.copy(),
@@ -225,16 +225,16 @@ class Player():
 
             dash_speed = self.velocidadeMov * dt * 2.5
             direcao = self.dash_direcao
-            if direcao == 'a': 
+            if direcao == 'a':
                 self.vx = -dash_speed
                 self.anim_direcao = "D_esquerda"
-            elif direcao == 'd': 
+            elif direcao == 'd':
                 self.vx = dash_speed
                 self.anim_direcao = "D_direita"
-            elif direcao == 'w': 
+            elif direcao == 'w':
                 self.vy = -dash_speed
                 self.anim_direcao = "D_cima"
-            elif direcao == 's': 
+            elif direcao == 's':
                 self.vy = dash_speed
                 self.anim_direcao = "D_baixo"
 
@@ -284,7 +284,7 @@ class Player():
             self.st = 100
 
         self.atualizar_animacao_espada(dt)
-        
+
         if self.anim_direcao in self.animacoes:
             animacao = self.animacoes[self.anim_direcao]
             self.anim_frame %= len(animacao)
@@ -331,8 +331,8 @@ class Player():
         angle = self._last_sword_angle
 
 
-        orbital2_x = self.x + 32 + math.cos(angle) * (self.radius + 15)
-        orbital2_y = self.y + 32 + math.sin(angle) * (self.radius + 15)
+        orbital2_x = self.x + 48 + math.cos(angle) * (self.radius + 15)
+        orbital2_y = self.y + 72 + math.sin(angle) * (self.radius + 15)
 
         orbital_rect2 = Rect(0, 0, *self.orbital_size)
         orbital_rect2.center = (orbital2_x, orbital2_y)
@@ -394,7 +394,7 @@ class Player():
 
         espada_frame = self.sword.subsurface(sword_frame_rect)
         espada_rotacionada = transform.rotate(espada_frame, -math.degrees(angle) - 90)
-        rect_espada = espada_rotacionada.get_rect(center=(base_x, base_y))
+        rect_espada = espada_rotacionada.get_rect(center=(base_x+10, base_y))  #aqui decide o negocio da espada
 
         tela.blit(espada_rotacionada, rect_espada) #<----------
 

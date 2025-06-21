@@ -6,7 +6,7 @@
         {
             "tipo": "comum",
             "visitada": false,
-            "arquivotmx": "mapas/2-4.tmx",
+            "arquivotmx": "mapas/2-2.tmx",
             "salaanterior": null,
             "p0": "sala1",
             "p1": "sala2",
@@ -19,7 +19,7 @@
         {
             "tipo": "comum",
             "visitada": false,
-            "arquivotmx": "mapas/3-5.tmx",
+            "arquivotmx": "mapas/3-1.tmx",
             "salaanterior": null,
             "p0": "sala0",
             "p1": "sala3",
@@ -34,7 +34,7 @@
         {
             "tipo": "comum",
             "visitada": false,
-            "arquivotmx": "mapas/3-3.tmx",
+            "arquivotmx": "mapas/3-4.tmx",
             "salaanterior": null,
             "p0": "sala0",
             "p1": "sala4",
@@ -49,7 +49,7 @@
         {
             "tipo": "spawn",
             "visitada": true,
-            "arquivotmx": "mapas/1-4.tmx",
+            "arquivotmx": "mapas/1-3.tmx",
             "salaanterior": null,
             "p0": "sala1",
             "conexoes": [
@@ -60,7 +60,7 @@
         {
             "tipo": "boss",
             "visitada": false,
-            "arquivotmx": "mapas/1-5.tmx",
+            "arquivotmx": "mapas/1-4.tmx",
             "salaanterior": null,
             "p0": "sala2",
             "conexoes": [
@@ -82,7 +82,7 @@
         {
             "tipo": "comum",
             "visitada": false,
-            "arquivotmx": "mapas/1-2.tmx",
+            "arquivotmx": "mapas/1-1.tmx",
             "salaanterior": null,
             "p0": "sala1",
             "conexoes": [
