@@ -6,7 +6,7 @@
         {
             "tipo": "comum",
             "visitada": false,
-            "arquivotmx": "mapas/2-1.tmx",
+            "arquivotmx": "mapas/2-4.tmx",
             "salaanterior": null,
             "p0": "sala1",
             "p1": "sala2",
@@ -49,7 +49,7 @@
         {
             "tipo": "spawn",
             "visitada": true,
-            "arquivotmx": "mapas/1-5.tmx",
+            "arquivotmx": "mapas/1-2.tmx",
             "salaanterior": null,
             "p0": "sala1",
             "conexoes": [
@@ -60,7 +60,7 @@
         {
             "tipo": "boss",
             "visitada": false,
-            "arquivotmx": "mapas/1-1.tmx",
+            "arquivotmx": "mapas/1-5.tmx",
             "salaanterior": null,
             "p0": "sala2",
             "conexoes": [
