@@ -27,6 +27,7 @@ class Player():
         self.tempo_animacao = 0
         self.tempo_por_frame = 100
         self.frame_atual = self.animacoes[self.anim_direcao][self.anim_frame]
+        self.rastros = [] #animação legal para o dash
 
 
         self.x = x
@@ -50,6 +51,7 @@ class Player():
 
         self.foi_atingido = False
         self.tempo_atingido = 0 #pra iniciar o "flash" de dano
+
 
         #itens
 
@@ -212,6 +214,14 @@ class Player():
 
 
         if self.is_dashing:
+            
+            #os rastros do dash
+            self.rastros.append({
+                "imagem": self.frame_atual.copy(),
+                "pos": self.player_rect.topleft,
+                "tempo": 200  # duração em milissegundos
+                })
+
             dash_speed = self.velocidadeMov * dt * 2.5
             direcao = self.dash_direcao
             if direcao == 'a': 
@@ -227,9 +237,27 @@ class Player():
                 self.vy = dash_speed
                 self.anim_direcao = "D_baixo"
 
+
             self.dash_duration += dt
             if self.dash_duration >= self.dash_duration_max:
                 self.is_dashing = False
+                self.anim_frame = 0
+
+                # Dash funciona bonitinho quando acaba
+                if self.dash_direcao == 'a':
+                    self.anim_direcao = 'esquerda'
+                elif self.dash_direcao == 'd':
+                    self.anim_direcao = 'direita'
+                elif self.dash_direcao == 'w':
+                    self.anim_direcao = 'cima'
+                elif self.dash_direcao == 's':
+                    self.anim_direcao = 'baixo'
+
+
+
+        for rastro in self.rastros:
+            rastro["tempo"] -= dt
+            self.rastros = [r for r in self.rastros if r["tempo"] > 0]
 
         #animação de merda
         if self.is_dashing or move_input:
@@ -317,6 +345,13 @@ class Player():
 
 
     def desenhar(self, tela, mouse_pos):
+
+        for rastro in self.rastros:
+            imagem = rastro["imagem"].copy()
+            alpha = max(0, int(255 * (rastro["tempo"] / 200)))  # vai de 255 até 0
+            imagem.set_alpha(alpha)
+            tela.blit(imagem, rastro["pos"])
+
         frame = self.frame_atual.copy()
         if self.foi_atingido and time.get_ticks() - self.tempo_atingido < 250:
             frame.fill((255, 255, 255), special_flags=BLEND_RGB_ADD)
