@@ -14,6 +14,7 @@ from sala import Sala
 from itensDic import *
 from gerenciador_andar import GerenciadorAndar
 
+
 init()
 
 clock = time.Clock()
