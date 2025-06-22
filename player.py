@@ -7,28 +7,28 @@ import time as t
 from sala import *
 
 
-class Player():
-    def __init__(self, x, y, largura, altura, hp=100, st=100, velocidadeMov=0.5, sprite='hero.png'):
 
-        # animações
+class Player():
+    def __init__(self, x, y, largura, altura, hp=100, st=100,velocidadeMov=0.5,sprite='hero.png'):
+
+        #animações
         self.animacoes = {
             "baixo": self.carregar_animacao("assets/Player/vampira_andando_frente.png"),
             "cima": self.carregar_animacao("assets/Player/vampira_andando_tras.png"),
             "D_cima": self.carregar_animacao("assets/Player/dash_frente.png"),
             "D_baixo": self.carregar_animacao("assets/Player/dash_costas.png"),
             "D_direita": self.carregar_animacao("assets/Player/dash _lado.png"),
-            "D_esquerda": [transform.flip(img, True, False) for img in
-                           self.carregar_animacao("assets/Player/dash _lado.png")],
+            "D_esquerda": [transform.flip(img, True, False) for img in self.carregar_animacao("assets/Player/dash _lado.png")],
             "direita": self.carregar_animacao("assets/Player/LADOANDAR-Sheet.png"),
-            "esquerda": [transform.flip(img, True, False) for img in
-                         self.carregar_animacao("assets/Player/LADOANDAR-Sheet.png")],
-        }
+            "esquerda": [transform.flip(img, True, False) for img in self.carregar_animacao("assets/Player/LADOANDAR-Sheet.png")],
+                        }
         self.anim_direcao = "baixo"
         self.anim_frame = 0
         self.tempo_animacao = 0
         self.tempo_por_frame = 100
         self.frame_atual = self.animacoes[self.anim_direcao][self.anim_frame]
-        self.rastros = []  # animação legal para o dash
+        self.rastros = [] #animação legal para o dash
+
 
         self.x = x
         self.y = y
@@ -36,41 +36,42 @@ class Player():
         self.altura = altura
 
         self.ultimo_uso = 0
-        # atributos
+        #atributos
         self.hp = hp
-        self.hpMax = 100  # atualmente não funciona muito bem quando aumentado porque o sprite não mostra nada acima de 100 de HP
+        self.hpMax = 100 #atualmente não funciona muito bem quando aumentado porque o sprite não mostra nada acima de 100 de HP
         self.velocidadeMov = velocidadeMov
-        self.rate = 1  # decaimento
+        self.rate = 1 #decaimento
         self.rateSt = 1
         self.dano = 20
-        self.velocidadeAtk = 1  # analisar esses valores depois com mais cuidado, depois da animação estar pronta, pq vai afetar a velocidade e a duração da animação
-        self.revives = 0  # quantidade de vezes que o jogador pode reviver
+        self.velocidadeAtk = 1 #analisar esses valores depois com mais cuidado, depois da animação estar pronta, pq vai afetar a velocidade e a duração da animação
+        self.revives = 0 #quantidade de vezes que o jogador pode reviver
         self.custoDash = 2.75
 
-        self.ultimo_dano = 0  # pra cuidar do cooldown
-        self.invencibilidade = 1500  # tempo que o jogador nao toma dano depois de tomar dano
+        self.ultimo_dano = 0 #pra cuidar do cooldown
+        self.invencibilidade = 1500 #tempo que o jogador nao toma dano depois de tomar dano
 
         self.foi_atingido = False
-        self.tempo_atingido = 0  # pra iniciar o "flash" de dano
+        self.tempo_atingido = 0 #pra iniciar o "flash" de dano
 
-        # itens
+
+        #itens
 
         self.itens = {}
         self.itemAtivo = None
         self.salaAtivoUsado = None
         self.itemAtivoEsgotado = None
 
-        # stamina
+        #stamina
         self.st = st
         self.cooldown_st = 3000
 
-        # almas
+        #almas
         self.almas = 0
 
         self.old_x = x
         self.old_y = y
 
-        # efeito de slide
+        #efeito de slide
         self.vx = 0
         self.vy = 0
         self.atrito = 0.92
@@ -81,7 +82,7 @@ class Player():
 
         self.atacou = False
 
-        # controles para o dash
+        #controles para o dash
         self.dash_cooldown = 0
         self.dash_duration = 0
         self.dash_cooldown_max = 500
@@ -94,7 +95,7 @@ class Player():
 
         self.ativo_ultimo_uso = 0
 
-        self.sword = transform.scale(image.load('assets/Player/Sword_Attack.png').convert_alpha(), (320 * 2, 54 * 2))
+        self.sword = transform.scale(image.load('assets/Player/Sword_Attack.png').convert_alpha(),(320*2,54*2))
 
         self.sprite_dano = self.frame_atual.copy()
         self.sprite_dano.fill((255, 255, 255), special_flags=BLEND_RGB_ADD)
@@ -113,25 +114,26 @@ class Player():
         self.dx = 0
         self.dy = 0
 
+
     def carregar_animacao(self, caminho):
-        frame_largura = 32
+        frame_largura = 32  
         frame_altura = 48
-        escala = 2.7
-        folha = transform.scale(image.load(caminho).convert_alpha(), (
-        image.load(caminho).convert_alpha().get_width() * escala,
-        image.load(caminho).convert_alpha().get_height() * escala))
-        num_frames = int(folha.get_width() // (frame_largura * escala))
+        escala = 2  
+        folha = transform.scale(image.load(caminho).convert_alpha(), (image.load(caminho).convert_alpha().get_width()*escala, image.load(caminho).convert_alpha().get_height()*escala))
+        num_frames = folha.get_width() // (frame_largura * escala)
 
         return [
             folha.subsurface((i * frame_largura * escala, 0, frame_largura * escala, frame_altura * escala))
             for i in range(num_frames)
         ]
 
+
     def _dash(self, dt, teclas, direcao):
         current_time = time.get_ticks()
 
         if (current_time - self.last_dash_time > self.dash_cooldown_max and
-                not self.is_dashing and teclas[K_SPACE] and self.st >= self.custoDash):
+            not self.is_dashing and teclas[K_SPACE] and self.st >=self.custoDash):
+
             self.last_dash_time = current_time
             self.is_dashing = True
             self.dash_direcao = direcao
@@ -141,7 +143,7 @@ class Player():
             self.st -= self.custoDash
         self.ultimo_uso = current_time
 
-    def usarItemAtivo(self, sala_atual: Sala):
+    def usarItemAtivo(self, sala_atual : Sala):
         if isinstance(self.itemAtivo, ItemAtivo):
             if self.itemAtivo.afetaIni:
                 self.itemAtivo.listaInimigos = sala_atual.inimigos
@@ -156,6 +158,8 @@ class Player():
         else:
             print("Não tem item ativo")
 
+
+
     def atualizar(self, dt, teclas):
         self.dt = dt
 
@@ -164,13 +168,14 @@ class Player():
         self.old_x = self.x
         self.old_y = self.y
 
-        self.x, self.y = self.player_rect.topleft
+        self.x,self.y = self.player_rect.topleft
+
 
         speed = self.velocidadeMov * dt
         move_input = False
 
-        if teclas[K_a]:
-            self.vx -= speed
+        if teclas[K_a]: 
+            self.vx -= speed 
             self.anim_direcao = "esquerda"
             move_input = True
 
@@ -179,15 +184,16 @@ class Player():
             self.anim_direcao = "direita"
             move_input = True
 
-        if teclas[K_w]:
+        if teclas[K_w]: 
             self.vy -= speed
             self.anim_direcao = "cima"
             move_input = True
 
-        if teclas[K_s]:
+        if teclas[K_s]: 
             self.vy += speed
             self.anim_direcao = "baixo"
             move_input = True
+
 
         self.vx *= self.atrito
         self.vy *= self.atrito
@@ -196,7 +202,8 @@ class Player():
         self.vx = max(-max_vel, min(self.vx, max_vel))
         self.vy = max(-max_vel, min(self.vy, max_vel))
 
-        # dash
+
+        #dash
         if teclas[K_d]:
             self._dash(dt, teclas, 'd')
         elif teclas[K_a]:
@@ -206,29 +213,31 @@ class Player():
         elif teclas[K_s]:
             self._dash(dt, teclas, 's')
 
-        if self.is_dashing:
 
-            # os rastros do dash
+        if self.is_dashing:
+            
+            #os rastros do dash
             self.rastros.append({
                 "imagem": self.frame_atual.copy(),
                 "pos": self.player_rect.topleft,
                 "tempo": 200  # duração em milissegundos
-            })
+                })
 
             dash_speed = self.velocidadeMov * dt * 2.5
             direcao = self.dash_direcao
-            if direcao == 'a':
+            if direcao == 'a': 
                 self.vx = -dash_speed
                 self.anim_direcao = "D_esquerda"
-            elif direcao == 'd':
+            elif direcao == 'd': 
                 self.vx = dash_speed
                 self.anim_direcao = "D_direita"
-            elif direcao == 'w':
+            elif direcao == 'w': 
                 self.vy = -dash_speed
                 self.anim_direcao = "D_cima"
-            elif direcao == 's':
+            elif direcao == 's': 
                 self.vy = dash_speed
                 self.anim_direcao = "D_baixo"
+
 
             self.dash_duration += dt
             if self.dash_duration >= self.dash_duration_max:
@@ -245,11 +254,13 @@ class Player():
                 elif self.dash_direcao == 's':
                     self.anim_direcao = 'baixo'
 
+
+
         for rastro in self.rastros:
             rastro["tempo"] -= dt
             self.rastros = [r for r in self.rastros if r["tempo"] > 0]
 
-        # animação de merda
+        #animação de merda
         if self.is_dashing or move_input:
             self.tempo_animacao += dt
             if self.tempo_animacao > self.tempo_por_frame:
@@ -271,6 +282,9 @@ class Player():
             else:
                 self.anim_direcao = "direita"
 
+
+
+
         self.hp -= 0.05 * self.rate
 
         if current_time - self.last_dash_time >= self.cooldown_st:
@@ -284,7 +298,7 @@ class Player():
             self.st = 100
 
         self.atualizar_animacao_espada(dt)
-
+        
         if self.anim_direcao in self.animacoes:
             animacao = self.animacoes[self.anim_direcao]
             self.anim_frame %= len(animacao)
@@ -294,16 +308,18 @@ class Player():
 
         self.player_rect = self.get_hitbox()
 
-    # tem que fazer uma possibilidade de pegar o item mais de uma vez e ficar incrementando
-    def adicionarItem(self, item):
+
+    #tem que fazer uma possibilidade de pegar o item mais de uma vez e ficar incrementando
+    def adicionarItem(self,item) :
         if isinstance(item, Item):
             item.aplicar_em(self)
-            if item not in self.itens:  # tentar entender essa merda que o fred fez depois
+            if item not in self.itens : #tentar entender essa merda que o fred fez depois
                 self.itens[item] = 1
             else:
                 pass
         else:
             self.itemAtivo = item
+
 
     def atualizar_animacao_espada(self, dt):
         if self.anima_espada:
@@ -314,6 +330,7 @@ class Player():
                 if self.frame_sword >= self.total_frames_espada:
                     self.anima_espada = False
                     self.frame_sword = 0
+
 
     def calcular_angulo(self, mouse_pos):
         mouse_x, mouse_y = mouse_pos
@@ -326,6 +343,7 @@ class Player():
             self._last_sword_angle = self.calcular_angulo(mouse_pos)
             self._last_mouse_pos = mouse_pos
         angle = self._last_sword_angle
+
 
         orbital2_x = self.x + 32 + math.cos(angle) * (self.radius + 15)
         orbital2_y = self.y + 32 + math.sin(angle) * (self.radius + 15)
@@ -340,18 +358,20 @@ class Player():
 
         return rotated_surf2, rotated_rect2
 
+
     def desenhar(self, tela, mouse_pos):
         angle = self.calcular_angulo(mouse_pos)
 
-        centro_jogador = (self.player_rect.topleft[0] + 32, self.player_rect.topleft[1] + 32)
+        centro_jogador = (self.player_rect.topleft[0]+32,self.player_rect.topleft[1]+32)
 
-        base_x = centro_jogador[0] + math.cos(angle) * self.radius  # <------------
-        base_y = 10 + centro_jogador[1] + math.sin(angle) * self.radius  # <------------
+        base_x =  centro_jogador[0] + math.cos(angle) * self.radius #<------------
+        base_y = 10 + centro_jogador[1] + math.sin(angle) * self.radius#<------------
 
         angulo_espada = math.degrees(angle) - 270
 
         espada_rotacionada = transform.rotate(self.sword, -angulo_espada)
         rect_espada = espada_rotacionada.get_rect(center=(base_x, base_y))
+
 
         orbital_x = self.x + 32 + math.cos(angle) * (self.radius)
         orbital_y = self.y + 32 + math.sin(angle) * (self.radius)
@@ -370,12 +390,13 @@ class Player():
 
         espada_frame = self.sword.subsurface(sword_frame_rect)
         espada_rotacionada = transform.rotate(espada_frame, -math.degrees(angle) - 90)
-        rect_espada = espada_rotacionada.get_rect(center=(base_x+10, base_y))
+        rect_espada = espada_rotacionada.get_rect(center=(base_x, base_y))
 
-        tela.blit(espada_rotacionada, rect_espada)  # <----------
+        tela.blit(espada_rotacionada, rect_espada) #<----------
 
         if self.anima_espada:
             tela.blit(espada_rotacionada, rect_espada.topleft)
+
 
         for rastro in self.rastros:
             imagem = rastro["imagem"].copy()
@@ -393,12 +414,15 @@ class Player():
         # corpo = Rect(self.x, self.y, self.largura, self.altura)
         # draw.rect(tela, (0, 255, 0), corpo)
 
+
         # Hitbox do ataque
         rotated_surf2, rotated_rect2 = self.get_rotated_rect_ataque(mouse_pos)
-        # tela.blit(rotated_surf2, rotated_rect2)
+        #tela.blit(rotated_surf2, rotated_rect2)
+
+
 
     def get_hitbox(self):
-        rect = Rect(self.player_img.get_rect(topleft=(self.x, self.y)))
+        rect = Rect(self.player_img.get_rect(topleft=(self.x,self.y)))
         # return Rect(
         #     rect.x + 20,
         #     rect.y + 10,
@@ -424,7 +448,8 @@ class Player():
 
         self.x, self.y = self.player_rect.topleft
 
-    def ataque_espada(self, inimigos, mouse_pos, dt):
+
+    def ataque_espada(self,inimigos,mouse_pos, dt):
         if not self.anima_espada:
             self.anima_espada = True
             self.frame_sword = 0
@@ -438,26 +463,29 @@ class Player():
         if self.frame_sword >= 5:
             self.frame_sword = 0
 
+
         _, hitbox_espada = self.get_rotated_rect_ataque(mouse_pos)
         for inimigo in inimigos:
             if inimigo.vivo:
                 if not inimigo.get_hitbox().colliderect(hitbox_espada):
                     self.atacou = False
                 if inimigo.get_hitbox().colliderect(hitbox_espada):
-                    # t.sleep(0.05) hitstop
+                    #t.sleep(0.05) hitstop
                     inimigo.anima_hit = True
                     self.atacou = False
                     inimigo.foi_atingido = False
 
-                    self.hp += self.dano / 3  # dar uma olhada melhor em qual vai ser a versao final desse valor
+                    self.hp += self.dano/3 #dar uma olhada melhor em qual vai ser a versao final desse valor
                     if self.hp > self.hpMax:
                         self.hp = self.hpMax
-                    inimigo.hp -= self.dano * inimigo.multDanoRecebido
+                    inimigo.hp -= self.dano*inimigo.multDanoRecebido
 
-                    # knockback
+
+                    #knockback
                     dx = inimigo.x - self.x
                     dy = inimigo.y - self.y
                     inimigo.aplicar_knockback(dx, dy, intensidade=4)
+
 
     def tomar_dano(self, valor):
         now = time.get_ticks()
@@ -465,6 +493,6 @@ class Player():
             return
         self.ultimo_dano = now
         self.hp -= valor
-        # pra fazer o "pisco"
+        #pra fazer o "pisco"
         self.foi_atingido = True
         self.tempo_atingido = time.get_ticks()
