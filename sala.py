@@ -78,6 +78,9 @@ class Sala:
         
         if self.pode_trocar_de_sala() and teclas[K_e]:
              self._trocar_de_sala()
+             self.transicao_fade(self.tela)
+
+
 
     def desenhar(self, tela):
         self.mapa.desenhar(self.porta_liberada)
@@ -148,4 +151,23 @@ class Sala:
         frame = transform.scale(frame, (64, 64))
         rect = frame.get_rect(center=pos)
         self.tela.blit(frame, rect)
+
+    def transicao_fade(self,screen, cor=(0, 0, 0), velocidade=10):
+        clock = time.Clock()
+        fade = Surface(self.tela.get_size())
+        fade.fill(cor)
+
+        # Fade-out (tela escurece)
+        for alpha in range(0, 255, velocidade):
+            fade.set_alpha(alpha)
+            screen.blit(fade, (0, 0))
+            display.update()
+            clock.tick(60)
+
+        # Fade-in (tela volta ao normal)
+        for alpha in range(255, -1, -velocidade):
+            fade.set_alpha(alpha)
+            screen.blit(fade, (0, 0))
+            display.update()
+            clock.tick(60)
 
