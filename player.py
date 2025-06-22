@@ -268,6 +268,18 @@ class Player():
                 self.anim_frame = (self.anim_frame + 1) % len(self.animacoes[self.anim_direcao])
         else:
             self.anim_frame = 0
+            angulo = self.calcular_angulo(mouse.get_pos())
+            angulo_deg = math.degrees(angulo) % 360
+
+            if 45 < angulo_deg <= 135:
+                self.anim_direcao = "baixo"
+            elif 135 < angulo_deg <= 225:
+                self.anim_direcao = "esquerda"
+            elif 225 < angulo_deg <= 315:
+                self.anim_direcao = "cima"
+            else:
+                self.anim_direcao = "direita"
+
 
 
 
@@ -346,27 +358,10 @@ class Player():
 
 
     def desenhar(self, tela, mouse_pos):
-
-        for rastro in self.rastros:
-            imagem = rastro["imagem"].copy()
-            alpha = max(0, int(255 * (rastro["tempo"] / 200)))  # vai de 255 até 0
-            imagem.set_alpha(alpha)
-            tela.blit(imagem, rastro["pos"])
-
-        frame = self.frame_atual.copy()
-        if self.foi_atingido and time.get_ticks() - self.tempo_atingido < 250:
-            frame.fill((255, 255, 255), special_flags=BLEND_RGB_ADD)
-            tela.blit(frame, self.player_rect.topleft)
-        else:
-            tela.blit(self.frame_atual, self.player_rect.topleft)
-
-        # corpo = Rect(self.x, self.y, self.largura, self.altura)
-        # draw.rect(tela, (0, 255, 0), corpo)
-
         angle = self.calcular_angulo(mouse_pos)
+        angle_deg = math.degrees(angle) % 360
 
         centro_jogador = (self.player_rect.topleft[0]+32,self.player_rect.topleft[1]+32)
-
         base_x =  centro_jogador[0] + math.cos(angle) * self.radius #<------------
         base_y = 10 + centro_jogador[1] + math.sin(angle) * self.radius#<------------
 
@@ -387,7 +382,6 @@ class Player():
         rotated_surf = transform.rotate(orbital_surf, -math.degrees(angle))
         rotated_rect = rotated_surf.get_rect(center=orbital_rect.center)
 
-
         frame_largura = 128
         frame_altura = 108
         sword_frame_rect = Rect(self.frame_sword * frame_largura, 0, frame_largura, frame_altura)
@@ -396,12 +390,26 @@ class Player():
         espada_rotacionada = transform.rotate(espada_frame, -math.degrees(angle) - 90)
         rect_espada = espada_rotacionada.get_rect(center=(base_x, base_y))
 
-        tela.blit(espada_rotacionada, rect_espada) #<----------
-
-        if self.anima_espada:
+        if  70 < angle_deg < 310:
             tela.blit(espada_rotacionada, rect_espada.topleft)
 
 
+        for rastro in self.rastros:
+            imagem = rastro["imagem"].copy()
+            alpha = max(0, int(255 * (rastro["tempo"] / 200)))  # vai de 255 até 0
+            imagem.set_alpha(alpha)
+            tela.blit(imagem, rastro["pos"])
+
+        frame = self.frame_atual.copy()
+        if self.foi_atingido and time.get_ticks() - self.tempo_atingido < 250:
+            frame.fill((255, 255, 255), special_flags=BLEND_RGB_ADD)
+        tela.blit(self.frame_atual, self.player_rect.topleft)
+
+        if angle_deg <= 70 or angle_deg >= 300:
+            tela.blit(espada_rotacionada, rect_espada.topleft)
+
+        # corpo = Rect(self.x, self.y, self.largura, self.altura)
+        # draw.rect(tela, (0, 255, 0), corpo)
 
         # Hitbox do ataque
         rotated_surf2, rotated_rect2 = self.get_rotated_rect_ataque(mouse_pos)
