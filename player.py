@@ -76,7 +76,7 @@ class Player():
         self.vy = 0
         self.atrito = 0.92
 
-        self.radius = 80
+        self.radius = 100
         self.orbital_size = (40, 20)
         self.hitbox_arma = (70, 100)
 
@@ -118,9 +118,9 @@ class Player():
     def carregar_animacao(self, caminho):
         frame_largura = 32  
         frame_altura = 48
-        escala = 2  
+        escala = 2.7
         folha = transform.scale(image.load(caminho).convert_alpha(), (image.load(caminho).convert_alpha().get_width()*escala, image.load(caminho).convert_alpha().get_height()*escala))
-        num_frames = folha.get_width() // (frame_largura * escala)
+        num_frames = int(folha.get_width() // (frame_largura * escala))
 
         return [
             folha.subsurface((i * frame_largura * escala, 0, frame_largura * escala, frame_altura * escala))
@@ -390,7 +390,7 @@ class Player():
 
         espada_frame = self.sword.subsurface(sword_frame_rect)
         espada_rotacionada = transform.rotate(espada_frame, -math.degrees(angle) - 90)
-        rect_espada = espada_rotacionada.get_rect(center=(base_x, base_y))
+        rect_espada = espada_rotacionada.get_rect(center=(base_x+10, base_y))
 
         tela.blit(espada_rotacionada, rect_espada) #<----------
 
