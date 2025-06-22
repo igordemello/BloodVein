@@ -74,9 +74,9 @@ while i == 1:
                 for item_nome, item in sala_atual.itensDisp.itens.items():
                     if hasattr(item, 'id') and item.id == item_id:
                         if isinstance(item, Item):
-                            player.adicionarItem(item=item)
+                            player.adicionarItem(item)
                         elif isinstance(item, ItemAtivo):
-                            player.adicionarItem(itemAt=item)
+                            player.adicionarItem(item)
                         print(f"Item '{item_nome}' (ID {item_id}) adicionado ao jogador.")
                         encontrado = True
                         break
