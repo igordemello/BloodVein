@@ -268,8 +268,6 @@ class Player():
                 self.anim_frame = (self.anim_frame + 1) % len(self.animacoes[self.anim_direcao])
         else:
             self.anim_frame = 0
-
-            # Se parado, atualizar direção com base na posição do mouse
             angulo = self.calcular_angulo(mouse.get_pos())
             angulo_deg = math.degrees(angulo) % 360
 
@@ -361,9 +359,9 @@ class Player():
 
     def desenhar(self, tela, mouse_pos):
         angle = self.calcular_angulo(mouse_pos)
+        angle_deg = math.degrees(angle) % 360
 
         centro_jogador = (self.player_rect.topleft[0]+32,self.player_rect.topleft[1]+32)
-
         base_x =  centro_jogador[0] + math.cos(angle) * self.radius #<------------
         base_y = 10 + centro_jogador[1] + math.sin(angle) * self.radius#<------------
 
@@ -392,9 +390,7 @@ class Player():
         espada_rotacionada = transform.rotate(espada_frame, -math.degrees(angle) - 90)
         rect_espada = espada_rotacionada.get_rect(center=(base_x, base_y))
 
-        tela.blit(espada_rotacionada, rect_espada) #<----------
-
-        if self.anima_espada:
+        if  70 < angle_deg < 310:
             tela.blit(espada_rotacionada, rect_espada.topleft)
 
 
@@ -407,13 +403,13 @@ class Player():
         frame = self.frame_atual.copy()
         if self.foi_atingido and time.get_ticks() - self.tempo_atingido < 250:
             frame.fill((255, 255, 255), special_flags=BLEND_RGB_ADD)
-            tela.blit(frame, self.player_rect.topleft)
-        else:
-            tela.blit(self.frame_atual, self.player_rect.topleft)
+        tela.blit(self.frame_atual, self.player_rect.topleft)
+
+        if angle_deg <= 70 or angle_deg >= 300:
+            tela.blit(espada_rotacionada, rect_espada.topleft)
 
         # corpo = Rect(self.x, self.y, self.largura, self.altura)
         # draw.rect(tela, (0, 255, 0), corpo)
-
 
         # Hitbox do ataque
         rotated_surf2, rotated_rect2 = self.get_rotated_rect_ataque(mouse_pos)

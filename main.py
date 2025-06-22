@@ -13,8 +13,13 @@ from inimigos.orb import Orb
 from sala import Sala
 from itensDic import *
 from gerenciador_andar import GerenciadorAndar
+from GerenciamentodeTelas import gerenciamento
+from menu import Menu
 
 init()
+
+gerenciamento.modo = 'menu'
+
 
 clock = time.Clock()
 SCREEN = display.set_mode((1920, 1080), vsync=1, flags=HWSURFACE | DOUBLEBUF)  # mudei para funcionar em hardware fudido
@@ -37,6 +42,7 @@ fonte = font.SysFont("Arial", 24)
 #player.adicionarItem(conjIt.itens["Sapato de Sangue"])
 
 
+menu = Menu(SCREEN)
 
 # while "Fred" == "Fred":
 i = 1
@@ -46,75 +52,96 @@ while i == 1:
     mouse_pos = mouse.get_pos() 
     clock.tick(60)
     dt = clock.get_time()
-    SCREEN.fill((115, 115, 115))
     current_time = time.get_ticks()
+    
 
     for ev in event.get():
         if ev.type == QUIT:
             quit()
             sys.exit()
-        if ev.type == MOUSEBUTTONDOWN and ev.button == 1:
-            if jogo_pausado:
-                item = sala_atual.bau.checar_clique_bau(mouse.get_pos())
-                if item:
-                    player.adicionarItem(item)
-                    jogo_pausado = False
-            else:
-                player.ataque_espada(sala_atual.inimigos, mouse_pos, dt)
-        if ev.type == KEYDOWN:
-            if ev.key == K_q and current_time - player.ativo_ultimo_uso > 2500:  #tecla de usar item ativo
-                player.ativo_ultimo_uso = current_time
-                player.usarItemAtivo(sala_atual)
-            if ev.key == K_MINUS:
-                jogo_pausado = not jogo_pausado
 
-            if ev.key == K_PERIOD:
-                item_id = int(input("Digite o ID do item para debug: "))
-                encontrado = False
-                for item_nome, item in sala_atual.itensDisp.itens.items():
-                    if hasattr(item, 'id') and item.id == item_id:
-                        if isinstance(item, Item):
-                            player.adicionarItem(item=item)
-                        elif isinstance(item, ItemAtivo):
-                            player.adicionarItem(itemAt=item)
-                        print(f"Item '{item_nome}' (ID {item_id}) adicionado ao jogador.")
-                        encontrado = True
-                        break
+        if gerenciamento.modo == 'menu':
+            menu.desenho(SCREEN)
+            if ev.type == MOUSEBUTTONDOWN and ev.button == 1:
+                escolha = menu.checar_clique(mouse_pos)
+                if escolha == 'jogo':
+                    gerenciamento.modo = "jogo"
+                elif escolha == "sair":
+                    quit()
+                    sys.exit()
+            
+
+        if gerenciamento.modo == 'sair':
+            quit()
+            sys.exit()
 
 
+        if gerenciamento.modo == "jogo":
+            if ev.type == MOUSEBUTTONDOWN and ev.button == 1:
+                if jogo_pausado:
+                    item = sala_atual.bau.checar_clique_bau(mouse.get_pos())
+                    if item:
+                        player.adicionarItem(item)
+                        jogo_pausado = False
+                else:
+                    player.ataque_espada(sala_atual.inimigos, mouse_pos, dt)
+            if ev.type == KEYDOWN:
+                if ev.key == K_q and current_time - player.ativo_ultimo_uso > 2500:  #tecla de usar item ativo
+                    player.ativo_ultimo_uso = current_time
+                    player.usarItemAtivo(sala_atual)
+                if ev.key == K_MINUS:
+                    jogo_pausado = not jogo_pausado
 
-    hud.desenhar(SCREEN)
-    sala_atual.desenhar(SCREEN)
-    player.desenhar(SCREEN,
-                    mouse_pos)  #probleminha, a espada continua sendo atualizado, pq ele é desenhado assim no futuro
-    if not jogo_pausado:
-        sala_atual.atualizar(dt, keys)
-        player.atualizar(dt, keys)
-    else:
-        sala_atual.bau.bauEscolherItens(SCREEN)
-
-    #print(player.salaAtivoUsado, '+asdfasdasdasd')
-    if sala_atual.pode_trocar_de_sala():
-
-        if player.itemAtivo is not None and player.salaAtivoUsado == sala_atual:
-
-            if not player.itemAtivo.afetaIni:
-                player.itemAtivo.player = player
-                player.itemAtivo.remover_efeitos()
-
-        if player.itemAtivoEsgotado is not None:
-            if not player.itemAtivoEsgotado.afetaIni:
-                player.itemAtivoEsgotado.player = player
-                player.itemAtivoEsgotado.remover_efeitos()
-            player.itemAtivoEsgotado = None
+                if ev.key == K_PERIOD:
+                    item_id = int(input("Digite o ID do item para debug: "))
+                    encontrado = False
+                    for item_nome, item in sala_atual.itensDisp.itens.items():
+                        if hasattr(item, 'id') and item.id == item_id:
+                            if isinstance(item, Item):
+                                player.adicionarItem(item=item)
+                            elif isinstance(item, ItemAtivo):
+                                player.adicionarItem(itemAt=item)
+                            print(f"Item '{item_nome}' (ID {item_id}) adicionado ao jogador.")
+                            encontrado = True
+                            break
+        
 
 
+    if gerenciamento.modo == 'jogo':
+        SCREEN.blit(imagem_cursor, mouse_pos)
+        hud.desenhar(SCREEN)
+        sala_atual.desenhar(SCREEN)
+        player.desenhar(SCREEN,
+                        mouse_pos)  #probleminha, a espada continua sendo atualizado, pq ele é desenhado assim no futuro
+        if not jogo_pausado:
+            sala_atual.atualizar(dt, keys)
+            player.atualizar(dt, keys)
+        else:
+            sala_atual.bau.bauEscolherItens(SCREEN)
 
-    # mostrar o fps:
-    if time.get_ticks() % 500 < 16:  # Atualiza ~30 vezes por segundo
-        fps = int(clock.get_fps())
-        fps_text = fps_font.render(f"FPS: {fps}", True, (255, 255, 255))
+        #print(player.salaAtivoUsado, '+asdfasdasdasd')
+        if sala_atual.pode_trocar_de_sala():
 
-    SCREEN.blit(fps_text, (10, 10))
+            if player.itemAtivo is not None and player.salaAtivoUsado == sala_atual:
+
+                if not player.itemAtivo.afetaIni:
+                    player.itemAtivo.player = player
+                    player.itemAtivo.remover_efeitos()
+
+            if player.itemAtivoEsgotado is not None:
+                if not player.itemAtivoEsgotado.afetaIni:
+                    player.itemAtivoEsgotado.player = player
+                    player.itemAtivoEsgotado.remover_efeitos()
+                player.itemAtivoEsgotado = None
+
+
+
+        # mostrar o fps:
+        if time.get_ticks() % 500 < 16:  # Atualiza ~30 vezes por segundo
+            fps = int(clock.get_fps())
+            fps_text = fps_font.render(f"FPS: {fps}", True, (255, 255, 255))
+
+        SCREEN.blit(fps_text, (10, 10))
+
     SCREEN.blit(imagem_cursor, mouse_pos)
     display.update()
