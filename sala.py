@@ -17,12 +17,11 @@ class Sala:
     def __init__(self, caminho_mapa, tela, player, gerenciador_andar):
         self.tela = tela
         self.mapa = Mapa(caminho_mapa,self.tela,self.tela.get_width(),self.tela.get_height())
-        self.inimigos = [Orb(400,700,64,64)]
+        self.gerenciador_andar = gerenciador_andar
 
         self.colisao = Colisao(self.mapa)
         self.colisao.adicionar_entidade(player)
-        for inimigo in self.inimigos:
-            self.colisao.adicionar_entidade(inimigo)
+        
 
         self.porta_liberada = False
         self.player = player
@@ -40,7 +39,26 @@ class Sala:
 
         self.bau = Bau(self.itensDisp)
 
-        self.gerenciador_andar = gerenciador_andar
+
+        self.em_transicao = False
+        self.visitada = False
+
+        
+        if not gerenciador_andar.sala_foi_conquistada(gerenciador_andar.sala_atual):
+            self.inimigos = self._criar_inimigos()
+        else:
+            self.inimigos = []
+            self.porta_liberada = True
+            self.visitada = True
+
+        for inimigo in self.inimigos:
+            self.colisao.adicionar_entidade(inimigo)
+
+    def _criar_inimigos(self):
+        if "boss" in self.gerenciador_andar.grafo.nodes[self.gerenciador_andar.sala_atual]["tipo"]:
+            return [Orb(400, 700, 64, 64, hp=200,velocidade=3, dano=30)]
+        else:
+            return [Orb(400, 700, 64, 64)]
 
     def atualizar(self,dt,teclas):
         for inimigo in self.inimigos:
@@ -51,8 +69,12 @@ class Sala:
         
         self.colisao.checar_colisoes(dt)
 
-        if not any(inimigo.vivo for inimigo in self.inimigos):
-            self.porta_liberada = True
+        if not self.visitada:
+            self.porta_liberada = False
+            if self.player.x > 50 and self.player.x < self.tela.get_width() - 50:
+                self.visitada = True
+        else:
+            self.porta_liberada = not any(inimigo.vivo for inimigo in self.inimigos)
         
         if self.pode_trocar_de_sala() and teclas[K_e]:
              self._trocar_de_sala()
@@ -86,13 +108,35 @@ class Sala:
     
 
     def _trocar_de_sala(self):
+        if self.em_transicao:
+            return
+
         for porta in self.ranges_doors:  
-            if self.player.get_hitbox().colliderect(porta['colisor']):
+            if self.player.get_hitbox().colliderect(porta['colisor']) and self.porta_liberada:
+
+                self.em_transicao = True
+
+                if not any(inimigo.vivo for inimigo in self.inimigos):
+                    self.gerenciador_andar.marcar_sala_conquistada(self.gerenciador_andar.sala_atual)
+
                 codigo_porta = porta['codigoporta'] 
-                nova_sala = self.gerenciador_andar.ir_para_proxima_sala(codigo_porta)
-                if nova_sala:
-                    self.mapa = Mapa(nova_sala, self.tela, self.tela.get_width(), self.tela.get_height())
-                    print(f"Trocando para: {nova_sala} - codigo porta: {codigo_porta}")
+
+                if f"p{int(codigo_porta[2:])}" in self.gerenciador_andar.grafo.nodes[self.gerenciador_andar.sala_atual]:
+
+                    nova_sala = self.gerenciador_andar.ir_para_proxima_sala(codigo_porta)
+                    
+                    if nova_sala:
+                        nova_instancia = Sala(nova_sala, self.tela, self.player, self.gerenciador_andar)
+
+                        nova_instancia.player = self.player
+                        nova_instancia.gerenciador_andar = self.gerenciador_andar
+                        nova_instancia.player.player_rect.topleft = (self.tela.get_width() // 2,self.tela.get_height() // 2)
+
+                        self.__dict__.update(nova_instancia.__dict__)
+
+                        print(f"Transição para: {nova_sala} via {codigo_porta}")
+                self.em_transicao = False
+                break
 
     def desenha_alma(self,pos):
         tempo_atual = time.get_ticks()

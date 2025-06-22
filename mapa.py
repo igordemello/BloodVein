@@ -120,4 +120,5 @@ class Mapa:
                         )
                         rangesdoors.append({'colisor':rect,'codigoporta':layer.name})
 
+        print(rangesdoors)
         return rangesdoors
