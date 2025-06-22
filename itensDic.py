@@ -4,7 +4,7 @@ import sys
 from pygame.locals import QUIT
 import math
 from efeito import *
-
+from random import randint
 
 class ConjuntoItens:
     def __init__(self):
@@ -55,7 +55,7 @@ class ConjuntoItens:
                 efeitos=[
                     DanoUsuario(1.5, "*")
                 ],
-                sprite=image.load("assets\itens\ChapeuDeBruxa.png").convert_alpha(),
+                sprite=image.load("assets\itens\Varinhamagica.png").convert_alpha(),
                 raridade="rara",
                 id=5,
             ),
@@ -100,7 +100,7 @@ class ConjuntoItens:
                     VelocidadeAtaque(-0.2),
                     VelocidadeMovimento(0.1),
                     DecaimentoVida(0.75),
-                    stamina_cooldown(850),
+                    CooldownStamina(850),
                 ],
                 sprite=image.load("assets\itens\Máscara_da_Comédia.png").convert_alpha(),
                 raridade="rara",
@@ -108,18 +108,60 @@ class ConjuntoItens:
             ),
             "Máscara da Tragédia": Item(
                 nome="Máscara da Tragédia",
-                descricao="diminui todos os status mas aumenta absurdamente sua força",
+                descricao="Diminui todos os status mas aumenta absurdamente sua força",
                 efeitos=[ #diminui tudo mas aumenta o dano
                     DanoUsuario(75, "+"),
                     VidaMaxima(-15),
                     VelocidadeAtaque(-0.2),
                     VelocidadeMovimento(-0.1),
                     DecaimentoVida(1.4),
-                    stamina_cooldown(-850),
+                    CooldownStamina(-850),
                 ],
                 sprite=image.load("assets\itens\Máscara_da_Tragedia.png").convert_alpha(),
                 raridade="rara",
                 id=10,
+            ),
+            "Amuleto de Seth" : Item(
+                nome="Amuleto de Seth",
+                descricao="Aumenta seu dano num valor aleatório quando obtido",
+                efeitos=[
+                    DanoUsuario(randint(1,35),"+")
+                ],
+                sprite=image.load("assets\itens\AmuletodeSeth.png").convert_alpha(),
+                raridade="comum",
+                id=11
+            ),
+            "Anel do Rei Rato" : Item(
+                nome="Anel do Rei Rato",
+                descricao="Diminui seu dano, mas também diminui o cooldown de recuperação\nde estamina",
+                efeitos=[
+                    CooldownStamina(2000),
+                    DanoUsuario(-15,"+")
+                ],
+                sprite=image.load("assets\itens\AnelDoReiRato.png").convert_alpha(),
+                raridade="rara",
+                id=12,
+            ),
+            "Escudo de Rubi" : Item(
+                nome="Escudo de Rubi",
+                descricao="Diminui o dano que você recebe",
+                efeitos=[
+                    ModificadorDanoRecebido(0.75)
+                ],
+                sprite=image.load("assets\itens\Escudo.png").convert_alpha(),
+                raridade="rara",
+                id = 13
+            ),
+            "Osso" : Item(
+                nome="Osso Frágil", #mudar o nome depois, tá muito basico
+                descricao="Dobra o dano que você recebe, mas também dobra o dano que você dá",
+                efeitos=[
+                    ModificadorDanoRecebido(2),
+                    DanoUsuario(2,"*")
+                ],
+                sprite=image.load("assets\itens\Osso.png").convert_alpha(),
+                raridade="lendaria",
+                id = 14
             ),
             #Itens Ativos:
             "Crucifixo Invertido": ItemAtivo(
@@ -130,9 +172,9 @@ class ConjuntoItens:
                     DanoUsuario(20, "+")
                 ],
                 afetaIni=False,
-                sprite=image.load("assets\itens\ChapeuDeBruxa.png").convert_alpha(),
+                sprite=image.load("assets\itens\crucifixoinvertido.png").convert_alpha(),
                 raridade="comum",
-                id=11,
+                id=15,
             ),
             "Aranha de brinquedo": ItemAtivo(
                 nome="Aranha de brinquedo",
@@ -144,7 +186,7 @@ class ConjuntoItens:
                 afetaIni=False,
                 sprite=image.load("assets\itens\AranhaDeBrinquedo.png").convert_alpha(),
                 raridade="comum",
-                id=12,
+                id=16,
             ),
             "Bomba": ItemAtivo(
                 nome="Bomba",
@@ -156,7 +198,7 @@ class ConjuntoItens:
                 afetaIni=True,
                 sprite=image.load("assets\itens\Bomba.png").convert_alpha(),
                 raridade="comum",
-                id=13,
+                id=17,
             )
 
         }

@@ -40,13 +40,17 @@ class DanoUsuario(Efeito):
         else:
             jogador.dano /= self.valor
 
-class stamina_cooldown(Efeito):
+class ModificadorDanoRecebido(Efeito):
+    def __init__(self, valor):
+        self.valor = valor
+    def aplicar(self,jogador):
+        jogador.modificadorDanoRecebido *= self.valor
+
+class CooldownStamina(Efeito):
     def __init__(self, valor):
         self.valor = valor
     def aplicar(self,jogador):
         jogador.cooldown_st -= self.valor
-
-
 
 class DarDano(Efeito):
     def __init__(self, valor):

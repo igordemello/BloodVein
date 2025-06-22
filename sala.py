@@ -78,7 +78,7 @@ class Sala:
         
         if self.pode_trocar_de_sala() and teclas[K_e]:
              self._trocar_de_sala()
-             self.transicao_fade(self.tela)
+             #self.fade_out()
 
 
 
@@ -108,26 +108,26 @@ class Sala:
 
     def pode_trocar_de_sala(self):
         return self.porta_liberada and any(self.player.get_hitbox().colliderect(rangee['colisor']) for rangee in self.ranges_doors)
-    
+
 
     def _trocar_de_sala(self):
         if self.em_transicao:
             return
 
-        for porta in self.ranges_doors:  
+        for porta in self.ranges_doors:
             if self.player.get_hitbox().colliderect(porta['colisor']) and self.porta_liberada:
-
                 self.em_transicao = True
+                self.fade_out()
 
                 if not any(inimigo.vivo for inimigo in self.inimigos):
                     self.gerenciador_andar.marcar_sala_conquistada(self.gerenciador_andar.sala_atual)
 
-                codigo_porta = porta['codigoporta'] 
+                codigo_porta = porta['codigoporta']
 
                 if f"p{int(codigo_porta[2:])}" in self.gerenciador_andar.grafo.nodes[self.gerenciador_andar.sala_atual]:
 
                     nova_sala = self.gerenciador_andar.ir_para_proxima_sala(codigo_porta)
-                    
+
                     if nova_sala:
                         nova_instancia = Sala(nova_sala, self.tela, self.player, self.gerenciador_andar)
 
@@ -137,9 +137,12 @@ class Sala:
 
                         self.__dict__.update(nova_instancia.__dict__)
 
+                        self.fade_in() # por algum motivo nao funciona
+
                         print(f"Transição para: {nova_sala} via {codigo_porta}")
                 self.em_transicao = False
                 break
+
 
     def desenha_alma(self,pos):
         tempo_atual = time.get_ticks()
@@ -152,22 +155,23 @@ class Sala:
         rect = frame.get_rect(center=pos)
         self.tela.blit(frame, rect)
 
-    def transicao_fade(self,screen, cor=(0, 0, 0), velocidade=10):
+    def fade_out(self, cor=(0, 0, 0), velocidade=14):
         clock = time.Clock()
-        fade = Surface(self.tela.get_size())
+        fade = Surface((1472,800))
         fade.fill(cor)
-
-        # Fade-out (tela escurece)
         for alpha in range(0, 255, velocidade):
             fade.set_alpha(alpha)
-            screen.blit(fade, (0, 0))
+            self.tela.blit(fade, (224, 248))
             display.update()
             clock.tick(60)
 
-        # Fade-in (tela volta ao normal)
+    def fade_in(self, cor=(0, 0, 0), velocidade=14):
+        clock = time.Clock()
+        fade = Surface((1472,736))
+        fade.fill(cor)
         for alpha in range(255, -1, -velocidade):
             fade.set_alpha(alpha)
-            screen.blit(fade, (0, 0))
+            self.tela.blit(fade, (224, 248))
             display.update()
             clock.tick(60)
 

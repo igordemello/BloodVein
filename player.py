@@ -46,6 +46,7 @@ class Player():
         self.velocidadeAtk = 1 #analisar esses valores depois com mais cuidado, depois da animação estar pronta, pq vai afetar a velocidade e a duração da animação
         self.revives = 0 #quantidade de vezes que o jogador pode reviver
         self.custoDash = 2.75
+        self.modificadorDanoRecebido = 1
 
         self.ultimo_dano = 0 #pra cuidar do cooldown
         self.invencibilidade = 1500 #tempo que o jogador nao toma dano depois de tomar dano
@@ -488,7 +489,7 @@ class Player():
         if now - self.ultimo_dano < self.invencibilidade:
             return
         self.ultimo_dano = now
-        self.hp -= valor
+        self.hp -= valor* self.modificadorDanoRecebido
         #pra fazer o "pisco"
         self.foi_atingido = True
         self.tempo_atingido = time.get_ticks()
