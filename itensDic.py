@@ -71,7 +71,7 @@ class ConjuntoItens:
                 id=6,
             ),
             "Coração Humano": Item(
-                nome="Coração Humano",
+                nome="Coração Humano", #só entra em efeito depois do jogador tomar dano, corrigir
                 descricao="Sua vida não decaí mais, mas ela é reduzida pela metade",
                 efeitos=[
                     VidaMaxima(-50),
@@ -136,7 +136,7 @@ class ConjuntoItens:
                 descricao="Diminui seu dano, mas também diminui o cooldown de recuperação\nde estamina",
                 efeitos=[
                     CooldownStamina(2000),
-                    DanoUsuario(-15,"+")
+                    DanoUsuario(-10,"+")
                 ],
                 sprite=image.load("assets\itens\AnelDoReiRato.png").convert_alpha(),
                 raridade="rara",

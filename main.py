@@ -16,6 +16,7 @@ from gerenciador_andar import GerenciadorAndar
 from GerenciamentodeTelas import gerenciamento
 from menu import Menu
 
+
 init()
 
 gerenciamento.modo = 'menu'
@@ -120,6 +121,7 @@ while i == 1:
 
                 if not player.itemAtivo.afetaIni:
                     player.itemAtivo.player = player
+
                     player.itemAtivo.remover_efeitos()
 
             if player.itemAtivoEsgotado is not None:
