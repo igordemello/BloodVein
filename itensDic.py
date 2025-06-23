@@ -163,6 +163,19 @@ class ConjuntoItens:
                 raridade="lendaria",
                 id = 14
             ),
+            "Sapatos Do Hermes" : Item(
+                nome="Sapatos Do Hermes", 
+                descricao="Super Dash",
+                efeitos=[
+                    CooldownStamina(900),
+                    CooldownDash(100),
+                    DuraçãoDash(30),
+                    CustoDash(0.75)
+                ],
+                sprite=image.load("assets\itens\BotasdeHermes.png").convert_alpha(),
+                raridade="lendaria",
+                id = 15
+            ),
             #Itens Ativos:
             "Crucifixo Invertido": ItemAtivo(
                 nome="Crucifixo Invertido",
@@ -174,7 +187,7 @@ class ConjuntoItens:
                 afetaIni=False,
                 sprite=image.load("assets\itens\crucifixoinvertido.png").convert_alpha(),
                 raridade="comum",
-                id=15,
+                id=16,
             ),
             "Aranha de brinquedo": ItemAtivo(
                 nome="Aranha de brinquedo",
@@ -186,7 +199,7 @@ class ConjuntoItens:
                 afetaIni=False,
                 sprite=image.load("assets\itens\AranhaDeBrinquedo.png").convert_alpha(),
                 raridade="comum",
-                id=16,
+                id=17,
             ),
             "Bomba": ItemAtivo(
                 nome="Bomba",
@@ -198,7 +211,7 @@ class ConjuntoItens:
                 afetaIni=True,
                 sprite=image.load("assets\itens\Bomba.png").convert_alpha(),
                 raridade="comum",
-                id=17,
+                id=18,
             )
 
         }

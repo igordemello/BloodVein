@@ -45,7 +45,7 @@ class Player():
         self.dano = 20
         self.velocidadeAtk = 1 #analisar esses valores depois com mais cuidado, depois da animação estar pronta, pq vai afetar a velocidade e a duração da animação
         self.revives = 0 #quantidade de vezes que o jogador pode reviver
-        self.custoDash = 2.75
+        self.custoDash = 2.75   
         self.modificadorDanoRecebido = 1
 
         self.ultimo_dano = 0 #pra cuidar do cooldown
@@ -404,7 +404,7 @@ class Player():
         frame = self.frame_atual.copy()
         if self.foi_atingido and time.get_ticks() - self.tempo_atingido < 250:
             frame.fill((255, 255, 255), special_flags=BLEND_RGB_ADD)
-        tela.blit(self.frame_atual, self.player_rect.topleft)
+        tela.blit(frame, self.player_rect.topleft)
 
         if angle_deg <= 70 or angle_deg >= 300:
             tela.blit(espada_rotacionada, rect_espada.topleft)

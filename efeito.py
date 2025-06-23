@@ -52,6 +52,24 @@ class CooldownStamina(Efeito):
     def aplicar(self,jogador):
         jogador.cooldown_st -= self.valor
 
+class CooldownDash(Efeito):
+    def __init__(self, valor):
+        self.valor = valor
+    def aplicar(self,jogador):
+        jogador.dash_cooldown_max -= self.valor
+
+class DuraçãoDash(Efeito):
+    def __init__(self, valor):
+        self.valor = valor
+    def aplicar(self,jogador):
+        jogador.dash_duration_max += self.valor
+
+class CustoDash(Efeito):
+    def __init__(self, valor):
+        self.valor = valor
+    def aplicar(self,jogador):
+        jogador.custoDash -= self.valor
+
 class DarDano(Efeito):
     def __init__(self, valor):
         self.valor = valor

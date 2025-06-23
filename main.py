@@ -43,6 +43,8 @@ fonte = font.SysFont("Arial", 24)
 
 
 menu = Menu(SCREEN)
+esperar_soltar_clique = True
+
 
 # while "Fred" == "Fred":
 i = 1
@@ -74,33 +76,37 @@ while i == 1:
             sys.exit()
 
         if gerenciamento.modo == "jogo":
-            if ev.type == MOUSEBUTTONDOWN and ev.button == 1:
-                if jogo_pausado:
-                    item = sala_atual.bau.checar_clique_bau(mouse.get_pos())
-                    if item:
-                        player.adicionarItem(item)
-                        jogo_pausado = False
-                else:
-                    player.ataque_espada(sala_atual.inimigos, mouse_pos, dt)
-            if ev.type == KEYDOWN:
-                if ev.key == K_q and current_time - player.ativo_ultimo_uso > 2500:  # tecla de usar item ativo
-                    player.ativo_ultimo_uso = current_time
-                    player.usarItemAtivo(sala_atual)
-                if ev.key == K_MINUS:
-                    jogo_pausado = not jogo_pausado
+            if esperar_soltar_clique:
+                if not mouse.get_pressed()[0]:
+                    esperar_soltar_clique = False
+            else:
+                if ev.type == MOUSEBUTTONDOWN and ev.button == 1:
+                    if jogo_pausado:
+                        item = sala_atual.bau.checar_clique_bau(mouse.get_pos())
+                        if item:
+                            player.adicionarItem(item)
+                            jogo_pausado = False
+                    else:
+                        player.ataque_espada(sala_atual.inimigos, mouse_pos, dt)
+                if ev.type == KEYDOWN:
+                    if ev.key == K_q and current_time - player.ativo_ultimo_uso > 2500:  # tecla de usar item ativo
+                        player.ativo_ultimo_uso = current_time
+                        player.usarItemAtivo(sala_atual)
+                    if ev.key == K_MINUS:
+                        jogo_pausado = not jogo_pausado
 
-                if ev.key == K_PERIOD:
-                    item_id = int(input("Digite o ID do item para debug: "))
-                    encontrado = False
-                    for item_nome, item in sala_atual.itensDisp.itens.items():
-                        if hasattr(item, 'id') and item.id == item_id:
-                            if isinstance(item, Item):
-                                player.adicionarItem(item)
-                            elif isinstance(item, ItemAtivo):
-                                player.adicionarItem(item)
-                            print(f"Item '{item_nome}' (ID {item_id}) adicionado ao jogador.")
-                            encontrado = True
-                            break
+                    if ev.key == K_PERIOD:
+                        item_id = int(input("Digite o ID do item para debug: "))
+                        encontrado = False
+                        for item_nome, item in sala_atual.itensDisp.itens.items():
+                            if hasattr(item, 'id') and item.id == item_id:
+                                if isinstance(item, Item):
+                                    player.adicionarItem(item)
+                                elif isinstance(item, ItemAtivo):
+                                    player.adicionarItem(item)
+                                print(f"Item '{item_nome}' (ID {item_id}) adicionado ao jogador.")
+                                encontrado = True
+                                break
 
     if gerenciamento.modo == 'jogo':
         SCREEN.blit(imagem_cursor, mouse_pos)
