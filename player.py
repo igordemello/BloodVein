@@ -391,7 +391,7 @@ class Player():
         espada_rotacionada = transform.rotate(espada_frame, -math.degrees(angle) - 90)
         rect_espada = espada_rotacionada.get_rect(center=(base_x+10, base_y))
 
-        if  70 < angle_deg < 310:
+        if  180 < angle_deg < 310:
             tela.blit(espada_rotacionada, rect_espada.topleft)
 
 
@@ -406,7 +406,7 @@ class Player():
             frame.fill((255, 255, 255), special_flags=BLEND_RGB_ADD)
         tela.blit(frame, self.player_rect.topleft)
 
-        if angle_deg <= 70 or angle_deg >= 300:
+        if angle_deg <= 180 or angle_deg >= 300:
             tela.blit(espada_rotacionada, rect_espada.topleft)
 
         # corpo = Rect(self.x, self.y, self.largura, self.altura)
