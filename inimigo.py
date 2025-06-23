@@ -28,7 +28,7 @@ class Inimigo:
         self.old_y = y
 
         self.hp = hp
-        self.multDanoRecebido = 1  # isso multiplica o dano que o jogador causa, serve pra fazer bleed e pro parry
+        self.modificadorDanoRecebido = 1  # isso multiplica o dano que o jogador causa, serve pra fazer bleed e pro parry
         self.vivo = True
         self.dano = dano
 

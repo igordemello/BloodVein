@@ -212,6 +212,18 @@ class ConjuntoItens:
                 sprite=image.load("assets\itens\Bomba.png").convert_alpha(),
                 raridade="comum",
                 id=18,
+            ),
+            "Adaga de Mandíbula": ItemAtivo(
+                nome="Adaga de Mandíbula",
+                descricao="Quando ativado, aplica sangramento a todos os inimigo\nduplicando dano recebido",
+                usos=2,
+                efeitos=[
+                    ModificadorDanoRecebido(2)
+                ],
+                afetaIni=True,
+                sprite=image.load("assets\itens\Bomba.png").convert_alpha(), #falta colocar
+                raridade="comum",
+                id=19,
             )
 
         }

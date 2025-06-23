@@ -475,7 +475,7 @@ class Player():
                     self.hp += self.dano/3 #dar uma olhada melhor em qual vai ser a versao final desse valor
                     if self.hp > self.hpMax:
                         self.hp = self.hpMax
-                    inimigo.hp -= self.dano*inimigo.multDanoRecebido
+                    inimigo.hp -= self.dano*inimigo.modificadorDanoRecebido
 
 
                     #knockback
