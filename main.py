@@ -120,29 +120,6 @@ while i == 1:
         else:
             sala_atual.bau.bauEscolherItens(SCREEN)
 
-        # print(player.salaAtivoUsado, '+asdfasdasdasd')
-        if sala_atual.pode_trocar_de_sala():
-            # Pré-transição: prepara o player
-            original_pos = (player.x, player.y)
-            original_vel = (player.vx, player.vy)
-            
-            if player.itemAtivo is not None and player.salaAtivoUsado == sala_atual:
-                if not player.itemAtivo.afetaIni:
-                    # Remove efeitos mas mantém a posição/velocidade
-                    player.itemAtivo.remover_efeitos()
-                    player.x, player.y = original_pos
-                    player.vx, player.vy = original_vel
-
-            
-            if player.itemAtivoEsgotado is not None :
-                if not player.itemAtivoEsgotado.afetaIni:
-                    player.itemAtivoEsgotado.remover_efeitos()
-                    player.x, player.y = original_pos
-                    player.vx, player.vy = original_vel
-                player.itemAtivoEsgotado = None
-            
-            # Garante que o player pode se mover após a transição
-            player.player_rect.topleft = (player.x, player.y)
 
         # mostrar o fps:
         if time.get_ticks() % 500 < 16:  # Atualiza ~30 vezes por segundo

@@ -77,8 +77,27 @@ class Sala:
             self.porta_liberada = not any(inimigo.vivo for inimigo in self.inimigos)
         
         if self.pode_trocar_de_sala() and teclas[K_e]:
-             self._trocar_de_sala()
-             #self.fade_out()
+            original_pos = (self.player.x, self.player.y)
+            original_vel = (self.player.vx, self.player.vy)
+
+            if self.player.itemAtivo is not None:
+                if not self.player.itemAtivo.afetaIni:
+                    # Remove efeitos mas mantém a posição/velocidade
+                    print('asdas')
+                    self.player.itemAtivo.remover_efeitos()
+                    self.player.x, self.player.y = original_pos
+                    self.player.vx, self.player.vy = original_vel
+
+        
+            if self.player.itemAtivoEsgotado is not None :
+                if not self.player.itemAtivoEsgotado.afetaIni:
+                    self.player.itemAtivoEsgotado.remover_efeitos()
+                    self.player.x, self.player.y = original_pos
+                    self.player.vx, self.player.vy = original_vel
+                self.player.itemAtivoEsgotado = None
+            self.player.player_rect.topleft = (self.player.x, self.player.y)
+            self._trocar_de_sala()
+            #self.fade_out()
 
 
 
