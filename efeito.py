@@ -91,11 +91,23 @@ class VelocidadeAtaque(Efeito):
 class VelocidadeMovimento(Efeito):
     def __init__(self, valor):
         self.valor = valor
+        self.valor_original = None
+        self.ativo = False
+    
     def aplicar(self, jogador):
-        jogador.velocidadeMov += self.valor
+        if not self.ativo:
+            self.valor_original = jogador.velocidadeMov
+            jogador.velocidadeMov += self.valor
+            self.ativo = True
+    
     def remover(self, jogador):
-        jogador.velocidadeMov -= self.valor
-
+        if self.ativo and self.valor_original is not None:
+            # Aplica um fade out suave da velocidade
+            jogador.velocidadeMov = self.valor_original
+            jogador.vx *= 0.5  # Reduz gradualmente
+            jogador.vy *= 0.5
+            self.ativo = False
+            
 class DecaimentoVida(Efeito):
     def __init__(self, valor):
         self.valor = valor
