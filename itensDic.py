@@ -169,7 +169,7 @@ class ConjuntoItens:
                 efeitos=[
                     CooldownStamina(900),
                     CooldownDash(100),
-                    DuraçãoDash(30),
+                    DuraçãoDash(180),
                     CustoDash(0.75)
                 ],
                 sprite=image.load("assets\itens\BotasdeHermes.png").convert_alpha(),
