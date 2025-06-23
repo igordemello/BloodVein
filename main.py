@@ -132,7 +132,7 @@ while i == 1:
                     player.itemAtivo.remover_efeitos()
                     player.x, player.y = original_pos
                     player.vx, player.vy = original_vel
-                    player.itemAtivo = None
+
             
             if player.itemAtivoEsgotado is not None :
                 if not player.itemAtivoEsgotado.afetaIni:
