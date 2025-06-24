@@ -20,6 +20,7 @@ class Bau:
         self.image_fundo = Surface((375, 500), SRCALPHA)
         self.image_fundo.fill((0, 0, 0, 0))
 
+
         for i in range(len(self.itens_sorteados)):
             x = 350 + 400 * i + 375 // 2
             y = 400 + 500 // 2

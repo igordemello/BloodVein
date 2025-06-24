@@ -15,11 +15,11 @@ from itensDic import *
 from gerenciador_andar import GerenciadorAndar
 from GerenciamentodeTelas import gerenciamento
 from menu import Menu
-
+from loja import Loja
 
 init()
 
-gerenciamento.modo = 'menu'
+gerenciamento.modo = 'jogo'
 
 clock = time.Clock()
 SCREEN = display.set_mode((1920, 1080), vsync=1, flags=HWSURFACE | DOUBLEBUF)  # mudei para funcionar em hardware fudido
@@ -45,6 +45,9 @@ fonte = font.SysFont("Arial", 24)
 menu = Menu(SCREEN)
 esperar_soltar_clique = True
 
+bau = False
+loja = False
+loja_instancia = None
 
 # while "Fred" == "Fred":
 i = 1
@@ -75,17 +78,20 @@ while i == 1:
             quit()
             sys.exit()
 
-        if gerenciamento.modo == "jogo":
+        if gerenciamento.modo == "jogo":  
             if esperar_soltar_clique:
                 if not mouse.get_pressed()[0]:
                     esperar_soltar_clique = False
             else:
                 if ev.type == MOUSEBUTTONDOWN and ev.button == 1:
-                    if jogo_pausado:
+                    if bau:
                         item = sala_atual.bau.checar_clique_bau(mouse.get_pos())
                         if item:
                             player.adicionarItem(item)
                             jogo_pausado = False
+                            bau = False
+                    elif loja and loja_instancia:  # Adicione esta condição para a loja
+                        loja_instancia.checar_compra(mouse.get_pos(), SCREEN)
                     else:
                         player.ataque_espada(sala_atual.inimigos, mouse_pos, dt)
                 if ev.type == KEYDOWN:
@@ -94,6 +100,17 @@ while i == 1:
                         player.usarItemAtivo(sala_atual)
                     if ev.key == K_MINUS:
                         jogo_pausado = not jogo_pausado
+                        bau = True
+                        loja = False
+                    if ev.key == K_l:
+                        loja = not loja  # Alterna entre abrir/fechar loja
+                        jogo_pausado = loja  # Pausa o jogo quando a loja está aberta
+                        bau = False  # Garante que o baú fecha se a loja abrir
+                        if loja:
+                            loja_instancia = Loja(ConjuntoItens()
+, player)  # Cria nova instância ao abrir
+                        else:
+                            loja_instancia = None  
 
                     if ev.key == K_PERIOD:
                         item_id = int(input("Digite o ID do item para debug: "))
@@ -117,8 +134,12 @@ while i == 1:
         if not jogo_pausado:
             sala_atual.atualizar(dt, keys)
             player.atualizar(dt, keys)
-        else:
+        elif bau == True:
             sala_atual.bau.bauEscolherItens(SCREEN)
+        elif loja and loja_instancia:
+            loja_instancia.desenhar_loja(SCREEN)
+
+
 
 
         # mostrar o fps:
