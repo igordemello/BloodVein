@@ -49,7 +49,7 @@
         {
             "tipo": "spawn",
             "visitada": true,
-            "arquivotmx": "mapas/1-2.tmx",
+            "arquivotmx": "mapas/1-1.tmx",
             "salaanterior": null,
             "p0": "sala1",
             "conexoes": [
