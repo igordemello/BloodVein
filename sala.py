@@ -137,7 +137,12 @@ class Sala:
         self.fade(fade_in=False, duration=2000)
         for porta in self.ranges_doors:
             if self.player.get_hitbox().colliderect(porta['colisor']) and self.porta_liberada:
+                
+                
                 self.em_transicao = True
+                self.player.set_velocidade_x(0)
+                self.player.set_velocidade_y(0)
+                self.player.is_dashing = False
 
 
                 if not any(inimigo.vivo for inimigo in self.inimigos):
