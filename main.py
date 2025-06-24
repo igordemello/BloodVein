@@ -98,6 +98,7 @@ while i == 1:
                     if ev.key == K_q and current_time - player.ativo_ultimo_uso > 2500:  # tecla de usar item ativo
                         player.ativo_ultimo_uso = current_time
                         player.usarItemAtivo(sala_atual)
+
                     if ev.key == K_MINUS:
                         jogo_pausado = not jogo_pausado
                         bau = True

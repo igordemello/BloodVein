@@ -49,8 +49,8 @@ class ConjuntoItens:
                 raridade="rara",
                 id=4,
             ),
-            "Varinha mágica": Item(
-                nome="Varinha Mágica",
+            "Cajado Mágico": Item(
+                nome="Cajado Mágico",
                 descricao="Aumenta o dano",
                 efeitos=[
                     DanoUsuario(1.5, "*")

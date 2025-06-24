@@ -19,13 +19,14 @@ class Sala:
         self.mapa = Mapa(caminho_mapa,self.tela,self.tela.get_width(),self.tela.get_height())
         self.gerenciador_andar = gerenciador_andar
 
-        self.colisao = Colisao(self.mapa)
+        self.player = player
+        self.colisao = Colisao(self.mapa, self.player)
         self.colisao.adicionar_entidade(player)
-        
+
 
         self.porta_liberada = False
-        self.player = player
-        self.ranges_doors = self.mapa.get_rangesdoors() 
+
+        self.ranges_doors = self.mapa.get_rangesdoors()
 
         self.almaspritesheet = image.load('./assets/Itens/almaSpriteSheet.png').convert_alpha()
 
@@ -43,7 +44,7 @@ class Sala:
         self.em_transicao = False
         self.visitada = False
 
-        
+
         if not gerenciador_andar.sala_foi_conquistada(gerenciador_andar.sala_atual):
             self.inimigos = self._criar_inimigos()
         else:
@@ -66,7 +67,7 @@ class Sala:
                 inimigo.atualizar((self.player.x,self.player.y), self.tela)
                 #da o dano no jogador
                 inimigo.dar_dano = lambda val=inimigo.dano: self.player.tomar_dano(val)
-        
+
         self.colisao.checar_colisoes(dt)
 
         if not self.visitada:
@@ -75,7 +76,7 @@ class Sala:
                 self.visitada = True
         else:
             self.porta_liberada = not any(inimigo.vivo for inimigo in self.inimigos)
-        
+
         if self.pode_trocar_de_sala() and teclas[K_e]:
             original_pos = (self.player.x, self.player.y)
             original_vel = (self.player.vx, self.player.vy)
@@ -88,7 +89,7 @@ class Sala:
                     self.player.x, self.player.y = original_pos
                     self.player.vx, self.player.vy = original_vel
 
-        
+
             if self.player.itemAtivoEsgotado is not None :
                 if not self.player.itemAtivoEsgotado.afetaIni:
                     self.player.itemAtivoEsgotado.remover_efeitos()
@@ -97,7 +98,8 @@ class Sala:
                 self.player.itemAtivoEsgotado = None
             self.player.player_rect.topleft = (self.player.x, self.player.y)
             self._trocar_de_sala()
-            #self.fade_out()
+
+
 
 
 
@@ -117,8 +119,8 @@ class Sala:
                         self.player.almas += 1
                         inimigo.alma_coletada = True
 
-        
-        
+
+
         #debug visual das colisões do player e do mapa:
         # for collider in self.mapa.get_colliders():
         #     draw.rect(tela, (255,0,0), collider['rect'], 1)
@@ -132,11 +134,16 @@ class Sala:
     def _trocar_de_sala(self):
         if self.em_transicao:
             return
-
+        self.fade(fade_in=False, duration=2000)
         for porta in self.ranges_doors:
             if self.player.get_hitbox().colliderect(porta['colisor']) and self.porta_liberada:
+                
+                
                 self.em_transicao = True
-                self.fade_out()
+                self.player.set_velocidade_x(0)
+                self.player.set_velocidade_y(0)
+                self.player.is_dashing = False
+
 
                 if not any(inimigo.vivo for inimigo in self.inimigos):
                     self.gerenciador_andar.marcar_sala_conquistada(self.gerenciador_andar.sala_atual)
@@ -156,10 +163,11 @@ class Sala:
 
                         self.__dict__.update(nova_instancia.__dict__)
 
-                        self.fade_in() # por algum motivo nao funciona
+
 
                         print(f"Transição para: {nova_sala} via {codigo_porta}")
                 self.em_transicao = False
+                self.fade(fade_in=True, duration=2000)
                 break
 
 
@@ -174,23 +182,30 @@ class Sala:
         rect = frame.get_rect(center=pos)
         self.tela.blit(frame, rect)
 
-    def fade_out(self, cor=(0, 0, 0), velocidade=14):
-        clock = time.Clock()
-        fade = Surface((1472,800))
-        fade.fill(cor)
-        for alpha in range(0, 255, velocidade):
-            fade.set_alpha(alpha)
-            self.tela.blit(fade, (224, 248))
-            display.update()
-            clock.tick(60)
+    def fade(self, fade_in=True, duration=500):
+        """Efeito de transição de fade (para entrada ou saída de sala)
+        Args:
+            fade_in (bool): Se True, fade de preto para tela (entrada). Se False, fade para preto (saída).
+            duration (int): Duração total do efeito em milissegundos.
+        """
+        fade_surface = Surface((1472, 780), SRCALPHA)
+        steps = 30
+        #delay = max(1, duration // steps)  # Garante pelo menos 1ms de delay
 
-    def fade_in(self, cor=(0, 0, 0), velocidade=14):
-        clock = time.Clock()
-        fade = Surface((1472,736))
-        fade.fill(cor)
-        for alpha in range(255, -1, -velocidade):
-            fade.set_alpha(alpha)
-            self.tela.blit(fade, (224, 248))
-            display.update()
-            clock.tick(60)
+        if fade_in:
+            # Fade in (preto -> tela)
+            for alpha in range(255, -1, -255 // steps):
+                self.desenhar(self.tela)
+                fade_surface.fill((0, 0, 0, alpha))
+                self.tela.blit(fade_surface, (224, 248))
+                display.flip()
+                #time.delay(delay)
+        else:
+            # Fade out (tela -> preto)
+            for alpha in range(0, 256, 255 // steps):
+                self.desenhar(self.tela)
+                fade_surface.fill((0, 0, 0, alpha))
+                self.tela.blit(fade_surface, (224, 248))
+                display.flip()
+                #time.delay(delay)
 
