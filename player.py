@@ -67,7 +67,7 @@ class Player():
         self.cooldown_st = 3000
 
         #almas
-        self.almas = 80
+        self.almas = 999
 
         self.old_x = x
         self.old_y = y

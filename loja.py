@@ -146,7 +146,7 @@ class Loja():
                 item = self.itens_sorteados[i]
                 preco = self.precos[item.raridade]
 
-                if self.player.almas >= preco:
+                if self.player.almas >= preco and not self.comprado[i]:
                     self.player.almas -= preco
                     self.player.adicionarItem(item)
                     comprado = self.font_preco.render("COMPRADO", True, ('Green'))
