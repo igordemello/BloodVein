@@ -3,9 +3,9 @@ import sys
 from pygame.locals import QUIT
 import math
 
-
 class Colisao:
-    def __init__(self, mapa):
+    def __init__(self, mapa, player):
+        self.player = player
         self.mapa = mapa
         self.entidades = []  
 
@@ -65,6 +65,8 @@ class Colisao:
 
 
     def _colisao_entidade_entidade(self, ent1, ent2):
+        if self.player.is_dashing:
+            return
         vx1, vy1 = ent1.get_velocidade()
         vx2, vy2 = ent2.get_velocidade()
 
