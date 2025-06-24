@@ -105,7 +105,7 @@ while i == 1:
                     if ev.key == K_l:
                         loja = not loja  # Alterna entre abrir/fechar loja
                         jogo_pausado = loja  # Pausa o jogo quando a loja está aberta
-                        bau = False  # Garante que o baú fecha se a loja abrir
+                        bau = False
                         if loja:
                             loja_instancia = Loja(ConjuntoItens()
 , player)  # Cria nova instância ao abrir
