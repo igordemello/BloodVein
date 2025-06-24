@@ -47,7 +47,6 @@ esperar_soltar_clique = True
 
 bau = False
 loja = False
-loja_instancia = None
 
 # while "Fred" == "Fred":
 i = 1
@@ -90,8 +89,8 @@ while i == 1:
                             player.adicionarItem(item)
                             jogo_pausado = False
                             bau = False
-                    elif loja and loja_instancia:  # Adicione esta condição para a loja
-                        loja_instancia.checar_compra(mouse.get_pos(), SCREEN)
+                    elif loja:  # Adicione esta condição para a loja
+                        sala_atual.loja.checar_compra(mouse.get_pos(), SCREEN)
                     else:
                         player.ataque_espada(sala_atual.inimigos, mouse_pos, dt)
                 if ev.type == KEYDOWN:
@@ -100,18 +99,10 @@ while i == 1:
                         player.usarItemAtivo(sala_atual)
 
                     if ev.key == K_MINUS:
-                        jogo_pausado = not jogo_pausado
-                        bau = True
-                        loja = False
+                        bau = not bau
                     if ev.key == K_l:
-                        loja = not loja  # Alterna entre abrir/fechar loja
-                        jogo_pausado = loja  # Pausa o jogo quando a loja está aberta
-                        bau = False
-                        if loja:
-                            loja_instancia = Loja(ConjuntoItens()
-, player)  # Cria nova instância ao abrir
-                        else:
-                            loja_instancia = None  
+                        loja = not loja
+
 
                     if ev.key == K_PERIOD:
                         item_id = int(input("Digite o ID do item para debug: "))
@@ -132,13 +123,13 @@ while i == 1:
         sala_atual.desenhar(SCREEN)
         player.desenhar(SCREEN,
                         mouse_pos)  # probleminha, a espada continua sendo atualizado, pq ele é desenhado assim no futuro
-        if not jogo_pausado:
+        if not bau and not loja:
             sala_atual.atualizar(dt, keys)
             player.atualizar(dt, keys)
-        elif bau == True:
+        elif bau:
             sala_atual.bau.bauEscolherItens(SCREEN)
-        elif loja and loja_instancia:
-            loja_instancia.desenhar_loja(SCREEN)
+        elif loja:
+            sala_atual.loja.desenhar_loja(SCREEN)
 
 
 

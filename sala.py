@@ -8,6 +8,7 @@ from itensDic import ConjuntoItens
 from mapa import Mapa
 from inimigos.orb import Orb
 from colisao import Colisao
+from loja import Loja
 import gerenciador_andar
 
 init()
@@ -39,6 +40,7 @@ class Sala:
         self.colliders = self.mapa.get_colliders()
 
         self.bau = Bau(self.itensDisp)
+        self.loja = Loja(self.itensDisp,self.player)
 
 
         self.em_transicao = False
