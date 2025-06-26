@@ -33,7 +33,7 @@ class DanoUsuario(Efeito):
         if self.tipoInc == "+":
             jogador.arma.dano += self.valor
         else:
-            jogador.arma.dano = jogador.dano*self.valor
+            jogador.arma.dano = jogador.arma.dano*self.valor
     def remover(self,jogador):
         if self.tipoInc == "+":
             jogador.arma.dano -= self.valor
