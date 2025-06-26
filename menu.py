@@ -3,6 +3,12 @@ from pygame.locals import QUIT
 import sys
 from GerenciamentodeTelas import gerenciamento
 
+class gerenciamento():
+    def __init__(self):
+        self.modo = "menu"
+
+
+
 class Menu():
     def __init__(self, SCREEN):
         self.screen = SCREEN
