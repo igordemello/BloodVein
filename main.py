@@ -13,13 +13,13 @@ from inimigos.orb import Orb
 from sala import Sala
 from itensDic import *
 from gerenciador_andar import GerenciadorAndar
-from GerenciamentodeTelas import gerenciamento
 from menu import Menu
+from menu import gerenciamento
 from loja import Loja
 
 init()
 
-gerenciamento.modo = 'jogo'
+gerenciamento.modo = 'menu'
 
 clock = time.Clock()
 SCREEN = display.set_mode((1920, 1080), vsync=1, flags=HWSURFACE | DOUBLEBUF)  # mudei para funcionar em hardware fudido
