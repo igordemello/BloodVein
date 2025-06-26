@@ -103,6 +103,9 @@ while i == 1:
                     if ev.key == K_l:
                         loja = not loja
 
+                    if ev.key == K_o:
+                        player.infoArma()
+
 
                     if ev.key == K_PERIOD:
                         item_id = int(input("Digite o ID do item para debug: "))

@@ -31,14 +31,14 @@ class DanoUsuario(Efeito):
         self.tipoInc = tipoInc
     def aplicar(self, jogador):
         if self.tipoInc == "+":
-            jogador.dano += self.valor
+            jogador.arma.dano += self.valor
         else:
-            jogador.dano = jogador.dano*self.valor
+            jogador.arma.dano = jogador.dano*self.valor
     def remover(self,jogador):
         if self.tipoInc == "+":
-            jogador.dano -= self.valor
+            jogador.arma.dano -= self.valor
         else:
-            jogador.dano /= self.valor
+            jogador.arma.dano /= self.valor
 
 class ModificadorDanoRecebido(Efeito):
     def __init__(self, valor):
@@ -86,7 +86,7 @@ class VelocidadeAtaque(Efeito):
     def __init__(self, valor):
         self.valor = valor
     def aplicar(self, jogador):
-        jogador.velocidadeAtk += self.valor #deixa o ataque mais rapido (a animação  também)
+        jogador.arma.velocidade += self.valor #deixa o ataque mais rapido (a animação  também)
 
 class VelocidadeMovimento(Efeito):
     def __init__(self, valor):

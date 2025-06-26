@@ -5,6 +5,7 @@ import math
 from efeito import *
 import time as t
 from sala import *
+from armas import *
 
 
 
@@ -29,6 +30,10 @@ class Player():
         self.frame_atual = self.animacoes[self.anim_direcao][self.anim_frame]
         self.rastros = [] #animação legal para o dash
 
+        self.lista_mods = ListaMods()
+        self.arma = LaminaDaNoite("comum", self.lista_mods)
+        self.arma.aplicaModificador()
+
 
         self.x = x
         self.y = y
@@ -42,8 +47,7 @@ class Player():
         self.velocidadeMov = velocidadeMov
         self.rate = 1 #decaimento
         self.rateSt = 1
-        self.dano = 20
-        self.velocidadeAtk = 1 #analisar esses valores depois com mais cuidado, depois da animação estar pronta, pq vai afetar a velocidade e a duração da animação
+
         self.revives = 0 #quantidade de vezes que o jogador pode reviver
         self.custoDash = 2.75   
         self.modificadorDanoRecebido = 1
@@ -445,6 +449,10 @@ class Player():
 
         self.x, self.y = self.player_rect.topleft
 
+    def infoArma(self):
+        print(f'Dano: {self.arma.dano}\nRapidez: {self.arma.velocidade}\nLife steal: {self.arma.lifeSteal}\nChance de Crítico: {self.arma.chanceCritico}\nDano do Crítico: {self.arma.danoCritico}')
+        print("Nome: ", self.arma.nome)
+
 
     def ataque_espada(self,inimigos,mouse_pos, dt):
         if not self.anima_espada:
@@ -472,10 +480,12 @@ class Player():
                     self.atacou = False
                     inimigo.foi_atingido = False
 
-                    self.hp += self.dano/3 #dar uma olhada melhor em qual vai ser a versao final desse valor
+                    self.arma.ataquePrincipal(inimigo)
+                    self.hp += self.arma.lifeSteal
+
                     if self.hp > self.hpMax:
                         self.hp = self.hpMax
-                    inimigo.hp -= self.dano*inimigo.modificadorDanoRecebido
+
 
 
                     #knockback
