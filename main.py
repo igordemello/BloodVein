@@ -35,15 +35,12 @@ mouse.set_visible(False)
 
 jogo_pausado = False
 
-
 player = Player(950, 600, 32 * 2, 48 * 2)
 hud = Hud(player)
 andar = GerenciadorAndar("data/andar1.json")
 sala_atual = Sala(andar.get_arquivo_atual(), SCREEN, player, andar)
 fonte = font.SysFont("Arial", 24)
 minimapa = Minimapa(andar, SCREEN)
-
-
 
 menu = Menu(SCREEN)
 esperar_soltar_clique = True
@@ -57,10 +54,8 @@ while i == 1:
     # i+=1
     keys = key.get_pressed()
     mouse_pos = mouse.get_pos()
-    clock.tick(60)
-    dt = clock.get_time()
+    dt = clock.tick(60)
     current_time = time.get_ticks()
-
     for ev in event.get():
         if ev.type == QUIT:
             quit()
@@ -80,7 +75,7 @@ while i == 1:
             quit()
             sys.exit()
 
-        if gerenciamento.modo == "jogo":  
+        if gerenciamento.modo == "jogo":
             if esperar_soltar_clique:
                 if not mouse.get_pressed()[0]:
                     esperar_soltar_clique = False
@@ -116,7 +111,6 @@ while i == 1:
                     if ev.key == K_TAB:
                         minimapa.toggle()
 
-
                     if ev.key == K_PERIOD:
                         item_id = int(input("Digite o ID do item para debug: "))
                         encontrado = False
@@ -130,12 +124,11 @@ while i == 1:
                                 encontrado = True
                                 break
 
-                    
-
     if gerenciamento.modo == 'jogo':
         SCREEN.blit(imagem_cursor, mouse_pos)
-        hud.desenhar(SCREEN)
+        hud.desenhaFundo(SCREEN)
         sala_atual.desenhar(SCREEN)
+        hud.desenhar(SCREEN)
         player.desenhar(SCREEN,
                         mouse_pos)  # probleminha, a espada continua sendo atualizado, pq ele é desenhado assim no futuro
         if not bau and not loja:
@@ -146,16 +139,14 @@ while i == 1:
         elif loja:
             sala_atual.loja.desenhar_loja(SCREEN)
 
-
-
-
+        hud.update(dt)
         # mostrar o fps:
         if time.get_ticks() % 500 < 16:  # Atualiza ~30 vezes por segundo
             fps = int(clock.get_fps())
             fps_text = fps_font.render(f"FPS: {fps}", True, (255, 255, 255))
 
         SCREEN.blit(fps_text, (10, 10))
-    
+
         minimapa.draw()
 
     SCREEN.blit(imagem_cursor, mouse_pos)
