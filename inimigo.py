@@ -14,6 +14,12 @@ class Inimigo:
         self.altura = altura
         self.velocidade = velocidade
 
+        self.particulas_dano = []
+
+        self.ultimo_dano = 0
+        self.ultimo_dano_tempo = 0
+        self.fonte_dano = font.SysFont("Arial", 20, bold=True)
+
         self.knockback_x = 0
         self.knockback_y = 0
         self.knockback_time = 0
@@ -31,6 +37,7 @@ class Inimigo:
         self.modificadorDanoRecebido = 1  # isso multiplica o dano que o jogador causa, serve pra fazer bleed e pro parry
         self.vivo = True
         self.dano = dano
+        self.ultimo_dano_critico = False
 
         self.spritesheet = None
         self.frame_width = 32
@@ -57,6 +64,24 @@ class Inimigo:
         self.dy = 0
 
         self.rect = self.get_hitbox()
+
+    def adicionar_particula_dano(self, x, y, valor):
+        cor = (255, 50, 50)  # Vermelho
+        if valor > 20:
+            cor = (255, 215, 0)  # Amarelo-ouro para críticos
+
+        for _ in range(10):  # 10 partículas
+            angulo = randint(0, 360)
+            velocidade = randint(1, 3)
+            self.particulas_dano.append({
+                'x': x,
+                'y': y,
+                'vx': math.cos(angulo) * velocidade,
+                'vy': math.sin(angulo) * velocidade,
+                'cor': cor,
+                'tempo': randint(300, 500),  # 300-500ms
+                'tamanho': randint(2, 5)
+            })
 
 
     def get_velocidade(self):
@@ -186,6 +211,7 @@ class Inimigo:
                 self.veneno_ativo = False
 
     def desenhar(self, tela, player_pos):
+        clock = time.Clock()
         if self.anima_hit:
             frame = self.frames_hit[self.frame_hit_index]
         elif self.frames:
@@ -204,6 +230,33 @@ class Inimigo:
 
         rot_rect, rot_surf = self.get_hitbox_ataque(player_pos)
         tela.blit(rot_surf, rot_rect)
+
+        if hasattr(self, 'ultimo_dano') and time.get_ticks() - self.ultimo_dano_tempo < 500:
+            if getattr(self, 'ultimo_dano_critico', False):
+                cor = (255, 215, 0)  # Amarelo-ouro
+                tamanho_fonte = 24  # Texto maior
+                offset_extra = 5 * math.sin(time.get_ticks() / 50)
+                texto = "!"
+            else:
+                cor = (255, 50, 50)
+                tamanho_fonte = 20
+                offset_extra = 0
+                texto = ""
+
+            fonte_atual = font.SysFont("Arial", tamanho_fonte, bold=True)
+            dano_text = fonte_atual.render(f"-{self.ultimo_dano}{texto}", True, cor)
+
+            sombra = fonte_atual.render(f"-{self.ultimo_dano}{texto}", True, (0, 0, 0))
+
+            offset_y = (time.get_ticks() - self.ultimo_dano_tempo) / 4
+            pos_x = self.x + self.largura / 2 - dano_text.get_width() / 2
+            pos_y = self.y - 5 - offset_y + offset_extra
+
+            tela.blit(sombra, (pos_x + 2, pos_y + 2))
+            tela.blit(dano_text, (pos_x, pos_y))
+
+
+
 
     def get_hitbox_ataque(self, player_pos):
         if not hasattr(self, '_last_angle') or self._last_pos != player_pos:

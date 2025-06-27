@@ -124,8 +124,10 @@ class LaminaDaNoite(Arma):
         self.radius = 100
         self.efeitos = None
         self.lifeSteal = self.dano/2
-        self.chanceCritico = 4
+        self.chanceCritico = 2
         self.danoCritico = self.dano*2
+        self.clock = time.Clock()
+
         mod_classe = listaMods.getMod(self.raridadeStr)  # Retorna a classe do modificador
         self.modificador = mod_classe(self)  # Instancia com self (a arma)
         self.nome = f"{self.tipoDeArma} {self.modificador.nome} {self.raridadeStr}"
@@ -134,12 +136,19 @@ class LaminaDaNoite(Arma):
         self.modificador.aplicarMod(self)
     def ataquePrincipal(self,inimigo):
         if randint(1, 100) <= self.chanceCritico:
+            original_speed = self.clock.get_fps()
+            time.delay(100)
+            self.clock.tick(original_speed)
             inimigo.hp -= self.danoCritico * inimigo.modificadorDanoRecebido
+            inimigo.ultimo_dano_critico = True
+            inimigo.ultimo_dano = self.danoCritico * inimigo.modificadorDanoRecebido
         else:
             inimigo.hp -= self.dano * inimigo.modificadorDanoRecebido
+            inimigo.ultimo_dano_critico = False
+            inimigo.ultimo_dano = self.dano
 
-    def ataqueSecundario(self,inimigo):
-        pass
+    def ataqueSecundario(self):
+        return False
 
 #falta sprite e animação de ataque
 class Chigatana(Arma):
@@ -156,6 +165,8 @@ class Chigatana(Arma):
         self.lifeSteal = self.dano/4
         self.chanceCritico = 5
         self.danoCritico = self.dano*2
+        self.clock = time.Clock()
+
         mod_classe = listaMods.getMod(self.raridadeStr)  # Retorna a classe do modificador
         self.modificador = mod_classe(self)  # Instancia com self (a arma)
         self.nome = f"{self.tipoDeArma} {self.modificador.nome} {self.raridadeStr}"
@@ -166,9 +177,16 @@ class Chigatana(Arma):
         self.modificador.aplicarMod(self)
     def ataquePrincipal(self,inimigo):
         if randint(1, 100) <= self.chanceCritico:
+            original_speed = self.clock.get_fps()
+            time.delay(100)
+            self.clock.tick(original_speed)
             inimigo.hp -= self.danoCritico * inimigo.modificadorDanoRecebido
+            inimigo.ultimo_dano_critico = True
+            inimigo.ultimo_dano = self.danoCritico * inimigo.modificadorDanoRecebido
         else:
             inimigo.hp -= self.dano * inimigo.modificadorDanoRecebido
+            inimigo.ultimo_dano_critico = False
+            inimigo.ultimo_dano = self.dano
 
     def ataqueSecundario(self,inimigo):
         inimigo.modificadorDanoRecebido = self.valorSangramento
@@ -188,6 +206,8 @@ class Karambit(Arma):
         self.lifeSteal = self.dano/4
         self.chanceCritico = 5
         self.danoCritico = self.dano*2
+        self.clock = time.Clock()
+
         mod_classe = listaMods.getMod(self.raridadeStr)  # Retorna a classe do modificador
         self.modificador = mod_classe(self)  # Instancia com self (a arma)
         self.nome = f"{self.tipoDeArma} {self.modificador.nome} {self.raridadeStr}"
@@ -198,9 +218,16 @@ class Karambit(Arma):
         self.modificador.aplicarMod(self)
     def ataquePrincipal(self,inimigo):
         if randint(1, 100) <= self.chanceCritico:
+            original_speed = self.clock.get_fps()
+            time.delay(100)
+            self.clock.tick(original_speed)
             inimigo.hp -= self.danoCritico * inimigo.modificadorDanoRecebido
+            inimigo.ultimo_dano_critico = True
+            inimigo.ultimo_dano = self.danoCritico * inimigo.modificadorDanoRecebido
         else:
             inimigo.hp -= self.dano * inimigo.modificadorDanoRecebido
+            inimigo.ultimo_dano_critico = False
+            inimigo.ultimo_dano = self.dano
 
     def ataqueSecundario(self,inimigo):
         inimigo.envenenar(5, self.dano)

@@ -6,7 +6,8 @@ from efeito import *
 import time as t
 from sala import *
 from armas import *
-
+from random import *
+from sistemaparticulas import *
 
 
 class Player():
@@ -30,10 +31,11 @@ class Player():
         self.frame_atual = self.animacoes[self.anim_direcao][self.anim_frame]
         self.rastros = [] #animação legal para o dash
 
+        self.sistemaparticulas = ParticleSystem()
 
         #armas
         self.lista_mods = ListaMods()
-        self.arma = Karambit("comum", self.lista_mods)
+        self.arma = LaminaDaNoite("comum", self.lista_mods)
         self.arma.aplicaModificador()
 
 
@@ -317,6 +319,8 @@ class Player():
 
         self.player_rect = self.get_hitbox()
 
+        self.sistemaparticulas.update(dt)
+
 
     #tem que fazer uma possibilidade de pegar o item mais de uma vez e ficar incrementando
     def adicionarItem(self,item) :
@@ -424,7 +428,9 @@ class Player():
 
         # Hitbox do ataque
         rotated_surf2, rotated_rect2 = self.get_rotated_rect_ataque(mouse_pos)
-        tela.blit(rotated_surf2, rotated_rect2)
+        #tela.blit(rotated_surf2, rotated_rect2)
+
+        self.sistemaparticulas.draw(tela)
 
 
 
@@ -459,6 +465,17 @@ class Player():
         print(f'Dano: {self.arma.dano}\nRapidez: {self.arma.velocidade}\nLife steal: {self.arma.lifeSteal}\nChance de Crítico: {self.arma.chanceCritico}\nDano do Crítico: {self.arma.danoCritico}')
         print("Nome: ", self.arma.nome)
 
+    def criar_efeito_sangue(self, x, y):
+        for _ in range(5):
+            angle = uniform(0, math.pi * 2)
+            speed = uniform(1, 1)
+            self.sistemaparticulas.add_particle(
+                x, y,
+                (200, 0, 0),
+                (math.cos(angle) * speed, math.sin(angle) * speed),
+                500,
+                randint(8, 10)
+            )
 
     def ataque_espadaPrincipal(self,inimigos,mouse_pos, dt):
         current_time = time.get_ticks()
@@ -490,6 +507,7 @@ class Player():
                     self.atacou = False
                 if inimigo.get_hitbox().colliderect(hitbox_espada):
                     #t.sleep(0.05) hitstop
+
                     inimigo.anima_hit = True
                     self.atacou = False
                     inimigo.foi_atingido = False
@@ -501,13 +519,20 @@ class Player():
                         self.hp = self.hpMax
 
 
+                    inimigo.ultimo_dano_tempo = time.get_ticks()
 
                     #knockback
                     dx = inimigo.x - self.x
                     dy = inimigo.y - self.y
                     inimigo.aplicar_knockback(dx, dy, intensidade=4)
 
+                    self.criar_efeito_sangue(hitbox_espada.centerx, hitbox_espada.centery)
+                    display.flip()
+                    time.delay(50)
+
     def ataque_espadaSecundario(self,inimigos,mouse_pos, dt):
+        if not self.arma.ataqueSecundario():
+            return
         current_time = time.get_ticks()
 
         cooldown = self.cooldown_ataque_base / self.arma.velocidade
