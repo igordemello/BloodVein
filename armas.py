@@ -61,7 +61,7 @@ class Impactante(Modificador):
         self.valor = arma.raridade
         self.nome = "Impactante"
     def aplicarMod(self, arma):
-        arma.danoCritico += self.valor
+        arma.danoCriticoMod += self.valor
 
 class Sangrenta(Modificador):
     def __init__(self,arma):
@@ -84,14 +84,14 @@ class Sortuda(Modificador):
         self.nome = "Sortuda"
     def aplicarMod(self, arma):
         arma.chanceCritico += self.valor
-        arma.danoCritico *= 0.8
+        arma.danoCriticoMod *= 0.8
 
 class Potente(Modificador):
     def __init__(self,arma):
-        self.valor = arma.danoCritico*2+arma.raridade
+        self.valor = 2*arma.raridade
         self.nome = "Potente"
     def aplicarMod(self, arma):
-        arma.danoCritico += self.valor
+        arma.danoCriticoMod += self.valor
         arma.chanceCritico *= 0.5
 
 
@@ -124,8 +124,8 @@ class LaminaDaNoite(Arma):
         self.radius = 100
         self.efeitos = None
         self.lifeSteal = self.dano/2
-        self.chanceCritico = 2
-        self.danoCritico = self.dano*2
+        self.chanceCritico = 8
+        self.danoCriticoMod = 2
         self.clock = time.Clock()
 
         mod_classe = listaMods.getMod(self.raridadeStr)  # Retorna a classe do modificador
@@ -139,9 +139,9 @@ class LaminaDaNoite(Arma):
             original_speed = self.clock.get_fps()
             time.delay(100)
             self.clock.tick(original_speed)
-            inimigo.hp -= self.danoCritico * inimigo.modificadorDanoRecebido
+            inimigo.hp -= self.dano * self.danoCriticoMod * inimigo.modificadorDanoRecebido
             inimigo.ultimo_dano_critico = True
-            inimigo.ultimo_dano = self.danoCritico * inimigo.modificadorDanoRecebido
+            inimigo.ultimo_dano = self.dano * self.danoCriticoMod * inimigo.modificadorDanoRecebido
         else:
             inimigo.hp -= self.dano * inimigo.modificadorDanoRecebido
             inimigo.ultimo_dano_critico = False
@@ -164,7 +164,7 @@ class Chigatana(Arma):
         self.efeitos = None
         self.lifeSteal = self.dano/4
         self.chanceCritico = 5
-        self.danoCritico = self.dano*2
+        self.danoCriticoMod = 2
         self.clock = time.Clock()
 
         mod_classe = listaMods.getMod(self.raridadeStr)  # Retorna a classe do modificador
@@ -180,9 +180,9 @@ class Chigatana(Arma):
             original_speed = self.clock.get_fps()
             time.delay(100)
             self.clock.tick(original_speed)
-            inimigo.hp -= self.danoCritico * inimigo.modificadorDanoRecebido
+            inimigo.hp -= self.dano * self.danoCriticoMod * inimigo.modificadorDanoRecebido
             inimigo.ultimo_dano_critico = True
-            inimigo.ultimo_dano = self.danoCritico * inimigo.modificadorDanoRecebido
+            inimigo.ultimo_dano = self.dano * self.danoCriticoMod * inimigo.modificadorDanoRecebido
         else:
             inimigo.hp -= self.dano * inimigo.modificadorDanoRecebido
             inimigo.ultimo_dano_critico = False
@@ -205,7 +205,7 @@ class Karambit(Arma):
         self.efeitos = None
         self.lifeSteal = self.dano/4
         self.chanceCritico = 5
-        self.danoCritico = self.dano*2
+        self.danoCriticoMod = 2
         self.clock = time.Clock()
 
         mod_classe = listaMods.getMod(self.raridadeStr)  # Retorna a classe do modificador
@@ -221,9 +221,9 @@ class Karambit(Arma):
             original_speed = self.clock.get_fps()
             time.delay(100)
             self.clock.tick(original_speed)
-            inimigo.hp -= self.danoCritico * inimigo.modificadorDanoRecebido
+            inimigo.hp -= self.dano * self.danoCriticoMod * inimigo.modificadorDanoRecebido
             inimigo.ultimo_dano_critico = True
-            inimigo.ultimo_dano = self.danoCritico * inimigo.modificadorDanoRecebido
+            inimigo.ultimo_dano = self.dano * self.danoCriticoMod * inimigo.modificadorDanoRecebido
         else:
             inimigo.hp -= self.dano * inimigo.modificadorDanoRecebido
             inimigo.ultimo_dano_critico = False

@@ -462,8 +462,9 @@ class Player():
         self.x, self.y = self.player_rect.topleft
 
     def infoArma(self):
-        print(f'Dano: {self.arma.dano}\nRapidez: {self.arma.velocidade}\nLife steal: {self.arma.lifeSteal}\nChance de Crítico: {self.arma.chanceCritico}\nDano do Crítico: {self.arma.danoCritico}')
+        print(f'Dano: {self.arma.dano}\nRapidez: {self.arma.velocidade}\nLife steal: {self.arma.lifeSteal}\nChance de Crítico: {self.arma.chanceCritico}\nDano do Crítico: {self.arma.danoCriticoMod*self.arma.dano}')
         print("Nome: ", self.arma.nome)
+        print(self.velocidadeMov)
 
     def criar_efeito_sangue(self, x, y):
         for _ in range(5):
