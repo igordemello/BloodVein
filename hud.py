@@ -85,7 +85,7 @@ class Hud:
         # Aplica efeitos de shake e scale
         combo_rect = combo.get_rect()
         combo_rect.right = 1880 + self.shake_offset[0]
-        combo_rect.top = 200 + self.shake_offset[1]
+        combo_rect.top = 190 + self.shake_offset[1]
 
         comboMult_rect = comboMult.get_rect()
         comboMult_rect.centerx = base_combo_rect.centerx + self.shake_offset[0] * 0.7

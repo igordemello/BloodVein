@@ -244,9 +244,9 @@ class Inimigo:
                 texto = ""
 
             fonte_atual = font.Font('assets/Fontes/alagard.ttf', tamanho_fonte)
-            dano_text = fonte_atual.render(f"-{self.ultimo_dano:.1f}{texto}", True, cor)
+            dano_text = fonte_atual.render(f"{self.ultimo_dano:.1f}{texto}", True, cor)
 
-            sombra = fonte_atual.render(f"-{self.ultimo_dano:.1f}{texto}", True, (0, 0, 0))
+            sombra = fonte_atual.render(f"{self.ultimo_dano:.1f}{texto}", True, (0, 0, 0))
 
             offset_y = (time.get_ticks() - self.ultimo_dano_tempo) / 4
             pos_x = self.x + self.largura / 2 - dano_text.get_width() / 2
