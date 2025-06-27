@@ -35,7 +35,7 @@ class Arma(ABC):
 #MODIFICADORES:
 class BainhaRapida(Modificador):
     def __init__(self,arma):
-        self.valor = randint(10+arma.raridade,20+arma.raridade)/10
+        self.valor = randint(15+arma.raridade,30+arma.raridade)/10
         self.nome = "Rapida"
 
     def aplicarMod(self, arma):
@@ -119,7 +119,9 @@ class LaminaDaNoite(Arma):
         self.raridade = RARIDADES.get(self.raridadeStr, 1)
         self.dano = 10+randint(5*self.raridade,10*self.raridade)
         self.velocidade = 1 #analisar esses valores depois
+        self.cooldown = 400
         self.range = (70, 100) #hitbox arma
+        self.radius = 100
         self.efeitos = None
         self.lifeSteal = self.dano/2
         self.chanceCritico = 4
@@ -132,11 +134,75 @@ class LaminaDaNoite(Arma):
         self.modificador.aplicarMod(self)
     def ataquePrincipal(self,inimigo):
         if randint(1, 100) <= self.chanceCritico:
-            inimigo.hp -= self.danoCritico
+            inimigo.hp -= self.danoCritico * inimigo.modificadorDanoRecebido
         else:
-            inimigo.hp -= self.dano
+            inimigo.hp -= self.dano * inimigo.modificadorDanoRecebido
 
     def ataqueSecundario(self,inimigo):
         pass
+
+#falta sprite e animação de ataque
+class Chigatana(Arma):
+    def __init__(self,raridadeStr : str,listaMods : ListaMods):
+        self.tipoDeArma = "Chigatana"
+        self.raridadeStr = raridadeStr
+        self.raridade = RARIDADES.get(self.raridadeStr, 1)
+        self.dano = 10+randint(5*self.raridade,10*self.raridade)
+        self.velocidade = 2 #analisar esses valores depois
+        self.cooldown = 400
+        self.range = (70, 100) #hitbox arma
+        self.radius = 100
+        self.efeitos = None
+        self.lifeSteal = self.dano/4
+        self.chanceCritico = 5
+        self.danoCritico = self.dano*2
+        mod_classe = listaMods.getMod(self.raridadeStr)  # Retorna a classe do modificador
+        self.modificador = mod_classe(self)  # Instancia com self (a arma)
+        self.nome = f"{self.tipoDeArma} {self.modificador.nome} {self.raridadeStr}"
+
+        self.valorSangramento = 2.2*self.raridade
+
+    def aplicaModificador(self):
+        self.modificador.aplicarMod(self)
+    def ataquePrincipal(self,inimigo):
+        if randint(1, 100) <= self.chanceCritico:
+            inimigo.hp -= self.danoCritico * inimigo.modificadorDanoRecebido
+        else:
+            inimigo.hp -= self.dano * inimigo.modificadorDanoRecebido
+
+    def ataqueSecundario(self,inimigo):
+        inimigo.modificadorDanoRecebido = self.valorSangramento
+
+
+class Karambit(Arma):
+    def __init__(self,raridadeStr : str,listaMods : ListaMods):
+        self.tipoDeArma = "Adaga"
+        self.raridadeStr = raridadeStr
+        self.raridade = RARIDADES.get(self.raridadeStr, 1)
+        self.dano = 10+randint(5*self.raridade,10*self.raridade)
+        self.velocidade = 2 #analisar esses valores depois
+        self.cooldown = 300
+        self.range = (45, 90) #hitbox arma
+        self.radius = 50
+        self.efeitos = None
+        self.lifeSteal = self.dano/4
+        self.chanceCritico = 5
+        self.danoCritico = self.dano*2
+        mod_classe = listaMods.getMod(self.raridadeStr)  # Retorna a classe do modificador
+        self.modificador = mod_classe(self)  # Instancia com self (a arma)
+        self.nome = f"{self.tipoDeArma} {self.modificador.nome} {self.raridadeStr}"
+
+        self.valorSangramento = 2.2*self.raridade
+
+    def aplicaModificador(self):
+        self.modificador.aplicarMod(self)
+    def ataquePrincipal(self,inimigo):
+        if randint(1, 100) <= self.chanceCritico:
+            inimigo.hp -= self.danoCritico * inimigo.modificadorDanoRecebido
+        else:
+            inimigo.hp -= self.dano * inimigo.modificadorDanoRecebido
+
+    def ataqueSecundario(self,inimigo):
+        inimigo.envenenar(5, self.dano)
 
 

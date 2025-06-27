@@ -110,6 +110,13 @@ class Inimigo:
         self.set_velocidade_x(self.knockback_x)
         self.set_velocidade_y(self.knockback_y)
 
+    def envenenar(self, duracao_em_segundos, dano_total):
+        self.veneno_dano_por_tick = dano_total // 2
+        self.veneno_ticks = 5
+        self.veneno_intervalo = (duracao_em_segundos * 1000) // 5  # em milissegundos
+        self.veneno_proximo_tick = time.get_ticks() + self.veneno_intervalo
+        self.veneno_ativo = True
+
     def atualizar(self, player_pos, tela):
         if self.anima_hit:
             now = time.get_ticks()
@@ -164,6 +171,19 @@ class Inimigo:
 
         self.x,self.y = self.rect.topleft
         self.atualizar_animacao()
+
+        if hasattr(self, 'veneno_ativo') and self.veneno_ativo:
+            if now >= self.veneno_proximo_tick and self.veneno_ticks > 0:
+                self.hp -= self.veneno_dano_por_tick
+                self.veneno_ticks -= 1
+                self.veneno_proximo_tick = now + self.veneno_intervalo
+
+                # Inicia animação de hit como feedback visual (opcional)
+                self.anima_hit = True
+                self.time_last_hit_frame = now
+
+            if self.veneno_ticks <= 0:
+                self.veneno_ativo = False
 
     def desenhar(self, tela, player_pos):
         if self.anima_hit:
@@ -223,6 +243,8 @@ class Inimigo:
 
     def get_hitbox(self):
         return Rect(self.x, self.y, self.largura, self.altura)
+
+
 
 
 

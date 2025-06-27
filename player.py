@@ -30,8 +30,10 @@ class Player():
         self.frame_atual = self.animacoes[self.anim_direcao][self.anim_frame]
         self.rastros = [] #animação legal para o dash
 
+
+        #armas
         self.lista_mods = ListaMods()
-        self.arma = LaminaDaNoite("comum", self.lista_mods)
+        self.arma = Karambit("comum", self.lista_mods)
         self.arma.aplicaModificador()
 
 
@@ -81,9 +83,9 @@ class Player():
         self.vy = 0
         self.atrito = 0.92
 
-        self.radius = 100
+        self.radius = self.arma.radius
         self.orbital_size = (40, 20)
-        self.hitbox_arma = (70, 100)
+        self.hitbox_arma = self.arma.range
 
         self.atacou = False
 
@@ -101,6 +103,10 @@ class Player():
         self.ativo_ultimo_uso = 0
 
         self.sword = transform.scale(image.load('assets/Player/Sword_Attack.png').convert_alpha(),(320*2,54*2))
+
+        #ataque
+        self.cooldown_ataque_base = self.arma.cooldown
+        self.ultimo_ataque = 0
 
         self.sprite_dano = self.frame_atual.copy()
         self.sprite_dano.fill((255, 255, 255), special_flags=BLEND_RGB_ADD)
@@ -327,7 +333,7 @@ class Player():
     def atualizar_animacao_espada(self, dt):
         if self.anima_espada:
             self.time_frame_sword += dt
-            if self.time_frame_sword > self.sword_frame_duration:
+            if self.time_frame_sword > self.sword_frame_duration / self.arma.velocidade:
                 self.frame_sword += 1
                 self.time_frame_sword = 0
                 if self.frame_sword >= self.total_frames_espada:
@@ -373,7 +379,7 @@ class Player():
         angulo_espada = math.degrees(angle) - 270
 
         espada_rotacionada = transform.rotate(self.sword, -angulo_espada)
-        rect_espada = espada_rotacionada.get_rect(center=(base_x, base_y))
+        rect_espada = espada_rotacionada.get_rect(center=(base_x+10, base_y))
 
 
         orbital_x = self.x + 32 + math.cos(angle) * (self.radius)
@@ -418,7 +424,7 @@ class Player():
 
         # Hitbox do ataque
         rotated_surf2, rotated_rect2 = self.get_rotated_rect_ataque(mouse_pos)
-        #tela.blit(rotated_surf2, rotated_rect2)
+        tela.blit(rotated_surf2, rotated_rect2)
 
 
 
@@ -454,7 +460,15 @@ class Player():
         print("Nome: ", self.arma.nome)
 
 
-    def ataque_espada(self,inimigos,mouse_pos, dt):
+    def ataque_espadaPrincipal(self,inimigos,mouse_pos, dt):
+        current_time = time.get_ticks()
+
+        cooldown = self.cooldown_ataque_base / self.arma.velocidade
+
+        if current_time - self.ultimo_ataque < cooldown:
+            return  # ainda no cooldown, não ataca
+
+        self.ultimo_ataque = current_time
         if not self.anima_espada:
             self.anima_espada = True
             self.frame_sword = 0
@@ -492,6 +506,49 @@ class Player():
                     dx = inimigo.x - self.x
                     dy = inimigo.y - self.y
                     inimigo.aplicar_knockback(dx, dy, intensidade=4)
+
+    def ataque_espadaSecundario(self,inimigos,mouse_pos, dt):
+        current_time = time.get_ticks()
+
+        cooldown = self.cooldown_ataque_base / self.arma.velocidade
+
+        if current_time - self.ultimo_ataque < cooldown:
+            return  # ainda no cooldown, não ataca
+
+        self.ultimo_ataque = current_time
+        if not self.anima_espada:
+            self.anima_espada = True
+            self.frame_sword = 0
+            self.time_frame_sword = 0
+
+        self.atacou = True
+        self.time_frame_sword += self.dt
+        if self.time_frame_sword > 150:
+            self.frame_sword += 1
+            self.time_frame_sword = 0
+        if self.frame_sword >= 5:
+            self.frame_sword = 0
+
+
+        _, hitbox_espada = self.get_rotated_rect_ataque(mouse_pos)
+        for inimigo in inimigos:
+            if inimigo.vivo:
+                if not inimigo.get_hitbox().colliderect(hitbox_espada):
+                    self.atacou = False
+                if inimigo.get_hitbox().colliderect(hitbox_espada):
+                    #t.sleep(0.05) hitstop
+                    inimigo.anima_hit = True
+                    self.atacou = False
+                    inimigo.foi_atingido = False
+
+                    self.arma.ataqueSecundario(inimigo)
+
+
+                    #knockback
+                    dx = inimigo.x - self.x
+                    dy = inimigo.y - self.y
+                    inimigo.aplicar_knockback(dx, dy, intensidade=0.5)
+
 
 
     def tomar_dano(self, valor):

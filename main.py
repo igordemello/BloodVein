@@ -82,17 +82,21 @@ while i == 1:
                 if not mouse.get_pressed()[0]:
                     esperar_soltar_clique = False
             else:
-                if ev.type == MOUSEBUTTONDOWN and ev.button == 1:
-                    if bau:
-                        item = sala_atual.bau.checar_clique_bau(mouse.get_pos())
-                        if item:
-                            player.adicionarItem(item)
-                            jogo_pausado = False
-                            bau = False
-                    elif loja:  # Adicione esta condição para a loja
-                        sala_atual.loja.checar_compra(mouse.get_pos(), SCREEN)
-                    else:
-                        player.ataque_espada(sala_atual.inimigos, mouse_pos, dt)
+                if ev.type == MOUSEBUTTONDOWN:
+                    if ev.button == 1:
+                        if bau:
+                            item = sala_atual.bau.checar_clique_bau(mouse.get_pos())
+                            if item:
+                                player.adicionarItem(item)
+                                jogo_pausado = False
+                                bau = False
+                        elif loja:  # Adicione esta condição para a loja
+                            sala_atual.loja.checar_compra(mouse.get_pos(), SCREEN)
+                        else:
+                            player.ataque_espadaPrincipal(sala_atual.inimigos, mouse_pos, dt)
+                    if ev.button == 3:
+                        player.ataque_espadaSecundario(sala_atual.inimigos, mouse_pos, dt)
+
                 if ev.type == KEYDOWN:
                     if ev.key == K_q and current_time - player.ativo_ultimo_uso > 2500:  # tecla de usar item ativo
                         player.ativo_ultimo_uso = current_time
