@@ -23,7 +23,7 @@ class Hud:
 
     def desenhar(self, tela):
         almas_font = font.Font('assets/Fontes/Philosopher-BoldItalic.ttf', 48)
-        almas = almas_font.render(f"{self.player.almas}x", True, (243, 236, 215))
+        almas = almas_font.render(f"{self.player.almas}x", True, (200, 200, 200))
         combo_font = font.Font('assets/Fontes/Philosopher-Bold.ttf', min(int(96 * self.player.arma.comboMult), 192))
         combo = combo_font.render(f"{self.player.hits}", True, (243, 236, 215))
         comboMult_font = font.Font('assets/Fontes/Philosopher-regular.ttf', min(int(24 * self.player.arma.comboMult), 48))
