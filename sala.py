@@ -17,8 +17,9 @@ fonte = font.SysFont("Arial", 24)
 class Sala:
     def __init__(self, caminho_mapa, tela, player, gerenciador_andar):
         self.tela = tela
-        self.mapa = Mapa(caminho_mapa,self.tela,self.tela.get_width(),self.tela.get_height())
         self.gerenciador_andar = gerenciador_andar
+        self.mapa = Mapa(caminho_mapa,self.tela,self.tela.get_width(),self.tela.get_height(),self.gerenciador_andar)
+        
 
         self.player = player
         self.colisao = Colisao(self.mapa, self.player)
@@ -80,13 +81,13 @@ class Sala:
             self.porta_liberada = not any(inimigo.vivo for inimigo in self.inimigos)
 
         if self.pode_trocar_de_sala() and teclas[K_e]:
+            print('cu')
             original_pos = (self.player.x, self.player.y)
             original_vel = (self.player.vx, self.player.vy)
 
             if self.player.itemAtivo is not None:
                 if not self.player.itemAtivo.afetaIni:
                     # Remove efeitos mas mantém a posição/velocidade
-                    print('asdas')
                     self.player.itemAtivo.remover_efeitos()
                     self.player.x, self.player.y = original_pos
                     self.player.vx, self.player.vy = original_vel
@@ -130,6 +131,7 @@ class Sala:
 
 
     def pode_trocar_de_sala(self):
+
         return self.porta_liberada and any(self.player.get_hitbox().colliderect(rangee['colisor']) for rangee in self.ranges_doors)
 
 
@@ -139,6 +141,7 @@ class Sala:
         self.fade(fade_in=False, duration=2000)
         for porta in self.ranges_doors:
             if self.player.get_hitbox().colliderect(porta['colisor']) and self.porta_liberada:
+                print('bct')
                 
                 
                 self.em_transicao = True
@@ -152,7 +155,7 @@ class Sala:
 
                 codigo_porta = porta['codigoporta']
 
-                if f"p{int(codigo_porta[2:])}" in self.gerenciador_andar.grafo.nodes[self.gerenciador_andar.sala_atual]:
+                if codigo_porta in self.gerenciador_andar.grafo.nodes[self.gerenciador_andar.sala_atual].get("portas", {}):
 
                     nova_sala = self.gerenciador_andar.ir_para_proxima_sala(codigo_porta)
 

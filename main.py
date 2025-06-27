@@ -31,15 +31,13 @@ mouse.set_visible(False)
 
 jogo_pausado = False
 
-# Instâncias das classes que foram criadas:
+
 player = Player(950, 600, 32 * 2, 48 * 2)
 hud = Hud(player)
 andar = GerenciadorAndar("data/andar1.json")
 sala_atual = Sala(andar.get_arquivo_atual(), SCREEN, player, andar)
-num_sala = 1
 fonte = font.SysFont("Arial", 24)
-# exemplo de como seria para adicionar um item pro jogador
-# player.adicionarItem(conjIt.itens["Sapato de Sangue"])
+
 
 
 menu = Menu(SCREEN)

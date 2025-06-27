@@ -4,91 +4,152 @@
     "graph": {},
     "nodes": [
         {
+            "portas": {
+                "cima": "sala1",
+                "baixo": "sala4"
+            },
+            "pos": [
+                0,
+                0
+            ],
             "tipo": "comum",
             "visitada": false,
-            "arquivotmx": "mapas/2-2.tmx",
+            "arquivotmx": "mapas/3.tmx",
             "salaanterior": null,
-            "p0": "sala1",
-            "p1": "sala2",
             "conexoes": [
                 "sala1",
-                "sala2"
+                "sala4"
             ],
             "id": "sala0"
         },
         {
+            "portas": {
+                "baixo": "sala0",
+                "cima": "sala2",
+                "esquerda": "sala5"
+            },
+            "pos": [
+                0,
+                -1
+            ],
             "tipo": "comum",
             "visitada": false,
-            "arquivotmx": "mapas/3-3.tmx",
+            "arquivotmx": "mapas/6.tmx",
             "salaanterior": null,
-            "p0": "sala0",
-            "p1": "sala3",
-            "p2": "sala6",
             "conexoes": [
                 "sala0",
-                "sala3",
-                "sala6"
+                "sala2",
+                "sala5"
             ],
             "id": "sala1"
         },
         {
+            "portas": {
+                "baixo": "sala1",
+                "cima": "sala3",
+                "esquerda": "sala6"
+            },
+            "pos": [
+                0,
+                -2
+            ],
             "tipo": "comum",
             "visitada": false,
-            "arquivotmx": "mapas/3-3.tmx",
+            "arquivotmx": "mapas/4.tmx",
             "salaanterior": null,
-            "p0": "sala0",
-            "p1": "sala4",
-            "p2": "sala5",
             "conexoes": [
-                "sala0",
-                "sala4",
-                "sala5"
+                "sala1",
+                "sala3",
+                "sala6"
             ],
             "id": "sala2"
         },
         {
+            "portas": {
+                "baixo": "sala2"
+            },
             "tipo": "spawn",
+            "pos": [
+                0,
+                -3
+            ],
             "visitada": true,
-            "arquivotmx": "mapas/1-1.tmx",
+            "arquivotmx": "mapas/1.tmx",
             "salaanterior": null,
-            "p0": "sala1",
             "conexoes": [
-                "sala1"
+                "sala2"
             ],
             "id": "sala3"
         },
         {
-            "tipo": "boss",
+            "portas": {
+                "cima": "sala0",
+                "baixo": "sala7"
+            },
+            "pos": [
+                0,
+                1
+            ],
+            "tipo": "comum",
             "visitada": false,
-            "arquivotmx": "mapas/1-1.tmx",
+            "arquivotmx": "mapas/13.tmx",
             "salaanterior": null,
-            "p0": "sala2",
             "conexoes": [
-                "sala2"
+                "sala0",
+                "sala7"
             ],
             "id": "sala4"
         },
         {
+            "portas": {
+                "direita": "sala1"
+            },
+            "pos": [
+                -1,
+                -1
+            ],
             "tipo": "comum",
             "visitada": false,
-            "arquivotmx": "mapas/1-2.tmx",
+            "arquivotmx": "mapas/11.tmx",
             "salaanterior": null,
-            "p0": "sala2",
             "conexoes": [
-                "sala2"
+                "sala1"
             ],
             "id": "sala5"
         },
         {
+            "portas": {
+                "direita": "sala2"
+            },
+            "pos": [
+                -1,
+                -2
+            ],
             "tipo": "comum",
             "visitada": false,
-            "arquivotmx": "mapas/1-4.tmx",
+            "arquivotmx": "mapas/14.tmx",
             "salaanterior": null,
-            "p0": "sala1",
             "conexoes": [
-                "sala1"
+                "sala2"
             ],
             "id": "sala6"
+        },
+        {
+            "portas": {
+                "cima": "sala4"
+            },
+            "tipo": "boss",
+            "pos": [
+                0,
+                2
+            ],
+            "visitada": false,
+            "arquivotmx": "mapas/8.tmx",
+            "salaanterior": null,
+            "conexoes": [
+                "sala4"
+            ],
+            "id": "sala7"
         }
     ],
     "links": [
@@ -98,23 +159,27 @@
         },
         {
             "source": "sala0",
+            "target": "sala4"
+        },
+        {
+            "source": "sala1",
             "target": "sala2"
         },
         {
             "source": "sala1",
+            "target": "sala5"
+        },
+        {
+            "source": "sala2",
             "target": "sala3"
         },
         {
-            "source": "sala1",
+            "source": "sala2",
             "target": "sala6"
         },
         {
-            "source": "sala2",
-            "target": "sala4"
-        },
-        {
-            "source": "sala2",
-            "target": "sala5"
+            "source": "sala4",
+            "target": "sala7"
         }
     ]
 }
