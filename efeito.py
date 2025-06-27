@@ -29,16 +29,25 @@ class DanoUsuario(Efeito):
     def __init__(self, valor,tipoInc=str):
         self.valor = valor
         self.tipoInc = tipoInc
+        self.valorOriginal = None
+        self.ativo = False
     def aplicar(self, jogador):
-        if self.tipoInc == "+":
-            jogador.arma.dano += self.valor
-        else:
-            jogador.arma.dano = jogador.arma.dano*self.valor
+        if not self.ativo:
+            if self.tipoInc == "+":
+                self.valorOriginal = jogador.arma.dano
+                jogador.arma.dano += self.valor
+            else:
+                self.valorOriginal = jogador.arma.dano
+                jogador.arma.dano = jogador.arma.dano*self.valor
+                self.ativo = True
     def remover(self,jogador):
-        if self.tipoInc == "+":
-            jogador.arma.dano -= self.valor
-        else:
-            jogador.arma.dano /= self.valor
+        if self.ativo and self.valorOriginal is not None:
+            if self.tipoInc == "+":
+                jogador.arma.dano = self.valorOriginal
+                self.ativo = False
+            else:
+                jogador.arma.dano = self.valorOriginal
+                self.ativo = False
 
 class ModificadorDanoRecebido(Efeito):
     def __init__(self, valor):
@@ -156,10 +165,10 @@ class ItemAtivo:
             for efeito in self.efeitos:
                 efeito.aplicar(self.player)
 
-    def remover_efeitos(self):
+    def remover_efeitos(self,player):
         if not self.afetaIni:
             for efeito in self.efeitos:
-                efeito.remover(self.player)
+                efeito.remover(player)
 
 
 

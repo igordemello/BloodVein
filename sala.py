@@ -87,7 +87,7 @@ class Sala:
             if self.player.itemAtivo is not None:
                 if not self.player.itemAtivo.afetaIni:
                     # Remove efeitos mas mantém a posição/velocidade
-                    self.player.itemAtivo.remover_efeitos()
+                    self.player.itemAtivo.remover_efeitos(self.player)
                     self.player.x, self.player.y = original_pos
                     self.player.vx, self.player.vy = original_vel
 

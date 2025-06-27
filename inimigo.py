@@ -16,7 +16,7 @@ class Inimigo:
 
         self.particulas_dano = []
 
-        self.ultimo_dano = 0
+
         self.ultimo_dano_tempo = 0
         self.fonte_dano = font.Font('assets/Fontes/Philosopher-Bold.ttf', 20)
 
