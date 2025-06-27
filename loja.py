@@ -102,10 +102,16 @@ class Loja():
                 nome = self.font_chata.render(item.nome, True, (255, 255, 255))
                 tela.blit(nome, (1250, 182 + 525))
 
+
+                # Descrição (hover)
+                if self.descricao_visivel[pos]:
+                    desc_lines = self.quebrar_texto_em_linhas(item.descricao, self.font_desc, width - 40)
+                    for i, line in enumerate(desc_lines):
+                        desc_text = self.font_desc.render(line, True, (255, 255, 255))
+                        tela.blit(desc_text, (1250, 755))
+
+
             
-
-
-
             # Sprite do item
             item_img = transform.scale(item.sprite, (150, 150))
             tela.blit(item_img, (pos_x + (width - 100)//2, pos_y + 40))
@@ -120,17 +126,10 @@ class Loja():
 
             #carta comprada
             if self.comprado[pos]:
-                    carta_tchau = Surface((width, height), SRCALPHA)
+                    carta_tchau = Surface((600, 300), SRCALPHA)
                     carta_tchau.fill((151, 0, 0, 90))  # Preto com transparência
                     tela.blit(carta_tchau, (pos_x, pos_y))
 
-
-            # Descrição (hover)
-            if self.descricao_visivel[pos]:
-                desc_lines = self.quebrar_texto_em_linhas(item.descricao, self.font_desc, width - 40)
-                for i, line in enumerate(desc_lines):
-                    desc_text = self.font_desc.render(line, True, (255, 255, 255))
-                    tela.blit(desc_text, (1250, 755))
     
         for botao in self.botoes:
             botao.changeColor(mouse_pos)

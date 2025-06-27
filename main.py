@@ -26,6 +26,9 @@ SCREEN = display.set_mode((1920, 1080), vsync=1, flags=HWSURFACE | DOUBLEBUF)  #
 fps_font = font.SysFont("Arial", 24)
 fps_text = fps_font.render("FPS: 60", True, (255, 255, 255))
 
+logo = image.load("assets/logo.png")
+display.set_icon(logo)
+
 imagem_cursor = transform.scale(image.load(r'assets\UI\cursor.png').convert_alpha(), (32, 32))
 mouse.set_visible(False)
 
