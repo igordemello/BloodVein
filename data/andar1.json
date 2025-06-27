@@ -14,7 +14,7 @@
             ],
             "tipo": "comum",
             "visitada": false,
-            "arquivotmx": "mapas/3.tmx",
+            "arquivotmx": "11.tmx",
             "salaanterior": null,
             "conexoes": [
                 "sala1",
@@ -34,7 +34,7 @@
             ],
             "tipo": "comum",
             "visitada": false,
-            "arquivotmx": "mapas/6.tmx",
+            "arquivotmx": "5.tmx",
             "salaanterior": null,
             "conexoes": [
                 "sala0",
@@ -55,7 +55,7 @@
             ],
             "tipo": "comum",
             "visitada": false,
-            "arquivotmx": "mapas/4.tmx",
+            "arquivotmx": "2.tmx",
             "salaanterior": null,
             "conexoes": [
                 "sala1",
@@ -74,7 +74,7 @@
                 -3
             ],
             "visitada": true,
-            "arquivotmx": "mapas/1.tmx",
+            "arquivotmx": "9.tmx",
             "salaanterior": null,
             "conexoes": [
                 "sala2"
@@ -92,7 +92,7 @@
             ],
             "tipo": "comum",
             "visitada": false,
-            "arquivotmx": "mapas/13.tmx",
+            "arquivotmx": "8.tmx",
             "salaanterior": null,
             "conexoes": [
                 "sala0",
@@ -110,7 +110,7 @@
             ],
             "tipo": "comum",
             "visitada": false,
-            "arquivotmx": "mapas/11.tmx",
+            "arquivotmx": "6.tmx",
             "salaanterior": null,
             "conexoes": [
                 "sala1"
@@ -127,7 +127,7 @@
             ],
             "tipo": "comum",
             "visitada": false,
-            "arquivotmx": "mapas/14.tmx",
+            "arquivotmx": "14.tmx",
             "salaanterior": null,
             "conexoes": [
                 "sala2"
@@ -144,7 +144,7 @@
                 2
             ],
             "visitada": false,
-            "arquivotmx": "mapas/8.tmx",
+            "arquivotmx": "7.tmx",
             "salaanterior": null,
             "conexoes": [
                 "sala4"

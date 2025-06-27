@@ -34,7 +34,9 @@ class GerenciadorAndar:
         self.salas_visitadas = set()
         self.salas_visitadas.add(self.sala_atual) 
 
-        
+    
+    # def gerar_grafo():
+    #     pass
 
     def marcar_sala_conquistada(self, sala_id):
         self.salas_conquistadas.add(sala_id)

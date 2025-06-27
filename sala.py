@@ -62,7 +62,7 @@ class Sala:
         if "boss" in self.gerenciador_andar.grafo.nodes[self.gerenciador_andar.sala_atual]["tipo"]:
             return [Orb(400, 700, 64, 64, hp=200,velocidade=3, dano=30)]
         else:
-            return []
+            return [Orb(400, 700, 64, 64)]
 
     def atualizar(self,dt,teclas):
         for inimigo in self.inimigos:
