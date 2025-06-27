@@ -22,8 +22,8 @@ class Hud:
         self.fundo = transform.scale(self.fundo, (1920,1080))
 
     def desenhar(self, tela):
-        almas_font = font.SysFont("Arial", 48)
-        almas = almas_font.render(f"{self.player.almas}x", True, (255, 255, 255))
+        almas_font = font.Font('assets/Fontes/Philosopher-BoldItalic.ttf', 48)
+        almas = almas_font.render(f"{self.player.almas}x", True, (243, 236, 215))
         almas_rect = almas.get_rect()
         almas_rect.right = 1700  # ponto fixo da direita (ajuste como preferir)
         almas_rect.top = 58

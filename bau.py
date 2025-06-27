@@ -11,8 +11,8 @@ class Bau:
         self.ids_disponiveis = list(conjunto.itens_por_id)
         self.ids_sorteados = sample(self.ids_disponiveis, 3)
         self.itens_sorteados = [self.itensDisp.itens_por_id[id_] for id_ in self.ids_sorteados]
-        self.font = font.SysFont("Arial", 24, bold=True)
-        self.fontDesc = font.SysFont("Arial", 24)
+        self.font = font.Font('assets/Fontes/Philosopher-BoldItalic.ttf', 24)
+        self.fontDesc = font.Font('assets/Fontes/Philosopher-Italic.ttf', 24)
 
         self.botoes = []
         self.estados_hover = [Vector2(1.0, 0.0) for _ in self.itens_sorteados]
