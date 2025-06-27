@@ -4,10 +4,11 @@ from pygame.locals import QUIT
 import math
 from pytmx.util_pygame import load_pygame
 import pytmx
+from gerenciador_andar import GerenciadorAndar
 
 
 class Mapa:
-    def __init__(self, caminho_tmx, tela, tela_width, tela_heigth, escala=3,):
+    def __init__(self, caminho_tmx, tela, tela_width, tela_heigth,gerenciador_andar, escala=3,):
         self.tmx_data = load_pygame(caminho_tmx)
         self.escala = escala
         self.tela = tela
@@ -20,6 +21,8 @@ class Mapa:
         self.mapa_cache = None
         self._last_porta_state = None
         self._cache_surface = None
+
+        self.gerenciador_andar = gerenciador_andar
 
 
     def desenhar(self, porta_liberada):
@@ -41,11 +44,25 @@ class Mapa:
         tile_w = self.tmx_data.tilewidth
         tile_h = self.tmx_data.tileheight
         
+        
+
         for layer in self.tmx_data:
             if hasattr(layer, "tiles"):
-                if layer.name[:2] == "cd" and porta_liberada:
-                    continue
-                    
+                
+                if layer.name.startswith('porta_'):
+                    lado = layer.name.removeprefix("porta_").removesuffix("_aberta")
+
+                    portas_sala = self.gerenciador_andar.grafo.nodes[self.gerenciador_andar.sala_atual].get("portas", {})
+
+                    if lado not in portas_sala:
+                        continue
+
+                if layer.name.startswith('porta_'):
+                    if not layer.name.endswith("_aberta") and porta_liberada:
+                        continue
+
+                     
+
                 for x, y, gid in layer:
                     tile_img = self.tmx_data.get_tile_image_by_gid(gid)
                     if tile_img:
@@ -110,7 +127,7 @@ class Mapa:
 
         for layer in self.tmx_data.visible_layers:
             if isinstance(layer, pytmx.TiledObjectGroup):
-                if layer.name[:2] == "cd":
+                if layer.name in self.gerenciador_andar.get_portas_sala(self.gerenciador_andar.sala_atual).keys():
                     for obj in layer:
                         rect = Rect(
                             obj.x * self.escala + offset_x,
