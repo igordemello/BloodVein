@@ -62,7 +62,7 @@ class Sala:
         if "boss" in self.gerenciador_andar.grafo.nodes[self.gerenciador_andar.sala_atual]["tipo"]:
             return [Orb(400, 700, 64, 64, hp=200,velocidade=3, dano=30)]
         else:
-            return [Orb(400, 700, 64, 64)]
+            return []
 
     def atualizar(self,dt,teclas):
         for inimigo in self.inimigos:
@@ -81,7 +81,6 @@ class Sala:
             self.porta_liberada = not any(inimigo.vivo for inimigo in self.inimigos)
 
         if self.pode_trocar_de_sala() and teclas[K_e]:
-            print('cu')
             original_pos = (self.player.x, self.player.y)
             original_vel = (self.player.vx, self.player.vy)
 
@@ -141,7 +140,6 @@ class Sala:
         self.fade(fade_in=False, duration=2000)
         for porta in self.ranges_doors:
             if self.player.get_hitbox().colliderect(porta['colisor']) and self.porta_liberada:
-                print('bct')
                 
                 
                 self.em_transicao = True

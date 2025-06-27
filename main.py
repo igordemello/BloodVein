@@ -16,6 +16,7 @@ from gerenciador_andar import GerenciadorAndar
 from menu import Menu
 from menu import gerenciamento
 from loja import Loja
+from minimapa import Minimapa
 
 init()
 
@@ -40,6 +41,7 @@ hud = Hud(player)
 andar = GerenciadorAndar("data/andar1.json")
 sala_atual = Sala(andar.get_arquivo_atual(), SCREEN, player, andar)
 fonte = font.SysFont("Arial", 24)
+minimapa = Minimapa(andar, SCREEN)
 
 
 
@@ -125,6 +127,8 @@ while i == 1:
                                 encontrado = True
                                 break
 
+                    
+
     if gerenciamento.modo == 'jogo':
         SCREEN.blit(imagem_cursor, mouse_pos)
         hud.desenhar(SCREEN)
@@ -148,6 +152,10 @@ while i == 1:
             fps_text = fps_font.render(f"FPS: {fps}", True, (255, 255, 255))
 
         SCREEN.blit(fps_text, (10, 10))
+    
+        minimapa_active = keys[K_TAB]
+        if minimapa_active:
+            minimapa.draw()
 
     SCREEN.blit(imagem_cursor, mouse_pos)
     display.update()

@@ -31,6 +31,9 @@ class GerenciadorAndar:
 
         self.salas_conquistadas = set()
 
+        self.salas_visitadas = set()
+        self.salas_visitadas.add(self.sala_atual) 
+
         
 
     def marcar_sala_conquistada(self, sala_id):
@@ -57,4 +60,35 @@ class GerenciadorAndar:
         if porta_direcao in self.grafo.nodes[self.sala_atual].get("portas", {}):
             proxima_sala = self.grafo.nodes[self.sala_atual]["portas"][porta_direcao]
             self.sala_atual = proxima_sala
+            self.salas_visitadas.add(proxima_sala)
             return self.grafo.nodes[proxima_sala]["arquivotmx"]
+        
+    def get_mapa_info(self):
+        nodes = []
+        
+        
+        for sala in self.grafo.nodes:
+            node_data = self.grafo.nodes[sala]
+            nodes.append({
+                'id': sala,
+                'tipo': node_data['tipo'],
+                'visitada': sala in self.salas_visitadas,
+                'atual': sala == self.sala_atual,
+                'posicao': (
+                    (node_data['pos'][0]) * 120 + 350,
+                    (node_data['pos'][1]) * 80 + 350
+                )
+            })
+        
+        edges = []
+        for origem, destino in self.grafo.edges:
+            edges.append({
+                'origem': origem,
+                'destino': destino
+            })
+            
+        
+        return {
+            'nodes': nodes,
+            'edges': edges
+        }
