@@ -113,6 +113,9 @@ while i == 1:
                     if ev.key == K_o:
                         player.infoArma()
 
+                    if ev.key == K_TAB:
+                        minimapa.toggle()
+
 
                     if ev.key == K_PERIOD:
                         item_id = int(input("Digite o ID do item para debug: "))
@@ -153,9 +156,7 @@ while i == 1:
 
         SCREEN.blit(fps_text, (10, 10))
     
-        minimapa_active = keys[K_TAB]
-        if minimapa_active:
-            minimapa.draw()
+        minimapa.draw()
 
     SCREEN.blit(imagem_cursor, mouse_pos)
     display.update()

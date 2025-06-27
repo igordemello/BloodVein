@@ -30,6 +30,8 @@ class Minimapa:
         self.border_radius = 20 
 
 
+    def toggle(self):
+        self.visible = not self.visible
 
     def draw_bg(self, surface, rect, color, radius=20):
         rect = Rect(rect)
@@ -46,7 +48,8 @@ class Minimapa:
         surface.blit(temp, rect.topleft)
 
     def draw(self):
-            
+        if not self.visible:
+            return
 
         self.surface.fill((0, 0, 0, 0))
         
