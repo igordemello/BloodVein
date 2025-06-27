@@ -19,7 +19,7 @@ from loja import Loja
 
 init()
 
-gerenciamento.modo = 'menu'
+gerenciamento.modo = 'jogo'
 
 clock = time.Clock()
 SCREEN = display.set_mode((1920, 1080), vsync=1, flags=HWSURFACE | DOUBLEBUF)  # mudei para funcionar em hardware fudido

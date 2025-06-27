@@ -9,7 +9,8 @@ import math
 
 class Loja():
     def __init__(self, conjunto: ConjuntoItens, player):
-        self.personagem_img = transform.scale(image.load('assets/iko.png').convert_alpha(), (750, 750))
+        self.personagem_img = transform.scale(transform.flip(image.load('assets/iko.png').convert_alpha(), True, False),(750, 750))
+        self.fundo = image.load("assets/loja.png").convert_alpha()
         
         self.itensDisp = conjunto
         self.ids_disponiveis = list(conjunto.itens_por_id)
@@ -25,9 +26,10 @@ class Loja():
         self.player = player
         self.tempo = 0  # Para animação
         
-        self.font_titulo = font.SysFont("Arial", 26, bold=True)
+        self.font_titulo = font.SysFont("Arial", 30, bold=True)
         self.font_desc = font.SysFont("Arial", 20)
-        self.font_preco = font.SysFont("Arial", 24, bold=True)
+        self.font_preco = font.SysFont("Arial", 30, bold=True)
+        self.font_chata = font.SysFont("Arial", 20, bold=True)
         
         self.estados_hover = [Vector2(1.0, 0.0) for _ in self.itens_sorteados]
         self.descricao_visivel = [False] * 3
@@ -42,35 +44,37 @@ class Loja():
             "rara": transform.scale(image.load("assets/itens/carta_rara_loja.png").convert_alpha(), (self.item_width, self.item_height)),
             "lendaria": transform.scale(image.load("assets/itens/carta_lendaria_loja.png").convert_alpha(), (self.item_width, self.item_height))
         }
-        
+            
         for i in range(3):
-            x = 900 + i * 350
-            y = 250
-            botao = Botao(
-                image=Surface((self.item_width, self.item_height), SRCALPHA),
-                pos=(x + self.item_width//2, y + self.item_height//2),
-                text_input="",
-                font=self.font_titulo,
-                base_color=(255, 255, 255),
-                hovering_color=(200, 200, 200)
-            )
-            self.botoes.append(botao)
+                base_x = 25
+                base_y = 75 + i * 320
+                botao = Botao(
+                    image=Surface((self.item_width, self.item_height), SRCALPHA),
+                    pos=(base_x + self.item_width//2, base_y + self.item_height//2),
+                    text_input="",
+                    font=self.font_titulo,
+                    base_color=(255, 255, 255, 0),  # Transparente
+                    hovering_color=(255, 255, 255, 0)  # Transparente
+                )
+                self.botoes.append(botao)
 
         self.comprado = [False]*3
 
     def desenhar_loja(self, tela):
         tela.fill((0, 0, 0))
-        tela.blit(self.personagem_img, (50, 150))
+        tela.blit(self.fundo,(0,0))
+        tela.blit(self.personagem_img, (1150, 250))
 
         mouse_pos = mouse.get_pos()
         self.tempo += 0.05
 
+
         for pos, item in enumerate(self.itens_sorteados):
 
             #animação foda
-            flutuacao = math.sin(self.tempo + pos * 2) * 10
-            base_x = 900 + pos * 350
-            base_y = 250 + flutuacao
+            #flutuacao = math.sin(self.tempo + pos * 2) * 10
+            base_x = 25
+            base_y = 75 + pos * 320 
 
             item_rect = Rect(base_x, base_y, self.item_width, self.item_height)
             is_hovered = item_rect.collidepoint(mouse_pos)
@@ -86,22 +90,33 @@ class Loja():
             height = int(self.item_height * scale)
             pos_x = base_x + (self.item_width - width) // 2
             pos_y = base_y + offset_y
+            
+            if is_hovered == True:
+                # Desenhar imagem da carta de fundo (DEPOIS FAZER NO BOLSO DELA)
+                carta_base = transform.scale(self.carta_imgs[item.raridade], (width, height))
+                tela.blit(carta_base, (pos_x + 1200, 525))
 
-            # Desenhar imagem da carta de fundo
-            carta_base = transform.scale(self.carta_imgs[item.raridade], (width, height))
-            tela.blit(carta_base, (pos_x, pos_y))
+                item_img = transform.scale(item.sprite, (100, 100))
+                tela.blit(item_img, (1325,40 + 525))
+
+                nome = self.font_chata.render(item.nome, True, (255, 255, 255))
+                tela.blit(nome, (1250, 182 + 525))
+
+            
+
+
 
             # Sprite do item
-            item_img = transform.scale(item.sprite, (100, 100))
+            item_img = transform.scale(item.sprite, (150, 150))
             tela.blit(item_img, (pos_x + (width - 100)//2, pos_y + 40))
 
             # Nome do item
             nome = self.font_titulo.render(item.nome, True, (255, 255, 255))
-            tela.blit(nome, (pos_x + (width - nome.get_width())//2, pos_y + 173))
+            tela.blit(nome, (pos_x + 30 + (width - nome.get_width())//2, pos_y + 200))
 
             # Preço
-            preco = self.font_preco.render(f"{self.precos[item.raridade]} almas", True, (255, 215, 0))
-            tela.blit(preco, (pos_x + (width - preco.get_width())//2,  200))
+            preco = self.font_preco.render(f"{self.precos[item.raridade]} almas", True, ('blue'))
+            tela.blit(preco, (pos_x + 300 + (width - preco.get_width())//2,  135 + pos_y))
 
             #carta comprada
             if self.comprado[pos]:
@@ -115,8 +130,8 @@ class Loja():
                 desc_lines = self.quebrar_texto_em_linhas(item.descricao, self.font_desc, width - 40)
                 for i, line in enumerate(desc_lines):
                     desc_text = self.font_desc.render(line, True, (255, 255, 255))
-                    tela.blit(desc_text, (pos_x + 27, pos_y + 240 + i * 22))
-
+                    tela.blit(desc_text, (1250, 755))
+    
         for botao in self.botoes:
             botao.changeColor(mouse_pos)
             botao.update(tela)
@@ -139,6 +154,8 @@ class Loja():
             linhas.append(linha_atual)
         
         return linhas
+
+      
 
     def checar_compra(self, mouse_pos, tela):
         for i, botao in enumerate(self.botoes):
