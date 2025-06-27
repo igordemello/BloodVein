@@ -62,15 +62,15 @@ class Hud:
         self.combo_shake_duration = 300
 
     def desenhar(self, tela):
-        almas_font = font.Font('assets/Fontes/Philosopher-BoldItalic.ttf', 48)
+        almas_font = font.Font('assets/Fontes/alagard.ttf', 48)
         almas = almas_font.render(f"{self.player.almas}x", True, (243, 236, 215))
 
         # Fontes para o combo (tamanho varia com o shake)
         current_font_size = int(self.normal_font_size * self.combo_scale)
-        combo_font = font.Font('assets/Fontes/Philosopher-Bold.ttf', max(72, min(int(current_font_size * self.player.arma.comboMult * 0.6), 165)))
+        combo_font = font.Font('assets/Fontes/alagard.ttf', max(72, min(int(current_font_size * self.player.arma.comboMult * 0.6), 165)))
         combo = combo_font.render(f"{self.player.hits}", True, (243, 236, 215))
 
-        comboMult_font = font.Font('assets/Fontes/Philosopher-regular.ttf',  min(int(24 * self.player.arma.comboMult), 48))
+        comboMult_font = font.Font('assets/Fontes/alagard.ttf',  min(int(24 * self.player.arma.comboMult), 48))
         comboMult = comboMult_font.render(f"{self.player.arma.comboMult:.2f}x", True, (253, 246, 225))
 
         almas_rect = almas.get_rect()

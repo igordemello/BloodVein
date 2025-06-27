@@ -18,7 +18,7 @@ class Inimigo:
 
 
         self.ultimo_dano_tempo = 0
-        self.fonte_dano = font.Font('assets/Fontes/Philosopher-Bold.ttf', 20)
+        self.fonte_dano = font.Font('assets/Fontes/alagard.ttf', 20)
 
         self.knockback_x = 0
         self.knockback_y = 0
@@ -243,7 +243,7 @@ class Inimigo:
                 offset_extra = 0
                 texto = ""
 
-            fonte_atual = font.Font('assets/Fontes/Philosopher-Bold.ttf', tamanho_fonte)
+            fonte_atual = font.Font('assets/Fontes/alagard.ttf', tamanho_fonte)
             dano_text = fonte_atual.render(f"-{self.ultimo_dano:.1f}{texto}", True, cor)
 
             sombra = fonte_atual.render(f"-{self.ultimo_dano:.1f}{texto}", True, (0, 0, 0))

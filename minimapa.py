@@ -91,7 +91,7 @@ class Minimapa:
             )
             draw.rect(self.surface, color, room_rect)
             
-            fonte = font.Font('assets/Fontes/Philosopher-BoldItalic.ttf', 14)
+            fonte = font.Font('assets/Fontes/alagard.ttf', 14)
             if node['tipo'] == 'spawn':
                 text = fonte.render('spawn', True, self.color_text)
                 text_rect = text.get_rect(center=(node['posicao'][0], node['posicao'][1]))
@@ -101,7 +101,7 @@ class Minimapa:
                 text_rect = text.get_rect(center=(node['posicao'][0], node['posicao'][1]))
                 self.surface.blit(text, text_rect)
             elif node['atual']:
-                text = fonte.render('you are here', True, self.color_text)
+                text = fonte.render('voce esta aqui', True, self.color_text)
                 text_rect = text.get_rect(center=(node['posicao'][0], node['posicao'][1]))
                 self.surface.blit(text, text_rect)
             
