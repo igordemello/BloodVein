@@ -90,6 +90,9 @@ class Player():
         self.hitbox_arma = self.arma.range
 
         self.atacou = False
+        self.hits = 0
+        self.tempo_ultimo_hit = 0
+        self.tempo_max_combo = 2500
 
         #controles para o dash
         self.dash_cooldown = 0
@@ -321,6 +324,9 @@ class Player():
 
         self.sistemaparticulas.update(dt)
 
+        if self.hits > 0 and time.get_ticks() - self.tempo_ultimo_hit > self.tempo_max_combo:
+            self.hits = 0
+            self.arma.comboMult = 1
 
     #tem que fazer uma possibilidade de pegar o item mais de uma vez e ficar incrementando
     def adicionarItem(self,item) :
@@ -461,6 +467,10 @@ class Player():
 
         self.x, self.y = self.player_rect.topleft
 
+    def medidorCombo(self):
+        self.arma.comboMult *= 1.1**self.hits
+
+
     def infoArma(self):
         print(f'Dano: {self.arma.dano}\nRapidez: {self.arma.velocidade}\nLife steal: {self.arma.lifeSteal}\nChance de Crítico: {self.arma.chanceCritico}\nDano do Crítico: {self.arma.danoCriticoMod*self.arma.dano}')
         print("Nome: ", self.arma.nome)
@@ -478,15 +488,17 @@ class Player():
                 randint(8, 10)
             )
 
-    def ataque_espadaPrincipal(self,inimigos,mouse_pos, dt):
+    def ataque_espadaPrincipal(self, inimigos, mouse_pos, dt):
         current_time = time.get_ticks()
-
         cooldown = self.cooldown_ataque_base / self.arma.velocidade
 
+        # Verifica se ainda está em cooldown
         if current_time - self.ultimo_ataque < cooldown:
-            return  # ainda no cooldown, não ataca
+            return
 
         self.ultimo_ataque = current_time
+
+        # Inicia animação da espada
         if not self.anima_espada:
             self.anima_espada = True
             self.frame_sword = 0
@@ -494,42 +506,60 @@ class Player():
 
         self.atacou = True
         self.time_frame_sword += self.dt
+
+        # Atualiza frame da animação
         if self.time_frame_sword > 150:
             self.frame_sword += 1
             self.time_frame_sword = 0
         if self.frame_sword >= 5:
             self.frame_sword = 0
 
-
+        # Obtém hitbox do ataque
         _, hitbox_espada = self.get_rotated_rect_ataque(mouse_pos)
+        hit_landed = False  # Flag para verificar se acertou algum inimigo
+
+        # Verifica combo antes de atacar qualquer inimigo
+        if current_time - self.tempo_ultimo_hit > self.tempo_max_combo:
+            self.hits = 0
+            self.arma.comboMult = 1.0
+
         for inimigo in inimigos:
-            if inimigo.vivo:
-                if not inimigo.get_hitbox().colliderect(hitbox_espada):
-                    self.atacou = False
-                if inimigo.get_hitbox().colliderect(hitbox_espada):
-                    #t.sleep(0.05) hitstop
+            if inimigo.vivo and inimigo.get_hitbox().colliderect(hitbox_espada):
+                hit_landed = True
+                inimigo.anima_hit = True
+                self.atacou = False
+                inimigo.foi_atingido = False
 
-                    inimigo.anima_hit = True
-                    self.atacou = False
-                    inimigo.foi_atingido = False
+                # Incrementa combo (independente de qual inimigo)
+                self.hits += 1
+                self.tempo_ultimo_hit = current_time
 
-                    self.arma.ataquePrincipal(inimigo)
-                    self.hp += self.arma.lifeSteal
+                # Atualiza multiplicador (crescimento linear)
+                self.arma.comboMult = 1.0 + (0.1 * self.hits)
 
-                    if self.hp > self.hpMax:
-                        self.hp = self.hpMax
+                # Aplica dano com multiplicador de combo
+                self.arma.ataquePrincipal(inimigo)
+                inimigo.ultimo_dano_tempo = current_time
 
+                # Life steal
+                self.hp = min(self.hp + self.arma.lifeSteal, self.hpMax)
 
-                    inimigo.ultimo_dano_tempo = time.get_ticks()
+                # Knockback
+                dx = inimigo.x - self.x
+                dy = inimigo.y - self.y
+                inimigo.aplicar_knockback(dx, dy, intensidade=4)
 
-                    #knockback
-                    dx = inimigo.x - self.x
-                    dy = inimigo.y - self.y
-                    inimigo.aplicar_knockback(dx, dy, intensidade=4)
+                # Efeito de sangue
+                self.criar_efeito_sangue(hitbox_espada.centerx, hitbox_espada.centery)
 
-                    self.criar_efeito_sangue(hitbox_espada.centerx, hitbox_espada.centery)
-                    display.flip()
-                    time.delay(50)
+                # Pequeno delay para efeito de hitstop
+                display.flip()
+                time.delay(50)
+
+        # Se não acertou nenhum inimigo, apenas verifica se precisa resetar o combo
+        if not hit_landed and current_time - self.tempo_ultimo_hit > self.tempo_max_combo:
+            self.hits = 0
+            self.arma.comboMult = 1.0
 
     def ataque_espadaSecundario(self,inimigos,mouse_pos, dt):
         if not self.arma.ataqueSecundario():

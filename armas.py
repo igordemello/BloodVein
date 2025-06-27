@@ -126,6 +126,7 @@ class LaminaDaNoite(Arma):
         self.lifeSteal = self.dano/2
         self.chanceCritico = 8
         self.danoCriticoMod = 2
+        self.comboMult = 1
         self.clock = time.Clock()
 
         mod_classe = listaMods.getMod(self.raridadeStr)  # Retorna a classe do modificador
@@ -139,13 +140,13 @@ class LaminaDaNoite(Arma):
             original_speed = self.clock.get_fps()
             time.delay(100)
             self.clock.tick(original_speed)
-            inimigo.hp -= self.dano * self.danoCriticoMod * inimigo.modificadorDanoRecebido
+            inimigo.hp -= self.dano * self.danoCriticoMod * inimigo.modificadorDanoRecebido * self.comboMult
             inimigo.ultimo_dano_critico = True
-            inimigo.ultimo_dano = self.dano * self.danoCriticoMod * inimigo.modificadorDanoRecebido
+            inimigo.ultimo_dano = self.dano * self.danoCriticoMod * inimigo.modificadorDanoRecebido * self.comboMult
         else:
-            inimigo.hp -= self.dano * inimigo.modificadorDanoRecebido
+            inimigo.hp -= self.dano * inimigo.modificadorDanoRecebido * self.comboMult
             inimigo.ultimo_dano_critico = False
-            inimigo.ultimo_dano = self.dano
+            inimigo.ultimo_dano = self.dano * self.comboMult
 
     def ataqueSecundario(self):
         return False
@@ -165,6 +166,7 @@ class Chigatana(Arma):
         self.lifeSteal = self.dano/4
         self.chanceCritico = 5
         self.danoCriticoMod = 2
+        self.comboMult = 1
         self.clock = time.Clock()
 
         mod_classe = listaMods.getMod(self.raridadeStr)  # Retorna a classe do modificador
@@ -180,13 +182,13 @@ class Chigatana(Arma):
             original_speed = self.clock.get_fps()
             time.delay(100)
             self.clock.tick(original_speed)
-            inimigo.hp -= self.dano * self.danoCriticoMod * inimigo.modificadorDanoRecebido
+            inimigo.hp -= self.dano * self.danoCriticoMod * inimigo.modificadorDanoRecebido * self.comboMult
             inimigo.ultimo_dano_critico = True
-            inimigo.ultimo_dano = self.dano * self.danoCriticoMod * inimigo.modificadorDanoRecebido
+            inimigo.ultimo_dano = self.dano * self.danoCriticoMod * inimigo.modificadorDanoRecebido * self.comboMult
         else:
-            inimigo.hp -= self.dano * inimigo.modificadorDanoRecebido
+            inimigo.hp -= self.dano * inimigo.modificadorDanoRecebido * self.comboMult
             inimigo.ultimo_dano_critico = False
-            inimigo.ultimo_dano = self.dano
+            inimigo.ultimo_dano = self.dano * self.comboMult
 
     def ataqueSecundario(self,inimigo):
         inimigo.modificadorDanoRecebido = self.valorSangramento
@@ -206,6 +208,7 @@ class Karambit(Arma):
         self.lifeSteal = self.dano/4
         self.chanceCritico = 5
         self.danoCriticoMod = 2
+        self.comboMult = 1
         self.clock = time.Clock()
 
         mod_classe = listaMods.getMod(self.raridadeStr)  # Retorna a classe do modificador
@@ -221,13 +224,13 @@ class Karambit(Arma):
             original_speed = self.clock.get_fps()
             time.delay(100)
             self.clock.tick(original_speed)
-            inimigo.hp -= self.dano * self.danoCriticoMod * inimigo.modificadorDanoRecebido
+            inimigo.hp -= self.dano * self.danoCriticoMod * inimigo.modificadorDanoRecebido * self.comboMult
             inimigo.ultimo_dano_critico = True
-            inimigo.ultimo_dano = self.dano * self.danoCriticoMod * inimigo.modificadorDanoRecebido
+            inimigo.ultimo_dano = self.dano * self.danoCriticoMod * inimigo.modificadorDanoRecebido * self.comboMult
         else:
-            inimigo.hp -= self.dano * inimigo.modificadorDanoRecebido
+            inimigo.hp -= self.dano * inimigo.modificadorDanoRecebido * self.comboMult
             inimigo.ultimo_dano_critico = False
-            inimigo.ultimo_dano = self.dano
+            inimigo.ultimo_dano = self.dano * self.comboMult
 
     def ataqueSecundario(self,inimigo):
         inimigo.envenenar(5, self.dano)

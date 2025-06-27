@@ -24,9 +24,22 @@ class Hud:
     def desenhar(self, tela):
         almas_font = font.Font('assets/Fontes/Philosopher-BoldItalic.ttf', 48)
         almas = almas_font.render(f"{self.player.almas}x", True, (243, 236, 215))
+        combo_font = font.Font('assets/Fontes/Philosopher-Bold.ttf', min(int(96 * self.player.arma.comboMult), 192))
+        combo = combo_font.render(f"{self.player.hits}", True, (243, 236, 215))
+        comboMult_font = font.Font('assets/Fontes/Philosopher-regular.ttf', min(int(24 * self.player.arma.comboMult), 48))
+        comboMult = comboMult_font.render(f"{self.player.arma.comboMult:.2f}x", True, (253, 246, 225))
+
         almas_rect = almas.get_rect()
         almas_rect.right = 1700  # ponto fixo da direita (ajuste como preferir)
         almas_rect.top = 58
+
+        combo_rect = combo.get_rect()
+        combo_rect.right = 1890  # ponto fixo da direita (ajuste como preferir)
+        combo_rect.top = 200
+
+        comboMult_rect = comboMult.get_rect()
+        comboMult_rect.centerx = combo_rect.centerx  # Mesmo centro horizontal
+        comboMult_rect.top = combo_rect.bottom - 15
 
         tela.blit(self.fundo,(0,0))
         tela.blit(self.hud,(0,0))
@@ -68,6 +81,9 @@ class Hud:
         #draw.rect(tela, (173,216,250), (1700, 75, 50,50))
         tela.blit(self.almaIcon, (1710, 33))
         tela.blit(almas, almas_rect)
+        if self.player.hits > 0:
+            tela.blit(combo, (combo_rect))
+            tela.blit(comboMult, (comboMult_rect))
 
         #STAMINA/MANA:
         braco_stamina = self.bracoSt_fundo
