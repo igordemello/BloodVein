@@ -29,6 +29,10 @@ class Minimapa:
         self.path_width = 2
         self.border_radius = 20 
 
+        self.icon_current = image.load('assets/minimapa/icon_current.png').convert_alpha()
+        self.icon_spawn = image.load('assets/minimapa/icon_spawn.png').convert_alpha()
+        self.icon_boss = image.load('assets/minimapa/icon_boss.png').convert_alpha()
+
 
     def toggle(self):
         self.visible = not self.visible
@@ -75,7 +79,14 @@ class Minimapa:
         
 
         for node in mapa_info['nodes']:
-            if not node['visitada']:
+            should_show = node['visitada'] or (
+                'boss' in node['tipo'] and 
+                any(edge['origem'] == self.gerenciador.sala_atual and edge['destino'] == node['id'] or
+                    edge['destino'] == self.gerenciador.sala_atual and edge['origem'] == node['id']
+                    for edge in mapa_info['edges'])
+                )
+
+            if not should_show:
                 continue
                 
             color = (self.color_current if node['atual'] else
@@ -92,18 +103,31 @@ class Minimapa:
             draw.rect(self.surface, color, room_rect)
             
             fonte = font.Font('assets/Fontes/alagard.ttf', 14)
-            if node['tipo'] == 'spawn':
-                text = fonte.render('spawn', True, self.color_text)
-                text_rect = text.get_rect(center=(node['posicao'][0], node['posicao'][1]))
-                self.surface.blit(text, text_rect)
+            if node['atual']:
+                # text = fonte.render('voce esta aqui', True, self.color_text)
+                # text_rect = text.get_rect(center=(node['posicao'][0], node['posicao'][1]))
+                # self.surface.blit(text, text_rect)
+                icon_resized = transform.scale(self.icon_current, (32,32))
+                icon_rect = icon_resized.get_rect()
+                icon_rect.center = (node['posicao'][0], node['posicao'][1])
+                self.surface.blit(icon_resized, icon_rect)
+            elif node['tipo'] == 'spawn':
+                # text = fonte.render('spawn', True, self.color_text)
+                # text_rect = text.get_rect(center=(node['posicao'][0], node['posicao'][1]))
+                # self.surface.blit(text, text_rect)
+                icon_resized = transform.scale(self.icon_spawn, (32,32))
+                icon_rect = icon_resized.get_rect()
+                icon_rect.center = (node['posicao'][0], node['posicao'][1])
+                self.surface.blit(icon_resized, icon_rect)
             elif 'boss' in node['tipo']:
-                text = fonte.render('boss', True, self.color_text)
-                text_rect = text.get_rect(center=(node['posicao'][0], node['posicao'][1]))
-                self.surface.blit(text, text_rect)
-            elif node['atual']:
-                text = fonte.render('voce esta aqui', True, self.color_text)
-                text_rect = text.get_rect(center=(node['posicao'][0], node['posicao'][1]))
-                self.surface.blit(text, text_rect)
+                # text = fonte.render('boss', True, self.color_text)
+                # text_rect = text.get_rect(center=(node['posicao'][0], node['posicao'][1]))
+                # self.surface.blit(text, text_rect)
+                icon_resized = transform.scale(self.icon_boss, (32,32))
+                icon_rect = icon_resized.get_rect()
+                icon_rect.center = (node['posicao'][0], node['posicao'][1])
+                self.surface.blit(icon_resized, icon_rect)
+            
             
         
         self.screen.blit(self.surface, (self.pos_x, self.pos_y))
