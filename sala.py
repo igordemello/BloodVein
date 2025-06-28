@@ -155,6 +155,7 @@ class Sala:
 
                 if codigo_porta in self.gerenciador_andar.grafo.nodes[self.gerenciador_andar.sala_atual].get("portas", {}):
 
+                    direcao_porta = codigo_porta
                     nova_sala = self.gerenciador_andar.ir_para_proxima_sala(codigo_porta)
 
                     if nova_sala:
@@ -162,7 +163,17 @@ class Sala:
 
                         nova_instancia.player = self.player
                         nova_instancia.gerenciador_andar = self.gerenciador_andar
-                        nova_instancia.player.player_rect.topleft = (self.tela.get_width() // 2,self.tela.get_height() // 2)
+                        
+                        if direcao_porta == 'cima':
+                            nova_instancia.player.player_rect.topleft = (914, 765)
+                        elif direcao_porta == 'baixo':
+                            nova_instancia.player.player_rect.topleft = (914, 360)
+                        elif direcao_porta == 'esquerda':
+                            nova_instancia.player.player_rect.topleft = (1475, 506)
+                        elif direcao_porta == 'direita':
+                            nova_instancia.player.player_rect.topleft = (350, 506)
+                        else:
+                            nova_instancia.player.player_rect.topleft = (self.tela.get_width() // 2, self.tela.get_height() // 2)
 
                         self.__dict__.update(nova_instancia.__dict__)
 
