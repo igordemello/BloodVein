@@ -129,6 +129,8 @@ class LaminaDaNoite(Arma):
         self.comboMult = 1
         self.clock = time.Clock()
 
+        self.spriteIcon = "assets/UI/LaminaDaNoite.png"
+
         mod_classe = listaMods.getMod(self.raridadeStr)  # Retorna a classe do modificador
         self.modificador = mod_classe(self)  # Instancia com self (a arma)
         self.nome = f"{self.tipoDeArma} {self.modificador.nome} {self.raridadeStr}"
@@ -169,6 +171,8 @@ class Chigatana(Arma):
         self.comboMult = 1
         self.clock = time.Clock()
 
+        self.spriteIcon = "assets/UI/LaminaDaNoite.png"
+
         mod_classe = listaMods.getMod(self.raridadeStr)  # Retorna a classe do modificador
         self.modificador = mod_classe(self)  # Instancia com self (a arma)
         self.nome = f"{self.tipoDeArma} {self.modificador.nome} {self.raridadeStr}"
@@ -199,7 +203,7 @@ class Karambit(Arma):
         self.tipoDeArma = "Adaga"
         self.raridadeStr = raridadeStr
         self.raridade = RARIDADES.get(self.raridadeStr, 1)
-        self.dano = 10+randint(5*self.raridade,10*self.raridade)
+        self.dano = 5+randint(5*self.raridade,10*self.raridade)
         self.velocidade = 2 #analisar esses valores depois
         self.cooldown = 300
         self.range = (45, 90) #hitbox arma
@@ -210,6 +214,8 @@ class Karambit(Arma):
         self.danoCriticoMod = 2
         self.comboMult = 1
         self.clock = time.Clock()
+
+        self.spriteIcon = "assets/UI/Karambit.png"
 
         mod_classe = listaMods.getMod(self.raridadeStr)  # Retorna a classe do modificador
         self.modificador = mod_classe(self)  # Instancia com self (a arma)
@@ -233,6 +239,6 @@ class Karambit(Arma):
             inimigo.ultimo_dano = self.dano * self.comboMult
 
     def ataqueSecundario(self,inimigo):
-        inimigo.envenenar(5, self.dano)
+        inimigo.envenenar(5, self.dano+10)
 
 

@@ -21,8 +21,11 @@ class Hud:
             False)
 
         self.almaIcon = transform.scale(image.load('assets/Itens/alma.png').convert_alpha(), (96, 96))
-        self.hud = image.load('assets/UI/Hud.png')
-        self.fundo = image.load('assets/UI/tela_fundo1.png')
+        self.hud = image.load('assets/UI/Hud.png').convert_alpha()
+        self.fundo = image.load('assets/UI/tela_fundo1.png').convert_alpha()
+
+        self.armaIcon = transform.scale(image.load(self.player.arma.spriteIcon).convert_alpha(), (96,96))
+
         self.fundo = transform.scale(self.fundo, (1920, 1080))
 
         # Variáveis para o efeito de shake
@@ -73,9 +76,10 @@ class Hud:
         comboMult_font = font.Font('assets/Fontes/alagard.ttf',  min(int(24 * self.player.arma.comboMult), 48))
         comboMult = comboMult_font.render(f"{self.player.arma.comboMult:.2f}x", True, (253, 246, 225))
 
+
         almas_rect = almas.get_rect()
-        almas_rect.right = 1700
-        almas_rect.top = 58
+        almas_rect.right = 1540
+        almas_rect.top = 68
 
         # Posição original do combo (sem shake)
         base_combo_rect = combo.get_rect()
@@ -122,8 +126,10 @@ class Hud:
             tela.blit(sprite, (60, 40))
 
         # Almas
-        tela.blit(self.almaIcon, (1710, 33))
+        tela.blit(self.almaIcon, (1545, 33))
         tela.blit(almas, almas_rect)
+
+        tela.blit(self.armaIcon, (1710, 48))
 
         # Combo (com efeitos)
         if self.player.hits > 0:
