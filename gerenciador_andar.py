@@ -209,7 +209,7 @@ class GerenciadorAndar:
                 'visitada': sala in self.salas_visitadas,
                 'atual': sala == self.sala_atual,
                 'posicao': (
-                    (node_data['pos'][0]) * 120 + 350,
+                    (node_data['pos'][0]) * 120 + 400,
                     (node_data['pos'][1]) * 80 + 350
                 )
             })
