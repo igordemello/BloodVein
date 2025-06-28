@@ -19,7 +19,7 @@ from loja import Loja
 from minimapa import Minimapa
 
 init()
-
+#teste
 gerenciamento.modo = 'jogo'
 
 

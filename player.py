@@ -109,6 +109,11 @@ class Player():
         self.dx = 0
         self.dy = 0
 
+        #efeito espada
+        self.sword_trail = []
+        self.max_trail_length = 5
+        self.trail_alpha = 100  # Transparência do rastro
+
     # [Métodos auxiliares permanecem iguais...]
     def carregar_animacao(self, caminho):
         frame_largura = 32
@@ -290,7 +295,20 @@ class Player():
 
         if self.attack_progress >= 1.0:
             self.attacking = False
+            self.sword_trail = []
             return
+        
+        
+        # Adiciona posição atual ao rastro
+        angle = self.calcular_angulo(mouse.get_pos())
+        centro_jogador = (self.player_rect.centerx, self.player_rect.centery)
+        base_x = centro_jogador[0] + math.cos(angle) * (self.radius - 5)
+        base_y = centro_jogador[1] + math.sin(angle) * (self.radius - 5)
+        
+        self.sword_trail.append((base_x, base_y, self.sword_angle))
+        if len(self.sword_trail) > self.max_trail_length:
+            self.sword_trail.pop(0)
+
 
         # Arco de ataque aumentado (210 graus)
         swing_angle = self.sword_start_angle + self.sword_arc * self.attack_progress
@@ -356,6 +374,21 @@ class Player():
             alpha = max(0, int(255 * (rastro["tempo"] / 200)))
             imagem.set_alpha(alpha)
             tela.blit(imagem, rastro["pos"])
+
+        #EFEITO PARA A ESPADA
+        for i, (x, y, angle) in enumerate(self.sword_trail):
+                alpha = int(self.trail_alpha * (i/len(self.sword_trail)))
+                sword_copy = self.sword.copy()
+                sword_copy.set_alpha(alpha)
+                
+                temp_surface = Surface((sword_copy.get_width() * 2, sword_copy.get_height() * 2), SRCALPHA)
+                temp_surface.blit(sword_copy, (temp_surface.get_width() // 2 - self.sword_pivot[0],
+                                            temp_surface.get_height() // 2 - self.sword_pivot[1]))
+                rotated_surface = transform.rotate(temp_surface, -angle)
+                final_rect = rotated_surface.get_rect(center=(x, y))
+                tela.blit(rotated_surface, final_rect.topleft)
+
+
 
         # Personagem
         frame = self.frame_atual.copy()
