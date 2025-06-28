@@ -35,7 +35,7 @@ class Player():
         self.sistemaparticulas = ParticleSystem()
         self.lista_mods = ListaMods()
         #ARMA
-        self.arma = EspadaDoTita("comum", self.lista_mods)
+        self.arma = MachadoDoInverno("comum", self.lista_mods)
         self.arma.aplicaModificador()
 
         self.x = x
@@ -508,7 +508,7 @@ class Player():
                 if inimigo.vivo:
                     if inimigo.get_hitbox().colliderect(hitbox_espada):
                         inimigo.anima_hit = True
-                        self.arma.ataqueSecundario(inimigo)
+                        self.arma.ataqueSecundario(inimigo,self)
                         dx = inimigo.x - self.x
                         dy = inimigo.y - self.y
                         inimigo.aplicar_knockback(dx, dy, intensidade=0.5)
