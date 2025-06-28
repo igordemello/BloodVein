@@ -34,7 +34,8 @@ class Player():
 
         self.sistemaparticulas = ParticleSystem()
         self.lista_mods = ListaMods()
-        self.arma = Karambit("comum", self.lista_mods)
+        #ARMA
+        self.arma = EspadaDoTita("comum", self.lista_mods)
         self.arma.aplicaModificador()
 
         self.x = x
@@ -68,7 +69,7 @@ class Player():
         self.atrito = 0.92
         self.radius = self.arma.radius - 50
         self.orbital_size = (40, 20)
-        self.hitbox_arma = (50, 100)
+        self.hitbox_arma = self.arma.range
         self.atacou = False
         self.hits = 0
         self.tempo_ultimo_hit = 0
@@ -453,32 +454,34 @@ class Player():
             self.arma.comboMult = 1.0
 
     def ataque_espadaSecundario(self, inimigos, mouse_pos, dt):
-        if not self.arma.ataqueSecundario():
-            return
         current_time = time.get_ticks()
 
         cooldown = self.cooldown_ataque_base / self.arma.velocidade
 
         if current_time - self.ultimo_ataque < cooldown:
             return
+        if self.arma.secEhAtaque:
 
-        self.ultimo_ataque = current_time
-        self.attacking = True
-        self.attack_start_time = current_time
-        self.attack_progress = 0
-        angle = self.calcular_angulo(mouse_pos)
-        self.base_sword_angle = math.degrees(angle) - 90
-        self.attack_direction = 1 if random() > 0.5 else -1
+            self.ultimo_ataque = current_time
+            self.attacking = True
+            self.attack_start_time = current_time
+            self.attack_progress = 0
+            angle = self.calcular_angulo(mouse_pos)
+            self.base_sword_angle = math.degrees(angle) - 90
+            self.attack_direction = 1 if random() > 0.5 else -1
 
-        _, hitbox_espada = self.get_rotated_rect_ataque(mouse_pos)
-        for inimigo in inimigos:
-            if inimigo.vivo:
-                if inimigo.get_hitbox().colliderect(hitbox_espada):
-                    inimigo.anima_hit = True
-                    self.arma.ataqueSecundario(inimigo)
-                    dx = inimigo.x - self.x
-                    dy = inimigo.y - self.y
-                    inimigo.aplicar_knockback(dx, dy, intensidade=0.5)
+            _, hitbox_espada = self.get_rotated_rect_ataque(mouse_pos)
+            for inimigo in inimigos:
+                if inimigo.vivo:
+                    if inimigo.get_hitbox().colliderect(hitbox_espada):
+                        inimigo.anima_hit = True
+                        self.arma.ataqueSecundario(inimigo)
+                        dx = inimigo.x - self.x
+                        dy = inimigo.y - self.y
+                        inimigo.aplicar_knockback(dx, dy, intensidade=0.5)
+        else:
+            self.ultimo_ataque = current_time
+            self.arma.ataqueSecundario(self)
 
     def tomar_dano(self, valor):
         now = time.get_ticks()

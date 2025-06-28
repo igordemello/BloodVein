@@ -4,6 +4,7 @@ from pygame.locals import QUIT
 import math
 import pygame.font
 from random import randint
+from armas import *
 
 
 class Hud:
@@ -23,6 +24,8 @@ class Hud:
         self.almaIcon = transform.scale(image.load('assets/Itens/alma.png').convert_alpha(), (96, 96))
         self.hud = image.load('assets/UI/Hud.png').convert_alpha()
         self.fundo = image.load('assets/UI/tela_fundo1.png').convert_alpha()
+
+        self.chanceCriticoTita= transform.scale(image.load('assets/UI/espadatitaCrit.png').convert_alpha(), (100,80))
 
         self.armaIcon = transform.scale(image.load(self.player.arma.spriteIcon).convert_alpha(), (96,96))
 
@@ -131,10 +134,22 @@ class Hud:
 
         tela.blit(self.armaIcon, (1710, 48))
 
+        #Se espada do titã, mostra chance critico:
+        if isinstance(self.player.arma, EspadaDoTita):
+            crit_font = font.Font('assets/Fontes/alagard.ttf', 36)
+            critico = crit_font.render(f"{self.player.arma.chanceCritico}%", True, (243, 236, 215))
+            crit_rect = critico.get_rect()
+            crit_rect.right = 1795
+            crit_rect.top = 170
+
+            tela.blit(self.chanceCriticoTita, (1710,150,110,74))
+            tela.blit(critico, (crit_rect))
+
         # Combo (com efeitos)
         if self.player.hits > 0:
             tela.blit(combo, combo_rect.topleft)
             tela.blit(comboMult, comboMult_rect.topleft)
+
 
         # Stamina Bar
         braco_stamina = self.bracoSt_fundo
