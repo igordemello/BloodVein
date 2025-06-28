@@ -120,7 +120,7 @@ class LaminaDaNoite(Arma):
         self.dano = 10+randint(5*self.raridade,10*self.raridade)
         self.velocidade = 1 #analisar esses valores depois
         self.cooldown = 400
-        self.range = (70, 100) #hitbox arma
+        self.range = (40, 80) #hitbox arma
         self.radius = 100
         self.efeitos = None
         self.lifeSteal = self.dano/2
@@ -130,6 +130,8 @@ class LaminaDaNoite(Arma):
         self.clock = time.Clock()
 
         self.spriteIcon = "assets/UI/LaminaDaNoite.png"
+        self.sprite = 'espada.png'
+        self.size = (20 * 2, 54 * 2)
 
         mod_classe = listaMods.getMod(self.raridadeStr)  # Retorna a classe do modificador
         self.modificador = mod_classe(self)  # Instancia com self (a arma)
@@ -150,7 +152,7 @@ class LaminaDaNoite(Arma):
             inimigo.ultimo_dano_critico = False
             inimigo.ultimo_dano = self.dano * self.comboMult
 
-    def ataqueSecundario(self):
+    def ataqueSecundario(self,inimigo):
         return False
 
 #falta sprite e animação de ataque
@@ -171,7 +173,9 @@ class Chigatana(Arma):
         self.comboMult = 1
         self.clock = time.Clock()
 
-        self.spriteIcon = "assets/UI/LaminaDaNoite.png"
+        self.spriteIcon = "assets/UI/chigatana.png"
+        self.sprite = 'espada.png'
+        self.size = (20 * 2, 54 * 2)
 
         mod_classe = listaMods.getMod(self.raridadeStr)  # Retorna a classe do modificador
         self.modificador = mod_classe(self)  # Instancia com self (a arma)
@@ -206,8 +210,8 @@ class Karambit(Arma):
         self.dano = 5+randint(5*self.raridade,10*self.raridade)
         self.velocidade = 2 #analisar esses valores depois
         self.cooldown = 300
-        self.range = (45, 90) #hitbox arma
-        self.radius = 50
+        self.range = (50, 50) #hitbox arma
+        self.radius = 80
         self.efeitos = None
         self.lifeSteal = self.dano/4
         self.chanceCritico = 5
@@ -216,6 +220,8 @@ class Karambit(Arma):
         self.clock = time.Clock()
 
         self.spriteIcon = "assets/UI/Karambit.png"
+        self.sprite = 'assets/player/Karambit.png'
+        self.size = (32*2,32*2)
 
         mod_classe = listaMods.getMod(self.raridadeStr)  # Retorna a classe do modificador
         self.modificador = mod_classe(self)  # Instancia com self (a arma)

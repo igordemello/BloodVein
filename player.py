@@ -68,7 +68,7 @@ class Player():
         self.atrito = 0.92
         self.radius = self.arma.radius - 50
         self.orbital_size = (40, 20)
-        self.hitbox_arma = (50, 100)
+        self.hitbox_arma = self.arma.range
         self.atacou = False
         self.hits = 0
         self.tempo_ultimo_hit = 0
@@ -84,8 +84,8 @@ class Player():
         self.ativo_ultimo_uso = 0
 
         # Sistema de ataque modificado
-        self.sword = transform.scale(transform.flip(image.load('espada.png').convert_alpha(), True, True),
-                                     (20 * 2, 54 * 2))
+        self.sword = transform.scale(transform.flip(image.load(self.arma.sprite).convert_alpha(), True, True),
+                                     self.arma.size) #(20 * 2, 54 * 2)
         self.sword_pivot = (20, 0)
         self.sword_angle = 0
         self.attacking = False
@@ -291,9 +291,20 @@ class Player():
             self.attacking = False
             return
 
-        # Arco de ataque aumentado (210 graus)
-        swing_angle = self.sword_start_angle + self.sword_arc * self.attack_progress
-        self.sword_angle = self.base_sword_angle + swing_angle * self.attack_direction
+        # Fase de preparação (primeiros 20% do tempo)
+        prep_progress = min(1.0, self.attack_progress * 5)  # 5 = 1/0.2
+        if prep_progress < 1.0:
+            # Movimento suave para trás antes do ataque
+            prep_angle = -30 * prep_progress  # Move até 30 graus para trás
+            swing_angle = 0
+        else:
+            # Fase de ataque normal (últimos 80% do tempo)
+            swing_progress = (self.attack_progress - 0.2) / 0.8  # Normaliza para 0-1
+            swing_angle = self.sword_start_angle + self.sword_arc * swing_progress
+            prep_angle = -30 * (1 - swing_progress)  # Retorna gradualmente da posição preparada
+
+        total_angle = prep_angle + swing_angle
+        self.sword_angle = self.base_sword_angle + total_angle * self.attack_direction
 
     def adicionarItem(self, item):
         if isinstance(item, Item):
@@ -388,8 +399,6 @@ class Player():
             self.player_rect.y += dy
         self.x, self.y = self.player_rect.topleft
 
-    def medidorCombo(self):
-        self.arma.comboMult *= 1.1 ** self.hits
 
     def infoArma(self):
         print(
@@ -453,8 +462,8 @@ class Player():
             self.arma.comboMult = 1.0
 
     def ataque_espadaSecundario(self, inimigos, mouse_pos, dt):
-        if not self.arma.ataqueSecundario():
-            return
+        #if not self.arma.ataqueSecundario():
+        #    return
         current_time = time.get_ticks()
 
         cooldown = self.cooldown_ataque_base / self.arma.velocidade
