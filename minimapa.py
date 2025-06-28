@@ -8,7 +8,7 @@ class Minimapa:
         self.visible = False
         
         self.width = 700
-        self.height = 700
+        self.height = 800
         self.pos_x = (self.screen.get_width() - self.width) // 2 
         self.pos_y = (self.screen.get_height() - self.height) // 2 
         

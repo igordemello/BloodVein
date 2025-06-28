@@ -30,6 +30,7 @@ class Loja():
         self.font_desc = font.SysFont("assets/Fontes/Philosopher-Italic.ttf", 20)
         self.font_preco = font.SysFont("assets/Fontes/Philosopher-Italic.ttf", 30, bold=True)
         self.font_chata = font.SysFont("assets/Fontes/Philosopher-Italic.ttf", 20, bold=True)
+        self.font_almas = font.SysFont("assets/Fontes/Philosopher-Italic.ttf", 70, bold=True)
         
         self.estados_hover = [Vector2(1.0, 0.0) for _ in self.itens_sorteados]
         self.descricao_visivel = [False] * 3
@@ -105,19 +106,32 @@ class Loja():
                 nome = self.font_chata.render(item.nome, True, (255, 255, 255))
                 tela.blit(nome, (1250, 182 + 525))
 
+                # Descrição 
+                carta_x = pos_x + 1200
+                carta_y = 525
 
-                # Descrição (hover)
-                if self.descricao_visivel[pos]:
-                    desc_lines = self.quebrar_texto_em_linhas(item.descricao, self.font_desc, width - 40)
-                    for i, line in enumerate(desc_lines):
-                        desc_text = self.font_desc.render(line, True, (255, 255, 255))
-                        tela.blit(desc_text, (1250, 755))
+                # Margens internas da carta
+                margem_lateral = 30
+                margem_topo = 220  # espaço pra imagem e título
+                largura_texto = self.carta_imgs[item.raridade].get_width() - 2 * margem_lateral
+
+                # Quebra de texto dentro da largura da carta
+                desc_lines = self.quebrar_texto_em_linhas(item.descricao, self.font_desc, largura_texto)
+
+                # Desenhar texto linha a linha
+                for i, line in enumerate(desc_lines):
+                    desc_text = self.font_desc.render(line, True, (255, 255, 255))
+                    tela.blit(desc_text, (carta_x + margem_lateral, carta_y + 20 + margem_topo + i * 22))
 
 
             
             # Sprite do item
-            item_img = transform.scale(item.sprite, (150, 150))
+            item_img = transform.scale(item.sprite, (140, 140))
             tela.blit(item_img, (pos_x + (width - 100)//2, pos_y + 40))
+
+            #quantidade de almas
+            almas = self.font_almas.render(f"Voçê possui {self.player.almas} almas",True, (9, 88, 237))
+            tela.blit(almas,(100,50))
 
             # Nome do item
             nome = self.font_titulo.render(item.nome, True, (255, 255, 255))
@@ -130,7 +144,7 @@ class Loja():
             #carta comprada
             if self.comprado[pos]:
                     carta_tchau = Surface((350, 180), SRCALPHA)
-                    carta_tchau.fill((151, 0, 0, 90))  # Preto com transparência
+                    carta_tchau.fill((0, 0, 0, 120))  # Preto com transparência
                     tela.blit(carta_tchau, (pos_x, pos_y + 44))
 
     
