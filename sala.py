@@ -7,6 +7,7 @@ from bau import Bau
 from itensDic import ConjuntoItens
 from mapa import Mapa
 from inimigos.orb import Orb
+from inimigos.MouthOrbBoss import MouthOrb
 from colisao import Colisao
 from loja import Loja
 import gerenciador_andar
@@ -60,7 +61,7 @@ class Sala:
 
     def _criar_inimigos(self):
         if "boss" in self.gerenciador_andar.grafo.nodes[self.gerenciador_andar.sala_atual]["tipo"]:
-            return [Orb(400, 700, 64, 64, hp=200,velocidade=3, dano=30)]
+            return [MouthOrb(400, 700, 64, 64, hp=200,velocidade=3, dano=30)]
         else:
             # return [Orb(400, 700, 64, 64)]
             return []

@@ -10,6 +10,7 @@ from botao import Botao
 from mapa import Mapa
 from colisao import Colisao
 from inimigos.orb import Orb
+from inimigos.MouthOrbBoss import MouthOrb
 from sala import Sala
 from itensDic import *
 from gerenciador_andar import GerenciadorAndar
