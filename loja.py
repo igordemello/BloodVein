@@ -30,6 +30,7 @@ class Loja():
         self.font_desc = font.SysFont("assets/Fontes/Philosopher-Italic.ttf", 20)
         self.font_preco = font.SysFont("assets/Fontes/Philosopher-Italic.ttf", 30, bold=True)
         self.font_chata = font.SysFont("assets/Fontes/Philosopher-Italic.ttf", 20, bold=True)
+        self.font_almas = font.SysFont("assets/Fontes/Philosopher-Italic.ttf", 70, bold=True)
         
         self.estados_hover = [Vector2(1.0, 0.0) for _ in self.itens_sorteados]
         self.descricao_visivel = [False] * 3
@@ -116,8 +117,12 @@ class Loja():
 
             
             # Sprite do item
-            item_img = transform.scale(item.sprite, (150, 150))
+            item_img = transform.scale(item.sprite, (140, 140))
             tela.blit(item_img, (pos_x + (width - 100)//2, pos_y + 40))
+
+            #quantidade de almas
+            almas = self.font_almas.render(f"Voçê possui {self.player.almas} almas",True, (9, 88, 237))
+            tela.blit(almas,(100,50))
 
             # Nome do item
             nome = self.font_titulo.render(item.nome, True, (255, 255, 255))
@@ -130,7 +135,7 @@ class Loja():
             #carta comprada
             if self.comprado[pos]:
                     carta_tchau = Surface((350, 180), SRCALPHA)
-                    carta_tchau.fill((151, 0, 0, 90))  # Preto com transparência
+                    carta_tchau.fill((0, 0, 0, 120))  # Preto com transparência
                     tela.blit(carta_tchau, (pos_x, pos_y + 44))
 
     
