@@ -8,6 +8,10 @@ import math
 class MouthOrb(Inimigo):
     def __init__(self, x, y, largura=128, altura=128, hp=300, velocidade=1.5, dano=20):
         super().__init__(x, y, largura, altura, hp, velocidade, dano)
+         
+        self.anima_dano = False
+        self.inicio_dano = 0
+        self.duracao_dano = 150  # ms
 
         self.sprite_size = (64, 64)
         self.animacoes = {
@@ -17,7 +21,8 @@ class MouthOrb(Inimigo):
                 "frame_width": 64,
                 "frame_height": 64,
                 "usar_indices": list(range(12)),
-                "frames": []
+                "frames": [],
+                "loop": True
             },
             "ataque": {
                 "spritesheet": pygame.image.load("./assets/Enemies/MouthOrb-AttackSheet.png").convert_alpha(),
@@ -25,7 +30,8 @@ class MouthOrb(Inimigo):
                 "frame_width": 64,
                 "frame_height": 64,
                 "usar_indices": list(range(10)),
-                "frames": []
+                "frames": [],
+                "loop": False
             },
             "invocacao": {
                 "spritesheet": pygame.image.load("./assets/Enemies/MouthOrb-SpawnSheet.png").convert_alpha(),
@@ -33,7 +39,8 @@ class MouthOrb(Inimigo):
                 "frame_width": 64,
                 "frame_height": 64,
                 "usar_indices": list(range(4)),
-                "frames": []
+                "frames": [],
+                "loop": False
             }
         }
 
@@ -52,6 +59,12 @@ class MouthOrb(Inimigo):
         self.cooldown_invocacao = 5000
         self.orbs_instanciados = []
         self.max_orbs = 3
+
+        self.estado = "normal"  # pode ser "normal" ou "invocando"
+        self.iniciou_invocacao_em = 0
+        self.tempo_para_invocar = 1500  # ms após começar invocação
+        self.cooldown_modo_invocacao = 7000  # ms
+        self.ultima_tentativa_invocacao = 0
 
     def _carregar_todas_animacoes(self):
         for chave, dados in self.animacoes.items():
@@ -75,8 +88,17 @@ class MouthOrb(Inimigo):
         if self.frame_time >= 1:
             self.frame_time = 0
             frames = self.animacoes[self.animacao_atual]["frames"]
-            self.frame_index = (self.frame_index + 1) % len(frames)
+            loop = self.animacoes[self.animacao_atual].get("loop", True)
+        
+            if self.frame_index < len(frames) - 1:
+                self.frame_index += 1
+            elif loop:
+                self.frame_index = 0
 
+    def animacao_terminou(self):
+        frames = self.animacoes[self.animacao_atual]["frames"]
+        return self.frame_index == len(frames) - 1 and self.frame_time >= 0.99
+    
     def iniciar_ataque_corpo_a_corpo(self, player_pos):
         distancia = math.hypot((player_pos[0] - self.x), (player_pos[1] - self.y))
         alcance = 100  # ou o valor que considerar como "curto alcance"
@@ -94,6 +116,26 @@ class MouthOrb(Inimigo):
             if rot_rect.colliderect(player_hitbox):
                 if hasattr(self, "dar_dano") and callable(self.dar_dano):
                     self.dar_dano()
+
+    def desenhar_barra_vida(self, tela):
+        if not self.vivo:
+            return
+        largura_barra = 400
+        altura_barra = 20
+        x = tela.get_width() // 2 - largura_barra // 2
+        y = 20
+
+        proporcao = self.hp / 300  # ajuste se tiver hp variável
+        barra_atual = int(largura_barra * proporcao)
+
+        pygame.draw.rect(tela, (60, 60, 60), (x, y, largura_barra, altura_barra))  # fundo
+        pygame.draw.rect(tela, (200, 0, 0), (x, y, barra_atual, altura_barra))     # vida
+        pygame.draw.rect(tela, (255, 255, 255), (x, y, largura_barra, altura_barra), 2)  # contorno
+
+    def tomar_dano(self, quantidade):
+        self.hp -= quantidade
+        self.anima_dano = True
+        self.inicio_dano = pygame.time.get_ticks()
 
     def instanciar_orb(self, grupo_inimigos):
         now = pygame.time.get_ticks()
@@ -118,7 +160,32 @@ class MouthOrb(Inimigo):
 
         # Atualiza ações e animação
         self.iniciar_ataque_corpo_a_corpo(player_pos)
-        self.instanciar_orb(grupo_inimigos)
+        now = pygame.time.get_ticks()
+
+        # Entrar em modo invocação
+        if self.estado == "normal" and now - self.ultima_tentativa_invocacao > self.cooldown_modo_invocacao:
+            self.estado = "invocando"
+            self.iniciou_invocacao_em = now
+            self.trocar_animacao("invocacao")
+            self.ultima_tentativa_invocacao = now
+
+        if self.estado == "invocando":
+            # Movimento de afastamento
+            dx = self.x - player_pos[0]
+            dy = self.y - player_pos[1]
+            distancia = math.hypot(dx, dy)
+            if distancia < 300:  # tenta manter distância
+                self.vx = (dx / distancia) * self.velocidade
+                self.vy = (dy / distancia) * self.velocidade
+                self.mover_se(True, True, self.vx, self.vy)
+
+            # Instancia um Orb após o tempo de preparação
+            if self.animacao_terminou():
+                self.instanciar_orb(grupo_inimigos)
+                self.estado = "normal"
+                self.trocar_animacao("idle")
+        else:
+            self.iniciar_ataque_corpo_a_corpo(player_pos)
 
         if self.animacao_atual not in ["ataque", "invocacao"]:
             self.trocar_animacao("idle")
@@ -128,4 +195,13 @@ class MouthOrb(Inimigo):
     def desenhar(self, tela, player_pos):
         if self.vivo:
             frame = self.animacoes[self.animacao_atual]["frames"][self.frame_index]
-            tela.blit(frame, (self.x, self.y))
+
+            if self.anima_dano and pygame.time.get_ticks() - self.inicio_dano < self.duracao_dano:
+                mask = pygame.Surface((self.largura, self.altura), pygame.SRCALPHA)
+                mask.fill((255, 0, 0, 100))  # vermelho com transparência
+                frame_copy = frame.copy()
+                frame_copy.blit(mask, (0, 0))
+                tela.blit(frame_copy, (self.x, self.y))
+            else:
+                self.anima_dano = False
+                tela.blit(frame, (self.x, self.y))
