@@ -106,13 +106,22 @@ class Loja():
                 nome = self.font_chata.render(item.nome, True, (255, 255, 255))
                 tela.blit(nome, (1250, 182 + 525))
 
+                # Descrição 
+                carta_x = pos_x + 1200
+                carta_y = 525
 
-                # Descrição (hover)
-                if self.descricao_visivel[pos]:
-                    desc_lines = self.quebrar_texto_em_linhas(item.descricao, self.font_desc, width - 40)
-                    for i, line in enumerate(desc_lines):
-                        desc_text = self.font_desc.render(line, True, (255, 255, 255))
-                        tela.blit(desc_text, (1250, 755))
+                # Margens internas da carta
+                margem_lateral = 30
+                margem_topo = 220  # espaço pra imagem e título
+                largura_texto = self.carta_imgs[item.raridade].get_width() - 2 * margem_lateral
+
+                # Quebra de texto dentro da largura da carta
+                desc_lines = self.quebrar_texto_em_linhas(item.descricao, self.font_desc, largura_texto)
+
+                # Desenhar texto linha a linha
+                for i, line in enumerate(desc_lines):
+                    desc_text = self.font_desc.render(line, True, (255, 255, 255))
+                    tela.blit(desc_text, (carta_x + margem_lateral, carta_y + 20 + margem_topo + i * 22))
 
 
             

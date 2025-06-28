@@ -8,6 +8,7 @@ from sala import *
 from armas import *
 from random import *
 from sistemaparticulas import *
+import pygame.mask
 
 
 class Player():
@@ -30,7 +31,9 @@ class Player():
         self.tempo_animacao = 0
         self.tempo_por_frame = 100
         self.frame_atual = self.animacoes[self.anim_direcao][self.anim_frame]
+
         self.rastros = []
+        self.rastros_arma = []
 
         self.sistemaparticulas = ParticleSystem()
         self.lista_mods = ListaMods()
@@ -266,7 +269,29 @@ class Player():
             self.st = 100
 
         if self.attacking:
+            sword_img = self.sword.copy()
+            temp_surface = Surface((sword_img.get_width() * 2, sword_img.get_height() * 2), SRCALPHA)
+            temp_surface.blit(sword_img, (temp_surface.get_width() // 2 - self.sword_pivot[0],
+                                        temp_surface.get_height() // 2 - self.sword_pivot[1]))
+            rotated_surface = transform.rotate(temp_surface, -self.sword_angle)
+
+            angle = self.calcular_angulo(mouse.get_pos())
+            centro_jogador = (self.player_rect.centerx, self.player_rect.centery)
+            base_x = centro_jogador[0] + math.cos(angle) * (self.radius - 5)
+            base_y = centro_jogador[1] + math.sin(angle) * (self.radius - 5)
+            final_rect = rotated_surface.get_rect(center=(base_x, base_y))
+
+            self.rastros_arma.append({
+                "imagem": rotated_surface,
+                "pos": final_rect.topleft,
+                "tempo": 150
+            })
+
             self.atualizar_ataque(dt)
+
+        for rastro in self.rastros_arma:
+            rastro["tempo"] -= dt
+        self.rastros_arma = [r for r in self.rastros_arma if r["tempo"] > 0]
 
         if self.anim_direcao in self.animacoes:
             animacao = self.animacoes[self.anim_direcao]
@@ -348,6 +373,28 @@ class Player():
         rotated_surface = transform.rotate(temp_surface, -self.sword_angle)
         final_rect = rotated_surface.get_rect(center=(base_x, base_y))
         tela.blit(rotated_surface, final_rect.topleft)
+
+        # Rastros da arma
+        for rastro in self.rastros_arma:
+            imagem = rastro["imagem"].copy()
+            alpha = max(0, int(200 * (rastro["tempo"] / 200)))
+            imagem.set_alpha(alpha)
+
+            # Aplica brilho apenas na espada, sem espalhar ao redor
+            mask = pygame.mask.from_surface(imagem)
+            brilho = Surface(imagem.get_size(), SRCALPHA)
+
+            # Percorre a máscara e pinta apenas os pixels visíveis
+            brilho_cor = (255, 255, 255, int(alpha * 0.4))
+            for x in range(imagem.get_width()):
+                for y in range(imagem.get_height()):
+                    if mask.get_at((x, y)):
+                        brilho.set_at((x, y), brilho_cor)
+
+            # Aplica brilho apenas onde há pixels da espada
+            imagem.blit(brilho, (0, 0), special_flags=BLEND_RGBA_ADD)
+
+            tela.blit(imagem, rastro["pos"])
 
         # Rastros do dash
         for rastro in self.rastros:
