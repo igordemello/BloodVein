@@ -120,7 +120,7 @@ class LaminaDaNoite(Arma):
         self.dano = 10+randint(5*self.raridade,10*self.raridade)
         self.velocidade = 1 #analisar esses valores depois
         self.cooldown = 400
-        self.range = (70, 100) #hitbox arma
+        self.range = (40, 90) #hitbox arma
         self.radius = 100
         self.efeitos = None
         self.lifeSteal = self.dano/2
@@ -130,6 +130,8 @@ class LaminaDaNoite(Arma):
         self.clock = time.Clock()
 
         self.spriteIcon = "assets/UI/LaminaDaNoite.png"
+        self.sprite = 'espada.png'
+        self.size = (20 * 2, 54 * 2)
 
         mod_classe = listaMods.getMod(self.raridadeStr)  # Retorna a classe do modificador
         self.modificador = mod_classe(self)  # Instancia com self (a arma)
@@ -150,7 +152,7 @@ class LaminaDaNoite(Arma):
             inimigo.ultimo_dano_critico = False
             inimigo.ultimo_dano = self.dano * self.comboMult
 
-    def ataqueSecundario(self):
+    def ataqueSecundario(self,inimigo):
         return False
 
 #falta sprite e animação de ataque
@@ -162,7 +164,7 @@ class Chigatana(Arma):
         self.dano = 10+randint(5*self.raridade,10*self.raridade)
         self.velocidade = 2 #analisar esses valores depois
         self.cooldown = 400
-        self.range = (70, 100) #hitbox arma
+        self.range = (35, 90) #hitbox arma
         self.radius = 100
         self.efeitos = None
         self.lifeSteal = self.dano/4
@@ -171,7 +173,11 @@ class Chigatana(Arma):
         self.comboMult = 1
         self.clock = time.Clock()
 
-        self.spriteIcon = "assets/UI/LaminaDaNoite.png"
+        self.secEhAtaque = True
+
+        self.spriteIcon = "assets/UI/chigatana.png"
+        self.sprite = 'assets/player/chigatana.png'
+        self.size = (20 * 2, 54 * 2)
 
         mod_classe = listaMods.getMod(self.raridadeStr)  # Retorna a classe do modificador
         self.modificador = mod_classe(self)  # Instancia com self (a arma)
@@ -206,8 +212,8 @@ class Karambit(Arma):
         self.dano = 5+randint(5*self.raridade,10*self.raridade)
         self.velocidade = 2 #analisar esses valores depois
         self.cooldown = 300
-        self.range = (45, 90) #hitbox arma
-        self.radius = 50
+        self.range = (50, 50) #hitbox arma
+        self.radius = 80
         self.efeitos = None
         self.lifeSteal = self.dano/4
         self.chanceCritico = 5
@@ -215,7 +221,11 @@ class Karambit(Arma):
         self.comboMult = 1
         self.clock = time.Clock()
 
+        self.secEhAtaque = True
+
         self.spriteIcon = "assets/UI/Karambit.png"
+        self.sprite = 'assets/player/Karambit.png'
+        self.size = (32*2,32*2)
 
         mod_classe = listaMods.getMod(self.raridadeStr)  # Retorna a classe do modificador
         self.modificador = mod_classe(self)  # Instancia com self (a arma)
@@ -240,5 +250,64 @@ class Karambit(Arma):
 
     def ataqueSecundario(self,inimigo):
         inimigo.envenenar(5, self.dano+10)
+
+
+class EspadaDoTita(Arma):
+    def __init__(self,raridadeStr : str,listaMods : ListaMods):
+        self.tipoDeArma = "Espada do Tita"
+        self.raridadeStr = raridadeStr
+        self.raridade = RARIDADES.get(self.raridadeStr, 1)
+        self.dano = 25+randint(15*self.raridade,25*self.raridade)
+        self.velocidade = 0.5 #analisar esses valores depois
+        self.cooldown = 400
+        self.range = (40, 115) #hitbox arma
+        self.radius = 100
+        self.efeitos = None
+        self.lifeSteal = self.dano/2
+        self.chanceCritico = 12
+        self.danoCriticoMod = 3
+        self.comboMult = 1
+        self.clock = time.Clock()
+        self.criticoOg = self.chanceCritico
+        self.danoCritOg = self.danoCriticoMod
+
+        self.secEhAtaque = False
+
+        self.spriteIcon = "assets/UI/espadadotita.png"
+        self.sprite = 'assets/player/espadadotita.png'
+        self.size = (25 * 2, 70 * 2)
+
+        mod_classe = listaMods.getMod(self.raridadeStr)  # Retorna a classe do modificador
+        self.modificador = mod_classe(self)  # Instancia com self (a arma)
+        self.nome = f"{self.tipoDeArma} {self.modificador.nome} {self.raridadeStr}"
+
+    def aplicaModificador(self):
+        self.modificador.aplicarMod(self)
+        self.criticoOg = self.chanceCritico
+        self.danoCritOg = self.danoCriticoMod
+    def ataquePrincipal(self,inimigo):
+        if randint(1, 100) <= self.chanceCritico:
+            original_speed = self.clock.get_fps()
+            time.delay(100)
+            self.clock.tick(original_speed)
+            inimigo.hp -= self.dano * self.danoCriticoMod * inimigo.modificadorDanoRecebido * self.comboMult
+            inimigo.ultimo_dano_critico = True
+            inimigo.ultimo_dano = self.dano * self.danoCriticoMod * inimigo.modificadorDanoRecebido * self.comboMult
+        else:
+            inimigo.hp -= self.dano * inimigo.modificadorDanoRecebido * self.comboMult
+            inimigo.ultimo_dano_critico = False
+            inimigo.ultimo_dano = self.dano * self.comboMult
+        self.chanceCritico = self.criticoOg
+        self.danoCriticoMod = self.danoCritOg
+
+
+    def ataqueSecundario(self,player):
+        if self.chanceCritico > 100:
+            return
+        else:
+            self.chanceCritico *= 2
+            self.danoCriticoMod *= 1.5
+            player.st -= 20
+
 
 

@@ -8,7 +8,6 @@ from sala import *
 from armas import *
 from random import *
 from sistemaparticulas import *
-import pygame.mask
 
 
 class Player():
@@ -31,13 +30,12 @@ class Player():
         self.tempo_animacao = 0
         self.tempo_por_frame = 100
         self.frame_atual = self.animacoes[self.anim_direcao][self.anim_frame]
-
         self.rastros = []
-        self.rastros_arma = []
 
         self.sistemaparticulas = ParticleSystem()
         self.lista_mods = ListaMods()
-        self.arma = LaminaDaNoite("comum", self.lista_mods)
+        #ARMA
+        self.arma = EspadaDoTita("comum", self.lista_mods)
         self.arma.aplicaModificador()
 
         self.x = x
@@ -71,7 +69,7 @@ class Player():
         self.atrito = 0.92
         self.radius = self.arma.radius - 50
         self.orbital_size = (40, 20)
-        self.hitbox_arma = (50, 100)
+        self.hitbox_arma = self.arma.range
         self.atacou = False
         self.hits = 0
         self.tempo_ultimo_hit = 0
@@ -87,8 +85,8 @@ class Player():
         self.ativo_ultimo_uso = 0
 
         # Sistema de ataque modificado
-        self.sword = transform.scale(transform.flip(image.load('espada.png').convert_alpha(), True, True),
-                                     (20 * 2, 54 * 2))
+        self.sword = transform.scale(transform.flip(image.load(self.arma.sprite).convert_alpha(), True, True),
+                                     (self.arma.size))
         self.sword_pivot = (20, 0)
         self.sword_angle = 0
         self.attacking = False
@@ -110,6 +108,11 @@ class Player():
         self.player_rect = self.get_hitbox()
         self.dx = 0
         self.dy = 0
+
+        #efeito espada
+        self.sword_trail = []
+        self.max_trail_length = 5
+        self.trail_alpha = 100  # Transparência do rastro
 
     # [Métodos auxiliares permanecem iguais...]
     def carregar_animacao(self, caminho):
@@ -269,29 +272,7 @@ class Player():
             self.st = 100
 
         if self.attacking:
-            sword_img = self.sword.copy()
-            temp_surface = Surface((sword_img.get_width() * 2, sword_img.get_height() * 2), SRCALPHA)
-            temp_surface.blit(sword_img, (temp_surface.get_width() // 2 - self.sword_pivot[0],
-                                        temp_surface.get_height() // 2 - self.sword_pivot[1]))
-            rotated_surface = transform.rotate(temp_surface, -self.sword_angle)
-
-            angle = self.calcular_angulo(mouse.get_pos())
-            centro_jogador = (self.player_rect.centerx, self.player_rect.centery)
-            base_x = centro_jogador[0] + math.cos(angle) * (self.radius - 5)
-            base_y = centro_jogador[1] + math.sin(angle) * (self.radius - 5)
-            final_rect = rotated_surface.get_rect(center=(base_x, base_y))
-
-            self.rastros_arma.append({
-                "imagem": rotated_surface,
-                "pos": final_rect.topleft,
-                "tempo": 150
-            })
-
             self.atualizar_ataque(dt)
-
-        for rastro in self.rastros_arma:
-            rastro["tempo"] -= dt
-        self.rastros_arma = [r for r in self.rastros_arma if r["tempo"] > 0]
 
         if self.anim_direcao in self.animacoes:
             animacao = self.animacoes[self.anim_direcao]
@@ -314,7 +295,20 @@ class Player():
 
         if self.attack_progress >= 1.0:
             self.attacking = False
+            self.sword_trail = []
             return
+        
+        
+        # Adiciona posição atual ao rastro
+        angle = self.calcular_angulo(mouse.get_pos())
+        centro_jogador = (self.player_rect.centerx, self.player_rect.centery)
+        base_x = centro_jogador[0] + math.cos(angle) * (self.radius - 5)
+        base_y = centro_jogador[1] + math.sin(angle) * (self.radius - 5)
+        
+        self.sword_trail.append((base_x, base_y, self.sword_angle))
+        if len(self.sword_trail) > self.max_trail_length:
+            self.sword_trail.pop(0)
+
 
         # Arco de ataque aumentado (210 graus)
         swing_angle = self.sword_start_angle + self.sword_arc * self.attack_progress
@@ -374,34 +368,27 @@ class Player():
         final_rect = rotated_surface.get_rect(center=(base_x, base_y))
         tela.blit(rotated_surface, final_rect.topleft)
 
-        # Rastros da arma
-        for rastro in self.rastros_arma:
-            imagem = rastro["imagem"].copy()
-            alpha = max(0, int(200 * (rastro["tempo"] / 200)))
-            imagem.set_alpha(alpha)
-
-            # Aplica brilho apenas na espada, sem espalhar ao redor
-            mask = pygame.mask.from_surface(imagem)
-            brilho = Surface(imagem.get_size(), SRCALPHA)
-
-            # Percorre a máscara e pinta apenas os pixels visíveis
-            brilho_cor = (255, 255, 255, int(alpha * 0.4))
-            for x in range(imagem.get_width()):
-                for y in range(imagem.get_height()):
-                    if mask.get_at((x, y)):
-                        brilho.set_at((x, y), brilho_cor)
-
-            # Aplica brilho apenas onde há pixels da espada
-            imagem.blit(brilho, (0, 0), special_flags=BLEND_RGBA_ADD)
-
-            tela.blit(imagem, rastro["pos"])
-
         # Rastros do dash
         for rastro in self.rastros:
             imagem = rastro["imagem"].copy()
             alpha = max(0, int(255 * (rastro["tempo"] / 200)))
             imagem.set_alpha(alpha)
             tela.blit(imagem, rastro["pos"])
+
+        #EFEITO PARA A ESPADA
+        for i, (x, y, angle) in enumerate(self.sword_trail):
+                alpha = int(self.trail_alpha * (i/len(self.sword_trail)))
+                sword_copy = self.sword.copy()
+                sword_copy.set_alpha(alpha)
+                
+                temp_surface = Surface((sword_copy.get_width() * 2, sword_copy.get_height() * 2), SRCALPHA)
+                temp_surface.blit(sword_copy, (temp_surface.get_width() // 2 - self.sword_pivot[0],
+                                            temp_surface.get_height() // 2 - self.sword_pivot[1]))
+                rotated_surface = transform.rotate(temp_surface, -angle)
+                final_rect = rotated_surface.get_rect(center=(x, y))
+                tela.blit(rotated_surface, final_rect.topleft)
+
+
 
         # Personagem
         frame = self.frame_atual.copy()
@@ -500,32 +487,34 @@ class Player():
             self.arma.comboMult = 1.0
 
     def ataque_espadaSecundario(self, inimigos, mouse_pos, dt):
-        if not self.arma.ataqueSecundario():
-            return
         current_time = time.get_ticks()
 
         cooldown = self.cooldown_ataque_base / self.arma.velocidade
 
         if current_time - self.ultimo_ataque < cooldown:
             return
+        if self.arma.secEhAtaque:
 
-        self.ultimo_ataque = current_time
-        self.attacking = True
-        self.attack_start_time = current_time
-        self.attack_progress = 0
-        angle = self.calcular_angulo(mouse_pos)
-        self.base_sword_angle = math.degrees(angle) - 90
-        self.attack_direction = 1 if random() > 0.5 else -1
+            self.ultimo_ataque = current_time
+            self.attacking = True
+            self.attack_start_time = current_time
+            self.attack_progress = 0
+            angle = self.calcular_angulo(mouse_pos)
+            self.base_sword_angle = math.degrees(angle) - 90
+            self.attack_direction = 1 if random() > 0.5 else -1
 
-        _, hitbox_espada = self.get_rotated_rect_ataque(mouse_pos)
-        for inimigo in inimigos:
-            if inimigo.vivo:
-                if inimigo.get_hitbox().colliderect(hitbox_espada):
-                    inimigo.anima_hit = True
-                    self.arma.ataqueSecundario(inimigo)
-                    dx = inimigo.x - self.x
-                    dy = inimigo.y - self.y
-                    inimigo.aplicar_knockback(dx, dy, intensidade=0.5)
+            _, hitbox_espada = self.get_rotated_rect_ataque(mouse_pos)
+            for inimigo in inimigos:
+                if inimigo.vivo:
+                    if inimigo.get_hitbox().colliderect(hitbox_espada):
+                        inimigo.anima_hit = True
+                        self.arma.ataqueSecundario(inimigo)
+                        dx = inimigo.x - self.x
+                        dy = inimigo.y - self.y
+                        inimigo.aplicar_knockback(dx, dy, intensidade=0.5)
+        else:
+            self.ultimo_ataque = current_time
+            self.arma.ataqueSecundario(self)
 
     def tomar_dano(self, valor):
         now = time.get_ticks()
