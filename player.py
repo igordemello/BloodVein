@@ -289,10 +289,6 @@ class Player():
 
             self.atualizar_ataque(dt)
 
-        for rastro in self.rastros_arma:
-            rastro["tempo"] -= dt
-        self.rastros_arma = [r for r in self.rastros_arma if r["tempo"] > 0]
-
         if self.anim_direcao in self.animacoes:
             animacao = self.animacoes[self.anim_direcao]
             self.anim_frame %= len(animacao)
@@ -373,28 +369,6 @@ class Player():
         rotated_surface = transform.rotate(temp_surface, -self.sword_angle)
         final_rect = rotated_surface.get_rect(center=(base_x, base_y))
         tela.blit(rotated_surface, final_rect.topleft)
-
-        # Rastros da arma
-        for rastro in self.rastros_arma:
-            imagem = rastro["imagem"].copy()
-            alpha = max(0, int(200 * (rastro["tempo"] / 200)))
-            imagem.set_alpha(alpha)
-
-            # Aplica brilho apenas na espada, sem espalhar ao redor
-            mask = pygame.mask.from_surface(imagem)
-            brilho = Surface(imagem.get_size(), SRCALPHA)
-
-            # Percorre a máscara e pinta apenas os pixels visíveis
-            brilho_cor = (255, 255, 255, int(alpha * 0.4))
-            for x in range(imagem.get_width()):
-                for y in range(imagem.get_height()):
-                    if mask.get_at((x, y)):
-                        brilho.set_at((x, y), brilho_cor)
-
-            # Aplica brilho apenas onde há pixels da espada
-            imagem.blit(brilho, (0, 0), special_flags=BLEND_RGBA_ADD)
-
-            tela.blit(imagem, rastro["pos"])
 
         # Rastros do dash
         for rastro in self.rastros:
