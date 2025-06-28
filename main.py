@@ -22,6 +22,7 @@ init()
 
 gerenciamento.modo = 'jogo'
 
+
 clock = time.Clock()
 SCREEN = display.set_mode((1920, 1080), vsync=1, flags=HWSURFACE | DOUBLEBUF)  # mudei para funcionar em hardware fudido
 fps_font = font.SysFont("Arial", 24)
@@ -54,8 +55,10 @@ while i == 1:
     # i+=1
     keys = key.get_pressed()
     mouse_pos = mouse.get_pos()
-    dt = clock.tick(60)
+    clock.tick(60)
+    dt = clock.get_time()
     current_time = time.get_ticks()
+
     for ev in event.get():
         if ev.type == QUIT:
             quit()
@@ -75,7 +78,7 @@ while i == 1:
             quit()
             sys.exit()
 
-        if gerenciamento.modo == "jogo":
+        if gerenciamento.modo == "jogo":  
             if esperar_soltar_clique:
                 if not mouse.get_pressed()[0]:
                     esperar_soltar_clique = False
@@ -89,7 +92,8 @@ while i == 1:
                                 jogo_pausado = False
                                 bau = False
                         elif loja:  # Adicione esta condição para a loja
-                            sala_atual.loja.checar_compra(mouse.get_pos(), SCREEN)
+                            if sala_atual.loja.checar_compra(mouse.get_pos(), SCREEN) == "sair":
+                                 loja = not loja
                         else:
                             player.ataque_espadaPrincipal(sala_atual.inimigos, mouse_pos, dt)
                     if ev.button == 3:
@@ -111,6 +115,7 @@ while i == 1:
                     if ev.key == K_TAB:
                         minimapa.toggle()
 
+
                     if ev.key == K_PERIOD:
                         item_id = int(input("Digite o ID do item para debug: "))
                         encontrado = False
@@ -124,6 +129,7 @@ while i == 1:
                                 encontrado = True
                                 break
 
+                
     if gerenciamento.modo == 'jogo':
         SCREEN.blit(imagem_cursor, mouse_pos)
         hud.desenhaFundo(SCREEN)
