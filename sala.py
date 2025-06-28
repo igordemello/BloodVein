@@ -2,12 +2,11 @@ from pygame import *
 import sys
 from pygame.locals import QUIT
 import math
-
 from bau import Bau
 from itensDic import ConjuntoItens
 from mapa import Mapa
 from inimigos.orb import Orb
-from inimigos.MouthOrbBoss import MouthOrb
+import inimigos.MouthOrbBoss as bossmod
 from colisao import Colisao
 from loja import Loja
 import gerenciador_andar
@@ -61,7 +60,7 @@ class Sala:
 
     def _criar_inimigos(self):
         if "boss" in self.gerenciador_andar.grafo.nodes[self.gerenciador_andar.sala_atual]["tipo"]:
-            return [MouthOrb(400, 700, 64, 64, hp=200,velocidade=3, dano=30)]
+            return [bossmod.MouthOrb(400, 700, 192, 192, hp=200,velocidade=3, dano=30)]
         else:
             return [Orb(400, 700, 64, 64)]
             #return []
@@ -111,7 +110,10 @@ class Sala:
         self.mapa.desenhar(self.porta_liberada)
         for inimigo in self.inimigos:
             if inimigo.vivo:
-                    inimigo.desenhar(tela, (self.player.x,self.player.y))
+                inimigo.desenhar(tela, (self.player.x, self.player.y))
+        
+                if isinstance(inimigo, bossmod.MouthOrb):
+                    inimigo.desenhar_barra_vida(tela)
 
             elif not getattr(inimigo, "alma_coletada", True):
                     pos = (inimigo.x+16, inimigo.y+16)
