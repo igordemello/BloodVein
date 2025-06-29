@@ -509,3 +509,59 @@ class MarteloSolar(Arma):
             player.last_dash_time = current_time
             return player.criarAOE(mouse_pos, 300)
 
+
+class Arco(Arma):
+    def __init__(self,raridadeStr : str,listaMods : ListaMods):
+        self.tipoDeArma = "Arco"
+        self.ataqueTipo = "ranged"
+        self.raridadeStr = raridadeStr
+        self.raridade = RARIDADES.get(self.raridadeStr, 1)
+        self.dano = 20+randint(10*self.raridade,20*self.raridade)
+        self.velocidade = 1 #analisar esses valores depois
+        self.cooldown = 400
+        self.range = (40, 90) #hitbox arma
+        self.radius = 90
+        self.efeitos = None
+        self.lifeSteal = self.dano/2
+        self.chanceCritico = 10
+        self.danoCriticoMod = 2
+        self.comboMult = 1
+        self.clock = time.Clock()
+
+        self.secEhAtaque = True
+        self.ehRanged = True
+        self.ehAOE = False
+
+        self.spriteIcon = "assets/UI/espadaestelar.png"
+        self.sprite = 'assets/player/arco.png'
+        self.size = (51 * 2, 27 * 2)
+
+        mod_classe = listaMods.getMod(self.raridadeStr)  # Retorna a classe do modificador
+        self.modificador = mod_classe(self)  # Instancia com self (a arma)
+        self.nome = f"{self.tipoDeArma} {self.modificador.nome} {self.raridadeStr}"
+
+    def aplicaModificador(self):
+        self.modificador.aplicarMod(self)
+    def ataquePrincipal(self,player,mouse_pos):
+        sprite_projetil = image.load("assets/player/flecha.png").convert_alpha()
+        player.criar_projetil(mouse_pos, dano=self.dano, cor=None, sprite=sprite_projetil)
+
+
+    def ataqueSecundario(self,player,mouse_pos):
+        sprite_projetil = image.load("assets/player/flecha.png").convert_alpha()
+
+        angulo_central = player.calcular_angulo(mouse_pos)
+        angulo_abertura = math.radians(5)  # 15 graus em radianos
+        current_time = time.get_ticks()
+        if player.st <= 0:
+            return
+        else:
+            player.st -= 20
+            player.last_dash_time = current_time
+            player.criar_projetil(mouse_pos, dano=self.dano, cor=None, sprite=sprite_projetil, angulo_personalizado=angulo_central)
+            player.criar_projetil(mouse_pos, dano=self.dano, cor=None, sprite=sprite_projetil, angulo_personalizado=angulo_central - angulo_abertura)
+            player.criar_projetil(mouse_pos, dano=self.dano, cor=None, sprite=sprite_projetil, angulo_personalizado=angulo_central + angulo_abertura)
+
+
+
+
