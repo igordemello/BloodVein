@@ -78,8 +78,7 @@ class Bau:
                     self.frame_index = len(self.frames) - 1
                     self.animando = False
                     self.aberto = True
-                    if player_hitbox and self.rect.colliderect(player_hitbox):
-                        self.menu_ativo = True
+                    self.menu_ativo = True
                 self.image = self.frames[self.frame_index]
 
         
