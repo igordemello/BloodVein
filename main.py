@@ -31,6 +31,7 @@ fps_text = fps_font.render("FPS: 60", True, (255, 255, 255))
 
 logo = image.load("assets/logo.png")
 display.set_icon(logo)
+display.set_caption("Blood Vein")
 
 imagem_cursor = transform.scale(image.load(r'assets\UI\cursor.png').convert_alpha(), (32, 32))
 mouse.set_visible(False)
@@ -86,12 +87,12 @@ while i == 1:
             else:
                 if ev.type == MOUSEBUTTONDOWN:
                     if ev.button == 1:
-                        if bau:
+                        if sala_atual.bau and sala_atual.ativar_menu_bau:
                             item = sala_atual.bau.checar_clique_bau(mouse.get_pos())
                             if item:
                                 player.adicionarItem(item)
                                 jogo_pausado = False
-                                bau = False
+                                sala_atual.gerenciador_andar.grafo.nodes[sala_atual.gerenciador_andar.sala_atual]["bau_aberto"] = True
                         elif loja:  # Adicione esta condição para a loja
                             if sala_atual.loja.checar_compra(mouse.get_pos(), SCREEN) == "sair":
                                  loja = not loja
@@ -105,8 +106,6 @@ while i == 1:
                         player.ativo_ultimo_uso = current_time
                         player.usarItemAtivo(sala_atual)
 
-                    if ev.key == K_MINUS:
-                        bau = not bau
                     if ev.key == K_l:
                         loja = not loja
 
@@ -138,10 +137,12 @@ while i == 1:
         hud.desenhar(SCREEN)
         player.desenhar(SCREEN,
                         mouse_pos)  # probleminha, a espada continua sendo atualizado, pq ele é desenhado assim no futuro
-        if not bau and not loja:
-            sala_atual.atualizar(dt, keys)
-            player.atualizar(dt, keys)
-        elif bau:
+
+        sala_atual.atualizar(dt, keys)
+        player.atualizar(dt, keys)
+
+
+        if sala_atual.bau and sala_atual.bau.menu_ativo:
             sala_atual.bau.bauEscolherItens(SCREEN)
         elif loja:
             sala_atual.loja.desenhar_loja(SCREEN)

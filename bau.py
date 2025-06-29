@@ -6,7 +6,7 @@ from random import sample
 from botao import Botao
 
 class Bau:
-    def __init__(self, conjunto: ConjuntoItens):
+    def __init__(self, conjunto: ConjuntoItens,posx,posy):
         self.itensDisp = conjunto
         self.ids_disponiveis = list(conjunto.itens_por_id)
         self.ids_sorteados = sample(self.ids_disponiveis, 3)
@@ -33,6 +33,57 @@ class Bau:
                 hovering_color=(0, 0, 0)
             )
             self.botoes.append(botao)
+
+        self.botaosair = Botao(image=None, pos=(200,980), text_input="Sair", font=font.Font('assets/Fontes/alagard.ttf', 32), base_color=(244,26,43), hovering_color=(202, 56, 68))
+        
+        #
+        self.escala = 3
+        self.spritesheet = image.load('assets/bau_sheet.png').convert_alpha()
+        self.frames = self._carregar_frames()
+        self.frame_index = 0
+        self.image = self.frames[0]
+        self.rect = self.image.get_rect(topleft=(posx, posy))
+
+        self.aberto = False
+        self.animando = False
+        self.tempo_ultimo_frame = time.get_ticks()
+        self.duracao_frame = 150  #ms por frame
+        self.menu_ativo = False
+        self.item_escolhido = None
+
+    def _carregar_frames(self):
+        largura = self.spritesheet.get_width() // 4
+        altura = self.spritesheet.get_height()
+        return [
+            transform.scale(
+                self.spritesheet.subsurface(Rect(i * largura, 0, largura, altura)),
+                (largura * self.escala, altura * self.escala)
+            ) for i in range(4)
+        ]
+    
+    def abrir(self):
+        if not self.aberto and not self.animando:
+            self.animando = True
+            self.frame_index = 0
+            self.tempo_ultimo_frame = time.get_ticks()
+
+    
+    def update(self, player_hitbox=None):
+        if self.animando:
+            agora = time.get_ticks()
+            if agora - self.tempo_ultimo_frame > self.duracao_frame:
+                self.tempo_ultimo_frame = agora
+                self.frame_index += 1
+                if self.frame_index >= len(self.frames):
+                    self.frame_index = len(self.frames) - 1
+                    self.animando = False
+                    self.aberto = True
+                    if player_hitbox and self.rect.colliderect(player_hitbox):
+                        self.menu_ativo = True
+                self.image = self.frames[self.frame_index]
+
+        
+
 
     def bauEscolherItens(self, tela):
         overlay = Surface(tela.get_size(), SRCALPHA)
@@ -82,6 +133,8 @@ class Bau:
                 texto_rect = texto.get_rect(center=(pos_x + width // 2, y_base + 50+ i * 24))
                 tela.blit(texto, texto_rect)
 
+        self.botaosair.changeColor(mouse_pos)
+        self.botaosair.update(tela)
         for botao in self.botoes:
             botao.changeColor(mouse_pos)
             botao.update(tela)
@@ -106,8 +159,12 @@ class Bau:
 
     def checar_clique_bau(self, mouse_pos):
         for i, botao in enumerate(self.botoes):
+            if self.botaosair.checkForInput(mouse_pos):
+                self.menu_ativo = False
+                return None
             if botao.checkForInput(mouse_pos):
                 item_escolhido = self.itens_sorteados[i]
                 print(f"Item escolhido: {item_escolhido.nome}")
+                self.menu_ativo = False
                 return item_escolhido
         return None
