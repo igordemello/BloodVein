@@ -34,6 +34,7 @@ class Inimigo:
         self.old_y = y
 
         self.hp = hp
+        self.hp_max = hp
         self.modificadorDanoRecebido = 1  # isso multiplica o dano que o jogador causa, serve pra fazer bleed e pro parry
         self.vivo = True
         self.dano = dano
@@ -232,9 +233,15 @@ class Inimigo:
                 frozen_sprite.fill((165, 242, 255, 100), special_flags=BLEND_MULT)
                 tela.blit(frozen_sprite, (self.x, self.y))
 
-        # vida
-        draw.rect(tela, (255, 200, 200), (self.x - 20, self.y + 70, 100, 10))
-        draw.rect(tela, (255, 0, 0), (self.x - 20, self.y + 70, self.hp, 10))
+        vida_maxima = getattr(self, "hp_max", 100)
+        largura_barra = 100
+        porcentagem = max(0, min(self.hp / vida_maxima, 1))  # entre 0 e 1
+        largura_hp = porcentagem * largura_barra
+
+        # fundo da barra
+        draw.rect(tela, (255, 200, 200), (self.x - 20, self.y + 70, largura_barra, 10))
+        # preenchimento da barra
+        draw.rect(tela, (255, 0, 0), (self.x - 20, self.y + 70, largura_hp, 10))
 
         rot_rect, rot_surf = self.get_hitbox_ataque(player_pos)
         tela.blit(rot_surf, rot_rect)
@@ -291,8 +298,8 @@ class Inimigo:
 
         # esse daqui é a hitbox do ataque do inimigo
         orb_surf = Surface(self.hitboxArma, SRCALPHA)
-        draw.rect(orb_surf, (255, 0, 0), orb_surf.get_rect(),
-                  width=1)  # quadrado sem preenchimento vermelho   que fica com o inimigo
+        # draw.rect(orb_surf, (255, 0, 0), orb_surf.get_rect(),
+        #           width=1)  # quadrado sem preenchimento vermelho   que fica com o inimigo
         rot_surf = transform.rotate(orb_surf, -math.degrees(
             angulo))  # quadrado sem preenchimento vermelho   que fica com o inimigo
         rot_rect = rot_surf.get_rect(

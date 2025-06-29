@@ -444,6 +444,8 @@ class Player():
         rotated_hitbox, rotated_rect = self.get_rotated_rect_ataque(mouse_pos)
         #tela.blit(rotated_hitbox, rotated_rect)
 
+        # draw.rect(tela, (0,255,0), self.get_hitbox(), 2)
+
         self.sistemaparticulas.draw(tela)
 
     def get_hitbox(self):
