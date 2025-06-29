@@ -244,7 +244,9 @@ class Player():
             self.tempo_animacao += dt
             if self.tempo_animacao > self.tempo_por_frame:
                 self.tempo_animacao = 0
-                self.anim_frame = (self.anim_frame + 1) % len(self.animacoes[self.anim_direcao])
+                self.anim_frame += 1
+                if self.anim_frame >= len(self.animacoes[self.anim_direcao]):
+                    self.anim_frame = 4
         else:
             self.anim_frame = 0
             angulo = self.calcular_angulo(mouse.get_pos())
