@@ -32,6 +32,7 @@ class Minimapa:
         self.icon_current = image.load('assets/minimapa/icon_current.png').convert_alpha()
         self.icon_spawn = image.load('assets/minimapa/icon_spawn.png').convert_alpha()
         self.icon_boss = image.load('assets/minimapa/icon_boss.png').convert_alpha()
+        self.icon_bau = image.load('assets/minimapa/icon_bau.png').convert_alpha()
 
 
     def toggle(self):
@@ -55,13 +56,47 @@ class Minimapa:
         if not self.visible:
             return
 
-        self.surface.fill((0, 0, 0, 0))
+
+        mapa_info = self.gerenciador.get_mapa_info()
+        
+        all_positions = [node['posicao'] for node in mapa_info['nodes']]
+        if not all_positions:
+            return
+        
+        min_x = min(pos[0] for pos in all_positions)
+        max_x = max(pos[0] for pos in all_positions)
+        min_y = min(pos[1] for pos in all_positions)
+        max_y = max(pos[1] for pos in all_positions)
+        
+        content_width = max_x - min_x
+        content_height = max_y - min_y
+        
+        self.width = 700
+        self.height = 800
+        self.pos_x = (self.screen.get_width() - self.width) // 2
+        self.pos_y = (self.screen.get_height() - self.height) // 2
+        
+
+        self.surface = Surface((self.width, self.height), SRCALPHA)
         
 
         self.draw_bg(self.surface, (0, 0, self.width, self.height), self.color_bg, self.border_radius)
         
 
-        mapa_info = self.gerenciador.get_mapa_info()
+        scale = min(
+            (self.width - 100) / max(content_width, 1), 
+            (self.height - 100) / max(content_height, 1)
+        )
+        
+        offset_x = (self.width - content_width * scale) / 2 - min_x * scale
+        offset_y = (self.height - content_height * scale) / 2 - min_y * scale
+        
+
+        def to_minimap_pos(abs_x, abs_y):
+            return (
+                int(abs_x * scale + offset_x),
+                int(abs_y * scale + offset_y)
+            )
         
 
         for edge in mapa_info['edges']:
@@ -69,18 +104,20 @@ class Minimapa:
             destino_node = next((n for n in mapa_info['nodes'] if n['id'] == edge['destino']), None)
             
             if origem_node and destino_node and (origem_node['visitada'] or destino_node['visitada']):
+                start_pos = to_minimap_pos(*origem_node['posicao'])
+                end_pos = to_minimap_pos(*destino_node['posicao'])
                 draw.line(
                     self.surface, 
                     self.color_path, 
-                    origem_node['posicao'], 
-                    destino_node['posicao'], 
+                    start_pos, 
+                    end_pos, 
                     self.path_width
                 )
         
 
         for node in mapa_info['nodes']:
             should_show = node['visitada'] or (
-                'boss' in node['tipo'] and 
+                any(t in node['tipo'] for t in ['boss', 'bau']) and 
                 any(edge['origem'] == self.gerenciador.sala_atual and edge['destino'] == node['id'] or
                     edge['destino'] == self.gerenciador.sala_atual and edge['origem'] == node['id']
                     for edge in mapa_info['edges'])
@@ -89,46 +126,41 @@ class Minimapa:
             if not should_show:
                 continue
                 
+            room_pos = to_minimap_pos(*node['posicao'])
+            
+
+            scaled_room_size = int(self.room_size * scale * 0.8)
+            
+
+            room_rect = Rect(
+                room_pos[0] - scaled_room_size,
+                room_pos[1] - scaled_room_size // 2,
+                scaled_room_size * 2,
+                scaled_room_size
+            )
+            
             color = (self.color_current if node['atual'] else
                     self.color_spawn if node['tipo'] == 'spawn' else
                     self.color_boss if 'boss' in node['tipo'] else
                     self.color_visited)
-                
-            room_rect = Rect(
-                int(node['posicao'][0]) - self.room_size,
-                int(node['posicao'][1]) - self.room_size //2,
-                self.room_size*2,
-                self.room_size  
-            )
+            
             draw.rect(self.surface, color, room_rect)
             
-            fonte = font.Font('assets/Fontes/alagard.ttf', 14)
+
+            icon_size = int(32 * scale * 0.8)
             if node['atual']:
-                # text = fonte.render('voce esta aqui', True, self.color_text)
-                # text_rect = text.get_rect(center=(node['posicao'][0], node['posicao'][1]))
-                # self.surface.blit(text, text_rect)
-                icon_resized = transform.scale(self.icon_current, (32,32))
-                icon_rect = icon_resized.get_rect()
-                icon_rect.center = (node['posicao'][0], node['posicao'][1])
-                self.surface.blit(icon_resized, icon_rect)
+                icon_resized = transform.scale(self.icon_current, (icon_size, icon_size))
+                self.surface.blit(icon_resized, (room_pos[0] - icon_size//2, room_pos[1] - icon_size//2))
             elif node['tipo'] == 'spawn':
-                # text = fonte.render('spawn', True, self.color_text)
-                # text_rect = text.get_rect(center=(node['posicao'][0], node['posicao'][1]))
-                # self.surface.blit(text, text_rect)
-                icon_resized = transform.scale(self.icon_spawn, (32,32))
-                icon_rect = icon_resized.get_rect()
-                icon_rect.center = (node['posicao'][0], node['posicao'][1])
-                self.surface.blit(icon_resized, icon_rect)
+                icon_resized = transform.scale(self.icon_spawn, (icon_size, icon_size))
+                self.surface.blit(icon_resized, (room_pos[0] - icon_size//2, room_pos[1] - icon_size//2))
             elif 'boss' in node['tipo']:
-                # text = fonte.render('boss', True, self.color_text)
-                # text_rect = text.get_rect(center=(node['posicao'][0], node['posicao'][1]))
-                # self.surface.blit(text, text_rect)
-                icon_resized = transform.scale(self.icon_boss, (32,32))
-                icon_rect = icon_resized.get_rect()
-                icon_rect.center = (node['posicao'][0], node['posicao'][1])
-                self.surface.blit(icon_resized, icon_rect)
-            
-            
+                icon_resized = transform.scale(self.icon_boss, (icon_size, icon_size))
+                self.surface.blit(icon_resized, (room_pos[0] - icon_size//2, room_pos[1] - icon_size//2))
+            elif 'bau' in node['tipo']:
+                icon_resized = transform.scale(self.icon_bau, (icon_size, icon_size))
+                self.surface.blit(icon_resized, (room_pos[0] - icon_size//2, room_pos[1] - icon_size//2))
         
+
         self.screen.blit(self.surface, (self.pos_x, self.pos_y))
         

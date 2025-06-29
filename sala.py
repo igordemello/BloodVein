@@ -40,12 +40,30 @@ class Sala:
         self.itensDisp = ConjuntoItens()
         self.colliders = self.mapa.get_colliders()
 
-        self.bau = Bau(self.itensDisp)
         self.loja = Loja(self.itensDisp,self.player)
 
 
         self.em_transicao = False
         self.visitada = False
+
+        tipo = self.gerenciador_andar.grafo.nodes[self.gerenciador_andar.sala_atual]['tipo']
+        bau_aberto = self.gerenciador_andar.grafo.nodes[self.gerenciador_andar.sala_atual].get('bau_aberto', False)
+
+        if tipo == 'bau':
+            x, y = self.mapa.get_rangebau()[0].topleft
+            self.bau = Bau(self.itensDisp, x, y)
+            
+            if bau_aberto:
+                self.bau.aberto = True
+                self.bau.animando = False
+                self.bau.frame_index = len(self.bau.frames) - 1
+                self.bau.image = self.bau.frames[-1]
+                self.bau.menu_ativo = False  # Garante que não reabra
+            else:
+                self.ativar_menu_bau = False
+        else:
+            self.bau = None
+
 
 
         if not gerenciador_andar.sala_foi_conquistada(gerenciador_andar.sala_atual):
@@ -62,8 +80,8 @@ class Sala:
         if "boss" in self.gerenciador_andar.grafo.nodes[self.gerenciador_andar.sala_atual]["tipo"]:
             return [bossmod.MouthOrb(400, 700, 192, 192, hp=200,velocidade=3, dano=30)]
         else:
-            return [Orb(400, 700, 64, 64)]
-            #return []
+            # return [Orb(400, 700, 64, 64)]
+            return []
 
     def atualizar(self,dt,teclas):
         for inimigo in self.inimigos:
@@ -102,6 +120,20 @@ class Sala:
             self.player.player_rect.topleft = (self.player.x, self.player.y)
             self._trocar_de_sala()
 
+        if self.bau:
+            self.bau.update(player_hitbox=self.player.get_hitbox())
+            
+            if not self.gerenciador_andar.grafo.nodes[self.gerenciador_andar.sala_atual].get("bau_aberto", False):
+                if self.player.get_hitbox().colliderect(self.bau.rect) and teclas[K_e]:
+                    if not self.bau.aberto:
+                        self.bau.abrir()
+
+            # Verifica continuamente se deve mostrar o menu
+            if self.bau.aberto and not self.bau.animando and not self.ativar_menu_bau:
+                if self.player.get_hitbox().colliderect(self.bau.rect):
+                    self.ativar_menu_bau = True
+
+
 
 
 
@@ -125,7 +157,8 @@ class Sala:
                         self.player.almas += 1
                         inimigo.alma_coletada = True
 
-
+        if self.bau:
+            tela.blit(self.bau.image, self.bau.rect.topleft)
 
         #debug visual das colisões do player e do mapa:
         # for collider in self.mapa.get_colliders():
