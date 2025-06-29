@@ -35,7 +35,7 @@ class Player():
         self.sistemaparticulas = ParticleSystem()
         self.lista_mods = ListaMods()
         #ARMA
-        self.arma = EspadaEstelar("comum", self.lista_mods)
+        self.arma = MarteloSolar("comum", self.lista_mods)
         self.arma.aplicaModificador()
 
         self.x = x
@@ -98,6 +98,7 @@ class Player():
         self.sword_start_angle = -105  # Ângulo inicial ajustado
 
         self.projeteis = []
+        self.aoe = None
 
         self.cooldown_ataque_base = self.arma.cooldown
         self.ultimo_ataque = 0
@@ -354,6 +355,14 @@ class Player():
             "raio_hitbox": 8
         })
 
+    def criarAOE(self, mouse_pos, tamanho):
+        mouse_x, mouse_y = mouse_pos
+        rect = Rect(0, 0, tamanho, tamanho)
+        rect.center = (mouse_x, mouse_y)
+        s = Surface((tamanho, tamanho), SRCALPHA)
+        tempoCriacao = time.get_ticks()
+        return s, rect,tamanho,tempoCriacao
+
     def calcular_angulo(self, mouse_pos):
         mouse_x, mouse_y = mouse_pos
         dx = mouse_x - (self.x + 32)
@@ -425,6 +434,17 @@ class Player():
         if self.foi_atingido and time.get_ticks() - self.tempo_atingido < 250:
             frame.fill((255, 255, 255), special_flags=BLEND_RGB_ADD)
         tela.blit(frame, self.player_rect.topleft)
+
+        if self.aoe is not None:
+            s, rectAoe,tamanho,tempoCriacao = self.aoe
+            tempo_atual = time.get_ticks()
+            if tempo_atual - tempoCriacao < 2000:
+                s.fill((0, 0, 0, 0))
+                draw.rect(s, (255, 228, 76, 20), s.get_rect(), border_radius=int(tamanho / 2))
+                tela.blit(s, rectAoe.topleft)
+            else:
+                self.aoe = None
+
 
         #projeteis
 
@@ -555,6 +575,16 @@ class Player():
                             dx = inimigo.x - self.x
                             dy = inimigo.y - self.y
                             inimigo.aplicar_knockback(dx, dy, intensidade=0.5)
+            elif self.arma.ehAOE:
+                self.aoe = self.arma.ataqueSecundario(self, mouse_pos)
+                self.ultimo_ataque = current_time
+                self.attacking = True
+                self.attack_start_time = current_time
+                self.attack_progress = 0
+                angle = self.calcular_angulo(mouse_pos)
+                self.base_sword_angle = math.degrees(angle) - 90
+                self.attack_direction = 1 if random() > 0.5 else -1
+
             else:
                 if self.arma.ataqueTipo == "melee":
                     self.attacking = True

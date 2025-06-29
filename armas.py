@@ -132,6 +132,7 @@ class LaminaDaNoite(Arma):
 
         self.secEhAtaque = True
         self.ehRanged = False
+        self.ehAOE = False
 
         self.spriteIcon = "assets/UI/LaminaDaNoite.png"
         self.sprite = 'espada.png'
@@ -180,6 +181,7 @@ class Chigatana(Arma):
 
         self.secEhAtaque = True
         self.ehRanged = False
+        self.ehAOE = False
 
         self.spriteIcon = "assets/UI/chigatana.png"
         self.sprite = 'assets/player/chigatana.png'
@@ -230,6 +232,7 @@ class Karambit(Arma):
 
         self.secEhAtaque = True
         self.ehRanged = False
+        self.ehAOE = False
 
         self.spriteIcon = "assets/UI/Karambit.png"
         self.sprite = 'assets/player/Karambit.png'
@@ -282,6 +285,7 @@ class EspadaDoTita(Arma):
 
         self.secEhAtaque = False
         self.ehRanged = False
+        self.ehAOE = False
 
         self.spriteIcon = "assets/UI/espadadotita.png"
         self.sprite = 'assets/player/espadadotita.png'
@@ -312,7 +316,7 @@ class EspadaDoTita(Arma):
 
 
     def ataqueSecundario(self,player):
-        if self.chanceCritico > 100:
+        if self.chanceCritico > 100 or player.st <= 0:
             return
         else:
             self.chanceCritico *= 2
@@ -344,6 +348,7 @@ class MachadoDoInverno(Arma):
 
         self.secEhAtaque = True
         self.ehRanged = False
+        self.ehAOE = False
 
         self.spriteIcon = "assets/UI/machadodoinverno.png"
         self.sprite = 'assets/player/machadodoinverno.png'
@@ -382,9 +387,14 @@ class MachadoDoInverno(Arma):
         self.danoCriticoMod = self.danoCritOg
 
     def ataqueSecundario(self, inimigo,player):
-        inimigo.velocidade *= 0.25
-        inimigo.congelado = True
-        player.st -= 50
+        current_time = time.get_ticks()
+        if player.st <= 0:
+            return
+        else:
+            inimigo.velocidade *= 0.25
+            inimigo.congelado = True
+            player.st -= 50
+            player.last_dash_time = current_time
 
 class EspadaEstelar(Arma):
     def __init__(self,raridadeStr : str,listaMods : ListaMods):
@@ -406,6 +416,7 @@ class EspadaEstelar(Arma):
 
         self.secEhAtaque = True
         self.ehRanged = True
+        self.ehAOE = False
 
         self.spriteIcon = "assets/UI/espadaestelar.png"
         self.sprite = 'assets/player/espadaestelar.png'
@@ -441,5 +452,60 @@ class EspadaEstelar(Arma):
             player.last_dash_time = current_time
 
 
+class MarteloSolar(Arma):
+    def __init__(self,raridadeStr : str,listaMods : ListaMods):
+        self.tipoDeArma = "Machado Do Inverno"
+        self.ataqueTipo = "melee"
+        self.raridadeStr = raridadeStr
+        self.raridade = RARIDADES.get(self.raridadeStr, 1)
+        self.dano = 15+randint(15*self.raridade,25*self.raridade)
+        self.velocidade = 0.5 #analisar esses valores depois
+        self.cooldown = 400
+        self.range = (52, 80) #hitbox arma
+        self.radius = 100
+        self.efeitos = None
+        self.lifeSteal = self.dano/2
+        self.chanceCritico = 13
+        self.danoCriticoMod = 2
+        self.comboMult = 1
+        self.clock = time.Clock()
 
+        self.secEhAtaque = True
+        self.ehRanged = True
+        self.ehAOE = True
+        self.danoAOE = self.dano*0.8
+
+
+        self.spriteIcon = "assets/UI/martelo_icone.png"
+        self.sprite = 'assets/player/martelo_solar.png'
+        self.size = (27 * 2, 51 * 2)
+
+        mod_classe = listaMods.getMod(self.raridadeStr)  # Retorna a classe do modificador
+        self.modificador = mod_classe(self)  # Instancia com self (a arma)
+        self.nome = f"{self.tipoDeArma} {self.modificador.nome} {self.raridadeStr}"
+
+    def aplicaModificador(self):
+        self.modificador.aplicarMod(self)
+
+    def ataquePrincipal(self,inimigo):
+        if randint(1, 100) <= self.chanceCritico:
+            original_speed = self.clock.get_fps()
+            time.delay(100)
+            self.clock.tick(original_speed)
+            inimigo.hp -= self.dano * self.danoCriticoMod * inimigo.modificadorDanoRecebido * self.comboMult
+            inimigo.ultimo_dano_critico = True
+            inimigo.ultimo_dano = self.dano * self.danoCriticoMod * inimigo.modificadorDanoRecebido * self.comboMult
+        else:
+            inimigo.hp -= self.dano * inimigo.modificadorDanoRecebido * self.comboMult
+            inimigo.ultimo_dano_critico = False
+            inimigo.ultimo_dano = self.dano * self.comboMult
+
+    def ataqueSecundario(self,player,mouse_pos):
+        current_time = time.get_ticks()
+        if player.st-50 <= 0:
+            return #revisar isso
+        else:
+            player.st -= 50
+            player.last_dash_time = current_time
+            return player.criarAOE(mouse_pos, 300)
 

@@ -26,6 +26,7 @@ class Colisao:
             self._colisao_entidade_mapa(entidade, dt)
 
         self._colisao_entidade_projetil()
+        self._colisao_entidade_AOE()
 
 
     def _colisao_entidade_mapa(self,entidade,dt):
@@ -123,4 +124,25 @@ class Colisao:
                     self.player.criar_efeito_sangue(projetil["x"], projetil["y"])
 
                     self.player.projeteis.remove(projetil)
+                    break
+
+    def _colisao_entidade_AOE(self):
+        from player import Player
+
+        tempo_atual = time.get_ticks()
+
+        if not hasattr(self, "ultimo_tempo_colisao_aoe"):
+            self.ultimo_tempo_colisao_aoe = 0
+
+        if self.player.aoe is not None and tempo_atual - self.ultimo_tempo_colisao_aoe >= 1000:
+            for inimigo in self.entidades:
+                if isinstance(inimigo, Player):
+                    continue
+                if inimigo.vivo and self.player.aoe[1].colliderect(inimigo.get_hitbox()):
+                    inimigo.hp -= self.player.arma.danoAOE
+                    inimigo.ultimo_dano_critico = False
+                    inimigo.ultimo_dano = self.player.arma.danoAOE
+                    inimigo.ultimo_dano_tempo = tempo_atual
+
+                    self.ultimo_tempo_colisao_aoe = tempo_atual
                     break
