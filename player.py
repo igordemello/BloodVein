@@ -334,14 +334,17 @@ class Player():
         else:
             self.itemAtivo = item
 
-    def criar_projetil(self, mouse_pos, dano,cor):
+    def criar_projetil(self, mouse_pos, dano, cor):
         angle = self.calcular_angulo(mouse_pos)
         centro_jogador = (self.player_rect.centerx, self.player_rect.centery)
+        sword_distance = self.radius + self.sword.get_width() // 2
+        start_x = centro_jogador[0] + math.cos(angle) * sword_distance
+        start_y = centro_jogador[1] + math.sin(angle) * sword_distance
         velocidade = 0.8
 
         self.projeteis.append({
-            "x": centro_jogador[0],
-            "y": centro_jogador[1],
+            "x": start_x,
+            "y": start_y,
             "vx": math.cos(angle) * velocidade,
             "vy": math.sin(angle) * velocidade,
             "color": cor,

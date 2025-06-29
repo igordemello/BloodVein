@@ -395,7 +395,7 @@ class EspadaEstelar(Arma):
         self.dano = 20+randint(10*self.raridade,20*self.raridade)
         self.velocidade = 0.8 #analisar esses valores depois
         self.cooldown = 400
-        self.range = (40, 115) #hitbox arma
+        self.range = (40, 90) #hitbox arma
         self.radius = 100
         self.efeitos = None
         self.lifeSteal = self.dano/2
@@ -407,9 +407,9 @@ class EspadaEstelar(Arma):
         self.secEhAtaque = True
         self.ehRanged = True
 
-        self.spriteIcon = "assets/UI/espadadotita.png"
-        self.sprite = 'assets/player/espadadotita.png'
-        self.size = (25 * 2, 70 * 2)
+        self.spriteIcon = "assets/UI/espadaestelar.png"
+        self.sprite = 'assets/player/espadaestelar.png'
+        self.size = (23 * 2, 54 * 2)
 
         mod_classe = listaMods.getMod(self.raridadeStr)  # Retorna a classe do modificador
         self.modificador = mod_classe(self)  # Instancia com self (a arma)
@@ -432,7 +432,7 @@ class EspadaEstelar(Arma):
 
 
     def ataqueSecundario(self,player,mouse_pos):
-        player.criar_projetil(mouse_pos,(self.dano/2),cor=(255,222,33))
+        player.criar_projetil(mouse_pos,(self.dano/2.5),cor=(24,212,59))
         player.st -= 20
 
 
