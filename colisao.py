@@ -124,6 +124,9 @@ class Colisao:
                     self.player.criar_efeito_sangue(projetil["x"], projetil["y"])
 
                     self.player.projeteis.remove(projetil)
+                    if self.player.arma.ataqueTipo == "ranged" and self.player.hp < 100:
+                        self.player.hp += self.player.arma.lifeSteal
+                        if self.player.hp > 100: self.player.hp = 100
                     break
 
     def _colisao_entidade_AOE(self):

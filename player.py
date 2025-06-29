@@ -35,7 +35,7 @@ class Player():
         self.sistemaparticulas = ParticleSystem()
         self.lista_mods = ListaMods()
         #ARMA
-        self.arma = MarteloSolar("comum", self.lista_mods)
+        self.arma = Arco("comum", self.lista_mods)
         self.arma.aplicaModificador()
 
         self.x = x
@@ -87,7 +87,7 @@ class Player():
         # Sistema de ataque modificado
         self.sword = transform.scale(transform.flip(image.load(self.arma.sprite).convert_alpha(), True, True),
                                      (self.arma.size))
-        self.sword_pivot = (20, 0)
+        self.sword_pivot = (self.arma.size[0]/2, 0)
         self.sword_angle = 0
         self.attacking = False
         self.attack_start_time = 0
@@ -337,25 +337,42 @@ class Player():
         else:
             self.itemAtivo = item
 
-    def criar_projetil(self, mouse_pos, dano, cor):
+    def criar_projetil(self, mouse_pos, dano, cor, sprite=None, tamanho=10, velocidade=0.8, lifetime=1000,angulo_personalizado=None):
         angle = self.calcular_angulo(mouse_pos)
         centro_jogador = (self.player_rect.centerx, self.player_rect.centery)
-        sword_distance = self.radius + self.sword.get_width() // 2
-        start_x = centro_jogador[0] + math.cos(angle) * sword_distance
-        start_y = centro_jogador[1] + math.sin(angle) * sword_distance
-        velocidade = 0.8
 
-        self.projeteis.append({
+        if angulo_personalizado is not None:
+            angle = angulo_personalizado
+        else:
+            angle = self.calcular_angulo(mouse_pos)
+
+        if sprite:
+            distancia = self.radius + sprite.get_width() // 2
+        else:
+            distancia = self.radius + tamanho // 2
+
+        start_x = centro_jogador[0] + math.cos(angle) * distancia
+        start_y = centro_jogador[1] + math.sin(angle) * distancia
+
+        projetil = {
             "x": start_x,
             "y": start_y,
             "vx": math.cos(angle) * velocidade,
             "vy": math.sin(angle) * velocidade,
-            "color": cor,
-            "lifetime": 1000,
-            "size": 10,
             "dano": dano,
-            "raio_hitbox": 8
-        })
+            "lifetime": lifetime,
+            "raio_hitbox": tamanho // 2 if not sprite else max(sprite.get_width(), sprite.get_height()) // 2
+        }
+
+        if sprite:
+            projetil["sprite"] = sprite
+            projetil["sprite_original"] = sprite  # Guarda uma cópia não rotacionada
+            projetil["angulo"] = math.degrees(angle)  # Ângulo em graus para rotação
+        else:
+            projetil["cor"] = cor
+            projetil["tamanho"] = tamanho
+
+        self.projeteis.append(projetil)
 
     def criarAOE(self, mouse_pos, tamanho):
         mouse_x, mouse_y = mouse_pos
@@ -451,11 +468,18 @@ class Player():
         #projeteis
 
         for projetil in self.projeteis:
-            s = Surface((projetil["size"], projetil["size"]), SRCALPHA)
-            radius = projetil["size"] // 2
-            color = projetil["color"]  # Assumindo que a cor já inclui alpha ou não é necessário
-            draw.circle(s, color, (projetil["size"] // 2, projetil["size"] // 2), radius)
-            tela.blit(s, (projetil["x"] - projetil["size"] // 2, projetil["y"] - projetil["size"] // 2))
+            if "sprite" in projetil:
+                angulo = math.degrees(math.atan2(projetil["vy"], projetil["vx"])) - 90
+                sprite_rotacionado = transform.rotate(projetil["sprite_original"], -angulo)
+                rect = sprite_rotacionado.get_rect(center=(projetil["x"], projetil["y"]))
+                tela.blit(sprite_rotacionado, rect.topleft)
+            else:
+                s = Surface((projetil["tamanho"], projetil["tamanho"]), SRCALPHA)
+                draw.circle(s, projetil["cor"],
+                            (projetil["tamanho"] // 2, projetil["tamanho"] // 2),
+                            projetil["tamanho"] // 2)
+                tela.blit(s, (projetil["x"] - projetil["tamanho"] // 2,
+                              projetil["y"] - projetil["tamanho"] // 2))
 
 
 
@@ -517,41 +541,45 @@ class Player():
         if current_time - self.ultimo_ataque < cooldown:
             return
 
-        self.ultimo_ataque = current_time
-        self.attacking = True
-        self.attack_start_time = current_time
-        self.attack_progress = 0
-        angle = self.calcular_angulo(mouse_pos)
-        self.base_sword_angle = math.degrees(angle) - 90
-        self.attack_direction = 1 if random() > 0.5 else -1
+        if self.arma.ataqueTipo != "ranged":
+            self.ultimo_ataque = current_time
+            self.attacking = True
+            self.attack_start_time = current_time
+            self.attack_progress = 0
+            angle = self.calcular_angulo(mouse_pos)
+            self.base_sword_angle = math.degrees(angle) - 90
+            self.attack_direction = 1 if random() > 0.5 else -1
 
-        _, hitbox_espada = self.get_rotated_rect_ataque(mouse_pos)
-        hit_landed = False
+            _, hitbox_espada = self.get_rotated_rect_ataque(mouse_pos)
+            hit_landed = False
 
-        if current_time - self.tempo_ultimo_hit > self.tempo_max_combo:
-            self.hits = 0
-            self.arma.comboMult = 1.0
+            if current_time - self.tempo_ultimo_hit > self.tempo_max_combo:
+                self.hits = 0
+                self.arma.comboMult = 1.0
 
-        for inimigo in inimigos:
-            if inimigo.vivo and inimigo.get_hitbox().colliderect(hitbox_espada):
-                hit_landed = True
-                inimigo.anima_hit = True
-                self.hits += 1
-                self.tempo_ultimo_hit = current_time
-                self.arma.comboMult = 1.0 + (0.1 * self.hits)
-                self.arma.ataquePrincipal(inimigo)
-                inimigo.ultimo_dano_tempo = current_time
-                self.hp = min(self.hp + self.arma.lifeSteal, self.hpMax)
-                dx = inimigo.x - self.x
-                dy = inimigo.y - self.y
-                inimigo.aplicar_knockback(dx, dy, intensidade=4)
-                self.criar_efeito_sangue(hitbox_espada.centerx, hitbox_espada.centery)
-                display.flip()
-                time.delay(50)
+            for inimigo in inimigos:
+                if inimigo.vivo and inimigo.get_hitbox().colliderect(hitbox_espada):
+                    hit_landed = True
+                    inimigo.anima_hit = True
+                    self.hits += 1
+                    self.tempo_ultimo_hit = current_time
+                    self.arma.comboMult = 1.0 + (0.1 * self.hits)
+                    self.arma.ataquePrincipal(inimigo)
+                    inimigo.ultimo_dano_tempo = current_time
+                    self.hp = min(self.hp + self.arma.lifeSteal, self.hpMax)
+                    dx = inimigo.x - self.x
+                    dy = inimigo.y - self.y
+                    inimigo.aplicar_knockback(dx, dy, intensidade=4)
+                    self.criar_efeito_sangue(hitbox_espada.centerx, hitbox_espada.centery)
+                    display.flip()
+                    time.delay(50)
 
-        if not hit_landed and current_time - self.tempo_ultimo_hit > self.tempo_max_combo:
-            self.hits = 0
-            self.arma.comboMult = 1.0
+            if not hit_landed and current_time - self.tempo_ultimo_hit > self.tempo_max_combo:
+                self.hits = 0
+                self.arma.comboMult = 1.0
+        else:
+            self.arma.ataquePrincipal(self, mouse_pos)
+            self.ultimo_ataque = current_time
 
     def ataque_espadaSecundario(self, inimigos, mouse_pos, dt):
         current_time = time.get_ticks()

@@ -9,6 +9,7 @@ from inimigos.orb import Orb
 import inimigos.MouthOrbBoss as bossmod
 from colisao import Colisao
 from loja import Loja
+from random import randint, sample
 import gerenciador_andar
 
 init()
@@ -80,7 +81,16 @@ class Sala:
         if "boss" in self.gerenciador_andar.grafo.nodes[self.gerenciador_andar.sala_atual]["tipo"]:
             return [bossmod.MouthOrb(400, 700, 192, 192, hp=5000,velocidade=3, dano=30)]
         else:
-            return [Orb(400, 700, 64, 64,hp=500),Orb(1400, 700, 64, 64,hp=500)]
+            #bagulho pequeno so pra aleatorizar o numero de inimigos numa sala, só na fase de testes mesmo
+            quant = randint(1, 4)
+            cords = [(400,700), (680,800), (850,600),(990,800), (1150,800)]
+            cordsEscolhe = sample(cords,quant)
+            inimigos = []
+            for i in cordsEscolhe:
+                inimigos.append(Orb(i[0],i[1],64,64,hp=200))
+
+            return inimigos
+            #return [Orb(400,700,64,64,hp=200),Orb(400,700,64,64,hp=200)]
 
     def atualizar(self,dt,teclas):
         for inimigo in self.inimigos:
