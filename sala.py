@@ -68,8 +68,10 @@ class Sala:
     def atualizar(self,dt,teclas):
         for inimigo in self.inimigos:
             if inimigo.vivo:
-                inimigo.atualizar((self.player.x,self.player.y), self.tela)
-                #da o dano no jogador
+                if isinstance(inimigo, bossmod.MouthOrb):
+                    inimigo.atualizar((self.player.x, self.player.y), self.tela, self.inimigos)
+                else:
+                    inimigo.atualizar((self.player.x, self.player.y), self.tela)
                 inimigo.dar_dano = lambda val=inimigo.dano: self.player.tomar_dano(val)
 
         self.colisao.checar_colisoes(dt)
