@@ -92,7 +92,7 @@ while i == 1:
                             if item:
                                 player.adicionarItem(item)
                                 jogo_pausado = False
-                                sala_atual.gerenciador_andar.grafo.nodes[sala_atual.gerenciador_andar.sala_atual]["bau_aberto"] = True
+                            sala_atual.gerenciador_andar.grafo.nodes[sala_atual.gerenciador_andar.sala_atual]["bau_aberto"] = True
                         elif loja:  # Adicione esta condição para a loja
                             if sala_atual.loja.checar_compra(mouse.get_pos(), SCREEN) == "sair":
                                  loja = not loja

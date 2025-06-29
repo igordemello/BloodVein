@@ -158,6 +158,8 @@ class Bau:
         return linhas
 
     def checar_clique_bau(self, mouse_pos):
+        if not self.menu_ativo:
+            return None
         for i, botao in enumerate(self.botoes):
             if self.botaosair.checkForInput(mouse_pos):
                 self.menu_ativo = False
