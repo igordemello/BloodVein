@@ -85,9 +85,9 @@ class Sala:
     def atualizar(self,dt,teclas):
         for inimigo in self.inimigos:
             if inimigo.vivo:
-                if isinstance(inimigo, bossmod.MouthOrb):
+                try:
                     inimigo.atualizar((self.player.x, self.player.y), self.tela, self.inimigos, self.colliders)
-                else:
+                except TypeError:
                     inimigo.atualizar((self.player.x, self.player.y), self.tela)
                 inimigo.dar_dano = lambda val=inimigo.dano: self.player.tomar_dano(val)
 
