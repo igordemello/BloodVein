@@ -432,8 +432,13 @@ class EspadaEstelar(Arma):
 
 
     def ataqueSecundario(self,player,mouse_pos):
-        player.criar_projetil(mouse_pos,(self.dano/2.5),cor=(24,212,59))
-        player.st -= 20
+        current_time = time.get_ticks()
+        if player.st <= 0:
+            return
+        else:
+            player.criar_projetil(mouse_pos,(self.dano/2.5),cor=(24,212,59))
+            player.st -= 20
+            player.last_dash_time = current_time
 
 
 
