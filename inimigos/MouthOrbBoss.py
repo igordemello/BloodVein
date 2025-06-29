@@ -63,6 +63,7 @@ class MouthOrb(Inimigo):
         self.cooldown_modo_invocacao = 7000
         self.ultima_tentativa_invocacao = 0
         self.ja_invocou = False
+        self.executando_ataque = False
 
     def _carregar_todas_animacoes(self):
         for chave, dados in self.animacoes.items():
@@ -100,16 +101,15 @@ class MouthOrb(Inimigo):
         distancia = math.hypot(player_pos[0] - self.x, player_pos[1] - self.y)
         alcance = 100
         if distancia > alcance:
-            return
+            return False
+
         now = pygame.time.get_ticks()
         if now - self.tempo_ultimo_ataque >= self.cooldown_ataque:
             self.trocar_animacao("ataque")
             self.tempo_ultimo_ataque = now
-            rot_rect, _ = self.get_hitbox_ataque(player_pos)
-            player_hitbox = pygame.Rect(player_pos[0], player_pos[1], 64, 64)
-            if rot_rect.colliderect(player_hitbox):
-                if hasattr(self, "dar_dano") and callable(self.dar_dano):
-                    self.dar_dano()
+            self.executando_ataque = True
+            return True
+        return False
 
     def desenhar_barra_vida(self, tela):
         if not self.vivo:
@@ -129,17 +129,26 @@ class MouthOrb(Inimigo):
         self.anima_dano = True
         self.inicio_dano = pygame.time.get_ticks()
 
-    def instanciar_orb(self, grupo_inimigos):
+    def instanciar_orb(self, grupo_inimigos, colliders):
         if grupo_inimigos is None:
             return
         if len(self.orbs_instanciados) < self.max_orbs:
+            # posição padrão (abaixo)
             orb_x = self.x + self.largura // 2 - 32
             orb_y = self.y + self.altura
-            novo_orb = Orb(orb_x, orb_y, 64, 64)
+            orb_rect = pygame.Rect(orb_x, orb_y, 64, 64)
+
+            for col in colliders:
+                if orb_rect.colliderect(col["rect"]):
+                    # tenta acima
+                    orb_rect.y = self.y - 64
+                    break
+
+            novo_orb = Orb(orb_rect.x, orb_rect.y, 64, 64)
             grupo_inimigos.append(novo_orb)
             self.orbs_instanciados.append(novo_orb)
 
-    def atualizar(self, player_pos, tela, grupo_inimigos=None):
+    def atualizar(self, player_pos, tela, grupo_inimigos=None, colliders=[]):
         if self.estado == "normal" and self.animacao_atual not in ["ataque", "invocacao"]:
             super().atualizar(player_pos, tela)
 
@@ -173,17 +182,25 @@ class MouthOrb(Inimigo):
             if not self.ja_invocou:
                 frames = self.animacoes[self.animacao_atual]["frames"]
                 loop = self.animacoes[self.animacao_atual].get("loop", True)
-
                 if not loop and self.frame_index >= len(frames) - 1:
-                    self.instanciar_orb(grupo_inimigos)
+                    self.instanciar_orb(grupo_inimigos, colliders)
                     self.estado = "normal"
                     self.trocar_animacao("idle")
                     self.ja_invocou = True
-        else:
-            self.iniciar_ataque_corpo_a_corpo(player_pos)
+        elif not self.executando_ataque:
+            if self.iniciar_ataque_corpo_a_corpo(player_pos):
+                rot_rect, _ = self.get_hitbox_ataque(player_pos)
+                player_hitbox = pygame.Rect(player_pos[0], player_pos[1], 64, 64)
+                if rot_rect.colliderect(player_hitbox):
+                    if hasattr(self, "dar_dano") and callable(self.dar_dano):
+                        self.dar_dano()
 
-        if self.animacao_atual == "ataque" and self.animacao_terminou():
-            self.trocar_animacao("idle")
+        if self.animacao_atual == "ataque":
+            if self.animacao_terminou():
+                self.executando_ataque = False
+                self.trocar_animacao("idle")
+        elif self.animacao_atual == "invocacao":
+            pass
         elif self.animacao_atual not in ["ataque", "invocacao"]:
             self.trocar_animacao("idle")
 
