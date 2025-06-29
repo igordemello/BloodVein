@@ -80,7 +80,8 @@ class Sala:
         if "boss" in self.gerenciador_andar.grafo.nodes[self.gerenciador_andar.sala_atual]["tipo"]:
             return [bossmod.MouthOrb(400, 700, 192, 192, hp=5000,velocidade=3, dano=30)]
         else:
-            return [Orb(400, 700, 64, 64,hp=500),Orb(1400, 700, 64, 64,hp=500)]
+            # return [Orb(400, 700, 64, 64,hp=500),Orb(1400, 700, 64, 64,hp=500)]
+            return []
 
     def atualizar(self,dt,teclas):
         for inimigo in self.inimigos:
@@ -134,7 +135,6 @@ class Sala:
 
             # Verifica continuamente se deve mostrar o menu
             if self.bau.aberto and not self.bau.animando and not self.ativar_menu_bau:
-                if self.player.get_hitbox().colliderect(self.bau.rect):
                     self.ativar_menu_bau = True
 
 
