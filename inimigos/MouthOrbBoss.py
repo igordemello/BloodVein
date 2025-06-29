@@ -8,7 +8,7 @@ import math
 class MouthOrb(Inimigo):
     def __init__(self, x, y, largura=128, altura=128, hp=300, velocidade=1.5, dano=20):
         super().__init__(x, y, largura, altura, hp, velocidade, dano)
-         
+
         self.anima_dano = False
         self.inicio_dano = 0
         self.duracao_dano = 150  # ms
@@ -29,7 +29,7 @@ class MouthOrb(Inimigo):
                 "total_frames": 10,
                 "frame_width": 64,
                 "frame_height": 64,
-                "usar_indices": list(range(10)),
+                "usar_indices": list(range(4)),
                 "frames": [],
                 "loop": False
             },
@@ -38,7 +38,7 @@ class MouthOrb(Inimigo):
                 "total_frames": 4,
                 "frame_width": 64,
                 "frame_height": 64,
-                "usar_indices": list(range(4)),
+                "usar_indices": list(range(10)),
                 "frames": [],
                 "loop": False
             }
@@ -51,7 +51,6 @@ class MouthOrb(Inimigo):
 
         self._carregar_todas_animacoes()
 
-        # controle de ataques
         self.tempo_ultimo_ataque = 0
         self.cooldown_ataque = 2000
 
@@ -60,11 +59,12 @@ class MouthOrb(Inimigo):
         self.orbs_instanciados = []
         self.max_orbs = 3
 
-        self.estado = "normal"  # pode ser "normal" ou "invocando"
+        self.estado = "normal"
         self.iniciou_invocacao_em = 0
-        self.tempo_para_invocar = 1500  # ms após começar invocação
-        self.cooldown_modo_invocacao = 7000  # ms
+        self.tempo_para_invocar = 1500
+        self.cooldown_modo_invocacao = 7000
         self.ultima_tentativa_invocacao = 0
+        self.ja_invocou = False
 
     def _carregar_todas_animacoes(self):
         for chave, dados in self.animacoes.items():
@@ -89,7 +89,6 @@ class MouthOrb(Inimigo):
             self.frame_time = 0
             frames = self.animacoes[self.animacao_atual]["frames"]
             loop = self.animacoes[self.animacao_atual].get("loop", True)
-        
             if self.frame_index < len(frames) - 1:
                 self.frame_index += 1
             elif loop:
@@ -98,19 +97,16 @@ class MouthOrb(Inimigo):
     def animacao_terminou(self):
         frames = self.animacoes[self.animacao_atual]["frames"]
         return self.frame_index == len(frames) - 1 and self.frame_time >= 0.99
-    
+
     def iniciar_ataque_corpo_a_corpo(self, player_pos):
-        distancia = math.hypot((player_pos[0] - self.x), (player_pos[1] - self.y))
-        alcance = 100  # ou o valor que considerar como "curto alcance"
-
+        distancia = math.hypot(player_pos[0] - self.x, player_pos[1] - self.y)
+        alcance = 100
         if distancia > alcance:
-            return  # muito longe para atacar
-
+            return
         now = pygame.time.get_ticks()
         if now - self.tempo_ultimo_ataque >= self.cooldown_ataque:
             self.trocar_animacao("ataque")
             self.tempo_ultimo_ataque = now
-  
             rot_rect, _ = self.get_hitbox_ataque(player_pos)
             player_hitbox = pygame.Rect(player_pos[0], player_pos[1], 64, 64)
             if rot_rect.colliderect(player_hitbox):
@@ -124,13 +120,11 @@ class MouthOrb(Inimigo):
         altura_barra = 20
         x = tela.get_width() // 2 - largura_barra // 2
         y = 20
-
-        proporcao = self.hp / 300  # ajuste se tiver hp variável
+        proporcao = self.hp / 300
         barra_atual = int(largura_barra * proporcao)
-
-        pygame.draw.rect(tela, (60, 60, 60), (x, y, largura_barra, altura_barra))  # fundo
-        pygame.draw.rect(tela, (200, 0, 0), (x, y, barra_atual, altura_barra))     # vida
-        pygame.draw.rect(tela, (255, 255, 255), (x, y, largura_barra, altura_barra), 2)  # contorno
+        pygame.draw.rect(tela, (60, 60, 60), (x, y, largura_barra, altura_barra))
+        pygame.draw.rect(tela, (200, 0, 0), (x, y, barra_atual, altura_barra))
+        pygame.draw.rect(tela, (255, 255, 255), (x, y, largura_barra, altura_barra), 2)
 
     def tomar_dano(self, quantidade):
         self.hp -= quantidade
@@ -138,67 +132,75 @@ class MouthOrb(Inimigo):
         self.inicio_dano = pygame.time.get_ticks()
 
     def instanciar_orb(self, grupo_inimigos):
-        now = pygame.time.get_ticks()
         if grupo_inimigos is None:
             return
-
-        if now - self.tempo_ultima_invocacao >= self.cooldown_invocacao:
-            if len(self.orbs_instanciados) < self.max_orbs:
-                self.trocar_animacao("invocacao")
-                self.tempo_ultima_invocacao = now
-                offset_x = random.randint(-100, 100)
-                offset_y = random.randint(-100, 100)
-                novo_orb = Orb(self.x + offset_x, self.y + offset_y, 32, 32)
-                grupo_inimigos.append(novo_orb)
-                self.orbs_instanciados.append(novo_orb)
+        if len(self.orbs_instanciados) < self.max_orbs:
+            orb_x = self.x + self.largura // 2 - 16
+            orb_y = self.y + self.altura
+            novo_orb = Orb(orb_x, orb_y, 32, 32)
+            grupo_inimigos.append(novo_orb)
+            self.orbs_instanciados.append(novo_orb)
 
     def atualizar(self, player_pos, tela, grupo_inimigos=None):
-        super().atualizar(player_pos, tela)
+        if self.estado != "invocando":
+            super().atualizar(player_pos, tela)
 
         if not self.vivo:
             return
 
-        # Atualiza ações e animação
-        self.iniciar_ataque_corpo_a_corpo(player_pos)
         now = pygame.time.get_ticks()
+        distancia_fuga_minima = 300
 
-        # Entrar em modo invocação
         if self.estado == "normal" and now - self.ultima_tentativa_invocacao > self.cooldown_modo_invocacao:
             self.estado = "invocando"
             self.iniciou_invocacao_em = now
             self.trocar_animacao("invocacao")
             self.ultima_tentativa_invocacao = now
+            self.ja_invocou = False
 
         if self.estado == "invocando":
-            # Movimento de afastamento
             dx = self.x - player_pos[0]
             dy = self.y - player_pos[1]
             distancia = math.hypot(dx, dy)
-            if distancia < 300:  # tenta manter distância
-                self.vx = (dx / distancia) * self.velocidade
-                self.vy = (dy / distancia) * self.velocidade
-                self.mover_se(True, True, self.vx, self.vy)
 
-            # Instancia um Orb após o tempo de preparação
-            if self.animacao_terminou():
-                self.instanciar_orb(grupo_inimigos)
-                self.estado = "normal"
-                self.trocar_animacao("idle")
+            if distancia < distancia_fuga_minima:
+                afastar_x = (dx / distancia) * self.velocidade
+                afastar_y = (dy / distancia) * self.velocidade
+                self.vx = afastar_x
+                self.vy = afastar_y
+                self.mover_se(True, True, afastar_x, afastar_y)
+            else:
+                self.vx = 0
+                self.vy = 0
+
+            if not self.ja_invocou:
+                frames = self.animacoes[self.animacao_atual]["frames"]
+                loop = self.animacoes[self.animacao_atual].get("loop", True)
+
+                if not loop and self.frame_index >= len(frames) - 1:
+                    self.instanciar_orb(grupo_inimigos)
+                    self.estado = "normal"
+                    self.trocar_animacao("idle")
+                    self.ja_invocou = True
+
         else:
             self.iniciar_ataque_corpo_a_corpo(player_pos)
 
+        # Só volta para idle se não estiver atacando/invocando ou se já tiver terminado
         if self.animacao_atual not in ["ataque", "invocacao"]:
             self.trocar_animacao("idle")
+        elif self.animacao_atual == "ataque":
+            if self.animacao_terminou():
+                self.trocar_animacao("idle")
 
         self.atualizar_animacao()
 
     def desenhar(self, tela, player_pos):
         if self.vivo:
             frame = self.animacoes[self.animacao_atual]["frames"][self.frame_index]
-
             if self.anima_dano and pygame.time.get_ticks() - self.inicio_dano < self.duracao_dano:
                 mask = pygame.Surface((self.largura, self.altura), pygame.SRCALPHA)
-                mask.fill((255, 0, 0, 100))  # vermelho com transparência
+                mask.fill((255, 0, 0, 100))
                 frame_copy = frame.copy()
                 frame_copy.blit(mask, (0, 0))
                 tela.blit(frame_copy, (self.x, self.y))
