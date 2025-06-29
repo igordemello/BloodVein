@@ -25,6 +25,8 @@ class Colisao:
         for entidade in self.entidades:
             self._colisao_entidade_mapa(entidade, dt)
 
+        self._colisao_entidade_projetil()
+
 
     def _colisao_entidade_mapa(self,entidade,dt):
         vx, vy = entidade.get_velocidade()
@@ -99,3 +101,26 @@ class Colisao:
 
         ent2.set_velocidade_x(vx2 if can_move_x2 else 0)
         ent2.set_velocidade_y(vy2 if can_move_y2 else 0)
+
+    def _colisao_entidade_projetil(self):
+        from player import Player
+        for projetil in self.player.projeteis[:]:
+            projetil_rect = Rect(
+                projetil["x"] - projetil["raio_hitbox"],
+                projetil["y"] - projetil["raio_hitbox"],
+                projetil["raio_hitbox"] * 2,
+                projetil["raio_hitbox"] * 2
+            )
+            for inimigo in self.entidades:
+                if isinstance(inimigo, Player):
+                    pass
+                elif inimigo.vivo and projetil_rect.colliderect(inimigo.get_hitbox()):
+                    inimigo.hp -= projetil["dano"]
+                    inimigo.ultimo_dano_critico = False
+                    inimigo.ultimo_dano = projetil["dano"]
+                    inimigo.ultimo_dano_tempo = time.get_ticks()
+
+                    self.player.criar_efeito_sangue(projetil["x"], projetil["y"])
+
+                    self.player.projeteis.remove(projetil)
+                    break

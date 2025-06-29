@@ -35,7 +35,7 @@ class Player():
         self.sistemaparticulas = ParticleSystem()
         self.lista_mods = ListaMods()
         #ARMA
-        self.arma = MachadoDoInverno("comum", self.lista_mods)
+        self.arma = EspadaEstelar("comum", self.lista_mods)
         self.arma.aplicaModificador()
 
         self.x = x
@@ -96,6 +96,8 @@ class Player():
         self.base_sword_angle = 0
         self.sword_arc = 210  # Arco aumentado (original 150)
         self.sword_start_angle = -105  # Ângulo inicial ajustado
+
+        self.projeteis = []
 
         self.cooldown_ataque_base = self.arma.cooldown
         self.ultimo_ataque = 0
@@ -288,6 +290,14 @@ class Player():
             self.hits = 0
             self.arma.comboMult = 1
 
+        for projetil in self.projeteis[:]:
+            projetil["x"] += projetil["vx"] * dt
+            projetil["y"] += projetil["vy"] * dt
+            projetil["lifetime"] -= dt
+            if projetil["lifetime"] <= 0:
+                self.projeteis.remove(projetil)
+
+
     def atualizar_ataque(self, dt):
         current_time = time.get_ticks()
         attack_duration = 300 / self.arma.velocidade
@@ -323,6 +333,23 @@ class Player():
                 pass
         else:
             self.itemAtivo = item
+
+    def criar_projetil(self, mouse_pos, dano,cor):
+        angle = self.calcular_angulo(mouse_pos)
+        centro_jogador = (self.player_rect.centerx, self.player_rect.centery)
+        velocidade = 0.8
+
+        self.projeteis.append({
+            "x": centro_jogador[0],
+            "y": centro_jogador[1],
+            "vx": math.cos(angle) * velocidade,
+            "vy": math.sin(angle) * velocidade,
+            "color": cor,
+            "lifetime": 1000,
+            "size": 10,
+            "dano": dano,
+            "raio_hitbox": 8
+        })
 
     def calcular_angulo(self, mouse_pos):
         mouse_x, mouse_y = mouse_pos
@@ -396,6 +423,18 @@ class Player():
             frame.fill((255, 255, 255), special_flags=BLEND_RGB_ADD)
         tela.blit(frame, self.player_rect.topleft)
 
+        #projeteis
+
+        for projetil in self.projeteis:
+            s = Surface((projetil["size"], projetil["size"]), SRCALPHA)
+            radius = projetil["size"] // 2
+            color = projetil["color"]  # Assumindo que a cor já inclui alpha ou não é necessário
+            draw.circle(s, color, (projetil["size"] // 2, projetil["size"] // 2), radius)
+            tela.blit(s, (projetil["x"] - projetil["size"] // 2, projetil["y"] - projetil["size"] // 2))
+
+
+
+
         # Hitbox de ataque (debug)
         rotated_hitbox, rotated_rect = self.get_rotated_rect_ataque(mouse_pos)
         #tela.blit(rotated_hitbox, rotated_rect)
@@ -442,6 +481,7 @@ class Player():
                 500,
                 randint(8, 10)
             )
+
 
     def ataque_espadaPrincipal(self, inimigos, mouse_pos, dt):
         current_time = time.get_ticks()
@@ -494,26 +534,35 @@ class Player():
         if current_time - self.ultimo_ataque < cooldown:
             return
         if self.arma.secEhAtaque:
+            if not self.arma.ehRanged:
+                self.ultimo_ataque = current_time
+                self.attacking = True
+                self.attack_start_time = current_time
+                self.attack_progress = 0
+                angle = self.calcular_angulo(mouse_pos)
+                self.base_sword_angle = math.degrees(angle) - 90
+                self.attack_direction = 1 if random() > 0.5 else -1
 
-            self.ultimo_ataque = current_time
-            self.attacking = True
-            self.attack_start_time = current_time
-            self.attack_progress = 0
-            angle = self.calcular_angulo(mouse_pos)
-            self.base_sword_angle = math.degrees(angle) - 90
-            self.attack_direction = 1 if random() > 0.5 else -1
-
-            _, hitbox_espada = self.get_rotated_rect_ataque(mouse_pos)
-            for inimigo in inimigos:
-                if inimigo.vivo:
-                    if inimigo.get_hitbox().colliderect(hitbox_espada):
-                        inimigo.anima_hit = True
-                        self.arma.ataqueSecundario(inimigo,self)
-                        dx = inimigo.x - self.x
-                        dy = inimigo.y - self.y
-                        inimigo.aplicar_knockback(dx, dy, intensidade=0.5)
+                _, hitbox_espada = self.get_rotated_rect_ataque(mouse_pos)
+                for inimigo in inimigos:
+                    if inimigo.vivo:
+                        if inimigo.get_hitbox().colliderect(hitbox_espada):
+                            inimigo.anima_hit = True
+                            self.arma.ataqueSecundario(inimigo,self)
+                            dx = inimigo.x - self.x
+                            dy = inimigo.y - self.y
+                            inimigo.aplicar_knockback(dx, dy, intensidade=0.5)
+            else:
+                if self.arma.ataqueTipo == "melee":
+                    self.attacking = True
+                    self.attack_start_time = current_time
+                    self.attack_progress = 0
+                    angle = self.calcular_angulo(mouse_pos)
+                    self.base_sword_angle = math.degrees(angle) - 90
+                    self.attack_direction = 1 if random() > 0.5 else -1
+                self.ultimo_ataque = current_time
+                self.arma.ataqueSecundario(self, mouse_pos)
         else:
-            self.ultimo_ataque = current_time
             self.arma.ataqueSecundario(self)
 
     def tomar_dano(self, valor):
