@@ -38,6 +38,7 @@ class Inimigo:
         self.vivo = True
         self.dano = dano
         self.ultimo_dano_critico = False
+        self.congelado = False
 
         self.spritesheet = None
         self.frame_width = 32
@@ -143,6 +144,7 @@ class Inimigo:
         self.veneno_ativo = True
 
     def atualizar(self, player_pos, tela):
+
         if self.anima_hit:
             now = time.get_ticks()
             if now - self.time_last_hit_frame > self.hit_frame_duration:
@@ -210,6 +212,8 @@ class Inimigo:
             if self.veneno_ticks <= 0:
                 self.veneno_ativo = False
 
+
+
     def desenhar(self, tela, player_pos):
         clock = time.Clock()
         if self.anima_hit:
@@ -223,6 +227,10 @@ class Inimigo:
 
         if frame:
             tela.blit(frame, (self.x, self.y))
+            if self.congelado:
+                frozen_sprite = frame.copy()
+                frozen_sprite.fill((165, 242, 255, 100), special_flags=BLEND_MULT)
+                tela.blit(frozen_sprite, (self.x, self.y))
 
         # vida
         draw.rect(tela, (255, 200, 200), (self.x - 20, self.y + 70, 100, 10))

@@ -78,7 +78,7 @@ class Sala:
 
     def _criar_inimigos(self):
         if "boss" in self.gerenciador_andar.grafo.nodes[self.gerenciador_andar.sala_atual]["tipo"]:
-            return [bossmod.MouthOrb(400, 700, 192, 192, hp=200,velocidade=3, dano=30)]
+            return [bossmod.MouthOrb(400, 700, 192, 192, hp=2000,velocidade=3, dano=30)]
         else:
             # return [Orb(400, 700, 64, 64)]
             return []

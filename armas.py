@@ -152,7 +152,7 @@ class LaminaDaNoite(Arma):
             inimigo.ultimo_dano_critico = False
             inimigo.ultimo_dano = self.dano * self.comboMult
 
-    def ataqueSecundario(self,inimigo):
+    def ataqueSecundario(self,inimigo,player):
         return False
 
 #falta sprite e animação de ataque
@@ -200,7 +200,7 @@ class Chigatana(Arma):
             inimigo.ultimo_dano_critico = False
             inimigo.ultimo_dano = self.dano * self.comboMult
 
-    def ataqueSecundario(self,inimigo):
+    def ataqueSecundario(self,inimigo,player):
         inimigo.modificadorDanoRecebido = self.valorSangramento
 
 
@@ -248,7 +248,7 @@ class Karambit(Arma):
             inimigo.ultimo_dano_critico = False
             inimigo.ultimo_dano = self.dano * self.comboMult
 
-    def ataqueSecundario(self,inimigo):
+    def ataqueSecundario(self,inimigo,player):
         inimigo.envenenar(5, self.dano+10)
 
 
@@ -307,7 +307,73 @@ class EspadaDoTita(Arma):
         else:
             self.chanceCritico *= 2
             self.danoCriticoMod *= 1.5
-            player.st -= 20
+            player.st -= 50
+
+
+class MachadoDoInverno(Arma):
+    def __init__(self,raridadeStr : str,listaMods : ListaMods):
+        self.tipoDeArma = "Machado Do Inverno"
+        self.raridadeStr = raridadeStr
+        self.raridade = RARIDADES.get(self.raridadeStr, 1)
+        self.dano = 15+randint(15*self.raridade,25*self.raridade)
+        self.velocidade = 0.7 #analisar esses valores depois
+        self.cooldown = 400
+        self.range = (40, 80) #hitbox arma
+        self.radius = 100
+        self.efeitos = None
+        self.lifeSteal = self.dano/2
+        self.chanceCritico = 15
+        self.danoCriticoMod = 1.5
+        self.comboMult = 1
+        self.clock = time.Clock()
+        self.criticoOg = self.chanceCritico
+        self.danoCritOg = self.danoCriticoMod
+
+        self.congelou = False
+
+        self.secEhAtaque = True
+
+        self.spriteIcon = "assets/UI/machadodoinverno.png"
+        self.sprite = 'assets/player/machadodoinverno.png'
+        self.size = (23 * 2, 54 * 2)
+
+        mod_classe = listaMods.getMod(self.raridadeStr)  # Retorna a classe do modificador
+        self.modificador = mod_classe(self)  # Instancia com self (a arma)
+        self.nome = f"{self.tipoDeArma} {self.modificador.nome} {self.raridadeStr}"
+
+    def aplicaModificador(self):
+        self.modificador.aplicarMod(self)
+        self.criticoOg = self.chanceCritico
+        self.danoCritOg = self.danoCriticoMod
+    def ataquePrincipal(self,inimigo):
+        if inimigo.congelado: #da crit se o inimigo estiver congelado
+            original_speed = self.clock.get_fps()
+            time.delay(100)
+            self.clock.tick(original_speed)
+            inimigo.hp -= self.dano * self.danoCriticoMod * inimigo.modificadorDanoRecebido * self.comboMult
+            inimigo.ultimo_dano_critico = True
+            inimigo.ultimo_dano = self.dano * self.danoCriticoMod * inimigo.modificadorDanoRecebido * self.comboMult
+            inimigo.congelado = False
+            inimigo.velocidade /= 0.25
+        if randint(1, 100) <= self.chanceCritico:
+            original_speed = self.clock.get_fps()
+            time.delay(100)
+            self.clock.tick(original_speed)
+            inimigo.hp -= self.dano * self.danoCriticoMod * inimigo.modificadorDanoRecebido * self.comboMult
+            inimigo.ultimo_dano_critico = True
+            inimigo.ultimo_dano = self.dano * self.danoCriticoMod * inimigo.modificadorDanoRecebido * self.comboMult
+        else:
+            inimigo.hp -= self.dano * inimigo.modificadorDanoRecebido * self.comboMult
+            inimigo.ultimo_dano_critico = False
+            inimigo.ultimo_dano = self.dano * self.comboMult
+        self.chanceCritico = self.criticoOg
+        self.danoCriticoMod = self.danoCritOg
+
+    def ataqueSecundario(self, inimigo,player):
+        inimigo.velocidade *= 0.25
+        inimigo.congelado = True
+        player.st -= 50
+
 
 
 
