@@ -1,8 +1,6 @@
 import pygame
 from inimigo import Inimigo
 from inimigos.orb import Orb
-import random
-import time
 import math
 
 class MouthOrb(Inimigo):
@@ -135,14 +133,14 @@ class MouthOrb(Inimigo):
         if grupo_inimigos is None:
             return
         if len(self.orbs_instanciados) < self.max_orbs:
-            orb_x = self.x + self.largura // 2 - 16
+            orb_x = self.x + self.largura // 2 - 32
             orb_y = self.y + self.altura
-            novo_orb = Orb(orb_x, orb_y, 32, 32)
+            novo_orb = Orb(orb_x, orb_y, 64, 64)
             grupo_inimigos.append(novo_orb)
             self.orbs_instanciados.append(novo_orb)
 
     def atualizar(self, player_pos, tela, grupo_inimigos=None):
-        if self.estado != "invocando":
+        if self.estado == "normal" and self.animacao_atual not in ["ataque", "invocacao"]:
             super().atualizar(player_pos, tela)
 
         if not self.vivo:
@@ -166,12 +164,11 @@ class MouthOrb(Inimigo):
             if distancia < distancia_fuga_minima:
                 afastar_x = (dx / distancia) * self.velocidade
                 afastar_y = (dy / distancia) * self.velocidade
-                self.vx = afastar_x
-                self.vy = afastar_y
-                self.mover_se(True, True, afastar_x, afastar_y)
+                self.set_velocidade_x(afastar_x)
+                self.set_velocidade_y(afastar_y)
             else:
-                self.vx = 0
-                self.vy = 0
+                self.set_velocidade_x(0)
+                self.set_velocidade_y(0)
 
             if not self.ja_invocou:
                 frames = self.animacoes[self.animacao_atual]["frames"]
@@ -182,16 +179,13 @@ class MouthOrb(Inimigo):
                     self.estado = "normal"
                     self.trocar_animacao("idle")
                     self.ja_invocou = True
-
         else:
             self.iniciar_ataque_corpo_a_corpo(player_pos)
 
-        # Só volta para idle se não estiver atacando/invocando ou se já tiver terminado
-        if self.animacao_atual not in ["ataque", "invocacao"]:
+        if self.animacao_atual == "ataque" and self.animacao_terminou():
             self.trocar_animacao("idle")
-        elif self.animacao_atual == "ataque":
-            if self.animacao_terminou():
-                self.trocar_animacao("idle")
+        elif self.animacao_atual not in ["ataque", "invocacao"]:
+            self.trocar_animacao("idle")
 
         self.atualizar_animacao()
         self.orbs_instanciados = [orb for orb in self.orbs_instanciados if orb.vivo]
