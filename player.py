@@ -84,18 +84,17 @@ class Player():
         self.parado_desde = 0
         self.ativo_ultimo_uso = 0
 
-        # Sistema de ataque modificado
         self.sword = transform.scale(transform.flip(image.load(self.arma.sprite).convert_alpha(), True, True),
                                      (self.arma.size))
-        self.sword_pivot = (self.arma.size[0]/2, 0)
+        self.sword_pivot = self.arma.pivot
         self.sword_angle = 0
         self.attacking = False
         self.attack_start_time = 0
         self.attack_direction = 1
         self.attack_progress = 0
         self.base_sword_angle = 0
-        self.sword_arc = 210  # Arco aumentado (original 150)
-        self.sword_start_angle = -105  # Ângulo inicial ajustado
+        self.sword_arc = 210
+        self.sword_start_angle = -105
 
         self.projeteis = []
         self.aoe = None
@@ -117,7 +116,6 @@ class Player():
         self.max_trail_length = 5
         self.trail_alpha = 100  # Transparência do rastro
 
-    # [Métodos auxiliares permanecem iguais...]
     def carregar_animacao(self, caminho):
         frame_largura = 32
         frame_altura = 48
@@ -310,14 +308,14 @@ class Player():
             self.attacking = False
             self.sword_trail = []
             return
-        
-        
+
+
         # Adiciona posição atual ao rastro
         angle = self.calcular_angulo(mouse.get_pos())
         centro_jogador = (self.player_rect.centerx, self.player_rect.centery)
         base_x = centro_jogador[0] + math.cos(angle) * (self.radius - 5)
         base_y = centro_jogador[1] + math.sin(angle) * (self.radius - 5)
-        
+
         self.sword_trail.append((base_x, base_y, self.sword_angle))
         if len(self.sword_trail) > self.max_trail_length:
             self.sword_trail.pop(0)
@@ -438,7 +436,7 @@ class Player():
                 alpha = int(self.trail_alpha * (i/len(self.sword_trail)))
                 sword_copy = self.sword.copy()
                 sword_copy.set_alpha(alpha)
-                
+
                 temp_surface = Surface((sword_copy.get_width() * 2, sword_copy.get_height() * 2), SRCALPHA)
                 temp_surface.blit(sword_copy, (temp_surface.get_width() // 2 - self.sword_pivot[0],
                                             temp_surface.get_height() // 2 - self.sword_pivot[1]))
@@ -572,7 +570,6 @@ class Player():
                     inimigo.aplicar_knockback(dx, dy, intensidade=4)
                     self.criar_efeito_sangue(hitbox_espada.centerx, hitbox_espada.centery)
                     display.flip()
-                    time.delay(50)
 
             if not hit_landed and current_time - self.tempo_ultimo_hit > self.tempo_max_combo:
                 self.hits = 0
@@ -642,3 +639,4 @@ class Player():
     def atualizar_arma(self):
         self.sword = transform.scale(transform.flip(image.load(self.arma.sprite).convert_alpha(), True, True),
                                      (self.arma.size))
+        self.sword_pivot = self.arma.pivot

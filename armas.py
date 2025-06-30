@@ -137,6 +137,7 @@ class LaminaDaNoite(Arma):
         self.spriteIcon = "assets/UI/LaminaDaNoite.png"
         self.sprite = 'espada.png'
         self.size = (20 * 2, 54 * 2)
+        self.pivot = (self.size[0] / 2, 0)
 
         mod_classe = listaMods.getMod(self.raridadeStr)  # Retorna a classe do modificador
         self.modificador = mod_classe(self)  # Instancia com self (a arma)
@@ -147,7 +148,6 @@ class LaminaDaNoite(Arma):
     def ataquePrincipal(self,inimigo):
         if randint(1, 100) <= self.chanceCritico:
             original_speed = self.clock.get_fps()
-            time.delay(100)
             self.clock.tick(original_speed)
             inimigo.hp -= self.dano * self.danoCriticoMod * inimigo.modificadorDanoRecebido * self.comboMult
             inimigo.ultimo_dano_critico = True
@@ -186,6 +186,7 @@ class Chigatana(Arma):
         self.spriteIcon = "assets/UI/chigatana.png"
         self.sprite = 'assets/player/chigatana.png'
         self.size = (20 * 2, 54 * 2)
+        self.pivot = (self.size[0] / 2, 0)
 
         mod_classe = listaMods.getMod(self.raridadeStr)  # Retorna a classe do modificador
         self.modificador = mod_classe(self)  # Instancia com self (a arma)
@@ -198,7 +199,6 @@ class Chigatana(Arma):
     def ataquePrincipal(self,inimigo):
         if randint(1, 100) <= self.chanceCritico:
             original_speed = self.clock.get_fps()
-            time.delay(100)
             self.clock.tick(original_speed)
             inimigo.hp -= self.dano * self.danoCriticoMod * inimigo.modificadorDanoRecebido * self.comboMult
             inimigo.ultimo_dano_critico = True
@@ -237,6 +237,7 @@ class Karambit(Arma):
         self.spriteIcon = "assets/UI/Karambit.png"
         self.sprite = 'assets/player/Karambit.png'
         self.size = (32*2,32*2)
+        self.pivot = (self.size[0] / 2, 0)
 
         mod_classe = listaMods.getMod(self.raridadeStr)  # Retorna a classe do modificador
         self.modificador = mod_classe(self)  # Instancia com self (a arma)
@@ -249,7 +250,6 @@ class Karambit(Arma):
     def ataquePrincipal(self,inimigo):
         if randint(1, 100) <= self.chanceCritico:
             original_speed = self.clock.get_fps()
-            time.delay(100)
             self.clock.tick(original_speed)
             inimigo.hp -= self.dano * self.danoCriticoMod * inimigo.modificadorDanoRecebido * self.comboMult
             inimigo.ultimo_dano_critico = True
@@ -290,6 +290,7 @@ class EspadaDoTita(Arma):
         self.spriteIcon = "assets/UI/espadadotita.png"
         self.sprite = 'assets/player/espadadotita.png'
         self.size = (25 * 2, 70 * 2)
+        self.pivot = (self.size[0] / 2, 0)
 
         mod_classe = listaMods.getMod(self.raridadeStr)  # Retorna a classe do modificador
         self.modificador = mod_classe(self)  # Instancia com self (a arma)
@@ -302,7 +303,6 @@ class EspadaDoTita(Arma):
     def ataquePrincipal(self,inimigo):
         if randint(1, 100) <= self.chanceCritico:
             original_speed = self.clock.get_fps()
-            time.delay(100)
             self.clock.tick(original_speed)
             inimigo.hp -= self.dano * self.danoCriticoMod * inimigo.modificadorDanoRecebido * self.comboMult
             inimigo.ultimo_dano_critico = True
@@ -353,6 +353,7 @@ class MachadoDoInverno(Arma):
         self.spriteIcon = "assets/UI/machadodoinverno.png"
         self.sprite = 'assets/player/machadodoinverno.png'
         self.size = (23 * 2, 54 * 2)
+        self.pivot = (self.size[0] / 2, 0)
 
         mod_classe = listaMods.getMod(self.raridadeStr)  # Retorna a classe do modificador
         self.modificador = mod_classe(self)  # Instancia com self (a arma)
@@ -365,7 +366,6 @@ class MachadoDoInverno(Arma):
     def ataquePrincipal(self,inimigo):
         if inimigo.congelado: #da crit se o inimigo estiver congelado
             original_speed = self.clock.get_fps()
-            time.delay(100)
             self.clock.tick(original_speed)
             inimigo.hp -= self.dano * self.danoCriticoMod * inimigo.modificadorDanoRecebido * self.comboMult
             inimigo.ultimo_dano_critico = True
@@ -374,7 +374,6 @@ class MachadoDoInverno(Arma):
             inimigo.velocidade /= 0.25
         if randint(1, 100) <= self.chanceCritico:
             original_speed = self.clock.get_fps()
-            time.delay(100)
             self.clock.tick(original_speed)
             inimigo.hp -= self.dano * self.danoCriticoMod * inimigo.modificadorDanoRecebido * self.comboMult
             inimigo.ultimo_dano_critico = True
@@ -421,6 +420,7 @@ class EspadaEstelar(Arma):
         self.spriteIcon = "assets/UI/espadaestelar.png"
         self.sprite = 'assets/player/espadaestelar.png'
         self.size = (23 * 2, 54 * 2)
+        self.pivot = (self.size[0] / 2, 0)
 
         mod_classe = listaMods.getMod(self.raridadeStr)  # Retorna a classe do modificador
         self.modificador = mod_classe(self)  # Instancia com self (a arma)
@@ -431,7 +431,6 @@ class EspadaEstelar(Arma):
     def ataquePrincipal(self,inimigo):
         if randint(1, 100) <= self.chanceCritico:
             original_speed = self.clock.get_fps()
-            time.delay(100)
             self.clock.tick(original_speed)
             inimigo.hp -= self.dano * self.danoCriticoMod * inimigo.modificadorDanoRecebido * self.comboMult
             inimigo.ultimo_dano_critico = True
@@ -479,6 +478,7 @@ class MarteloSolar(Arma):
         self.spriteIcon = "assets/UI/martelo_icone.png"
         self.sprite = 'assets/player/martelo_solar.png'
         self.size = (27 * 2, 51 * 2)
+        self.pivot = (self.size[0] / 2, 0)
 
         mod_classe = listaMods.getMod(self.raridadeStr)  # Retorna a classe do modificador
         self.modificador = mod_classe(self)  # Instancia com self (a arma)
@@ -490,7 +490,6 @@ class MarteloSolar(Arma):
     def ataquePrincipal(self,inimigo):
         if randint(1, 100) <= self.chanceCritico:
             original_speed = self.clock.get_fps()
-            time.delay(100)
             self.clock.tick(original_speed)
             inimigo.hp -= self.dano * self.danoCriticoMod * inimigo.modificadorDanoRecebido * self.comboMult
             inimigo.ultimo_dano_critico = True
@@ -532,9 +531,10 @@ class Arco(Arma):
         self.ehRanged = True
         self.ehAOE = False
 
-        self.spriteIcon = "assets/UI/espadaestelar.png"
+        self.spriteIcon = "assets/UI/arco.png"
         self.sprite = 'assets/player/arco.png'
         self.size = (51 * 2, 27 * 2)
+        self.pivot = (self.size[0]/2, 0)
 
         mod_classe = listaMods.getMod(self.raridadeStr)  # Retorna a classe do modificador
         self.modificador = mod_classe(self)  # Instancia com self (a arma)
