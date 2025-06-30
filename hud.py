@@ -43,6 +43,8 @@ class Hud:
         self.normal_font_size = 96
         self.enlarged_font_size = 110
 
+        self.stats_alpha = None
+
         self.tela = tela
 
     def desenhaFundo(self):
