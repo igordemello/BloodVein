@@ -294,6 +294,10 @@ class Player():
             self.hits = 0
             self.arma.comboMult = 1
 
+        if self.hits_projetil > 0 and time.get_ticks() - self.tempo_ultimo_hit_projetil > self.tempo_max_combo:
+            self.hits_projetil = 0
+            self.arma.comboMult = 1
+
         for projetil in self.projeteis[:]:
             projetil["x"] += projetil["vx"] * dt
             projetil["y"] += projetil["vy"] * dt
