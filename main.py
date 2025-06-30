@@ -154,7 +154,7 @@ while i == 1:
     if gerenciamento.modo == 'jogo':
 
         if menuArmas:
-            hud.desenhaFundo(SCREEN)
+            hud.desenhaFundo2(SCREEN)
             menuDeArma.menu_ativo = True
             menuDeArma.menuEscolherItens(SCREEN)
 

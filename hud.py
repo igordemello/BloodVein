@@ -24,6 +24,7 @@ class Hud:
         self.almaIcon = transform.scale(image.load('assets/Itens/alma.png').convert_alpha(), (96, 96))
         self.hud = image.load('assets/UI/Hud.png').convert_alpha()
         self.fundo = image.load('assets/UI/tela_fundo1.png').convert_alpha()
+        self.fundo2 = image.load('assets/UI/tela_fundo2.jpeg').convert_alpha()
 
         self.chanceCriticoTita= transform.scale(image.load('assets/UI/espadatitaCrit.png').convert_alpha(), (100,80))
 
@@ -42,6 +43,9 @@ class Hud:
 
     def desenhaFundo(self, tela):
         tela.blit(self.fundo, (0, 0))
+
+    def desenhaFundo2(self,tela):
+        tela.blit(self.fundo2, (0,0))
 
     def update(self, dt):
         # Atualiza o efeito de shake
