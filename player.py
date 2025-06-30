@@ -13,6 +13,7 @@ from sistemaparticulas import *
 class Player():
     def __init__(self, x, y, largura, altura, hp=100, st=100, velocidadeMov=0.5, sprite='hero.png', arma=None):
         # animações
+        self.hit_landed = None
         self.animacoes = {
             "baixo": self.carregar_animacao("assets/Player/vampira_andando_frente.png"),
             "cima": self.carregar_animacao("assets/Player/vampira_andando_tras.png"),
@@ -98,6 +99,8 @@ class Player():
 
         self.projeteis = []
         self.aoe = None
+        self.hits_projetil = 0
+        self.tempo_ultimo_hit_projetil = 0
 
         self.cooldown_ataque_base = self.arma.cooldown
         self.ultimo_ataque = 0
@@ -510,9 +513,6 @@ class Player():
             self.player_rect.y += dy
         self.x, self.y = self.player_rect.topleft
 
-    def medidorCombo(self):
-        self.arma.comboMult *= 1.1 ** self.hits
-
     def infoArma(self):
         print(
             f'Dano: {self.arma.dano}\nRapidez: {self.arma.velocidade}\nLife steal: {self.arma.lifeSteal}\nChance de Crítico: {self.arma.chanceCritico}\nDano do Crítico: {self.arma.danoCriticoMod * self.arma.dano}')
@@ -535,6 +535,7 @@ class Player():
     def ataque_espadaPrincipal(self, inimigos, mouse_pos, dt):
         current_time = time.get_ticks()
         cooldown = self.cooldown_ataque_base / self.arma.velocidade
+        self.hit_landed = False
 
         if current_time - self.ultimo_ataque < cooldown:
             return
@@ -549,7 +550,6 @@ class Player():
             self.attack_direction = 1 if random() > 0.5 else -1
 
             _, hitbox_espada = self.get_rotated_rect_ataque(mouse_pos)
-            hit_landed = False
 
             if current_time - self.tempo_ultimo_hit > self.tempo_max_combo:
                 self.hits = 0
@@ -557,7 +557,7 @@ class Player():
 
             for inimigo in inimigos:
                 if inimigo.vivo and inimigo.get_hitbox().colliderect(hitbox_espada):
-                    hit_landed = True
+                    self.hit_landed = True
                     inimigo.anima_hit = True
                     self.hits += 1
                     self.tempo_ultimo_hit = current_time
@@ -565,18 +565,21 @@ class Player():
                     self.arma.ataquePrincipal(inimigo)
                     inimigo.ultimo_dano_tempo = current_time
                     self.hp = min(self.hp + self.arma.lifeSteal, self.hpMax)
+
                     dx = inimigo.x - self.x
                     dy = inimigo.y - self.y
                     inimigo.aplicar_knockback(dx, dy, intensidade=4)
+
                     self.criar_efeito_sangue(hitbox_espada.centerx, hitbox_espada.centery)
                     display.flip()
 
-            if not hit_landed and current_time - self.tempo_ultimo_hit > self.tempo_max_combo:
+            if not self.hit_landed and current_time - self.tempo_ultimo_hit > self.tempo_max_combo:
                 self.hits = 0
                 self.arma.comboMult = 1.0
         else:
             self.arma.ataquePrincipal(self, mouse_pos)
             self.ultimo_ataque = current_time
+
 
     def ataque_espadaSecundario(self, inimigos, mouse_pos, dt):
         current_time = time.get_ticks()

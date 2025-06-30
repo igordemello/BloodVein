@@ -48,10 +48,9 @@ class Hud:
         tela.blit(self.fundo2, (0,0))
 
     def update(self, dt):
-        # Atualiza o efeito de shake
         if self.combo_shake_duration > 0:
             self.combo_shake_duration -= dt
-            intensity = int(self.combo_shake_intensity * (self.combo_shake_duration / 300))  # Convertemos para int
+            intensity = int(self.combo_shake_intensity * (self.combo_shake_duration / 300))
             self.shake_offset = (
                 randint(-intensity, intensity) if intensity > 0 else 0,
                 randint(-intensity, intensity) if intensity > 0 else 0
@@ -61,16 +60,15 @@ class Hud:
             self.shake_offset = (0, 0)
             self.combo_scale = 1.0
 
-        # Detecta quando o combo aumenta
-        if self.player.hits > self.last_combo_count:
+        total_hits = self.player.hits + self.player.hits_projetil
+        if total_hits > self.last_combo_count:
             self.trigger_combo_shake()
-        self.last_combo_count = self.player.hits
+        self.last_combo_count = total_hits
         if hasattr(self, 'arma_anterior') and self.arma_anterior != self.player.arma:
             self.atualizar_arma_icon()
         self.arma_anterior = self.player.arma
 
     def trigger_combo_shake(self):
-        """Inicia o efeito de shake quando o combo aumenta"""
         self.combo_shake_intensity = min(10 + self.player.hits * 0.5, 30)
         self.combo_shake_duration = 300
 
@@ -78,25 +76,26 @@ class Hud:
         almas_font = font.Font('assets/Fontes/alagard.ttf', 48)
         almas = almas_font.render(f"{self.player.almas}x", True, (243, 236, 215))
 
-        # Fontes para o combo (tamanho varia com o shake)
-        current_font_size = int(self.normal_font_size * self.combo_scale)
-        combo_font = font.Font('assets/Fontes/alagard.ttf', max(72, min(int(current_font_size * self.player.arma.comboMult * 0.6), 165)))
-        combo = combo_font.render(f"{self.player.hits}", True, (243, 236, 215))
+        total_hits = self.player.hits + self.player.hits_projetil
+        combo_mult = self.player.arma.comboMult
 
-        comboMult_font = font.Font('assets/Fontes/alagard.ttf',  min(int(24 * self.player.arma.comboMult), 48))
-        comboMult = comboMult_font.render(f"{self.player.arma.comboMult:.2f}x", True, (253, 246, 225))
+        current_font_size = int(self.normal_font_size * self.combo_scale)
+        combo_font = font.Font('assets/Fontes/alagard.ttf',
+                               max(72, min(int(current_font_size * combo_mult * 0.6), 165)))
+        combo = combo_font.render(f"{total_hits}", True, (243, 236, 215))
+
+        comboMult_font = font.Font('assets/Fontes/alagard.ttf', min(int(24 * combo_mult), 48))
+        comboMult = comboMult_font.render(f"{combo_mult:.2f}x", True, (253, 246, 225))
 
 
         almas_rect = almas.get_rect()
         almas_rect.right = 1540
         almas_rect.top = 68
 
-        # Posição original do combo (sem shake)
         base_combo_rect = combo.get_rect()
         base_combo_rect.right = 1880
         base_combo_rect.top = 200
 
-        # Aplica efeitos de shake e scale
         combo_rect = combo.get_rect()
         combo_rect.right = 1880 + self.shake_offset[0]
         combo_rect.top = 190 + self.shake_offset[1]
@@ -152,8 +151,7 @@ class Hud:
             tela.blit(self.chanceCriticoTita, (1710,150,110,74))
             tela.blit(critico, (crit_rect))
 
-        # Combo (com efeitos)
-        if self.player.hits > 0:
+        if total_hits > 0:
             tela.blit(combo, combo_rect.topleft)
             tela.blit(comboMult, comboMult_rect.topleft)
 
