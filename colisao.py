@@ -27,6 +27,7 @@ class Colisao:
 
         self._colisao_entidade_projetil()
         self._colisao_entidade_AOE()
+        self._colisao_projetil_mapa()
 
 
     def _colisao_entidade_mapa(self,entidade,dt):
@@ -162,3 +163,20 @@ class Colisao:
 
                     self.ultimo_tempo_colisao_aoe = tempo_atual
                     break
+
+    def _colisao_projetil_mapa(self):
+        for projetil in self.player.projeteis[:]:
+            projetil_rect = Rect(
+                projetil["x"] - projetil["raio_hitbox"],
+                projetil["y"] - projetil["raio_hitbox"],
+                projetil["raio_hitbox"] * 2,
+                projetil["raio_hitbox"] * 2
+            )
+
+            for collider in self.mapa.colliders:
+                if projetil_rect.colliderect(collider['rect']):
+                    print("teste")
+                    self.player.projeteis.remove(projetil)
+
+
+
