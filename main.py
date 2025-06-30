@@ -18,6 +18,7 @@ from menu import Menu
 from menu import gerenciamento
 from loja import Loja
 from minimapa import Minimapa
+from menuarmas import *
 
 init()
 #teste
@@ -50,6 +51,9 @@ esperar_soltar_clique = True
 
 bau = False
 loja = False
+menuArmas = True
+
+menuDeArma = MenuArmas()
 
 # while "Fred" == "Fred":
 i = 1
@@ -87,12 +91,21 @@ while i == 1:
             else:
                 if ev.type == MOUSEBUTTONDOWN:
                     if ev.button == 1:
-                        if sala_atual.bau and sala_atual.ativar_menu_bau:
+                        if menuArmas and menuDeArma.menu_ativo:
+                            if menuDeArma.checar_clique_menu(mouse_pos) is not None:
+                                player.arma = menuDeArma.checar_clique_menu(mouse_pos)
+                                if player.arma:
+                                    menuArmas = False
+                                    hud.atualizar_arma_icon()
+                                    player.atualizar_arma()
+
+                        elif sala_atual.bau and sala_atual.ativar_menu_bau:
                             item = sala_atual.bau.checar_clique_bau(mouse.get_pos())
                             if item:
                                 player.adicionarItem(item)
                                 jogo_pausado = False
                             sala_atual.gerenciador_andar.grafo.nodes[sala_atual.gerenciador_andar.sala_atual]["bau_aberto"] = True
+
                         elif loja:  # Adicione esta condição para a loja
                             if sala_atual.loja.checar_compra(mouse.get_pos(), SCREEN) == "sair":
                                  loja = not loja
@@ -102,6 +115,14 @@ while i == 1:
                         player.ataque_espadaSecundario(sala_atual.inimigos, mouse_pos, dt)
 
                 if ev.type == KEYDOWN:
+                    if menuArmas:
+                        if ev.key == K_RIGHT:
+                            menuDeArma.scrollMenu(">")
+                            print(menuDeArma.pos)
+                        if ev.key == K_LEFT:
+                            menuDeArma.scrollMenu("<")
+                            print(menuDeArma.pos)
+
                     if ev.key == K_q and current_time - player.ativo_ultimo_uso > 2500:  # tecla de usar item ativo
                         player.ativo_ultimo_uso = current_time
                         player.usarItemAtivo(sala_atual)
@@ -131,31 +152,39 @@ while i == 1:
 
                 
     if gerenciamento.modo == 'jogo':
-        SCREEN.blit(imagem_cursor, mouse_pos)
-        hud.desenhaFundo(SCREEN)
-        sala_atual.desenhar(SCREEN)
-        hud.desenhar(SCREEN)
-        player.desenhar(SCREEN,
-                        mouse_pos)  # probleminha, a espada continua sendo atualizado, pq ele é desenhado assim no futuro
 
-        sala_atual.atualizar(dt, keys)
-        player.atualizar(dt, keys)
+        if menuArmas:
+            hud.desenhaFundo(SCREEN)
+            menuDeArma.menu_ativo = True
+            menuDeArma.menuEscolherItens(SCREEN)
 
 
-        if sala_atual.bau and sala_atual.bau.menu_ativo:
-            sala_atual.bau.bauEscolherItens(SCREEN)
-        elif loja:
-            sala_atual.loja.desenhar_loja(SCREEN)
+        else:
+            SCREEN.blit(imagem_cursor, mouse_pos)
+            hud.desenhaFundo(SCREEN)
+            sala_atual.desenhar(SCREEN)
+            hud.desenhar(SCREEN)
+            player.desenhar(SCREEN,
+                            mouse_pos)  # probleminha, a espada continua sendo atualizado, pq ele é desenhado assim no futuro
 
-        hud.update(dt)
-        # mostrar o fps:
-        if time.get_ticks() % 500 < 16:  # Atualiza ~30 vezes por segundo
-            fps = int(clock.get_fps())
-            fps_text = fps_font.render(f"FPS: {fps}", True, (255, 255, 255))
+            sala_atual.atualizar(dt, keys)
+            player.atualizar(dt, keys)
 
-        SCREEN.blit(fps_text, (10, 10))
 
-        minimapa.draw()
+            if sala_atual.bau and sala_atual.bau.menu_ativo:
+                sala_atual.bau.bauEscolherItens(SCREEN)
+            elif loja:
+                sala_atual.loja.desenhar_loja(SCREEN)
+
+            hud.update(dt)
+            # mostrar o fps:
+            if time.get_ticks() % 500 < 16:  # Atualiza ~30 vezes por segundo
+                fps = int(clock.get_fps())
+                fps_text = fps_font.render(f"FPS: {fps}", True, (255, 255, 255))
+
+            SCREEN.blit(fps_text, (10, 10))
+
+            minimapa.draw()
 
     SCREEN.blit(imagem_cursor, mouse_pos)
     display.update()

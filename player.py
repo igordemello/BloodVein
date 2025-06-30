@@ -11,7 +11,7 @@ from sistemaparticulas import *
 
 
 class Player():
-    def __init__(self, x, y, largura, altura, hp=100, st=100, velocidadeMov=0.5, sprite='hero.png'):
+    def __init__(self, x, y, largura, altura, hp=100, st=100, velocidadeMov=0.5, sprite='hero.png', arma=None):
         # animações
         self.animacoes = {
             "baixo": self.carregar_animacao("assets/Player/vampira_andando_frente.png"),
@@ -35,8 +35,8 @@ class Player():
         self.sistemaparticulas = ParticleSystem()
         self.lista_mods = ListaMods()
         #ARMA
-        self.arma = Arco("comum", self.lista_mods)
-        self.arma.aplicaModificador()
+        self.arma = arma if arma else EspadaEstelar("comum", self.lista_mods)
+
 
         self.x = x
         self.y = y
@@ -638,3 +638,7 @@ class Player():
         self.hp -= valor * self.modificadorDanoRecebido
         self.foi_atingido = True
         self.tempo_atingido = time.get_ticks()
+
+    def atualizar_arma(self):
+        self.sword = transform.scale(transform.flip(image.load(self.arma.sprite).convert_alpha(), True, True),
+                                     (self.arma.size))

@@ -61,6 +61,9 @@ class Hud:
         if self.player.hits > self.last_combo_count:
             self.trigger_combo_shake()
         self.last_combo_count = self.player.hits
+        if hasattr(self, 'arma_anterior') and self.arma_anterior != self.player.arma:
+            self.atualizar_arma_icon()
+        self.arma_anterior = self.player.arma
 
     def trigger_combo_shake(self):
         """Inicia o efeito de shake quando o combo aumenta"""
@@ -164,3 +167,6 @@ class Hud:
             y_corte = self.bracoSt_cima.get_height() - altura_visivelSt
             barra_cheia_cortada = self.bracoSt_cima.subsurface((0, y_corte, larguraSt_total, altura_visivelSt)).copy()
             tela.blit(barra_cheia_cortada, (1715, 510 + y_corte))
+
+    def atualizar_arma_icon(self):
+        self.armaIcon = transform.scale(image.load(self.player.arma.spriteIcon).convert_alpha(), (96, 96))
