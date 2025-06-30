@@ -56,7 +56,6 @@ class MenuArmas:
 
     def menuEscolherItens(self, tela):
         overlay = Surface(tela.get_size(), SRCALPHA)
-        overlay.fill((0, 0, 0, 180))
         tela.blit(overlay, (0, 0))
 
         mouse_pos = mouse.get_pos()

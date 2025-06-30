@@ -34,6 +34,8 @@ class Hud:
 
         self.fundo = transform.scale(self.fundo, (1920, 1080))
 
+        self.stats_alpha = None
+
         # Variáveis para o efeito de shake
         self.combo_shake_intensity = 0
         self.combo_shake_duration = 0
