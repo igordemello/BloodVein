@@ -9,7 +9,9 @@ class MouthOrb(Inimigo):
 
         self.anima_dano = False
         self.inicio_dano = 0
-        self.duracao_dano = 150  # ms
+        self.duracao_dano = 500  # ms (aumentado para efeito gradual)
+        self.foi_atingido = False
+        self.tempo_atingido = 0
 
         self.sprite_size = (64, 64)
         self.animacoes = {
@@ -45,7 +47,7 @@ class MouthOrb(Inimigo):
         self.animacao_atual = "idle"
         self.frame_index = 0
         self.frame_time = 0
-        self.animation_speed = 0.15
+        self.animation_speed = 0.05  # diminuído para deixar mais lento
 
         self._carregar_todas_animacoes()
 
@@ -64,6 +66,12 @@ class MouthOrb(Inimigo):
         self.ultima_tentativa_invocacao = 0
         self.ja_invocou = False
         self.executando_ataque = False
+
+    def get_hitbox(self):
+        raio = min(self.largura, self.altura) // 2
+        centro_x = self.x + self.largura // 2
+        centro_y = self.y + self.altura // 2
+        return pygame.Rect(centro_x - raio, centro_y - raio, raio * 2, raio * 2)
 
     def _carregar_todas_animacoes(self):
         for chave, dados in self.animacoes.items():
@@ -114,33 +122,29 @@ class MouthOrb(Inimigo):
     def desenhar_barra_vida(self, tela):
         if not self.vivo:
             return
-        largura_barra = 400
-        altura_barra = 20
-        x = tela.get_width() // 2 - largura_barra // 2
-        y = 20
-        proporcao = self.hp / 300
-        barra_atual = int(largura_barra * proporcao)
-        pygame.draw.rect(tela, (60, 60, 60), (x, y, largura_barra, altura_barra))
-        pygame.draw.rect(tela, (200, 0, 0), (x, y, barra_atual, altura_barra))
-        pygame.draw.rect(tela, (255, 255, 255), (x, y, largura_barra, altura_barra), 2)
 
-    def tomar_dano(self, quantidade):
-        self.hp -= quantidade
-        self.anima_dano = True
-        self.inicio_dano = pygame.time.get_ticks()
+        # barra como a dos Orbs (acima do sprite)
+        largura_barra = self.largura
+        altura_barra = 8
+        x = self.x
+        y = self.y - 10
+        proporcao = max(self.hp, 0) / self.hp_max
+        barra_atual = int(largura_barra * proporcao)
+
+        pygame.draw.rect(tela, (60, 60, 60), (x, y, largura_barra, altura_barra))
+        pygame.draw.rect(tela, (255, 0, 0), (x, y, barra_atual, altura_barra))
+        pygame.draw.rect(tela, (255, 255, 255), (x, y, largura_barra, altura_barra), 1)
 
     def instanciar_orb(self, grupo_inimigos, colliders):
         if grupo_inimigos is None:
             return
         if len(self.orbs_instanciados) < self.max_orbs:
-            # posição padrão (abaixo)
             orb_x = self.x + self.largura // 2 - 32
             orb_y = self.y + self.altura
             orb_rect = pygame.Rect(orb_x, orb_y, 64, 64)
 
             for col in colliders:
                 if orb_rect.colliderect(col["rect"]):
-                    # tenta acima
                     orb_rect.y = self.y - 64
                     break
 
@@ -149,13 +153,24 @@ class MouthOrb(Inimigo):
             self.orbs_instanciados.append(novo_orb)
 
     def atualizar(self, player_pos, tela, grupo_inimigos=None, colliders=[]):
-        if self.estado == "normal" and self.animacao_atual not in ["ataque", "invocacao"]:
-            super().atualizar(player_pos, tela)
-
         if not self.vivo:
             return
 
         now = pygame.time.get_ticks()
+
+        if self.knockback_time:
+            if now - self.knockback_time < self.knockback_duration:
+                self.x += self.vx
+                self.y += self.vy
+                return
+            else:
+                self.knockback_time = 0
+                self.vx = 0
+                self.vy = 0
+
+        if self.estado == "normal" and self.animacao_atual not in ["ataque", "invocacao"]:
+            super().atualizar(player_pos, tela)
+
         distancia_fuga_minima = 300
 
         if self.estado == "normal" and now - self.ultima_tentativa_invocacao > self.cooldown_modo_invocacao:
@@ -187,35 +202,42 @@ class MouthOrb(Inimigo):
                     self.estado = "normal"
                     self.trocar_animacao("idle")
                     self.ja_invocou = True
-        elif not self.executando_ataque:
-            if self.iniciar_ataque_corpo_a_corpo(player_pos):
-                rot_rect, _ = self.get_hitbox_ataque(player_pos)
-                player_hitbox = pygame.Rect(player_pos[0], player_pos[1], 64, 64)
-                if rot_rect.colliderect(player_hitbox):
-                    if hasattr(self, "dar_dano") and callable(self.dar_dano):
-                        self.dar_dano()
+        elif self.estado == "normal":
+            distancia = math.hypot(player_pos[0] - self.x, player_pos[1] - self.y)
+            alcance = 100
+            if distancia <= alcance:
+                self.set_velocidade_x(0)
+                self.set_velocidade_y(0)
+                if not self.executando_ataque:
+                    if self.iniciar_ataque_corpo_a_corpo(player_pos):
+                        rot_rect, _ = self.get_hitbox_ataque(player_pos)
+                        player_hitbox = pygame.Rect(player_pos[0], player_pos[1], 64, 64)
+                        if rot_rect.colliderect(player_hitbox):
+                            if hasattr(self, "dar_dano") and callable(self.dar_dano):
+                                self.dar_dano()
+            else:
+                super().atualizar(player_pos, tela)
 
         if self.animacao_atual == "ataque":
             if self.animacao_terminou():
                 self.executando_ataque = False
                 self.trocar_animacao("idle")
         elif self.animacao_atual == "invocacao":
-            pass
-        elif self.animacao_atual not in ["ataque", "invocacao"]:
-            self.trocar_animacao("idle")
+            if self.animacao_terminou() and self.estado == "normal":
+                self.trocar_animacao("idle")
 
         self.atualizar_animacao()
         self.orbs_instanciados = [orb for orb in self.orbs_instanciados if orb.vivo]
 
     def desenhar(self, tela, player_pos):
-        if self.vivo:
-            frame = self.animacoes[self.animacao_atual]["frames"][self.frame_index]
-            if self.anima_dano and pygame.time.get_ticks() - self.inicio_dano < self.duracao_dano:
-                mask = pygame.Surface((self.largura, self.altura), pygame.SRCALPHA)
-                mask.fill((255, 0, 0, 100))
-                frame_copy = frame.copy()
-                frame_copy.blit(mask, (0, 0))
-                tela.blit(frame_copy, (self.x, self.y))
-            else:
-                self.anima_dano = False
-                tela.blit(frame, (self.x, self.y))
+        if not self.vivo:
+            return
+
+        frame = self.animacoes[self.animacao_atual]["frames"][self.frame_index]
+
+        if self.foi_atingido and pygame.time.get_ticks() - self.tempo_atingido < 250:
+            frame = frame.copy()
+            frame.fill((255, 255, 255), special_flags=pygame.BLEND_RGB_ADD)
+
+        tela.blit(frame, (self.x, self.y))
+        self.desenhar_barra_vida(tela)
