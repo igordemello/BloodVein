@@ -40,7 +40,7 @@ mouse.set_visible(False)
 jogo_pausado = False
 
 player = Player(950, 600, 32 * 2, 48 * 2)
-hud = Hud(player)
+hud = Hud(player, SCREEN)
 andar = GerenciadorAndar("data/andar1.json")
 sala_atual = Sala(andar.get_arquivo_atual(), SCREEN, player, andar)
 fonte = font.SysFont("Arial", 24)
@@ -53,7 +53,7 @@ bau = False
 loja = False
 menuArmas = True
 
-menuDeArma = MenuArmas()
+menuDeArma = MenuArmas(hud)
 
 # while "Fred" == "Fred":
 i = 1
@@ -154,16 +154,16 @@ while i == 1:
     if gerenciamento.modo == 'jogo':
 
         if menuArmas:
-            hud.desenhaFundo2(SCREEN)
+            hud.desenhaFundo2()
             menuDeArma.menu_ativo = True
             menuDeArma.menuEscolherItens(SCREEN)
 
 
         else:
             SCREEN.blit(imagem_cursor, mouse_pos)
-            hud.desenhaFundo(SCREEN)
+            hud.desenhaFundo()
             sala_atual.desenhar(SCREEN)
-            hud.desenhar(SCREEN)
+            hud.desenhar()
             player.desenhar(SCREEN,
                             mouse_pos)  # probleminha, a espada continua sendo atualizado, pq ele é desenhado assim no futuro
 

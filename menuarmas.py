@@ -1,6 +1,7 @@
 from pygame import *
 from pygame.math import Vector2
 from efeito import *
+from hud import Hud
 from itensDic import ConjuntoItens
 from random import sample
 from botao import Botao
@@ -8,8 +9,9 @@ from armas import *
 
 
 class MenuArmas:
-    def __init__(self):
+    def __init__(self,hud):
         self.lista_mods = ListaMods()
+        self.hud = hud
         self.armasDisp = [
             LaminaDaNoite("comum", self.lista_mods),
             Chigatana("comum", self.lista_mods),
@@ -20,6 +22,9 @@ class MenuArmas:
             MarteloSolar("comum", self.lista_mods),
             Arco("comum", self.lista_mods)
         ]
+
+        for i in self.armasDisp:
+            i.aplicaModificador()
 
         self.pos = 0
         self.arma_sorteada = self.armasDisp[self.pos]
@@ -84,6 +89,13 @@ class MenuArmas:
                 self.estado_hover = self.estado_hover.lerp(alvo, 0.1)
                 scale = self.estado_hover.x * carta["scale"]
                 deslocamento_y = self.estado_hover.y + carta["desloc_y"]
+
+                if is_hovered:
+                    if not self.hud.stats_alpha:
+                        self.hud.reset_stats_fade()
+                    self.hud.mostraStatsArma(arma_atual)
+                else:
+                    self.hud.reset_stats_fade()
             else:
                 scale = carta["scale"]
                 deslocamento_y = carta["desloc_y"]
@@ -133,7 +145,6 @@ class MenuArmas:
                                     display.get_surface().get_height() // 2)
 
         if carta_rect.collidepoint(mouse_pos):
-            self.arma_sorteada.aplicaModificador()
             print(f"Arma escolhida: {self.arma_sorteada.nome}")
             self.menu_ativo = False
             return self.arma_sorteada
