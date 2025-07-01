@@ -9,7 +9,7 @@ import math
 
 class Loja():
     def __init__(self, conjunto: ConjuntoItens, player):
-        self.personagem_img = transform.scale(transform.flip(image.load('assets/iko.png').convert_alpha(), True, False),(750, 750))
+        self.personagem_img = transform.scale(transform.flip(image.load('assets/iko.png').convert_alpha(), True, False),(910, 840))
         self.fundo = image.load("assets/loja.png").convert_alpha()
         
         self.itensDisp = conjunto
@@ -30,8 +30,10 @@ class Loja():
         self.font_desc = font.Font("assets/Fontes/alagard.ttf", 20)
         self.font_preco = font.Font("assets/Fontes/alagard.ttf", 35, )
         self.font_chata = font.Font("assets/Fontes/alagard.ttf", 20, )
-        self.font_almas = font.Font("assets/Fontes/alagard.ttf", 55, )
+
+
         
+
         self.estados_hover = [Vector2(1.0, 0.0) for _ in self.itens_sorteados]
         self.descricao_visivel = [False] * 3
         
@@ -54,30 +56,43 @@ class Loja():
                     pos=(base_x + self.item_width//2, base_y + self.item_height//2),
                     text_input="",
                     font=self.font_titulo,
-                    base_color=(255, 255, 255, 0),  # Transparente
-                    hovering_color=(255, 255, 255, 0)  # Transparente
+                    base_color=(255, 255, 255, 0),
+                    hovering_color=(255, 255, 255, 0)
                 )
                 self.botoes.append(botao)
 
+        self.botaosair = Botao(image=None, pos=(100,1030),text_input="Sair",font=self.alagard(48), base_color=(117,6,30), hovering_color=(155,26,54))
+        
 
         self.comprado = [False]*3
+        
 
+    def img_alma(self,tam):
+        return transform.scale(image.load('assets/Itens/alma.png').convert_alpha(),(tam,tam))
+
+    def alagard(self, tam):
+        return font.Font("assets/Fontes/alagard.ttf", tam)
     
 
     def desenhar_loja(self, tela):
         tela.fill((0, 0, 0))
         tela.blit(self.fundo,(0,0))
-        tela.blit(self.personagem_img, (1150, 250))
+        tela.blit(self.personagem_img, (1100, 300))
 
         mouse_pos = mouse.get_pos()
         self.tempo += 0.05
 
+        #quantidade de almas
+        almas = self.alagard(40).render(f'{self.player.almas}x', True,(253, 246, 225))
+        x_almas, y_almas = 50, 50
+        tela.blit(almas,(x_almas,y_almas))
+        texto_width = almas.get_width()
+        tela.blit(self.img_alma(48), (x_almas + texto_width + 2.5, y_almas-16))
 
         for pos, item in enumerate(self.itens_sorteados):
 
-            #animação foda
-            #flutuacao = math.sin(self.tempo + pos * 2) * 10
-            base_x = 25
+
+            base_x = -20
             base_y = 120 + pos * 260
 
             item_rect = Rect(base_x, base_y, self.item_width, self.item_height)
@@ -101,9 +116,9 @@ class Loja():
                 tela.blit(carta_base, (pos_x + 1200, 525))
 
                 item_img = transform.scale(item.sprite, (100, 100))
-                tela.blit(item_img, (1325,40 + 525))
+                tela.blit(item_img, (1280,40 + 525))
 
-                nome = self.font_chata.render(item.nome, True, (255, 255, 255))
+                nome = self.font_chata.render(item.nome, True, (0,0,0))
                 tela.blit(nome, (1250, 182 + 525))
 
                 # Descrição 
@@ -120,37 +135,39 @@ class Loja():
 
                 # Desenhar texto linha a linha
                 for i, line in enumerate(desc_lines):
-                    desc_text = self.font_desc.render(line, True, (255, 255, 255))
+                    desc_text = self.font_desc.render(line, True, (0,0,0))
                     tela.blit(desc_text, (carta_x + margem_lateral, carta_y + 20 + margem_topo + i * 22))
 
 
-            
-            # Sprite do item
-            item_img = transform.scale(item.sprite, (140, 140))
-            tela.blit(item_img, (pos_x + (width - 100)//2, pos_y + 40))
 
-            #quantidade de almas
-            almas = self.font_almas.render(f"Voçê possui {self.player.almas} almas",True, (9, 88, 237))
-            tela.blit(almas,(100,50))
+            
+
+            #Sprite do item
+            item_img = transform.scale(item.sprite, (140, 140))
+            tela.blit(item_img, (pos_x + (width - 100)//2, pos_y + 70))
 
             # Nome do item
-            nome = self.font_titulo.render(item.nome, True, (255, 255, 255))
-            tela.blit(nome, (pos_x + 30 + (width - nome.get_width())//2, pos_y + 200))
-
-            # Preço
-            preco = self.font_preco.render(f"{self.precos[item.raridade]} almas", True, ('blue'))
-            tela.blit(preco, (pos_x + 300 + (width - preco.get_width())//2,  135 + pos_y))
-
-            #carta comprada
             if self.comprado[pos]:
-                    carta_tchau = Surface((350, 180), SRCALPHA)
-                    carta_tchau.fill((0, 0, 0, 120))  # Preto com transparência
-                    tela.blit(carta_tchau, (pos_x, pos_y + 44))
+                nome = self.alagard(30).render("COMPRADA", True, (200, 50, 50))
+            else:
+                nome = self.alagard(30).render(item.nome, True, (253, 246, 225))
+
+            tela.blit(nome, (pos_x + 250, pos_y + 100))
+
+            #Preço
+            preco = self.alagard(25).render(f"Price: {self.precos[item.raridade]}", True, (253, 246, 225))
+            tela.blit(preco, (pos_x + 250, pos_y+150))
+            texto_width_price = almas.get_width()
+            tela.blit(self.img_alma(32), (pos_x + 250 + texto_width_price + 2.5, pos_y+150-8))
+
+            
 
     
         for botao in self.botoes: # para todos os botões (para aparecerem na tela)
             botao.changeColor(mouse_pos)
             botao.update(tela)
+        self.botaosair.changeColor(mouse_pos)
+        self.botaosair.update(tela)
 
     def quebrar_texto_em_linhas(self, texto, fonte, largura_max):
         palavras = texto.split()
@@ -175,8 +192,8 @@ class Loja():
 
     def checar_compra(self, mouse_pos, tela):
 
-        if  115 <= mouse_pos[0] <= 644  and   942 <= mouse_pos[1] <= 1056:
-            return "sair"
+        if self.botaosair.checkForInput(mouse_pos):
+            return 'sair'
         
         for i, botao in enumerate(self.botoes):
 
