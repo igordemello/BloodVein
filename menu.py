@@ -1,7 +1,6 @@
 from pygame import *
 from pygame.locals import QUIT
 import sys
-from GerenciamentodeTelas import gerenciamento
 
 class gerenciamento():
     def __init__(self):

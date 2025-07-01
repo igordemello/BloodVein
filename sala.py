@@ -49,6 +49,7 @@ class Sala:
 
         tipo = self.gerenciador_andar.grafo.nodes[self.gerenciador_andar.sala_atual]['tipo']
         bau_aberto = self.gerenciador_andar.grafo.nodes[self.gerenciador_andar.sala_atual].get('bau_aberto', False)
+        self.bau_interagido = False
 
         if tipo == 'bau':
             x, y = self.mapa.get_rangebau()[0].topleft
@@ -82,6 +83,7 @@ class Sala:
             return [bossmod.MouthOrb(400, 700, 192, 192, hp=5000,velocidade=3, dano=30)]
         else:
             #bagulho pequeno so pra aleatorizar o numero de inimigos numa sala, só na fase de testes mesmo
+            return []
             quant = randint(1, 4)
             cords = [(400,700), (680,800), (850,600),(990,800), (1150,800)]
             cordsEscolhe = sample(cords,quant)
@@ -138,14 +140,17 @@ class Sala:
             self.bau.update(player_hitbox=self.player.get_hitbox())
             
             if not self.gerenciador_andar.grafo.nodes[self.gerenciador_andar.sala_atual].get("bau_aberto", False):
-                if self.player.get_hitbox().colliderect(self.bau.rect) and teclas[K_e]:
+                if self.player.get_hitbox().colliderect(self.bau.rect) and teclas[K_e] and self.porta_liberada:
                     if not self.bau.aberto:
                         self.bau.abrir()
+                        self.player.vx = 0
+                        self.player.vy = 0
+                        self.player.travado = True
 
-            # Verifica continuamente se deve mostrar o menu
-            if self.bau.aberto and not self.bau.animando and not self.ativar_menu_bau:
-                if self.player.get_hitbox().colliderect(self.bau.rect):
-                    self.ativar_menu_bau = True
+            
+            if (self.bau.aberto and not self.bau.animando and not self.ativar_menu_bau and not self.bau_interagido and self.player.get_hitbox().colliderect(self.bau.rect)):
+                self.ativar_menu_bau = True
+                self.bau_interagido = True 
 
 
 

@@ -103,10 +103,14 @@ while i == 1:
                             item = sala_atual.bau.checar_clique_bau(mouse.get_pos())
                             if item:
                                 player.adicionarItem(item)
-                                jogo_pausado = False
                             sala_atual.gerenciador_andar.grafo.nodes[sala_atual.gerenciador_andar.sala_atual]["bau_aberto"] = True
+                            sala_atual.bau.menu_ativo = False
+                            sala_atual.ativar_menu_bau = False
+                            sala_atual.bau_interagido = False
+                            sala_atual.player.travado = False
+                            jogo_pausado = False
 
-                        elif loja:  # Adicione esta condição para a loja
+                        elif loja:
                             if sala_atual.loja.checar_compra(mouse.get_pos(), SCREEN) == "sair":
                                  loja = not loja
                         else:
@@ -123,7 +127,7 @@ while i == 1:
                             menuDeArma.scrollMenu("<")
                             print(menuDeArma.pos)
 
-                    if ev.key == K_q and current_time - player.ativo_ultimo_uso > 2500:  # tecla de usar item ativo
+                    if ev.key == K_q and current_time - player.ativo_ultimo_uso > 2500:
                         player.ativo_ultimo_uso = current_time
                         player.usarItemAtivo(sala_atual)
 
@@ -167,12 +171,14 @@ while i == 1:
             player.desenhar(SCREEN,
                             mouse_pos)  # probleminha, a espada continua sendo atualizado, pq ele é desenhado assim no futuro
 
-            sala_atual.atualizar(dt, keys)
-            player.atualizar(dt, keys)
+            if not jogo_pausado:
+                sala_atual.atualizar(dt, keys)
+                player.atualizar(dt, keys)
 
 
             if sala_atual.bau and sala_atual.bau.menu_ativo:
                 sala_atual.bau.bauEscolherItens(SCREEN)
+                jogo_pausado = True
             elif loja:
                 sala_atual.loja.desenhar_loja(SCREEN)
 

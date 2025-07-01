@@ -124,6 +124,7 @@ class Player():
         self.sword_trail = []
         self.max_trail_length = 5
         self.trail_alpha = 100  # Transparência do rastro
+        self.travado = False
 
     def carregar_animacao(self, caminho):
         frame_largura = 32
@@ -169,6 +170,8 @@ class Player():
             print("Não tem item ativo")
 
     def atualizar(self, dt, teclas):
+        if self.travado:
+            return
         self.dt = dt
         current_time = time.get_ticks()
         self.old_x = self.x
