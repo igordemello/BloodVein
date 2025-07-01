@@ -130,7 +130,7 @@ class Loja():
             tela.blit(item_img, (pos_x + (width - 100)//2, pos_y + 40))
 
             #quantidade de almas
-            almas = self.font_almas.render(f"Voçê possui {self.player.almas} almas",True, (9, 88, 237))
+            almas = self.font_almas.render(f"You have {self.player.almas} souls",True, (9, 88, 237))
             tela.blit(almas,(100,50))
 
             # Nome do item
@@ -138,7 +138,7 @@ class Loja():
             tela.blit(nome, (pos_x + 30 + (width - nome.get_width())//2, pos_y + 200))
 
             # Preço
-            preco = self.font_preco.render(f"{self.precos[item.raridade]} almas", True, ('blue'))
+            preco = self.font_preco.render(f"{self.precos[item.raridade]} souls", True, ('blue'))
             tela.blit(preco, (pos_x + 300 + (width - preco.get_width())//2,  135 + pos_y))
 
             #carta comprada

@@ -32,64 +32,71 @@ class Arma(ABC):
         pass
 
 
-#MODIFICADORES:
+# MODIFICADORES:
 class BainhaRapida(Modificador):
-    def __init__(self,arma):
-        self.valor = randint(15+arma.raridade,30+arma.raridade)/10
-        self.nome = "Rapida"
+    def __init__(self, arma):
+        self.valor = randint(15 + arma.raridade, 30 + arma.raridade) / 10
+        self.nome = "Quick"
 
     def aplicarMod(self, arma):
         arma.velocidade = self.valor
         arma.dano -= self.valor
 
 class Afiada(Modificador):
-    def __init__(self,arma):
-        self.valor = arma.dano*0.5+arma.raridade*5
-        self.nome = "Afiada"
+    def __init__(self, arma):
+        self.valor = arma.dano * 0.5 + arma.raridade * 5
+        self.nome = "Sharp"
+
     def aplicarMod(self, arma):
         arma.dano += self.valor
 
 class Precisa(Modificador):
-    def __init__(self,arma):
-        self.valor = 5*arma.raridade
-        self.nome = "Precisa"
+    def __init__(self, arma):
+        self.valor = 5 * arma.raridade
+        self.nome = "Precise"
+
     def aplicarMod(self, arma):
         arma.chanceCritico += self.valor
 
 class Impactante(Modificador):
-    def __init__(self,arma):
+    def __init__(self, arma):
         self.valor = arma.raridade
-        self.nome = "Impactante"
+        self.nome = "Impactful"
+
     def aplicarMod(self, arma):
         arma.danoCriticoMod += self.valor
 
 class Sangrenta(Modificador):
-    def __init__(self,arma):
-        self.valor = arma.lifeSteal/2
-        self.nome = "Sangrenta"
+    def __init__(self, arma):
+        self.valor = arma.lifeSteal / 2
+        self.nome = "Bloody"
+
     def aplicarMod(self, arma):
         arma.lifeSteal += self.valor
 
 class Pesada(Modificador):
-    def __init__(self,arma):
+    def __init__(self, arma):
         self.valor = arma.dano
-        self.nome = "Pesada"
+        self.nome = "Heavy"
+
     def aplicarMod(self, arma):
         arma.dano += self.valor
         arma.velocidade *= 0.5
 
 class Sortuda(Modificador):
-    def __init__(self,arma):
+    def __init__(self, arma):
         self.valor = arma.chanceCritico * 10
-        self.nome = "Sortuda"
+        self.nome = "Lucky"
+
     def aplicarMod(self, arma):
         arma.chanceCritico += self.valor
         arma.danoCriticoMod *= 0.8
 
 class Potente(Modificador):
-    def __init__(self,arma):
-        self.valor = 2*arma.raridade
-        self.nome = "Potente"
+    def __init__(self, arma):
+        self.valor = 2 * arma.raridade
+        self.nome = "Powerful"
+
     def aplicarMod(self, arma):
         arma.danoCriticoMod += self.valor
         arma.chanceCritico *= 0.5
@@ -114,7 +121,7 @@ class ListaMods:
 #ARMAS:
 class LaminaDaNoite(Arma):
     def __init__(self,raridadeStr : str,listaMods : ListaMods):
-        self.tipoDeArma = "Espada Lunar"
+        self.tipoDeArma = "Moon Sword"
         self.ataqueTipo = "melee"
         self.raridadeStr = raridadeStr
         self.raridade = RARIDADES.get(self.raridadeStr, 1)
@@ -141,7 +148,7 @@ class LaminaDaNoite(Arma):
 
         mod_classe = listaMods.getMod(self.raridadeStr)  # Retorna a classe do modificador
         self.modificador = mod_classe(self)  # Instancia com self (a arma)
-        self.nome = f"{self.tipoDeArma} {self.modificador.nome} {self.raridadeStr}"
+        self.nome = f"{self.tipoDeArma} {self.modificador.nome}"
 
     def aplicaModificador(self):
         self.modificador.aplicarMod(self)
@@ -188,7 +195,7 @@ class Chigatana(Arma):
 
         mod_classe = listaMods.getMod(self.raridadeStr)  # Retorna a classe do modificador
         self.modificador = mod_classe(self)  # Instancia com self (a arma)
-        self.nome = f"{self.tipoDeArma} {self.modificador.nome} {self.raridadeStr}"
+        self.nome = f"{self.tipoDeArma} {self.modificador.nome}"
 
         self.valorSangramento = 2.2*self.raridade
 
@@ -210,7 +217,7 @@ class Chigatana(Arma):
 
 class Karambit(Arma):
     def __init__(self,raridadeStr : str,listaMods : ListaMods):
-        self.tipoDeArma = "Adaga"
+        self.tipoDeArma = "Dagger"
         self.ataqueTipo = "melee"
         self.raridadeStr = raridadeStr
         self.raridade = RARIDADES.get(self.raridadeStr, 1)
@@ -237,7 +244,7 @@ class Karambit(Arma):
 
         mod_classe = listaMods.getMod(self.raridadeStr)  # Retorna a classe do modificador
         self.modificador = mod_classe(self)  # Instancia com self (a arma)
-        self.nome = f"{self.tipoDeArma} {self.modificador.nome} {self.raridadeStr}"
+        self.nome = f"{self.tipoDeArma} {self.modificador.nome}"
 
         self.valorSangramento = 2.2*self.raridade
 
@@ -259,7 +266,7 @@ class Karambit(Arma):
 
 class EspadaDoTita(Arma):
     def __init__(self,raridadeStr : str,listaMods : ListaMods):
-        self.tipoDeArma = "Espada do Tita"
+        self.tipoDeArma = "Titan's Sword"
         self.ataqueTipo = "melee"
         self.raridadeStr = raridadeStr
         self.raridade = RARIDADES.get(self.raridadeStr, 1)
@@ -288,7 +295,7 @@ class EspadaDoTita(Arma):
 
         mod_classe = listaMods.getMod(self.raridadeStr)  # Retorna a classe do modificador
         self.modificador = mod_classe(self)  # Instancia com self (a arma)
-        self.nome = f"{self.tipoDeArma} {self.modificador.nome} {self.raridadeStr}"
+        self.nome = f"{self.tipoDeArma} {self.modificador.nome}"
 
     def aplicaModificador(self):
         self.modificador.aplicarMod(self)
@@ -318,7 +325,7 @@ class EspadaDoTita(Arma):
 
 class MachadoDoInverno(Arma):
     def __init__(self,raridadeStr : str,listaMods : ListaMods):
-        self.tipoDeArma = "Machado Do Inverno"
+        self.tipoDeArma = "Winter Axe"
         self.ataqueTipo = "melee"
         self.raridadeStr = raridadeStr
         self.raridade = RARIDADES.get(self.raridadeStr, 1)
@@ -349,7 +356,7 @@ class MachadoDoInverno(Arma):
 
         mod_classe = listaMods.getMod(self.raridadeStr)  # Retorna a classe do modificador
         self.modificador = mod_classe(self)  # Instancia com self (a arma)
-        self.nome = f"{self.tipoDeArma} {self.modificador.nome} {self.raridadeStr}"
+        self.nome = f"{self.tipoDeArma} {self.modificador.nome}"
 
     def aplicaModificador(self):
         self.modificador.aplicarMod(self)
@@ -385,7 +392,7 @@ class MachadoDoInverno(Arma):
 
 class EspadaEstelar(Arma):
     def __init__(self,raridadeStr : str,listaMods : ListaMods):
-        self.tipoDeArma = "Espada Estelar"
+        self.tipoDeArma = "Star Sword"
         self.ataqueTipo = "melee"
         self.raridadeStr = raridadeStr
         self.raridade = RARIDADES.get(self.raridadeStr, 1)
@@ -412,7 +419,7 @@ class EspadaEstelar(Arma):
 
         mod_classe = listaMods.getMod(self.raridadeStr)  # Retorna a classe do modificador
         self.modificador = mod_classe(self)  # Instancia com self (a arma)
-        self.nome = f"{self.tipoDeArma} {self.modificador.nome} {self.raridadeStr}"
+        self.nome = f"{self.tipoDeArma} {self.modificador.nome}"
 
     def aplicaModificador(self):
         self.modificador.aplicarMod(self)
@@ -439,7 +446,7 @@ class EspadaEstelar(Arma):
 
 class MarteloSolar(Arma):
     def __init__(self,raridadeStr : str,listaMods : ListaMods):
-        self.tipoDeArma = "Martelo Solar"
+        self.tipoDeArma = "Sun Hammer"
         self.ataqueTipo = "melee"
         self.raridadeStr = raridadeStr
         self.raridade = RARIDADES.get(self.raridadeStr, 1)
@@ -468,7 +475,7 @@ class MarteloSolar(Arma):
 
         mod_classe = listaMods.getMod(self.raridadeStr)  # Retorna a classe do modificador
         self.modificador = mod_classe(self)  # Instancia com self (a arma)
-        self.nome = f"{self.tipoDeArma} {self.modificador.nome} {self.raridadeStr}"
+        self.nome = f"{self.tipoDeArma} {self.modificador.nome}"
 
     def aplicaModificador(self):
         self.modificador.aplicarMod(self)
@@ -495,7 +502,7 @@ class MarteloSolar(Arma):
 
 class Arco(Arma):
     def __init__(self,raridadeStr : str,listaMods : ListaMods):
-        self.tipoDeArma = "Arco"
+        self.tipoDeArma = "Bow"
         self.ataqueTipo = "ranged"
         self.raridadeStr = raridadeStr
         self.raridade = RARIDADES.get(self.raridadeStr, 1)
@@ -522,7 +529,7 @@ class Arco(Arma):
 
         mod_classe = listaMods.getMod(self.raridadeStr)  # Retorna a classe do modificador
         self.modificador = mod_classe(self)  # Instancia com self (a arma)
-        self.nome = f"{self.tipoDeArma} {self.modificador.nome} {self.raridadeStr}"
+        self.nome = f"{self.tipoDeArma} {self.modificador.nome}"
 
     def aplicaModificador(self):
         self.modificador.aplicarMod(self)

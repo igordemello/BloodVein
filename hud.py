@@ -202,12 +202,12 @@ class Hud:
         stats_surface.blit(self.statsArma, (0, 0))
 
         texts = [
-            stats_font.render(f"Dano: {dano}", True, (243, 236, 215)),
-            stats_font.render(f"Rapidez: {rapidez}", True, (243, 236, 215)),
-            stats_font.render(f"Roubo de Vida: {roubo_de_vida}", True, (243, 236, 215)),
-            stats_font.render(f"Chance de Critico: {chance_de_critico}%", True, (243, 236, 215)),
-            stats_font.render(f"Dano Critico: {dano_critico}", True, (243, 236, 215)),
-            stats_font.render(f"Modificador: {modificador}", True, (243, 236, 215))
+            stats_font.render(f"Damage: {dano}", True, (243, 236, 215)),
+            stats_font.render(f"Speed: {rapidez}", True, (243, 236, 215)),
+            stats_font.render(f"Life Steal: {roubo_de_vida}", True, (243, 236, 215)),
+            stats_font.render(f"Critical Chance: {chance_de_critico}%", True, (243, 236, 215)),
+            stats_font.render(f"Critical Damage: {dano_critico}", True, (243, 236, 215)),
+            stats_font.render(f"Modifier: {modificador}", True, (243, 236, 215))
         ]
 
         for i, text in enumerate(texts):

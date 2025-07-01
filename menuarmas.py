@@ -118,8 +118,8 @@ class MenuArmas:
             tela.blit(titulo, titulo_rect)
 
 
-        armasTitulo = self.fontTitulo.render("ARMAS", False, (255,255,255))
-        tela.blit(armasTitulo, (820,40,24,24))
+        armasTitulo = self.fontTitulo.render("Weapons", False, (255,255,255))
+        tela.blit(armasTitulo, (790,40,24,24))
 
         seta_esquerda = image.load("assets/UI/seta_esquerda.png").convert_alpha()
         seta_direita = image.load("assets/UI/seta_direita.png").convert_alpha()
