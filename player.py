@@ -24,7 +24,13 @@ class Player():
             "direita": self.carregar_animacao("assets/Player/LADOANDAR-Sheet.png"),
             "esquerda": [transform.flip(img, True, False) for img in
                          self.carregar_animacao("assets/Player/LADOANDAR-Sheet.png")],
+            "idle": self.carregar_animacao("assets/Player/IDLE.png"),
+            "idle_costas": self.carregar_animacao("assets/Player/IDLE_COSTAS.png"),
+            "idle_lado1": self.carregar_animacao("assets/Player/IDLE_LADO.png"),
+            "idle_lado2": [transform.flip(img, True, False) for img in
+                         self.carregar_animacao("assets/Player/IDLE_LADO.png")],
         }
+        self.animacoes_principais = 'esquerdadireitabaixocima'
         self.anim_direcao = "baixo"
         self.anim_frame = 0
         self.tempo_animacao = 0
@@ -242,25 +248,34 @@ class Player():
         self.rastros = [r for r in self.rastros if r["tempo"] > 0]
 
         if self.is_dashing or move_input:
+            self.tempo_por_frame = 100
             self.tempo_animacao += dt
             if self.tempo_animacao > self.tempo_por_frame:
                 self.tempo_animacao = 0
                 self.anim_frame += 1
-                if self.anim_frame >= len(self.animacoes[self.anim_direcao]):
+                if self.anim_frame >= len(self.animacoes[self.anim_direcao]) and self.anim_direcao in self.animacoes_principais:
                     self.anim_frame = 4
         else:
-            self.anim_frame = 0
             angulo = self.calcular_angulo(mouse.get_pos())
             angulo_deg = math.degrees(angulo) % 360
+            
 
             if 45 < angulo_deg <= 135:
-                self.anim_direcao = "baixo"
+                self.anim_direcao = "idle"
             elif 135 < angulo_deg <= 225:
-                self.anim_direcao = "esquerda"
+                self.anim_direcao = "idle_lado2"
             elif 225 < angulo_deg <= 315:
-                self.anim_direcao = "cima"
+                self.anim_direcao = "idle_costas"
             else:
-                self.anim_direcao = "direita"
+                self.anim_direcao = "idle_lado1"
+
+            self.tempo_animacao += dt
+            self.tempo_por_frame = 200
+            if self.tempo_animacao > self.tempo_por_frame:
+                self.tempo_animacao = 0
+                self.anim_frame += 1
+                if self.anim_frame >= len(self.animacoes[self.anim_direcao]) and self.anim_direcao in self.animacoes_principais:
+                    self.anim_frame = 0
 
         self.hp -= 0.05 * self.rate
 
