@@ -83,7 +83,7 @@ class Sala:
             return [bossmod.MouthOrb(400, 700, 192, 192, hp=5000,velocidade=3, dano=30)]
         else:
             #bagulho pequeno so pra aleatorizar o numero de inimigos numa sala, só na fase de testes mesmo
-            return []
+            #return []
             quant = randint(1, 4)
             cords = [(400,700), (680,800), (850,600),(990,800), (1150,800)]
             cordsEscolhe = sample(cords,quant)

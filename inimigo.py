@@ -238,11 +238,12 @@ class Inimigo:
         porcentagem = max(0, min(self.hp / vida_maxima, 1))  # entre 0 e 1
         largura_hp = porcentagem * largura_barra
 
-        # fundo da barra
-        draw.rect(tela, (255, 200, 200), (self.x - 20, self.y + 70, largura_barra, 5))
-        # preenchimento da barra
-        draw.rect(tela, (255, 0, 0), (self.x - 20, self.y + 70, largura_hp, 5))
-        draw.rect(tela, (255, 255, 255), (self.x - 20, self.y + 70, largura_barra,5), 1)
+        if hasattr(self, 'ultimo_dano') and time.get_ticks() - self.ultimo_dano_tempo < 2500:
+            # fundo da barra
+            draw.rect(tela, (255, 200, 200), (self.x - 20, self.y + 70, largura_barra, 5))
+            # preenchimento da barra
+            draw.rect(tela, (255, 0, 0), (self.x - 20, self.y + 70, largura_hp, 5))
+            draw.rect(tela, (255, 255, 255), (self.x - 20, self.y + 70, largura_barra,5), 1)
 
         rot_rect, rot_surf = self.get_hitbox_ataque(player_pos)
         tela.blit(rot_surf, rot_rect)
