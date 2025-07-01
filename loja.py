@@ -26,11 +26,11 @@ class Loja():
         self.player = player
         self.tempo = 0  # Para animação
 
-        self.font_titulo = font.SysFont("assets/Fontes/Philosopher-BoldItalic.ttf", 30, bold=True)
-        self.font_desc = font.SysFont("assets/Fontes/Philosopher-Italic.ttf", 20)
-        self.font_preco = font.SysFont("assets/Fontes/Philosopher-Italic.ttf", 30, bold=True)
-        self.font_chata = font.SysFont("assets/Fontes/Philosopher-Italic.ttf", 20, bold=True)
-        self.font_almas = font.SysFont("assets/Fontes/Philosopher-Italic.ttf", 70, bold=True)
+        self.font_titulo = font.Font("assets/Fontes/alagard.ttf", 30,)
+        self.font_desc = font.Font("assets/Fontes/alagard.ttf", 20)
+        self.font_preco = font.Font("assets/Fontes/alagard.ttf", 35, )
+        self.font_chata = font.Font("assets/Fontes/alagard.ttf", 20, )
+        self.font_almas = font.Font("assets/Fontes/alagard.ttf", 55, )
         
         self.estados_hover = [Vector2(1.0, 0.0) for _ in self.itens_sorteados]
         self.descricao_visivel = [False] * 3
