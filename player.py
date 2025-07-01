@@ -290,6 +290,8 @@ class Player():
 
         if self.hp < 0:
             self.hp = 0
+        if self.hp > 100:
+            self.hp = 100
         if self.st < 0:
             self.st = 0
         if self.st > 100:
