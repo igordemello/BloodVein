@@ -27,6 +27,7 @@ class Colisao:
 
         self._colisao_entidade_projetil()
         self._colisao_entidade_AOE()
+        self._colisao_projetil_mapa()
 
 
     def _colisao_entidade_mapa(self,entidade,dt):
@@ -116,17 +117,30 @@ class Colisao:
                 if isinstance(inimigo, Player):
                     pass
                 elif inimigo.vivo and projetil_rect.colliderect(inimigo.get_hitbox()):
-                    inimigo.hp -= projetil["dano"]
+                    current_time = time.get_ticks()
+                    if current_time - self.player.tempo_ultimo_hit_projetil > self.player.tempo_max_combo:
+                        self.player.hits_projetil = 0
+                        self.player.arma.comboMult = 1.0
+                    self.player.hits_projetil += 1
+                    self.player.tempo_ultimo_hit_projetil = current_time
+                    self.player.arma.comboMult = 1.0 + (0.1 * self.player.hits_projetil)
+
+                    inimigo.hp -= projetil["dano"] * self.player.arma.comboMult
                     inimigo.ultimo_dano_critico = False
-                    inimigo.ultimo_dano = projetil["dano"]
+                    inimigo.ultimo_dano = projetil["dano"] * self.player.arma.comboMult
                     inimigo.ultimo_dano_tempo = time.get_ticks()
+
+                    dx = inimigo.x - self.player.x
+                    dy = inimigo.y - self.player.y
+                    inimigo.aplicar_knockback(dx, dy, intensidade=1)
 
                     self.player.criar_efeito_sangue(projetil["x"], projetil["y"])
 
                     self.player.projeteis.remove(projetil)
                     if self.player.arma.ataqueTipo == "ranged" and self.player.hp < 100:
                         self.player.hp += self.player.arma.lifeSteal
-                        if self.player.hp > 100: self.player.hp = 100
+                        if self.player.hp > 100:
+                            self.player.hp = 100
                     break
 
     def _colisao_entidade_AOE(self):
@@ -149,3 +163,20 @@ class Colisao:
 
                     self.ultimo_tempo_colisao_aoe = tempo_atual
                     break
+
+    def _colisao_projetil_mapa(self):
+        for projetil in self.player.projeteis[:]:
+            projetil_rect = Rect(
+                projetil["x"] - projetil["raio_hitbox"],
+                projetil["y"] - projetil["raio_hitbox"],
+                projetil["raio_hitbox"] * 2,
+                projetil["raio_hitbox"] * 2
+            )
+
+            for collider in self.mapa.colliders:
+                if projetil_rect.colliderect(collider['rect']):
+                    print("teste")
+                    self.player.projeteis.remove(projetil)
+
+
+

@@ -147,8 +147,6 @@ class LaminaDaNoite(Arma):
         self.modificador.aplicarMod(self)
     def ataquePrincipal(self,inimigo):
         if randint(1, 100) <= self.chanceCritico:
-            original_speed = self.clock.get_fps()
-            self.clock.tick(original_speed)
             inimigo.hp -= self.dano * self.danoCriticoMod * inimigo.modificadorDanoRecebido * self.comboMult
             inimigo.ultimo_dano_critico = True
             inimigo.ultimo_dano = self.dano * self.danoCriticoMod * inimigo.modificadorDanoRecebido * self.comboMult
@@ -198,8 +196,6 @@ class Chigatana(Arma):
         self.modificador.aplicarMod(self)
     def ataquePrincipal(self,inimigo):
         if randint(1, 100) <= self.chanceCritico:
-            original_speed = self.clock.get_fps()
-            self.clock.tick(original_speed)
             inimigo.hp -= self.dano * self.danoCriticoMod * inimigo.modificadorDanoRecebido * self.comboMult
             inimigo.ultimo_dano_critico = True
             inimigo.ultimo_dano = self.dano * self.danoCriticoMod * inimigo.modificadorDanoRecebido * self.comboMult
@@ -249,8 +245,6 @@ class Karambit(Arma):
         self.modificador.aplicarMod(self)
     def ataquePrincipal(self,inimigo):
         if randint(1, 100) <= self.chanceCritico:
-            original_speed = self.clock.get_fps()
-            self.clock.tick(original_speed)
             inimigo.hp -= self.dano * self.danoCriticoMod * inimigo.modificadorDanoRecebido * self.comboMult
             inimigo.ultimo_dano_critico = True
             inimigo.ultimo_dano = self.dano * self.danoCriticoMod * inimigo.modificadorDanoRecebido * self.comboMult
@@ -302,8 +296,6 @@ class EspadaDoTita(Arma):
         self.danoCritOg = self.danoCriticoMod
     def ataquePrincipal(self,inimigo):
         if randint(1, 100) <= self.chanceCritico:
-            original_speed = self.clock.get_fps()
-            self.clock.tick(original_speed)
             inimigo.hp -= self.dano * self.danoCriticoMod * inimigo.modificadorDanoRecebido * self.comboMult
             inimigo.ultimo_dano_critico = True
             inimigo.ultimo_dano = self.dano * self.danoCriticoMod * inimigo.modificadorDanoRecebido * self.comboMult
@@ -365,16 +357,12 @@ class MachadoDoInverno(Arma):
         self.danoCritOg = self.danoCriticoMod
     def ataquePrincipal(self,inimigo):
         if inimigo.congelado: #da crit se o inimigo estiver congelado
-            original_speed = self.clock.get_fps()
-            self.clock.tick(original_speed)
             inimigo.hp -= self.dano * self.danoCriticoMod * inimigo.modificadorDanoRecebido * self.comboMult
             inimigo.ultimo_dano_critico = True
             inimigo.ultimo_dano = self.dano * self.danoCriticoMod * inimigo.modificadorDanoRecebido * self.comboMult
             inimigo.congelado = False
             inimigo.velocidade /= 0.25
         if randint(1, 100) <= self.chanceCritico:
-            original_speed = self.clock.get_fps()
-            self.clock.tick(original_speed)
             inimigo.hp -= self.dano * self.danoCriticoMod * inimigo.modificadorDanoRecebido * self.comboMult
             inimigo.ultimo_dano_critico = True
             inimigo.ultimo_dano = self.dano * self.danoCriticoMod * inimigo.modificadorDanoRecebido * self.comboMult
@@ -430,8 +418,6 @@ class EspadaEstelar(Arma):
         self.modificador.aplicarMod(self)
     def ataquePrincipal(self,inimigo):
         if randint(1, 100) <= self.chanceCritico:
-            original_speed = self.clock.get_fps()
-            self.clock.tick(original_speed)
             inimigo.hp -= self.dano * self.danoCriticoMod * inimigo.modificadorDanoRecebido * self.comboMult
             inimigo.ultimo_dano_critico = True
             inimigo.ultimo_dano = self.dano * self.danoCriticoMod * inimigo.modificadorDanoRecebido * self.comboMult
@@ -489,8 +475,6 @@ class MarteloSolar(Arma):
 
     def ataquePrincipal(self,inimigo):
         if randint(1, 100) <= self.chanceCritico:
-            original_speed = self.clock.get_fps()
-            self.clock.tick(original_speed)
             inimigo.hp -= self.dano * self.danoCriticoMod * inimigo.modificadorDanoRecebido * self.comboMult
             inimigo.ultimo_dano_critico = True
             inimigo.ultimo_dano = self.dano * self.danoCriticoMod * inimigo.modificadorDanoRecebido * self.comboMult
