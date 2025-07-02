@@ -229,7 +229,7 @@ class MouthOrb(Inimigo):
         self.atualizar_animacao()
         self.orbs_instanciados = [orb for orb in self.orbs_instanciados if orb.vivo]
 
-    def desenhar(self, tela, player_pos):
+    def desenhar(self, tela, player_pos, offset=(0,0)):
         if not self.vivo:
             return
 
