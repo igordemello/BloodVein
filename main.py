@@ -23,7 +23,7 @@ from screen_shake import screen_shaker
 from save_manager import SaveManager
 
 init()
-gerenciamento.modo = 'jogo'
+gerenciamento.modo = 'menu'
 
 clock = time.Clock()
 SCREEN = display.set_mode((1920, 1080), vsync=1, flags=HWSURFACE | DOUBLEBUF)
@@ -68,13 +68,18 @@ while i == 1:
     # Atualiza o screen shake
     screen_shaker.update(dt)
 
+
+    if gerenciamento.modo == 'menu':
+        menu.run()
+        menu.desenho(SCREEN)
+
+
     for ev in event.get():
         if ev.type == QUIT:
             quit()
             sys.exit()
 
         if gerenciamento.modo == 'menu':
-            menu.desenho(SCREEN)
             if ev.type == MOUSEBUTTONDOWN and ev.button == 1:
                 escolha = menu.checar_clique(mouse_pos)
                 if escolha == 'jogo':
