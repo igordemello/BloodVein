@@ -584,7 +584,7 @@ class Player():
                 if inimigo.vivo and inimigo.get_hitbox().colliderect(hitbox_espada):
                     self.hit_landed = True
 
-                    screen_shaker.start(intensity=8, duration=150)
+                    screen_shaker.start(intensity=9, duration=150)
 
                     inimigo.anima_hit = True
                     self.hits += 1

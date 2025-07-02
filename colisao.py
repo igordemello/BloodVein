@@ -3,6 +3,9 @@ import sys
 from pygame.locals import QUIT
 import math
 
+from screen_shake import screen_shaker
+
+
 class Colisao:
     def __init__(self, mapa, player):
         self.player = player
@@ -129,6 +132,7 @@ class Colisao:
                     inimigo.ultimo_dano_critico = False
                     inimigo.ultimo_dano = projetil["dano"] * self.player.arma.comboMult
                     inimigo.ultimo_dano_tempo = time.get_ticks()
+                    screen_shaker.start(intensity=5, duration=150)
 
                     dx = inimigo.x - self.player.x
                     dy = inimigo.y - self.player.y
