@@ -32,6 +32,29 @@ class Player():
             "idle_lado2": [transform.flip(img, True, False) for img in
                          self.carregar_animacao("assets/Player/IDLE_LADO.png")],
         }
+
+        self.atributos = {
+            "forca" : 1,
+            "destreza": 1,
+            "agilidade": 1,
+            "vigor": 1,
+            "resistencia": 1,
+            "estamina": 1,
+            "sorte": 1,
+        }
+
+        self.hp = hp
+        self.hpMax = 100
+        self.rate = 1 #decaimento da vida
+        self.rateSt = 1 #velocidade que a stamina recupera
+        self.velocidadeMov = velocidadeMov #velocidade de movimento
+        self.custoDash = 2.75 #custo do dash
+        self.modificadorDanoRecebido = 1 #modificador de resistencia
+        self.invencibilidade = 1500 #tempo de invencibilidade
+        self.cooldown_st = 3000 #cooldown de stamina
+        self.dash_cooldown_max = 1000 #cooldown entre dashes
+        self.dash_duration_max = 150 #duração máxima do dash
+
         self.animacoes_principais = 'esquerdadireitabaixocima'
         self.anim_direcao = "baixo"
         self.anim_frame = 0
@@ -54,16 +77,8 @@ class Player():
         self.largura = largura
         self.altura = altura
         self.ultimo_uso = 0
-        self.hp = hp
-        self.hpMax = 100
-        self.velocidadeMov = velocidadeMov
-        self.rate = 1
-        self.rateSt = 1
         self.revives = 0
-        self.custoDash = 2.75
-        self.modificadorDanoRecebido = 1
         self.ultimo_dano = 0
-        self.invencibilidade = 1500
         self.foi_atingido = False
         self.tempo_atingido = 0
         self.itens = {}
@@ -71,7 +86,7 @@ class Player():
         self.salaAtivoUsado = None
         self.itemAtivoEsgotado = None
         self.st = st
-        self.cooldown_st = 3000
+
         self.almas = 999
         self.old_x = x
         self.old_y = y
@@ -87,8 +102,7 @@ class Player():
         self.tempo_max_combo = 2500
         self.dash_cooldown = 0
         self.dash_duration = 0
-        self.dash_cooldown_max = 1000
-        self.dash_duration_max = 150
+
         self.is_dashing = False
         self.last_dash_time = 0
         self.dash_direcao = None

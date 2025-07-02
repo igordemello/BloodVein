@@ -239,7 +239,6 @@ class Karambit(Arma):
         self.modificador = mod_classe(self)  # Instancia com self (a arma)
         self.nome = f"{self.tipoDeArma} {self.modificador.nome} {self.raridadeStr}"
 
-        self.valorSangramento = 2.2*self.raridade
 
     def aplicaModificador(self):
         self.modificador.aplicarMod(self)
@@ -335,8 +334,6 @@ class MachadoDoInverno(Arma):
         self.clock = time.Clock()
         self.criticoOg = self.chanceCritico
         self.danoCritOg = self.danoCriticoMod
-
-        self.congelou = False
 
         self.secEhAtaque = True
         self.ehRanged = False
