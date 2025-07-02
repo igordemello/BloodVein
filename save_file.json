@@ -1,14 +1,14 @@
 {
     "player": {
         "position": [
-            1197,
-            478
+            907,
+            574
         ],
         "stats": {
-            "hp": 51.10000000000264,
+            "hp": 79.00000000000063,
             "hpMax": 100,
-            "st": 100,
-            "almas": 1007,
+            "st": 72.5,
+            "almas": 1003,
             "velocidadeMov": 0.5
         },
         "itens": [],
@@ -16,28 +16,26 @@
         "arma": {
             "tipo": "LaminaDaNoite",
             "raridade": "comum",
-            "dano": 15,
+            "dano": 50.0,
             "velocidade": 1,
-            "lifeSteal": 7.5,
-            "chanceCritico": 13,
+            "lifeSteal": 10.0,
+            "chanceCritico": 8,
             "danoCriticoMod": 2,
-            "modificador": "Precisa",
+            "modificador": "Afiada",
             "modificador_detalhes": {
-                "nome": "Precisa",
-                "valor": 5
+                "nome": "Afiada",
+                "valor": 15.0
             }
         }
     },
     "map": {
-        "sala_atual": "sala9",
+        "sala_atual": "sala4",
         "salas_conquistadas": [
-            "sala4",
             "sala6"
         ],
         "salas_visitadas": [
-            "sala4",
-            "sala9",
-            "sala6"
+            "sala6",
+            "sala4"
         ],
         "bau_aberto": {
             "sala3": false
@@ -47,19 +45,37 @@
         "inimigos": [
             {
                 "tipo": "Orb",
-                "x": 1098,
-                "y": 610,
-                "hp": -15.5,
+                "x": 1150,
+                "y": 800,
+                "hp": 140.0,
+                "vivo": true,
+                "nome_base": "Orb",
+                "elite": false
+            },
+            {
+                "tipo": "Orb",
+                "x": 748,
+                "y": 627,
+                "hp": -50.0,
                 "vivo": false,
                 "nome_base": "Orb",
                 "elite": false
             },
             {
                 "tipo": "Orb",
-                "x": 860,
-                "y": 592,
-                "hp": 200,
-                "vivo": true,
+                "x": 824,
+                "y": 674,
+                "hp": -180.0,
+                "vivo": false,
+                "nome_base": "Orb",
+                "elite": false
+            },
+            {
+                "tipo": "Orb",
+                "x": 610,
+                "y": 674,
+                "hp": -125.00000000000003,
+                "vivo": false,
                 "nome_base": "Orb",
                 "elite": false
             }
@@ -69,6 +85,6 @@
         "bau": null,
         "em_transicao": false
     },
-    "timestamp": "2025-07-02T15:34:45.013254",
+    "timestamp": "2025-07-02T15:44:50.610286",
     "version": "1.0"
 }

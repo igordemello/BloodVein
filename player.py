@@ -34,26 +34,26 @@ class Player():
         }
 
         self.atributos = {
-            "forca" : 1,
-            "destreza": 1,
-            "agilidade": 1,
-            "vigor": 1,
-            "resistencia": 1,
-            "estamina": 1,
-            "sorte": 1,
+            "forca" : 1, #influencia DANO DA ARMA, DANO DO CRÍTICO
+            "destreza": 1, #influencia VELOCIDADE DE ATAQUE DA ARMA
+            "agilidade": 1, # influencia VELOCIDADE DE MOVIMENTO DO PERSONAGEM
+            "vigor": 1, #influencia VELOCIDADE DO DECAIMENTO
+            "resistencia": 1, #influencia DANO RECEBIDO
+            "estamina": 1, #influencia COOLDOWN DE DASH, GASTO E COOLDOWN STAMINA
+            "sorte": 1, #influencia CHANCE DE CRÍTICO E UM POUCO DE TUDO
         }
-
+        #1-2 normal / 3-4 melhorzinho / 5-6 bom / 7-8 muito bom / 9-10 peak
         self.hp = hp
         self.hpMax = 100
-        self.rate = 1 #decaimento da vida
-        self.rateSt = 1 #velocidade que a stamina recupera
-        self.velocidadeMov = velocidadeMov #velocidade de movimento
-        self.custoDash = 2.75 #custo do dash
-        self.modificadorDanoRecebido = 1 #modificador de resistencia
-        self.invencibilidade = 1500 #tempo de invencibilidade
-        self.cooldown_st = 3000 #cooldown de stamina
-        self.dash_cooldown_max = 1000 #cooldown entre dashes
-        self.dash_duration_max = 150 #duração máxima do dash
+        self.rate = 1 - (self.atributos["vigor"]/20) #decaimento da vida - max em 0.5
+        self.rateSt = 1 + ((self.atributos["estamina"]*3)/10) #velocidade que a stamina recupera - max em 4
+        self.velocidadeMov = velocidadeMov + (self.atributos["agilidade"]/20) #velocidade de movimento - inicial : 0.5 // max : 1
+        self.custoDash = 2.75 - ((self.atributos["estamina"] - 1) * (0.75 / 9)) #custo do dash - inicial : 2.75 // max : 2
+        self.modificadorDanoRecebido = 1 - (self.atributos["resistencia"]/20) #modificador de resistencia - inicial : 1 // max : 0.5
+        self.invencibilidade = int(1500 + ((self.atributos["resistencia"] - 1) * (500 / 9))) #tempo de invencibilidade - inicial : 1500 // max : 2000
+        self.cooldown_st = round(3222.22 - (self.atributos["estamina"] * 222.22)) #cooldown de stamina - inicial : 3000 // max : 1000
+        self.dash_cooldown_max = int(1000 - ((self.atributos["estamina"] - 1) * (750 / 9))) #cooldown entre dashes - inicial : 1000 // max :  250
+        self.dash_duration_max = int(150 + ((self.atributos["estamina"] - 1) * (250 / 9))) #duração máxima do dash - inicial : 150 // max : 400
 
         self.animacoes_principais = 'esquerdadireitabaixocima'
         self.anim_direcao = "baixo"
@@ -779,6 +779,21 @@ class Player():
         self.cooldown_ataque_base = self.arma.cooldown
         self.radius = self.arma.radius - 50
         self.hitbox_arma = self.arma.range
+
+
+    def atualizar_atributos(self):
+        #dano da arma e dano do crítico - força
+        self.arma.dano *= 1 + (self.atributos["forca"] - 1) / 9#mínimo é o proprio dano da arma, máximo é o dobro
+        self.arma.danoCriticoMod *=  1 + (self.atributos["forca"] - 1) / 9#mínimo é o proprioCriticoMod, maximo é o dobro
+
+        #velocidade de ataque da arma - destreza
+        self.arma.velocidade *= 1 + ((self.atributos["destreza"] - 1) / 9) * 0.5
+
+        #chance de critico - sorte
+        self.arma.chanceCritico *= 1 + ((self.atributos["sorte"] - 1) / 9) * 3
+        if hasattr(self.arma, "criticoOg"):
+            self.arma.criticoOg *= 1 + ((self.atributos["sorte"] - 1) / 9) * 3
+
 
     def get_save_data(self):
         return {

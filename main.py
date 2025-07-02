@@ -101,6 +101,7 @@ while i == 1:
                                     menuArmas = False
                                     hud.atualizar_arma_icon()
                                     player.atualizar_arma()
+                                    player.atualizar_atributos()
 
                         elif sala_atual.bau and sala_atual.ativar_menu_bau:
                             item = sala_atual.bau.checar_clique_bau(mouse.get_pos())
