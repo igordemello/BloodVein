@@ -117,7 +117,7 @@ class Player():
 
         self.projetil_trail_particles = []
         self.trail_projetil_max = 5
-        self.trail_projetil_fade = 20
+        self.trail_projetil_fade = 25
 
         self.last_attack_direction = -1
 
@@ -339,9 +339,10 @@ class Player():
                 projetil["trail"].append({
                     "x": projetil["x"],
                     "y": projetil["y"],
-                    "alpha": 255,
-                    "angle": projetil["angulo"],
-                    "lifetime": 255
+                    "alpha": randint(150, 200),  # Variação de transparência
+                    "angle": projetil["angulo"] + randint(-5, 5),  # Pequena variação angular
+                    "lifetime": randint(200, 255),  # Variação de tempo de vida
+                    "scale": 0.5 + random() * 0.5  # Variação de escala
                 })
 
             for part in projetil["trail"][:]:
@@ -542,9 +543,9 @@ class Player():
                 if "sprite" in projetil:
                     trail_sprite = projetil["sprite_original"].copy()
                     trail_sprite.set_alpha(part["alpha"])
-                    trail_sprite = transform.scale(trail_sprite,
-                                                   (int(trail_sprite.get_width() * 0.5),
-                                                    int(trail_sprite.get_height() * 0.5)))
+                    trail_sprite = transform.scale(projetil["sprite_original"],
+                                                   (int(projetil["sprite_original"].get_width() * part["scale"]),
+                                                    int(projetil["sprite_original"].get_height() * part["scale"])))
 
                     rotated = transform.rotate(trail_sprite, -part["angle"])
                     rect = rotated.get_rect(center=(part["x"], part["y"]))
