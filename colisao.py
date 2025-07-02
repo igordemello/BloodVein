@@ -179,8 +179,8 @@ class Colisao:
 
             for collider in self.mapa.colliders:
                 if projetil_rect.colliderect(collider['rect']):
-                    print("teste")
-                    self.player.projeteis.remove(projetil)
-
+                    if projetil in self.player.projeteis:
+                        self.player.projeteis.remove(projetil)
+                    break
 
 
