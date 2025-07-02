@@ -308,3 +308,69 @@ class Sala:
                 display.flip()
                 #time.delay(delay)
 
+    def get_save_data(self):
+        return {
+            'inimigos': [
+                {
+                    'tipo': type(inimigo).__name__,
+                    'x': inimigo.x,
+                    'y': inimigo.y,
+                    'hp': inimigo.hp,
+                    'vivo': inimigo.vivo,
+                    'nome_base': getattr(inimigo, 'nome_base', None),
+                    'elite': getattr(inimigo, 'elite', False)
+                }
+                for inimigo in self.inimigos
+            ],
+            'porta_liberada': self.porta_liberada,
+            'visitada': self.visitada,
+            'bau': {
+                'aberto': self.bau.aberto if self.bau else False,
+                'interagido': self.bau_interagido,
+                'menu_ativo': getattr(self, 'ativar_menu_bau', False)
+            } if self.bau else None,
+            'em_transicao': self.em_transicao
+        }
+
+    def load_save_data(self, data, conjunto_itens):
+
+        self.porta_liberada = data['porta_liberada']
+        self.visitada = data['visitada']
+        self.em_transicao = data.get('em_transicao', False)
+        
+        self.inimigos = []
+        for inimigo_data in data['inimigos']:
+            if inimigo_data['tipo'] == 'MouthOrb':
+                inimigo = bossmod.MouthOrb(
+                    inimigo_data['x'], 
+                    inimigo_data['y'], 
+                    192, 192, 
+                    hp=inimigo_data['hp'],
+                    velocidade=3, 
+                    dano=30
+                )
+            else: 
+                inimigo = Orb(
+                    inimigo_data['x'], 
+                    inimigo_data['y'], 
+                    64, 64, 
+                    hp=inimigo_data['hp']
+                )
+                
+                if 'nome_base' in inimigo_data:
+                    inimigo.nome_base = inimigo_data['nome_base']
+            
+            inimigo.vivo = inimigo_data['vivo']
+            self.inimigos.append(inimigo)
+        
+        if data['bau'] and self.bau:
+            self.bau.aberto = data['bau']['aberto']
+            self.bau_interagido = data['bau']['interagido']
+            self.ativar_menu_bau = data['bau']['menu_ativo']
+            
+            if self.bau.aberto:
+                self.bau.animando = False
+                self.bau.frame_index = len(self.bau.frames) - 1
+                self.bau.image = self.bau.frames[-1]
+        
+        self.colisao.entidades = [self.player] + self.inimigos

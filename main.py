@@ -20,6 +20,7 @@ from loja import Loja
 from minimapa import Minimapa
 from menuarmas import *
 from screen_shake import screen_shaker
+from save_manager import SaveManager
 
 init()
 gerenciamento.modo = 'jogo'
@@ -53,6 +54,8 @@ loja = False
 menuArmas = True
 
 menuDeArma = MenuArmas(hud)
+
+save_manager = SaveManager()
 
 i = 1
 while i == 1:
@@ -139,6 +142,32 @@ while i == 1:
 
                     if ev.key == K_TAB:
                         minimapa.toggle()
+
+                    if ev.key == K_F5:
+                        game_state = save_manager.generate_game_state(player, andar, sala_atual)
+                        save_manager.save_game(game_state, "save_file.json")
+
+                    if ev.key == K_F9:
+                        try:
+                            loaded_data = save_manager.load_game("save_file.json")
+                            
+                            player.load_save_data(loaded_data['player'], sala_atual.itensDisp, player.lista_mods)
+                            andar.load_save_data(loaded_data['map'])
+                            
+                            sala_atual = Sala(
+                                andar.get_arquivo_atual(), 
+                                SCREEN, 
+                                player, 
+                                andar
+                            )
+                            sala_atual.load_save_data(loaded_data['sala'], sala_atual.itensDisp)
+                            
+                            hud.player = player
+                            minimapa.andar = andar
+                            
+                            print("Jogo carregado com sucesso!")
+                        except Exception as e:
+                            print(f"Erro ao carregar jogo: {e}")
 
                     if ev.key == K_PERIOD:
                         item_id = int(input("Digite o ID do item para debug: "))

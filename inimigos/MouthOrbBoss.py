@@ -232,6 +232,7 @@ class MouthOrb(Inimigo):
     def desenhar(self, tela, player_pos, offset=(0,0)):
         if not self.vivo:
             return
+            
 
         frame = self.animacoes[self.animacao_atual]["frames"][self.frame_index]
 

@@ -776,3 +776,48 @@ class Player():
         self.sword = transform.scale(transform.flip(image.load(self.arma.sprite).convert_alpha(), True, True),
                                      (self.arma.size))
         self.sword_pivot = self.arma.pivot
+        self.cooldown_ataque_base = self.arma.cooldown
+        self.radius = self.arma.radius - 50
+        self.hitbox_arma = self.arma.range
+
+    def get_save_data(self):
+        return {
+        'position': [self.x, self.y],
+        'stats': {
+            'hp': self.hp,
+            'hpMax': self.hpMax,
+            'st': self.st,
+            'almas': self.almas,
+            'velocidadeMov': self.velocidadeMov,
+        },
+        'itens': [item.id for item in self.itens],
+        'itemAtivo': self.itemAtivo.id if self.itemAtivo else None,
+        'arma': self.arma.get_save_data() if hasattr(self.arma, 'get_save_data') else None
+    }
+
+
+    def load_save_data(self, data, conjunto_itens, lista_mods):
+        self.x, self.y = data['position']
+        self.player_rect.topleft = self.x, self.y 
+
+        stats = data['stats']
+        self.hp = stats['hp']
+        self.hpMax = stats['hpMax']
+        self.st = stats['st']
+        self.almas = stats['almas']
+        self.velocidadeMov = stats['velocidadeMov']
+
+        self.itens = {}
+        for item_id in data['itens']:
+            item = conjunto_itens.itens_por_id[item_id]
+            self.adicionarItem(item)
+        
+        if data['itemAtivo']:
+            self.itemAtivo = conjunto_itens.itens_por_id[data['itemAtivo']]
+
+        if data['arma']:
+            arma_class = globals().get(data['arma']['tipo'])
+            if arma_class:
+                self.arma = arma_class(data['arma']['raridade'], lista_mods)
+                self.arma.load_save_data(data['arma'], lista_mods)
+                self.atualizar_arma()
