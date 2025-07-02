@@ -232,3 +232,26 @@ class GerenciadorAndar:
             'nodes': nodes,
             'edges': edges
         }
+
+    def get_save_data(self):
+
+        return {
+            'sala_atual': self.sala_atual,
+            'salas_conquistadas': list(self.salas_conquistadas),
+            'salas_visitadas': list(self.salas_visitadas),
+            'bau_aberto': {
+                sala: self.grafo.nodes[sala].get('bau_aberto', False)
+                for sala in self.grafo.nodes
+                if self.grafo.nodes[sala]['tipo'] == 'bau'
+            }
+        }
+
+    def load_save_data(self, data):
+
+        self.sala_atual = data['sala_atual']
+        self.salas_conquistadas = set(data['salas_conquistadas'])
+        self.salas_visitadas = set(data['salas_visitadas'])
+        
+        for sala, aberto in data['bau_aberto'].items():
+            if sala in self.grafo.nodes:
+                self.grafo.nodes[sala]['bau_aberto'] = aberto

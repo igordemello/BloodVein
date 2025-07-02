@@ -31,6 +31,37 @@ class Arma(ABC):
     def ataqueSecundario(self,inimigo):
         pass
 
+    def get_save_data(self):
+        return {
+            'tipo': self.__class__.__name__,
+            'raridade': self.raridadeStr,
+            'dano': self.dano,
+            'velocidade': self.velocidade,
+            'lifeSteal': self.lifeSteal,
+            'chanceCritico': self.chanceCritico,
+            'danoCriticoMod': self.danoCriticoMod,
+            'modificador': self.modificador.nome if hasattr(self, 'modificador') else None,
+            'modificador_detalhes': {
+                'nome': self.modificador.nome,
+                'valor': self.modificador.valor
+            } if hasattr(self, 'modificador') else None
+        }
+
+    def load_save_data(self, data, lista_mods=None):
+        self.dano = data['dano']
+        self.velocidade = data['velocidade']
+        self.lifeSteal = data['lifeSteal']
+        self.chanceCritico = data['chanceCritico']
+        self.danoCriticoMod = data['danoCriticoMod']
+        
+        if data['modificador'] and lista_mods:
+            mod_class = getattr(sys.modules[__name__], data['modificador'])
+            self.modificador = mod_class(self)
+            if data.get('modificador_detalhes'):
+                self.modificador.valor = data['modificador_detalhes']['valor']
+        
+        self.aplicaModificador()
+
 
 #MODIFICADORES:
 class BainhaRapida(Modificador):
@@ -102,6 +133,15 @@ class ListaMods:
             "rara": [Impactante, Sangrenta, Pesada],
             "lendária": [Sortuda, Potente],
         }
+        
+        self.modificadores_por_nome = {
+            cls.__name__: cls for cls in 
+            [BainhaRapida, Afiada, Precisa, Impactante, Sangrenta, Pesada, Sortuda, Potente]
+        }
+
+    def get_mod_by_name(self, nome):
+        """Obtém uma classe de modificador pelo nome"""
+        return self.modificadores_por_nome.get(nome)
 
     def getMod(self, raridade_str):
         mods = self.modificadores_por_raridade.get(raridade_str.lower(), [])
