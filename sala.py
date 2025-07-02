@@ -11,6 +11,7 @@ from colisao import Colisao
 from loja import Loja
 from random import randint, sample
 import gerenciador_andar
+from screen_shake import screen_shaker
 
 init()
 fonte = font.SysFont("Arial", 24)
@@ -78,6 +79,7 @@ class Sala:
         for inimigo in self.inimigos:
             self.colisao.adicionar_entidade(inimigo)
 
+    '''
     def _criar_inimigos(self):
         if "boss" in self.gerenciador_andar.grafo.nodes[self.gerenciador_andar.sala_atual]["tipo"]:
             return [bossmod.MouthOrb(400, 700, 192, 192, hp=5000,velocidade=3, dano=30)]
@@ -93,6 +95,31 @@ class Sala:
 
             return inimigos
             #return [Orb(400,700,64,64,hp=200),Orb(400,700,64,64,hp=200)]
+
+    '''
+    def _criar_inimigos(self):
+        if "boss" in self.gerenciador_andar.grafo.nodes[self.gerenciador_andar.sala_atual]["tipo"]:
+            boss = bossmod.MouthOrb(400, 700, 192, 192, hp=5000, velocidade=3, dano=30)
+            boss.nome_base = "Mãe Orbe"  # sei lá
+            return [boss]
+        elif "bau" in self.gerenciador_andar.grafo.nodes[self.gerenciador_andar.sala_atual]["tipo"]:
+            elite = Orb(400, 700, 64, 64, hp=300)
+            elite.nome_base = "Orb"
+            elite.aplicar_modificadores(elite=True)
+            return [elite,Orb(540,700,64,64,hp=200),Orb(400,700,64,64,hp=200),Orb(690,700,64,64,hp=200) ]
+            #depois substituir esses 3 orbs por 3 inimigos aleatórios
+        else:
+            quant = randint(1, 4)
+            cords = [(400, 700), (680, 800), (850, 600), (990, 800), (1150, 800)]
+            cordsEscolhe = sample(cords, quant)
+            inimigos = []
+            for i in cordsEscolhe:
+                inimigo = Orb(i[0], i[1], 64, 64, hp=200)
+                inimigo.nome_base = "Orb"
+                inimigo.aplicar_modificadores(elite=False)
+                inimigos.append(inimigo)
+            return inimigos
+
 
     def atualizar(self,dt,teclas):
         for inimigo in self.inimigos:
@@ -158,11 +185,12 @@ class Sala:
 
 
     def desenhar(self, tela):
+        offset_x, offset_y = screen_shaker.offset
         self.mapa.desenhar(self.porta_liberada)
         for inimigo in self.inimigos:
             if inimigo.vivo:
-                inimigo.desenhar(tela, (self.player.x, self.player.y))
-        
+                inimigo.desenhar(tela, (self.player.x, self.player.y), offset=(offset_x, offset_y))
+
                 if isinstance(inimigo, bossmod.MouthOrb):
                     inimigo.desenhar_barra_vida(tela)
 
@@ -177,7 +205,7 @@ class Sala:
                         inimigo.alma_coletada = True
 
         if self.bau:
-            tela.blit(self.bau.image, self.bau.rect.topleft)
+            tela.blit(self.bau.image, (self.bau.rect.x + offset_x, self.bau.rect.y + offset_y))
 
         #debug visual das colisões do player e do mapa:
         # for collider in self.mapa.get_colliders():

@@ -3,6 +3,8 @@ import sys
 from pygame.locals import QUIT
 import math
 from random import randint
+from modificadores_inimigos import *
+from screen_shake import screen_shaker
 
 
 class Inimigo:
@@ -15,7 +17,6 @@ class Inimigo:
         self.velocidade = velocidade
 
         self.particulas_dano = []
-
 
         self.ultimo_dano_tempo = 0
         self.fonte_dano = font.Font('assets/Fontes/alagard.ttf', 20)
@@ -40,6 +41,13 @@ class Inimigo:
         self.dano = dano
         self.ultimo_dano_critico = False
         self.congelado = False
+        #self.nome_base = nome
+
+        self.pode_congelar = False
+        self.pode_sangramento = False
+        self.pode_envenenar = False
+        self.pode_critar = False
+        self.pode_enfraquecer = False
 
         self.spritesheet = None
         self.frame_width = 32
@@ -84,7 +92,6 @@ class Inimigo:
                 'tempo': randint(300, 500),  # 300-500ms
                 'tamanho': randint(2, 5)
             })
-
 
     def get_velocidade(self):
         return (self.vx, self.vy)
@@ -157,7 +164,7 @@ class Inimigo:
                     return
 
         now = time.get_ticks()
-        
+
         if now - self.knockback_time < self.knockback_duration:
             # O knockback ainda está ativo → não atualiza perseguição
             return
@@ -197,7 +204,7 @@ class Inimigo:
             if hasattr(self, "dar_dano") and callable(self.dar_dano):
                 self.dar_dano()
 
-        self.x,self.y = self.rect.topleft
+        self.x, self.y = self.rect.topleft
         self.atualizar_animacao()
 
         if hasattr(self, 'veneno_ativo') and self.veneno_ativo:
@@ -213,39 +220,43 @@ class Inimigo:
             if self.veneno_ticks <= 0:
                 self.veneno_ativo = False
 
-
-
-    def desenhar(self, tela, player_pos):
+    def desenhar(self, tela, player_pos, offset=(0,0)):
         clock = time.Clock()
+        offset_x, offset_y = offset
+
+        # Aplica o offset na posição do inimigo
+        draw_x = self.x + offset_x
+        draw_y = self.y + offset_y
+
         if self.anima_hit:
             frame = self.frames_hit[self.frame_hit_index]
         elif self.frames:
             frame = self.frames[self.frame_index]
         else:
-            corpo = Rect(self.x, self.y, self.largura, self.altura)
+            corpo = Rect(draw_x, draw_y, self.largura, self.altura)
             draw.rect(tela, (255, 0, 0), corpo)
             frame = None
 
         if frame:
-            tela.blit(frame, (self.x, self.y))
+            tela.blit(frame, (draw_x, draw_y))
             if self.congelado:
                 frozen_sprite = frame.copy()
                 frozen_sprite.fill((165, 242, 255, 100), special_flags=BLEND_MULT)
-                tela.blit(frozen_sprite, (self.x, self.y))
+                tela.blit(frozen_sprite, (draw_x, draw_y))
 
         vida_maxima = getattr(self, "hp_max", 100)
         largura_barra = 100
-        porcentagem = max(0, min(self.hp / vida_maxima, 1))  # entre 0 e 1
+        porcentagem = max(0, min(self.hp / vida_maxima, 1))
         largura_hp = porcentagem * largura_barra
 
         if hasattr(self, 'ultimo_dano') and time.get_ticks() - self.ultimo_dano_tempo < 2500:
-            # fundo da barra
-            draw.rect(tela, (255, 200, 200), (self.x - 20, self.y + 70, largura_barra, 5))
-            # preenchimento da barra
-            draw.rect(tela, (255, 0, 0), (self.x - 20, self.y + 70, largura_hp, 5))
-            draw.rect(tela, (255, 255, 255), (self.x - 20, self.y + 70, largura_barra,5), 1)
+            # Aplica offset na barra de vida
+            draw.rect(tela, (255, 200, 200), (draw_x - 20, draw_y + 70, largura_barra, 5))
+            draw.rect(tela, (255, 0, 0), (draw_x - 20, draw_y + 70, largura_hp, 5))
+            draw.rect(tela, (255, 255, 255), (draw_x - 20, draw_y + 70, largura_barra, 5), 1)
 
-        rot_rect, rot_surf = self.get_hitbox_ataque(player_pos)
+        # Aplica offset na hitbox de ataque
+        rot_rect, rot_surf = self.get_hitbox_ataque((player_pos[0] + offset_x, player_pos[1] + offset_y))
         tela.blit(rot_surf, rot_rect)
 
         if hasattr(self, 'ultimo_dano') and time.get_ticks() - self.ultimo_dano_tempo < 500:
@@ -262,18 +273,14 @@ class Inimigo:
 
             fonte_atual = font.Font('assets/Fontes/alagard.ttf', tamanho_fonte)
             dano_text = fonte_atual.render(f"{self.ultimo_dano:.1f}{texto}", True, cor)
-
             sombra = fonte_atual.render(f"{self.ultimo_dano:.1f}{texto}", True, (0, 0, 0))
 
-            offset_y = (time.get_ticks() - self.ultimo_dano_tempo) / 4
-            pos_x = self.x + self.largura / 2 - dano_text.get_width() / 2
-            pos_y = self.y - 5 - offset_y + offset_extra
+            offset_y_text = (time.get_ticks() - self.ultimo_dano_tempo) / 4
+            pos_x = draw_x + self.largura / 2 - dano_text.get_width() / 2
+            pos_y = draw_y - 5 - offset_y_text + offset_extra
 
             tela.blit(sombra, (pos_x + 2, pos_y + 2))
             tela.blit(dano_text, (pos_x, pos_y))
-
-
-
 
     def get_hitbox_ataque(self, player_pos):
         if not hasattr(self, '_last_angle') or self._last_pos != player_pos:
@@ -313,6 +320,10 @@ class Inimigo:
 
     def get_hitbox(self):
         return Rect(self.x, self.y, self.largura, self.altura)
+
+    def aplicar_modificadores(self, elite=False):
+       gerenciador = GerenciadorModificadores()
+       gerenciador.aplicar_modificadores(self, elite)
 
 
 

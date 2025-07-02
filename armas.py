@@ -220,7 +220,7 @@ class Karambit(Arma):
         self.range = (50, 50) #hitbox arma
         self.radius = 80
         self.efeitos = None
-        self.lifeSteal = self.dano/4
+        self.lifeSteal = self.dano/2
         self.chanceCritico = 5
         self.danoCriticoMod = 2
         self.comboMult = 1

@@ -5,6 +5,7 @@ import math
 from pytmx.util_pygame import load_pygame
 import pytmx
 from gerenciador_andar import GerenciadorAndar
+from screen_shake import screen_shaker
 
 
 class Mapa:
@@ -33,7 +34,13 @@ class Mapa:
             self._recriar_cache(porta_liberada)
         
         # Usar o cache existente
-        rect_mapa = self.mapa_cache.get_rect(center=(self.tela_width // 2, (self.tela_heigth+184) // 2))
+
+        offset_x, offset_y = screen_shaker.offset
+
+        rect_mapa = self.mapa_cache.get_rect(center=(
+            self.tela_width // 2 + offset_x,
+            (self.tela_heigth + 184) // 2 + offset_y
+        ))
         self.tela.blit(self.mapa_cache, rect_mapa)
 
 

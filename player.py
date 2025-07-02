@@ -8,6 +8,7 @@ from sala import *
 from armas import *
 from random import *
 from sistemaparticulas import *
+from screen_shake import screen_shaker
 
 
 class Player():
@@ -582,6 +583,9 @@ class Player():
             for inimigo in inimigos:
                 if inimigo.vivo and inimigo.get_hitbox().colliderect(hitbox_espada):
                     self.hit_landed = True
+
+                    screen_shaker.start(intensity=8, duration=150)
+
                     inimigo.anima_hit = True
                     self.hits += 1
                     self.tempo_ultimo_hit = current_time

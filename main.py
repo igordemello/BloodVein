@@ -19,14 +19,13 @@ from menu import gerenciamento
 from loja import Loja
 from minimapa import Minimapa
 from menuarmas import *
+from screen_shake import screen_shaker
 
 init()
-#teste
 gerenciamento.modo = 'jogo'
 
-
 clock = time.Clock()
-SCREEN = display.set_mode((1920, 1080), vsync=1, flags=HWSURFACE | DOUBLEBUF)  # mudei para funcionar em hardware fudido
+SCREEN = display.set_mode((1920, 1080), vsync=1, flags=HWSURFACE | DOUBLEBUF)
 fps_font = font.SysFont("Arial", 24)
 fps_text = fps_font.render("FPS: 60", True, (255, 255, 255))
 
@@ -55,15 +54,16 @@ menuArmas = True
 
 menuDeArma = MenuArmas(hud)
 
-# while "Fred" == "Fred":
 i = 1
 while i == 1:
-    # i+=1
     keys = key.get_pressed()
     mouse_pos = mouse.get_pos()
     clock.tick(60)
     dt = clock.get_time()
     current_time = time.get_ticks()
+
+    # Atualiza o screen shake
+    screen_shaker.update(dt)
 
     for ev in event.get():
         if ev.type == QUIT:
@@ -84,7 +84,7 @@ while i == 1:
             quit()
             sys.exit()
 
-        if gerenciamento.modo == "jogo":  
+        if gerenciamento.modo == "jogo":
             if esperar_soltar_clique:
                 if not mouse.get_pressed()[0]:
                     esperar_soltar_clique = False
@@ -140,7 +140,6 @@ while i == 1:
                     if ev.key == K_TAB:
                         minimapa.toggle()
 
-
                     if ev.key == K_PERIOD:
                         item_id = int(input("Digite o ID do item para debug: "))
                         encontrado = False
@@ -154,27 +153,35 @@ while i == 1:
                                 encontrado = True
                                 break
 
-                
     if gerenciamento.modo == 'jogo':
+        # Limpa a tela
+        SCREEN.fill((0, 0, 0))
+
+        # Obtém o offset atual do screen shake
+        offset_x, offset_y = screen_shaker.offset
 
         if menuArmas:
             hud.desenhaFundo2()
             menuDeArma.menu_ativo = True
             menuDeArma.menuEscolherItens(SCREEN)
-
-
         else:
-            SCREEN.blit(imagem_cursor, mouse_pos)
+            # Desenha o fundo (sem offset)
             hud.desenhaFundo()
+
+            # Desenha a sala com o offset
             sala_atual.desenhar(SCREEN)
+
+            # Desenha o player com o offset
+            player.desenhar(SCREEN, mouse_pos)
+
+            # Desenha o HUD (sem offset)
             hud.desenhar()
-            player.desenhar(SCREEN,
-                            mouse_pos)  # probleminha, a espada continua sendo atualizado, pq ele é desenhado assim no futuro
+
+            # Desenha o cursor com o offset
 
             if not jogo_pausado:
                 sala_atual.atualizar(dt, keys)
                 player.atualizar(dt, keys)
-
 
             if sala_atual.bau and sala_atual.bau.menu_ativo:
                 sala_atual.bau.bauEscolherItens(SCREEN)
@@ -183,14 +190,14 @@ while i == 1:
                 sala_atual.loja.desenhar_loja(SCREEN)
 
             hud.update(dt)
-            # mostrar o fps:
-            if time.get_ticks() % 500 < 16:  # Atualiza ~30 vezes por segundo
+
+            # Mostrar o fps com offset
+            if time.get_ticks() % 500 < 16:
                 fps = int(clock.get_fps())
                 fps_text = fps_font.render(f"FPS: {fps}", True, (255, 255, 255))
-
-            SCREEN.blit(fps_text, (10, 10))
+            SCREEN.blit(fps_text, (10 + offset_x, 10 + offset_y))
 
             minimapa.draw()
 
-    SCREEN.blit(imagem_cursor, mouse_pos)
+    SCREEN.blit(imagem_cursor, (mouse_pos[0], mouse_pos[1] ))
     display.update()

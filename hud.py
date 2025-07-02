@@ -5,6 +5,7 @@ import math
 import pygame.font
 from random import randint
 from armas import *
+from screen_shake import screen_shaker
 
 
 class Hud:
@@ -81,6 +82,7 @@ class Hud:
         self.combo_shake_duration = 300
 
     def desenhar(self):
+        offset_x, offset_y = screen_shaker.offset
         almas_font = font.Font('assets/Fontes/alagard.ttf', 48)
         almas = almas_font.render(f"{self.player.almas}x", True, (243, 236, 215))
 
@@ -121,12 +123,12 @@ class Hud:
         proporcaoHp = max(0, min(1, self.player.hp / 100))
         altura_visivelHp = int(alturaHp_total * proporcaoHp)
 
-        self.tela.blit(self.bracoHp_fundo, (15, 510))
+        self.tela.blit(self.bracoHp_fundo, (15 + offset_x, 510 + offset_y))
 
         if altura_visivelHp > 0:
             y_corte = self.bracoHp_cima.get_height() - altura_visivelHp
             barra_cheia_cortada = self.bracoHp_cima.subsurface((0, y_corte, larguraHp_total, altura_visivelHp)).copy()
-            self.tela.blit(barra_cheia_cortada, (15, 510 + y_corte))
+            self.tela.blit(barra_cheia_cortada, (15 + offset_x, 510 + y_corte + offset_y))
 
         # Desenha itens
         for i, (item, qtd) in enumerate(self.player.itens.items()):
@@ -171,7 +173,7 @@ class Hud:
         proporcaoSt = max(0, min(1, self.player.st / 100))
         altura_visivelSt = int(alturaSt_total * proporcaoSt)
 
-        self.tela.blit(braco_stamina, (1715, 510))
+        self.tela.blit(braco_stamina, (1715+ offset_x, 510+offset_y))
 
         if altura_visivelSt > 0:
             y_corte = self.bracoSt_cima.get_height() - altura_visivelSt
