@@ -45,6 +45,9 @@ class Player():
         #ARMA
         self.arma = arma if arma else EspadaEstelar("comum", self.lista_mods)
 
+        self.telaSangue = image.load('assets/UI/sangueTelaDano.png').convert_alpha()
+        self.telaSangue_alpha = 0
+        self.telaSangue_surface = None
 
         self.x = x
         self.y = y
@@ -104,6 +107,22 @@ class Player():
         self.sword_arc = 210
         self.sword_start_angle = -105
 
+        # Sistema de rastro melhorado
+        self.sword_trail_particles = []
+        self.trail_max_particles = 50
+        self.trail_fade_speed = 15
+        self.trail_size_variation = 0
+        self.trail_spawn_rate = 1
+        self.trail_start_alpha = 130
+
+        self.projetil_trail_particles = []
+        self.trail_projetil_max = 5
+        self.trail_projetil_fade = 20
+
+        self.last_attack_direction = -1
+
+        self.dano_recebido_tempo = 0
+
         self.projeteis = []
         self.aoe = None
         self.hits_projetil = 0
@@ -121,10 +140,6 @@ class Player():
         self.dx = 0
         self.dy = 0
 
-        #efeito espada
-        self.sword_trail = []
-        self.max_trail_length = 5
-        self.trail_alpha = 100  # Transparência do rastro
         self.travado = False
 
     def carregar_animacao(self, caminho):
@@ -320,6 +335,20 @@ class Player():
             self.arma.comboMult = 1
 
         for projetil in self.projeteis[:]:
+            if len(projetil["trail"]) < self.trail_projetil_max or random() < 0.4:
+                projetil["trail"].append({
+                    "x": projetil["x"],
+                    "y": projetil["y"],
+                    "alpha": 255,
+                    "angle": projetil["angulo"],
+                    "lifetime": 255
+                })
+
+            for part in projetil["trail"][:]:
+                part["alpha"] = max(0, part["alpha"] - self.trail_projetil_fade)
+                if part["alpha"] <= 0:
+                    projetil["trail"].remove(part)
+
             projetil["x"] += projetil["vx"] * dt
             projetil["y"] += projetil["vy"] * dt
             projetil["lifetime"] -= dt
@@ -334,22 +363,36 @@ class Player():
 
         if self.attack_progress >= 1.0:
             self.attacking = False
-            self.sword_trail = []
+            self.sword_trail_particles = []
             return
 
-
-        # Adiciona posição atual ao rastro
         angle = self.calcular_angulo(mouse.get_pos())
         centro_jogador = (self.player_rect.centerx, self.player_rect.centery)
         base_x = centro_jogador[0] + math.cos(angle) * (self.radius - 5)
         base_y = centro_jogador[1] + math.sin(angle) * (self.radius - 5)
 
-        self.sword_trail.append((base_x, base_y, self.sword_angle))
-        if len(self.sword_trail) > self.max_trail_length:
-            self.sword_trail.pop(0)
+        # Adiciona nova partícula ao rastro
+        if (len(self.sword_trail_particles) < self.trail_max_particles and
+            random() < self.trail_spawn_rate):
+            size_variation = 1 + (random() - 0.5) * self.trail_size_variation
+            self.sword_trail_particles.append({
+                'x': base_x,
+                'y': base_y,
+                'angle': self.sword_angle,
+                'size': size_variation,
+                'alpha': self.trail_start_alpha,  # Usando o valor definido no init
+                'lifetime': 255,
+                'color_mod': (min(255, 200 + randint(0, 55)),
+                              min(255, 200 + randint(0, 55)),
+                              min(255, 200 + randint(0, 55)))
+            })
 
+        for particle in self.sword_trail_particles[:]:
+            particle['alpha'] = max(0, particle['alpha'] - self.trail_fade_speed)
+            particle['lifetime'] -= self.trail_fade_speed
+            if particle['lifetime'] <= 0:
+                self.sword_trail_particles.remove(particle)
 
-        # Arco de ataque aumentado (210 graus)
         swing_angle = self.sword_start_angle + self.sword_arc * self.attack_progress
         self.sword_angle = self.base_sword_angle + swing_angle * self.attack_direction
 
@@ -363,19 +406,20 @@ class Player():
         else:
             self.itemAtivo = item
 
-    def criar_projetil(self, mouse_pos, dano, cor, sprite=None, tamanho=10, velocidade=0.8, lifetime=1000,angulo_personalizado=None):
+    def criar_projetil(self, mouse_pos, dano, cor, sprite=None, tamanho=10, velocidade=0.8, lifetime=1000,
+                       angulo_personalizado=None):
         angle = self.calcular_angulo(mouse_pos)
         centro_jogador = (self.player_rect.centerx, self.player_rect.centery)
 
         if angulo_personalizado is not None:
             angle = angulo_personalizado
-        else:
-            angle = self.calcular_angulo(mouse_pos)
 
         if sprite:
             distancia = self.radius + sprite.get_width() // 2
+            sprite_original = sprite
         else:
             distancia = self.radius + tamanho // 2
+            sprite_original = None
 
         start_x = centro_jogador[0] + math.cos(angle) * distancia
         start_y = centro_jogador[1] + math.sin(angle) * distancia
@@ -387,13 +431,14 @@ class Player():
             "vy": math.sin(angle) * velocidade,
             "dano": dano,
             "lifetime": lifetime,
-            "raio_hitbox": tamanho // 2 if not sprite else max(sprite.get_width(), sprite.get_height()) // 2
+            "raio_hitbox": tamanho // 2 if not sprite else max(sprite.get_width(), sprite.get_height()) // 2,
+            "trail": [],  # Partículas de rastro para este projétil
+            "sprite_original": sprite_original,
+            "angulo": math.degrees(angle) - 90  # Ângulo em graus para rotação
         }
 
         if sprite:
             projetil["sprite"] = sprite
-            projetil["sprite_original"] = sprite  # Guarda uma cópia não rotacionada
-            projetil["angulo"] = math.degrees(angle)  # Ângulo em graus para rotação
         else:
             projetil["cor"] = cor
             projetil["tamanho"] = tamanho
@@ -443,7 +488,29 @@ class Player():
             self.base_sword_angle = math.degrees(angle) - 90
             self.sword_angle = self.base_sword_angle
 
-        # Desenho da espada
+        for particle in sorted(self.sword_trail_particles, key=lambda p: p['alpha']):
+            alpha = particle['alpha']
+            if alpha <= 0:
+                continue
+
+            sword_copy = transform.scale(self.sword,
+                                         (int(self.sword.get_width() * particle['size']),
+                                          int(self.sword.get_height() * particle['size'])))
+
+            colored_sword = Surface(sword_copy.get_size(), SRCALPHA)
+            colored_sword.blit(sword_copy, (0, 0))
+            colored_sword.fill(particle['color_mod'], special_flags=BLEND_MULT)
+            colored_sword.set_alpha(alpha)
+
+            temp_surface = Surface((colored_sword.get_width() * 2, colored_sword.get_height() * 2), SRCALPHA)
+            temp_surface.blit(colored_sword,
+                              (temp_surface.get_width() // 2 - self.sword_pivot[0],
+                               temp_surface.get_height() // 2 - self.sword_pivot[1]))
+
+            rotated_surface = transform.rotate(temp_surface, -particle['angle'])
+            final_rect = rotated_surface.get_rect(center=(particle['x'], particle['y']))
+            tela.blit(rotated_surface, final_rect.topleft)
+
         sword_img = self.sword.copy()
         temp_surface = Surface((sword_img.get_width() * 2, sword_img.get_height() * 2), SRCALPHA)
         temp_surface.blit(sword_img, (temp_surface.get_width() // 2 - self.sword_pivot[0],
@@ -452,29 +519,6 @@ class Player():
         final_rect = rotated_surface.get_rect(center=(base_x, base_y))
         tela.blit(rotated_surface, final_rect.topleft)
 
-        # Rastros do dash
-        for rastro in self.rastros:
-            imagem = rastro["imagem"].copy()
-            alpha = max(0, int(255 * (rastro["tempo"] / 200)))
-            imagem.set_alpha(alpha)
-            tela.blit(imagem, rastro["pos"])
-
-        #EFEITO PARA A ESPADA
-        for i, (x, y, angle) in enumerate(self.sword_trail):
-                alpha = int(self.trail_alpha * (i/len(self.sword_trail)))
-                sword_copy = self.sword.copy()
-                sword_copy.set_alpha(alpha)
-
-                temp_surface = Surface((sword_copy.get_width() * 2, sword_copy.get_height() * 2), SRCALPHA)
-                temp_surface.blit(sword_copy, (temp_surface.get_width() // 2 - self.sword_pivot[0],
-                                            temp_surface.get_height() // 2 - self.sword_pivot[1]))
-                rotated_surface = transform.rotate(temp_surface, -angle)
-                final_rect = rotated_surface.get_rect(center=(x, y))
-                tela.blit(rotated_surface, final_rect.topleft)
-
-
-
-        # Personagem
         frame = self.frame_atual.copy()
         if self.foi_atingido and time.get_ticks() - self.tempo_atingido < 250:
             frame.fill((255, 255, 255), special_flags=BLEND_RGB_ADD)
@@ -494,9 +538,20 @@ class Player():
         #projeteis
 
         for projetil in self.projeteis:
+            for part in projetil["trail"]:
+                if "sprite" in projetil:
+                    trail_sprite = projetil["sprite_original"].copy()
+                    trail_sprite.set_alpha(part["alpha"])
+                    trail_sprite = transform.scale(trail_sprite,
+                                                   (int(trail_sprite.get_width() * 0.5),
+                                                    int(trail_sprite.get_height() * 0.5)))
+
+                    rotated = transform.rotate(trail_sprite, -part["angle"])
+                    rect = rotated.get_rect(center=(part["x"], part["y"]))
+                    tela.blit(rotated, rect.topleft)
+
             if "sprite" in projetil:
-                angulo = math.degrees(math.atan2(projetil["vy"], projetil["vx"])) - 90
-                sprite_rotacionado = transform.rotate(projetil["sprite_original"], -angulo)
+                sprite_rotacionado = transform.rotate(projetil["sprite_original"], -projetil["angulo"])
                 rect = sprite_rotacionado.get_rect(center=(projetil["x"], projetil["y"]))
                 tela.blit(sprite_rotacionado, rect.topleft)
             else:
@@ -515,6 +570,32 @@ class Player():
         #tela.blit(rotated_hitbox, rotated_rect)
 
         # draw.rect(tela, (0,255,0), self.get_hitbox(), 2)
+
+        if hasattr(self, 'dano_recebido') and time.get_ticks() - self.dano_recebido_tempo < 500:
+            if self.telaSangue_alpha > 0:
+                self.telaSangue_alpha = max(0, 255 - (time.get_ticks() - self.dano_recebido_tempo) * 1.02)
+                self.telaSangue_surface.set_alpha(int(self.telaSangue_alpha))
+                tela.blit(self.telaSangue_surface, (0, 0))
+
+            cor = (255, 0, 0)
+            tamanho_fonte = 48
+            fonte_atual = font.Font('assets/Fontes/KiwiSoda.ttf', tamanho_fonte)
+            texto_str = f"-{self.dano_recebido:.1f}"
+
+            pos_x = 108
+            pos_y = 440 - ((time.get_ticks() - self.dano_recebido_tempo) / 4)
+
+            outline_color = (0, 0, 0)
+            outline_size = 1
+            for x_offset in [-outline_size, 0, outline_size]:
+                for y_offset in [-outline_size, 0, outline_size]:
+                    if x_offset == 0 and y_offset == 0:
+                        continue
+                    outline_text = fonte_atual.render(texto_str, True, outline_color)
+                    tela.blit(outline_text, (pos_x - outline_text.get_width() / 2 + x_offset, pos_y + y_offset))
+
+            dano_text = fonte_atual.render(texto_str, True, cor)
+            tela.blit(dano_text, (pos_x - dano_text.get_width() / 2, pos_y))
 
         self.sistemaparticulas.draw(tela)
 
@@ -572,7 +653,9 @@ class Player():
             self.attack_progress = 0
             angle = self.calcular_angulo(mouse_pos)
             self.base_sword_angle = math.degrees(angle) - 90
-            self.attack_direction = 1 if random() > 0.5 else -1
+
+            self.last_attack_direction *= -1
+            self.attack_direction = self.last_attack_direction
 
             _, hitbox_espada = self.get_rotated_rect_ataque(mouse_pos)
 
@@ -665,7 +748,14 @@ class Player():
         self.ultimo_dano = now
         self.hp -= valor * self.modificadorDanoRecebido
         self.foi_atingido = True
-        self.tempo_atingido = time.get_ticks()
+        self.tempo_atingido = now
+        self.dano_recebido_tempo = now
+        self.dano_recebido = valor * self.modificadorDanoRecebido
+        self.telaSangue_alpha = 255
+        screen_shaker.start(intensity=4, duration=150)
+        if self.telaSangue_surface is None:
+            self.telaSangue_surface = self.telaSangue.copy()
+
 
     def atualizar_arma(self):
         self.sword = transform.scale(transform.flip(image.load(self.arma.sprite).convert_alpha(), True, True),

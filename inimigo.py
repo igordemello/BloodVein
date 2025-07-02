@@ -19,7 +19,7 @@ class Inimigo:
         self.particulas_dano = []
 
         self.ultimo_dano_tempo = 0
-        self.fonte_dano = font.Font('assets/Fontes/alagard.ttf', 20)
+        self.fonte_dano = font.Font('assets/Fontes/KiwiSoda.ttf', 20)
 
         self.knockback_x = 0
         self.knockback_y = 0
@@ -262,25 +262,35 @@ class Inimigo:
         if hasattr(self, 'ultimo_dano') and time.get_ticks() - self.ultimo_dano_tempo < 500:
             if getattr(self, 'ultimo_dano_critico', False):
                 cor = (255, 215, 0)  # Amarelo-ouro
-                tamanho_fonte = 24  # Texto maior
+                tamanho_fonte = 28  # Texto maior
                 offset_extra = 5 * math.sin(time.get_ticks() / 50)
                 texto = "!"
             else:
-                cor = (255, 50, 50)
-                tamanho_fonte = 20
+                cor = (253, 246, 245)
+                tamanho_fonte = 24
                 offset_extra = 0
                 texto = ""
 
-            fonte_atual = font.Font('assets/Fontes/alagard.ttf', tamanho_fonte)
-            dano_text = fonte_atual.render(f"{self.ultimo_dano:.1f}{texto}", True, cor)
-            sombra = fonte_atual.render(f"{self.ultimo_dano:.1f}{texto}", True, (0, 0, 0))
+            fonte_atual = font.Font('assets/Fontes/KiwiSoda.ttf', tamanho_fonte)
+            texto_str = f"{self.ultimo_dano:.1f}{texto}"
 
             offset_y_text = (time.get_ticks() - self.ultimo_dano_tempo) / 4
-            pos_x = draw_x + self.largura / 2 - dano_text.get_width() / 2
+            pos_x = draw_x + self.largura / 2
             pos_y = draw_y - 5 - offset_y_text + offset_extra
 
-            tela.blit(sombra, (pos_x + 2, pos_y + 2))
-            tela.blit(dano_text, (pos_x, pos_y))
+            outline_color = (0, 0, 0)
+            outline_size = 1
+            for x_offset in [-outline_size, 0, outline_size]:
+                for y_offset in [-outline_size, 0, outline_size]:
+                    if x_offset == 0 and y_offset == 0:
+                        continue  # Pular o centro (preenchimento principal)
+                    outline_text = fonte_atual.render(texto_str, True, outline_color)
+                    tela.blit(outline_text, (pos_x - outline_text.get_width() / 2 + x_offset,
+                                             pos_y + y_offset))
+
+            # Renderizar texto principal
+            dano_text = fonte_atual.render(texto_str, True, cor)
+            tela.blit(dano_text, (pos_x - dano_text.get_width() / 2, pos_y))
 
     def get_hitbox_ataque(self, player_pos):
         if not hasattr(self, '_last_angle') or self._last_pos != player_pos:

@@ -130,6 +130,7 @@ class Sala:
                     inimigo.atualizar((self.player.x, self.player.y), self.tela)
                 inimigo.dar_dano = lambda val=inimigo.dano: self.player.tomar_dano(val)
 
+
         self.colisao.checar_colisoes(dt)
         for inimigo in self.inimigos:
             if inimigo not in self.colisao.entidades:
