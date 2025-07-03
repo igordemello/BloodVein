@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="right-down" width="15" height="8" tilewidth="32" tileheight="32" infinite="0" nextlayerid="39" nextobjectid="169">
- <tileset firstgid="1" name="Sprite_sheet_tiles" tilewidth="32" tileheight="32" tilecount="44" columns="11">
-  <image source="../assets/TileSet/Sprite_sheet_tiles.png" width="352" height="128"/>
+ <tileset firstgid="1" name="Sprite_sheet_tiles" tilewidth="32" tileheight="32" tilecount="55" columns="11">
+  <image source="../assets/TileSet/Sprite_sheet_tiles.png" width="352" height="160"/>
  </tileset>
  <layer id="11" name="chao e paredes" width="15" height="8">
   <data encoding="csv">
@@ -67,11 +67,11 @@
   <data encoding="csv">
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,7,0,0,0,0,7,0,0,0,0,0,
-0,0,0,0,0,7,0,0,0,0,7,0,0,0,0,
-0,0,0,0,7,0,0,0,0,7,0,0,0,0,0,
+0,0,0,0,0,55,0,0,0,0,7,0,0,0,0,
+0,0,0,0,7,0,0,0,0,54,0,0,0,0,0,
 0,0,0,0,0,7,0,0,0,0,7,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,7,7,0,0,0,0,0,0,7,7,0,0,0,
+0,0,7,55,0,0,0,0,0,0,7,7,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 </data>
  </layer>
