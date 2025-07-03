@@ -38,6 +38,10 @@ class Menu():
         self.showing_intro = True
         self.menu_active = False
 
+        self.index_selecionado = 0
+        self.espada_img = image.load("assets/UI/Espada menu.png").convert_alpha()
+        self.espada_img = transform.scale(self.espada_img, (50, 50))
+
     def cv2_to_pygame(self, frame):
         frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
         return image.frombuffer(frame.tobytes(), frame.shape[1::-1], "RGB")
@@ -75,7 +79,10 @@ class Menu():
 
         mouse_pos = mouse.get_pos()
         for i, botao in enumerate(self.botoes):
-            is_hovered = botao.rect.collidepoint(mouse_pos)
+            is_hovered = botao.rect.collidepoint(mouse_pos) or i == self.index_selecionado
+
+            if is_hovered:
+                self.index_selecionado = i  
 
             alvo = Vector2(1.1, -5) if is_hovered else Vector2(1.0, 0.0)
             self.hover_escala[i] = self.hover_escala[i].lerp(alvo, 0.1)
@@ -97,6 +104,12 @@ class Menu():
 
             tela.blit(sombra, (pos_x + 3, pos_y + 3))
             tela.blit(texto, (pos_x, pos_y))
+
+            if i == self.index_selecionado:
+                espada_x = pos_x - self.espada_img.get_width() - 20
+                espada_y = pos_y + (texto.get_height() // 2) - (self.espada_img.get_height() // 2)
+                tela.blit(self.espada_img, (espada_x, espada_y))
+
 
     def checar_clique(self, pos):
         for botao in self.botoes:

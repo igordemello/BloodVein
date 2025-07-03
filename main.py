@@ -87,6 +87,23 @@ while i == 1:
                 elif escolha == "sair":
                     quit()
                     sys.exit()
+            if ev.type == KEYDOWN:
+                if ev.key == K_DOWN or ev.key == K_s :
+                    menu.index_selecionado = (menu.index_selecionado + 1) % len(menu.botoes)
+                if ev.key == K_UP or ev.key == K_w:
+                    menu.index_selecionado = (menu.index_selecionado - 1) % len(menu.botoes)
+                if ev.key == K_RETURN or ev.key == K_SPACE:
+                    escolha = menu.botoes[menu.index_selecionado].value
+                    if escolha == 'jogo':
+                        gerenciamento.modo = "jogo"
+                    elif escolha == "sair":
+                        quit()
+                        sys.exit()
+
+
+
+
+
 
         if gerenciamento.modo == 'sair':
             quit()
