@@ -186,7 +186,7 @@ class ConjuntoItens:
                 ],
                 afetaIni=False,
                 sprite=image.load("assets\itens\crucifixoinvertido.png").convert_alpha(),
-                raridade="comum",
+                raridade="ativo",
                 id=16,
             ),
             "Aranha de brinquedo": ItemAtivo(
@@ -198,7 +198,7 @@ class ConjuntoItens:
                 ],
                 afetaIni=False,
                 sprite=image.load("assets\itens\AranhaDeBrinquedo.png").convert_alpha(),
-                raridade="comum",
+                raridade="ativo",
                 id=17,
             ),
             "Bomba": ItemAtivo(
@@ -210,7 +210,7 @@ class ConjuntoItens:
                 ],
                 afetaIni=True,
                 sprite=image.load("assets\itens\Bomba.png").convert_alpha(),
-                raridade="comum",
+                raridade="ativo",
                 id=18,
             ),
             "Adaga Sangrenta": ItemAtivo(
@@ -222,7 +222,7 @@ class ConjuntoItens:
                 ],
                 afetaIni=True,
                 sprite=image.load("assets\itens\AdagaSangrenta.png").convert_alpha(),
-                raridade="comum",
+                raridade="ativo",
                 id=19,
             )
 

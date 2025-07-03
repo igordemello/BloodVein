@@ -20,7 +20,8 @@ class Loja():
         self.precos = {
             "comum": 15,
             "rara": 30,
-            "lendaria": 45
+            "lendaria": 45,
+            "ativo": 20
         }
         
         self.player = player
@@ -45,7 +46,8 @@ class Loja():
         self.carta_imgs = {
             "comum": transform.scale(image.load("assets/itens/carta_comum_loja.png").convert_alpha(), (self.item_width + 40, self.item_height + 130)),
             "rara": transform.scale(image.load("assets/itens/carta_rara_loja.png").convert_alpha(), (self.item_width + 40, self.item_height + 130)),
-            "lendaria": transform.scale(image.load("assets/itens/carta_lendaria_loja.png").convert_alpha(), (self.item_width + 40, self.item_height + 130))
+            "lendaria": transform.scale(image.load("assets/itens/carta_lendaria_loja.png").convert_alpha(), (self.item_width + 40, self.item_height + 130)),
+            "ativo": transform.scale(image.load("assets/itens/carta_ativo_loja.png").convert_alpha(), (self.item_width + 40, self.item_height + 130))
         }
             
         for i in range(3):
