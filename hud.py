@@ -204,11 +204,11 @@ class Hud:
         stats_surface.blit(self.statsArma, (0, 0))
 
         texts = [
-            stats_font.render(f"Dano: {dano}", True, (243, 236, 215)),
-            stats_font.render(f"Rapidez: {rapidez}", True, (243, 236, 215)),
-            stats_font.render(f"Roubo de Vida: {roubo_de_vida}", True, (243, 236, 215)),
-            stats_font.render(f"Chance de Critico: {chance_de_critico}%", True, (243, 236, 215)),
-            stats_font.render(f"Dano Critico: {dano_critico}", True, (243, 236, 215)),
+            stats_font.render(f"Dano: {dano:.1f}", True, (243, 236, 215)),
+            stats_font.render(f"Rapidez: {rapidez:.1f}", True, (243, 236, 215)),
+            stats_font.render(f"Roubo de Vida: {roubo_de_vida:.1f}", True, (243, 236, 215)),
+            stats_font.render(f"Chance de Critico: {chance_de_critico:.1f}%", True, (243, 236, 215)),
+            stats_font.render(f"Dano Critico: {dano_critico:.1f}", True, (243, 236, 215)),
             stats_font.render(f"Modificador: {modificador}", True, (243, 236, 215))
         ]
 
@@ -216,7 +216,7 @@ class Hud:
             text.set_alpha(self.stats_alpha)
             stats_surface.blit(text, (45, 55 + i * 42))
 
-        self.tela.blit(stats_surface, (770, 750))
+        self.tela.blit(stats_surface, (1250, 750))
 
     def reset_stats_fade(self):
         self.stats_alpha = 0

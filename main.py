@@ -100,8 +100,13 @@ while i == 1:
                 if ev.type == MOUSEBUTTONDOWN:
                     if ev.button == 1:
                         if menuArmas and menuDeArma.menu_ativo:
-                            if menuDeArma.checar_clique_menu(mouse_pos) is not None:
-                                player.arma = menuDeArma.checar_clique_menu(mouse_pos)
+                            resultado = menuDeArma.checar_clique_menu(mouse_pos)
+                            if resultado is not None:
+                                arma, atributos = resultado
+                                player.arma = arma
+                                player.atributos = atributos
+                                player.atualizar_atributos()
+
                                 if player.arma:
                                     menuArmas = False
                                     hud.atualizar_arma_icon()
