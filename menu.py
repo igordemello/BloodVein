@@ -16,18 +16,18 @@ class Menu():
     def __init__(self, SCREEN):
         self.screen = SCREEN
         self.screen_width, self.screen_height = self.screen.get_size()
-        self.fonte = font.Font("assets/Fontes/Super Rugged.ttf", 200)
+        self.fonte = font.Font("assets/Fontes/Alkhemikal.ttf", 180)
         self.fonte_botoes = font.Font("assets/Fontes/alagard.ttf", 72)
 
         self.cor_base = (253, 246, 225)
         self.cor_hover = (0, 0, 0)
 
         self.botoes = [
-            Botao(None, (600, 420), "INICIAR RUN", self.fonte_botoes, self.cor_base, self.cor_hover, "jogo"),
-            Botao(None, (600, 520), "CONTINUAR RUN", self.fonte_botoes, self.cor_base, self.cor_hover, "continuar"),
-            Botao(None, (600, 620), "OPÇÕES", self.fonte_botoes, self.cor_base, self.cor_hover, "opcoes"),
-            Botao(None, (600, 720), "CONQUISTAS", self.fonte_botoes, self.cor_base, self.cor_hover, "pontuacao"),
-            Botao(None, (600, 820), "SAIR", self.fonte_botoes, self.cor_base, self.cor_hover, "sair"),
+            Botao(None, (600, 420), "Iniciar", self.fonte_botoes, self.cor_base, self.cor_hover, "jogo"),
+            Botao(None, (600, 520), "Continuar", self.fonte_botoes, self.cor_base, self.cor_hover, "continuar"),
+            Botao(None, (600, 620), "Opções", self.fonte_botoes, self.cor_base, self.cor_hover, "opcoes"),
+            Botao(None, (600, 720), "Conquistas", self.fonte_botoes, self.cor_base, self.cor_hover, "pontuacao"),
+            Botao(None, (600, 820), "Sair", self.fonte_botoes, self.cor_base, self.cor_hover, "sair"),
         ]
 
         self.hover_escala = [Vector2(1.0, 0.0) for _ in self.botoes]
@@ -68,10 +68,10 @@ class Menu():
 
     def desenho(self, tela):
         titulo_sombra = self.fonte.render("Blood Vein", True, (30, 30, 30))
-        tela.blit(titulo_sombra, (160 + 4, 100 + 4))
+        tela.blit(titulo_sombra, (200 + 4, 100 + 4))
 
-        titulo = self.fonte.render("Blood Vein", True, 'White')
-        tela.blit(titulo, (160, 100))
+        titulo = self.fonte.render("Blood Vein", True, (253, 246, 225))
+        tela.blit(titulo, (200, 100))
 
         mouse_pos = mouse.get_pos()
         for i, botao in enumerate(self.botoes):
