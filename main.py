@@ -64,6 +64,7 @@ while i == 1:
     clock.tick(60)
     dt = clock.get_time()
     current_time = time.get_ticks()
+    eventos = []
 
     # Atualiza o screen shake
     screen_shaker.update(dt)
@@ -75,6 +76,7 @@ while i == 1:
 
 
     for ev in event.get():
+        eventos.append(ev)
         if ev.type == QUIT:
             quit()
             sys.exit()
@@ -222,23 +224,19 @@ while i == 1:
             menuDeArma.menu_ativo = True
             menuDeArma.menuEscolherItens(SCREEN)
         else:
-            # Desenha o fundo (sem offset)
             hud.desenhaFundo()
 
-            # Desenha a sala com o offset
-            sala_atual.desenhar(SCREEN)
+            sala_atual.desenhar(SCREEN)  # a própria sala decide se vai mostrar cutscene ou não
 
-            # Desenha o player com o offset
-            player.desenhar(SCREEN, mouse_pos)
-
-            # Desenha o HUD (sem offset)
-            hud.desenhar()
-
-            # Desenha o cursor com o offset
+            if not (sala_atual.cutscene and sala_atual.cutscene.ativa):
+                player.desenhar(SCREEN, mouse_pos)
+                hud.desenhar()
 
             if not jogo_pausado:
-                sala_atual.atualizar(dt, keys)
-                player.atualizar(dt, keys)
+                sala_atual.atualizar(dt, keys, eventos)
+
+                if not (sala_atual.cutscene and sala_atual.cutscene.ativa):
+                    player.atualizar(dt, keys)
 
             if sala_atual.bau and sala_atual.bau.menu_ativo:
                 sala_atual.bau.bauEscolherItens(SCREEN)

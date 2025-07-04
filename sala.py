@@ -12,6 +12,7 @@ from loja import Loja
 from random import randint, sample
 import gerenciador_andar
 from screen_shake import screen_shaker
+from cutscene import Cutscene
 
 init()
 fonte = font.SysFont("Arial", 24)
@@ -47,6 +48,7 @@ class Sala:
 
         self.em_transicao = False
         self.visitada = False
+        self.cutscene = None
 
         tipo = self.gerenciador_andar.grafo.nodes[self.gerenciador_andar.sala_atual]['tipo']
         bau_aberto = self.gerenciador_andar.grafo.nodes[self.gerenciador_andar.sala_atual].get('bau_aberto', False)
@@ -66,6 +68,14 @@ class Sala:
                 self.ativar_menu_bau = False
         else:
             self.bau = None
+
+        if tipo == "boss" and not gerenciador_andar.sala_foi_conquistada(gerenciador_andar.sala_atual):
+            fundo = self.tela.copy()
+            cenas = [
+                {"imagem": image.load("heroi_teste_cutscene.png").convert_alpha(), "fala": "Chegamos ao covil da criatura...", "lado": "esquerda"},
+                {"imagem": image.load("boss_teste_cutscene.png").convert_alpha(), "fala": "Você ousa me desafiar, humano?", "lado": "direita"}
+            ]
+            self.cutscene = Cutscene(cenas, fundo, self.tela.get_width(), self.tela.get_height())
 
 
 
@@ -109,6 +119,7 @@ class Sala:
             return [elite,Orb(540,700,64,64,hp=200),Orb(400,700,64,64,hp=200),Orb(690,700,64,64,hp=200) ]
             #depois substituir esses 3 orbs por 3 inimigos aleatórios
         else:
+            return []
             quant = randint(1, 4)
             cords = [(400, 700), (680, 800), (850, 600), (990, 800), (1150, 800)]
             cordsEscolhe = sample(cords, quant)
@@ -121,7 +132,11 @@ class Sala:
             return inimigos
 
 
-    def atualizar(self,dt,teclas):
+    def atualizar(self,dt,teclas, eventos):
+        if self.cutscene and self.cutscene.ativa:
+            self.cutscene.update(eventos)  # ou eventos se estiver usando eventos
+            return  # pausa o resto da sala
+
         for inimigo in self.inimigos:
             if inimigo.vivo:
                 try:
@@ -186,6 +201,10 @@ class Sala:
 
 
     def desenhar(self, tela):
+        if self.cutscene and self.cutscene.ativa:
+            self.cutscene.draw(self.tela)
+            return
+        
         offset_x, offset_y = screen_shaker.offset
         self.mapa.desenhar(self.porta_liberada)
         for inimigo in self.inimigos:
