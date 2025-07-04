@@ -646,7 +646,7 @@ class Player():
         print(
             f'Dano: {self.arma.dano}\nRapidez: {self.arma.velocidade}\nLife steal: {self.arma.lifeSteal}\nChance de Crítico: {self.arma.chanceCritico}\nDano do Crítico: {self.arma.danoCriticoMod * self.arma.dano}')
         print("Nome: ", self.arma.nome)
-        print(self.velocidadeMov)
+        print(self.atributos["forca"])
 
     def criar_efeito_sangue(self, x, y):
         for _ in range(5):
@@ -829,6 +829,7 @@ class Player():
             'st': self.st,
             'almas': self.almas,
             'velocidadeMov': self.velocidadeMov,
+            'atributos' : self.atributos
         },
         'itens': [item.id for item in self.itens],
         'itemAtivo': self.itemAtivo.id if self.itemAtivo else None,
@@ -846,6 +847,7 @@ class Player():
         self.st = stats['st']
         self.almas = stats['almas']
         self.velocidadeMov = stats['velocidadeMov']
+        self.atributos = stats['atributos']
 
         self.itens = {}
         for item_id in data['itens']:

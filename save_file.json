@@ -1,87 +1,90 @@
 {
     "player": {
         "position": [
-            1339,
-            594
+            1251,
+            597
         ],
         "stats": {
-            "hp": 92.95099999999948,
-            "hpMax": 85,
+            "hp": 83.87250000000013,
+            "hpMax": 100,
             "st": 100,
-            "almas": 1008,
-            "velocidadeMov": 0.5500000000000002
+            "almas": 1003,
+            "velocidadeMov": 0.6500000000000001,
+            "atributos": {
+                "forca": 10,
+                "destreza": 1,
+                "agilidade": 1,
+                "vigor": 1,
+                "resistencia": 1,
+                "estamina": 1,
+                "sorte": 1
+            }
         },
-        "itens": [
-            10
-        ],
+        "itens": [],
         "itemAtivo": null,
         "arma": {
-            "tipo": "Arco",
+            "tipo": "LaminaDaNoite",
             "raridade": "comum",
-            "dano": 167.61728395061732,
-            "velocidade": 0.8,
-            "lifeSteal": 19.0,
-            "chanceCritico": 10.0,
-            "danoCriticoMod": 2.9876543209876547,
+            "dano": 128.0,
+            "velocidade": 1.0,
+            "lifeSteal": 9.0,
+            "chanceCritico": 8.0,
+            "danoCriticoMod": 8.0,
             "modificador": "Afiada",
             "modificador_detalhes": {
                 "nome": "Afiada",
-                "valor": 24.0
+                "valor": 14.0
             }
         }
     },
     "map": {
-        "sala_atual": "sala4",
+        "sala_atual": "sala0",
         "salas_conquistadas": [
-            "sala1",
-            "sala3",
-            "sala0"
+            "sala3"
         ],
         "salas_visitadas": [
-            "sala1",
             "sala3",
-            "sala4",
             "sala0"
         ],
         "bau_aberto": {
-            "sala1": true
+            "sala1": false
         }
     },
     "sala": {
         "inimigos": [
             {
                 "tipo": "Orb",
-                "x": 884,
-                "y": 518,
-                "hp": 400.0,
-                "vivo": true,
-                "nome_base": "Orb",
-                "elite": false
-            },
-            {
-                "tipo": "Orb",
-                "x": 1079,
-                "y": 524,
-                "hp": -17.902469135802534,
+                "x": 680,
+                "y": 800,
+                "hp": -4.800000000000011,
                 "vivo": false,
                 "nome_base": "Orb",
                 "elite": false
             },
             {
                 "tipo": "Orb",
-                "x": 1244,
-                "y": 642,
-                "hp": -185.51975308641983,
+                "x": 1150,
+                "y": 800,
+                "hp": -137.6,
+                "vivo": false,
+                "nome_base": "Orb",
+                "elite": false
+            },
+            {
+                "tipo": "Orb",
+                "x": 850,
+                "y": 636,
+                "hp": -94.4,
                 "vivo": false,
                 "nome_base": "Orb",
                 "elite": false
             }
         ],
-        "porta_liberada": false,
+        "porta_liberada": true,
         "visitada": true,
         "bau": null,
         "em_transicao": false
     },
-    "timestamp": "2025-07-04T11:17:42.912937",
+    "timestamp": "2025-07-04T14:39:57.915438",
     "version": "1.0"
 }
