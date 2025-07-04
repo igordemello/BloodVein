@@ -18,6 +18,7 @@ class Mapa:
         self.gerenciador_andar = gerenciador_andar
         self.colliders = self.get_colliders()
         self.gid_cache = {}
+        self.colliders_sem_obstaculo = self.get_colliders_sem_obstaculo()
 
         # Inicializar o cache do mapa
         self.mapa_cache = None
@@ -87,6 +88,43 @@ class Mapa:
 
 
 
+    def get_colliders_sem_obstaculo(self):
+        colliders = []
+
+        tile_w = self.tmx_data.tilewidth
+        tile_h = self.tmx_data.tileheight
+
+        largura_total = self.tmx_data.width * tile_w * self.escala
+        altura_total = self.tmx_data.height * tile_h * self.escala
+        mapa_rect = Rect(0, 0, largura_total, altura_total)
+        mapa_rect.center = (self.tela_width // 2, (self.tela_heigth + 184) // 2)
+        offset_x, offset_y = mapa_rect.topleft
+
+        for layer in self.tmx_data.visible_layers:
+            if isinstance(layer, pytmx.TiledObjectGroup):
+                if layer.name == "colisor_parede":
+                    for obj in layer:
+                        if obj.name == 'bau' and not self.gerenciador_andar.grafo.nodes[self.gerenciador_andar.sala_atual]['tipo'] == 'bau':
+                            continue
+                        rect = Rect(
+                            obj.x * self.escala + offset_x,
+                            obj.y * self.escala + offset_y,
+                            obj.width * self.escala,
+                            obj.height * self.escala
+                        )
+
+
+                        # surface = Surface((rect.width, rect.height), SRCALPHA)
+                        # surface.fill((255, 255, 255, 255))  # branco opaco
+                        # maska = mask.from_surface(surface)
+
+                        # Guarda rect + mask em forma de dicionário
+                        colliders.append({
+                            "rect": rect,
+                            # "mask": maska
+                        })
+        return colliders
+    
     def get_colliders(self):
         colliders = []
 

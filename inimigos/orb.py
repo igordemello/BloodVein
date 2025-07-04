@@ -29,6 +29,8 @@ class Orb(Inimigo):
 
         self.carregar_hit_sprites()
 
+        self.tipo_colisao = 'voador'
+
 
     def desenhar(self, tela, player_pos, offset=(0,0)):
         clock = time.Clock()

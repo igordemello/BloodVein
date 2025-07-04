@@ -20,20 +20,26 @@ class Colisao:
         self.entidades = [ent for ent in self.entidades if isinstance(ent, Player)]
 
     def checar_colisoes(self,dt):
-
+        from player import Player
         for i, ent1 in enumerate(self.entidades):
             for ent2 in self.entidades[i+1:]:
                 self._colisao_entidade_entidade(ent1, ent2)
 
         for entidade in self.entidades:
-            self._colisao_entidade_mapa(entidade, dt)
+            if isinstance(entidade, Player):
+                continue
+            if entidade.tipo_colisao == 'voador':
+                self._colisao_entidade_mapa_sem_obstaculo(entidade)
+            elif entidade.tipo_colisao == 'obstaculo':
+                self._colisao_entidade_mapa_contando_obstaculo(entidade)
 
+        self._colisao_entidade_mapa_contando_obstaculo(self.player)
         self._colisao_entidade_projetil()
         self._colisao_entidade_AOE()
         self._colisao_projetil_mapa()
 
 
-    def _colisao_entidade_mapa(self,entidade,dt):
+    def _colisao_entidade_mapa_contando_obstaculo(self,entidade):
         vx, vy = entidade.get_velocidade()
         new_rect = entidade.get_hitbox().copy()
         
@@ -57,6 +63,43 @@ class Colisao:
         new_rect.x = entidade.get_hitbox().x
         new_rect.y += vy
         for collider in self.mapa.colliders:
+            if area_interesse.colliderect(collider['rect']) and new_rect.colliderect(collider['rect']):
+                can_move_y = False
+                break
+        
+
+        entidade.mover_se(can_move_x, can_move_y, vx, vy)
+
+
+        if not can_move_x:
+            entidade.set_velocidade_x(0)
+        if not can_move_y:
+            entidade.set_velocidade_y(0)
+
+    def _colisao_entidade_mapa_sem_obstaculo(self,entidade):
+        vx, vy = entidade.get_velocidade()
+        new_rect = entidade.get_hitbox().copy()
+        
+
+        area_interesse = Rect(
+            new_rect.x - 100, new_rect.y - 100,
+            new_rect.width + 200, new_rect.height + 200
+        )
+        
+
+        can_move_x, can_move_y = True, True
+        
+
+        new_rect.x += vx
+        for collider in self.mapa.colliders_sem_obstaculo:
+            if area_interesse.colliderect(collider['rect']) and new_rect.colliderect(collider['rect']):
+                can_move_x = False
+                break
+        
+
+        new_rect.x = entidade.get_hitbox().x
+        new_rect.y += vy
+        for collider in self.mapa.colliders_sem_obstaculo:
             if area_interesse.colliderect(collider['rect']) and new_rect.colliderect(collider['rect']):
                 can_move_y = False
                 break
