@@ -26,22 +26,17 @@ class Inimigo:
         self.knockback_time = 0
         self.knockback_duration = 200
 
-        self.radius = 70
-        self.hitbox_arma = (70, 100)
-        self.orbital_size = (40, 20)
-        self.hitboxArma = (70, 100)
-
+        
         self.old_x = x
         self.old_y = y
 
         self.hp = hp
         self.hp_max = hp
-        self.modificadorDanoRecebido = 1  # isso multiplica o dano que o jogador causa, serve pra fazer bleed e pro parry
+        self.modificadorDanoRecebido = 1
         self.vivo = True
         self.dano = dano
         self.ultimo_dano_critico = False
         self.congelado = False
-        #self.nome_base = nome
 
         self.pode_congelar = False
         self.pode_sangramento = False
@@ -59,15 +54,6 @@ class Inimigo:
         self.frame_time = 0
         self.animation_speed = 0.10
 
-        self.sprite_hit = image.load("assets/Enemies/orbTomandoDano.png").convert_alpha()
-        self.frames_hit = []
-        self.total_frames_hit = 4
-        self.hit_frame_duration = 100
-        self.frame_hit_index = 0
-        self.time_last_hit_frame = 0
-        self.anima_hit = False
-        self.carregar_hit_sprites()
-
         self.vy = 0
         self.vx = 0
         self.dx = 0
@@ -76,11 +62,11 @@ class Inimigo:
         self.rect = self.get_hitbox()
 
     def adicionar_particula_dano(self, x, y, valor):
-        cor = (255, 50, 50)  # Vermelho
+        cor = (255, 50, 50)
         if valor > 20:
-            cor = (255, 215, 0)  # Amarelo-ouro para críticos
+            cor = (255, 215, 0) 
 
-        for _ in range(10):  # 10 partículas
+        for _ in range(10): 
             angulo = randint(0, 360)
             velocidade = randint(1, 3)
             self.particulas_dano.append({
@@ -89,7 +75,7 @@ class Inimigo:
                 'vx': math.cos(angulo) * velocidade,
                 'vy': math.sin(angulo) * velocidade,
                 'cor': cor,
-                'tempo': randint(300, 500),  # 300-500ms
+                'tempo': randint(300, 500),
                 'tamanho': randint(2, 5)
             })
 
@@ -114,14 +100,6 @@ class Inimigo:
         if self.spritesheet:
             self.frames = [self.get_frame(i) for i in self.usar_indices]
 
-    def carregar_hit_sprites(self):
-        for i in range(self.total_frames_hit):
-            rect = Rect(i * self.frame_width, 0, self.frame_width, self.frame_height)
-            frame = Surface((self.frame_width, self.frame_height), SRCALPHA)
-            frame.blit(self.sprite_hit, (0, 0), rect)
-            frame = transform.scale(frame, (self.largura, self.altura))
-            self.frames_hit.append(frame)
-
     def get_frame(self, index):
         rect = Rect(index * self.frame_width, 0, self.frame_width, self.frame_height)
         frame = Surface((self.frame_width, self.frame_height), SRCALPHA)
@@ -140,28 +118,17 @@ class Inimigo:
         self.knockback_y = math.sin(angulo) * intensidade
         self.knockback_time = time.get_ticks()
 
-        # Aplica a velocidade do knockback, que será tratada com colisão
         self.set_velocidade_x(self.knockback_x)
         self.set_velocidade_y(self.knockback_y)
 
     def envenenar(self, duracao_em_segundos, dano_total):
         self.veneno_dano_por_tick = dano_total // 2
         self.veneno_ticks = 5
-        self.veneno_intervalo = (duracao_em_segundos * 1000) // 5  # em milissegundos
+        self.veneno_intervalo = (duracao_em_segundos * 1000) // 5
         self.veneno_proximo_tick = time.get_ticks() + self.veneno_intervalo
         self.veneno_ativo = True
 
     def atualizar(self, player_pos, tela):
-
-        if self.anima_hit:
-            now = time.get_ticks()
-            if now - self.time_last_hit_frame > self.hit_frame_duration:
-                self.time_last_hit_frame = now
-                self.frame_hit_index += 1
-                if self.frame_hit_index >= len(self.frames_hit):
-                    self.frame_hit_index = 0
-                    self.anima_hit = False
-                    return
 
         now = time.get_ticks()
 
@@ -191,14 +158,14 @@ class Inimigo:
         self.vx = 0
         self.vy = 0
 
-        # colocar um range máximo que ele precisa ficar do jogador
+        
         if abs(player_x - self.x) > 100:
             self.vx = self.velocidade if player_x > self.x else -self.velocidade
         if abs(player_y - self.y) > 100:
             self.vy = self.velocidade if player_y > self.y else -self.velocidade
 
         rot_rect, _ = self.get_hitbox_ataque((player_x, player_y))
-        player_hitbox = Rect(player_x, player_y, 64, 64)  # ou use player.get_hitbox()
+        player_hitbox = Rect(player_x, player_y, 64, 64)
 
         if rot_rect.colliderect(player_hitbox):
             if hasattr(self, "dar_dano") and callable(self.dar_dano):
@@ -219,123 +186,10 @@ class Inimigo:
 
             if self.veneno_ticks <= 0:
                 self.veneno_ativo = False
-
-    def desenhar(self, tela, player_pos, offset=(0,0)):
-        clock = time.Clock()
-        offset_x, offset_y = offset
-
-        # Aplica o offset na posição do inimigo
-        draw_x = self.x + offset_x
-        draw_y = self.y + offset_y
-
-        if self.anima_hit:
-            frame = self.frames_hit[self.frame_hit_index]
-        elif self.frames:
-            frame = self.frames[self.frame_index]
-        else:
-            corpo = Rect(draw_x, draw_y, self.largura, self.altura)
-            draw.rect(tela, (255, 0, 0), corpo)
-            frame = None
-
-        if frame:
-            tela.blit(frame, (draw_x, draw_y))
-            if self.congelado:
-                frozen_sprite = frame.copy()
-                frozen_sprite.fill((165, 242, 255, 100), special_flags=BLEND_MULT)
-                tela.blit(frozen_sprite, (draw_x, draw_y))
-
-        vida_maxima = getattr(self, "hp_max", 100)
-        largura_barra = 100
-        porcentagem = max(0, min(self.hp / vida_maxima, 1))
-        largura_hp = porcentagem * largura_barra
-
-        if hasattr(self, 'ultimo_dano') and time.get_ticks() - self.ultimo_dano_tempo < 2500:
-            # Aplica offset na barra de vida
-            draw.rect(tela, (255, 200, 200), (draw_x - 20, draw_y + 70, largura_barra, 5))
-            draw.rect(tela, (255, 0, 0), (draw_x - 20, draw_y + 70, largura_hp, 5))
-            draw.rect(tela, (255, 255, 255), (draw_x - 20, draw_y + 70, largura_barra, 5), 1)
-
-        # Aplica offset na hitbox de ataque
-        rot_rect, rot_surf = self.get_hitbox_ataque((player_pos[0] + offset_x, player_pos[1] + offset_y))
-        tela.blit(rot_surf, rot_rect)
-
-        if hasattr(self, 'ultimo_dano') and time.get_ticks() - self.ultimo_dano_tempo < 500:
-            if getattr(self, 'ultimo_dano_critico', False):
-                cor = (255, 215, 0)  # Amarelo-ouro
-                tamanho_fonte = 28  # Texto maior
-                offset_extra = 5 * math.sin(time.get_ticks() / 50)
-                texto = "!"
-            else:
-                cor = (253, 246, 245)
-                tamanho_fonte = 24
-                offset_extra = 0
-                texto = ""
-
-            fonte_atual = font.Font('assets/Fontes/KiwiSoda.ttf', tamanho_fonte)
-            texto_str = f"{self.ultimo_dano:.1f}{texto}"
-
-            offset_y_text = (time.get_ticks() - self.ultimo_dano_tempo) / 4
-            pos_x = draw_x + self.largura / 2
-            pos_y = draw_y - 5 - offset_y_text + offset_extra
-
-            outline_color = (0, 0, 0)
-            outline_size = 1
-            for x_offset in [-outline_size, 0, outline_size]:
-                for y_offset in [-outline_size, 0, outline_size]:
-                    if x_offset == 0 and y_offset == 0:
-                        continue  # Pular o centro (preenchimento principal)
-                    outline_text = fonte_atual.render(texto_str, True, outline_color)
-                    tela.blit(outline_text, (pos_x - outline_text.get_width() / 2 + x_offset,
-                                             pos_y + y_offset))
-
-            # Renderizar texto principal
-            dano_text = fonte_atual.render(texto_str, True, cor)
-            tela.blit(dano_text, (pos_x - dano_text.get_width() / 2, pos_y))
-
-    def get_hitbox_ataque(self, player_pos):
-        if not hasattr(self, '_last_angle') or self._last_pos != player_pos:
-            player_x, player_y = player_pos
-            dx = (player_x + 32) - (self.x + 32)
-            dy = (player_y + 32) - (self.y + 32)
-            self._last_angle = math.atan2(dy, dx)
-            self._last_pos = player_pos
-
-        # player_x = player_pos[0]
-        # player_y = player_pos[1]
-
-        # inimigo orbital
-        # dx = (player_x+32) - (self.x+32)
-        # dy = (player_y+32) - (self.y+32)
-
-        angulo = self._last_angle
-
-        orb_x = self.x + 32 + math.cos(angulo) * (self.radius + 15)
-        orb_y = self.y + 32 + math.sin(angulo) * (self.radius + 15)
-
-        Orb_rect = Rect(0, 0, *(self.orbital_size))
-        Orb_rect.center = (orb_x, orb_y)
-
-        # esse daqui é a hitbox do ataque do inimigo
-        orb_surf = Surface(self.hitboxArma, SRCALPHA)
-        # draw.rect(orb_surf, (255, 0, 0), orb_surf.get_rect(),
-        #           width=1)  # quadrado sem preenchimento vermelho   que fica com o inimigo
-        rot_surf = transform.rotate(orb_surf, -math.degrees(
-            angulo))  # quadrado sem preenchimento vermelho   que fica com o inimigo
-        rot_rect = rot_surf.get_rect(
-            center=Orb_rect.center)  # quadrado sem preenchimento vermelho   que fica com o inimigo
-
-        # tela.blit(rot_surf, Rot_rect) #quadrado sem preenchimento vermelho   que fica com o inimigo
-
-        return rot_rect, rot_surf
-
+    
     def get_hitbox(self):
         return Rect(self.x, self.y, self.largura, self.altura)
 
     def aplicar_modificadores(self, elite=False):
        gerenciador = GerenciadorModificadores()
        gerenciador.aplicar_modificadores(self, elite)
-
-
-
-
-
