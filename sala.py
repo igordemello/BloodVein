@@ -53,7 +53,7 @@ class Sala:
         tipo = self.gerenciador_andar.grafo.nodes[self.gerenciador_andar.sala_atual]['tipo']
         bau_aberto = self.gerenciador_andar.grafo.nodes[self.gerenciador_andar.sala_atual].get('bau_aberto', False)
         self.bau_interagido = False
-
+        self.ativar_menu_bau = False # eu adicionei isso aqui depois de fazer o iniciar e continuar por conta de um erro que estava dando, se DO NADA der merda no bau a culpa é disso e eu vou me matar
         if tipo == 'bau':
             x, y = self.mapa.get_rangebau()[0].topleft
             self.bau = Bau(self.itensDisp, x, y)

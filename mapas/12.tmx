@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="right-down" width="15" height="8" tilewidth="32" tileheight="32" infinite="0" nextlayerid="39" nextobjectid="173">
+<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="right-down" width="15" height="8" tilewidth="32" tileheight="32" infinite="0" nextlayerid="40" nextobjectid="177">
  <tileset firstgid="1" name="Sprite_sheet_tiles" tilewidth="32" tileheight="32" tilecount="66" columns="11">
   <image source="../assets/TileSet/Sprite_sheet_tiles.png" width="352" height="192"/>
  </tileset>
@@ -78,12 +78,14 @@
  <objectgroup id="36" name="inimigo_spawn">
   <object id="172" x="229.75" y="117.5" width="19.5" height="17"/>
  </objectgroup>
- <objectgroup id="15" name="colisor">
-  <object id="61" x="0.142348" y="224.226" width="479.685" height="31.9275"/>
-  <object id="66" x="449.255" y="1.78749" width="41.708" height="233.565"/>
-  <object id="67" x="-20.2582" y="-14.2999" width="50.0497" height="257.398"/>
+ <objectgroup id="15" name="colisor_obstaculo">
   <object id="76" name="bau" x="356.5" y="34.4773" width="21.2386" height="21.1705"/>
-  <object id="78" x="7.5" y="-29.5" width="473" height="41.5"/>
+ </objectgroup>
+ <objectgroup id="39" name="colisor_parede">
+  <object id="173" x="14.0115" y="-0.424591" width="457.284" height="22.0787"/>
+  <object id="174" x="448.368" y="-10.1902" width="23.3525" height="267.917"/>
+  <object id="175" x="14.8607" y="225.458" width="459.832" height="30.9951"/>
+  <object id="176" x="6.36886" y="-2.54755" width="26.3246" height="252.632"/>
  </objectgroup>
  <objectgroup id="33" name="range_bau">
   <object id="77" x="351.875" y="32" width="32.125" height="32.125"/>

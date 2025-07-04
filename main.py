@@ -52,7 +52,7 @@ esperar_soltar_clique = True
 
 bau = False
 loja = False
-menuArmas = True
+menuArmas = False
 continuar = False
 
 menuDeArma = MenuArmas(hud)
@@ -97,6 +97,7 @@ while i == 1:
                     sala_atual = Sala(andar.get_arquivo_atual(), SCREEN, player, andar)
                     minimapa = Minimapa(andar, SCREEN)
                     hud.player = player
+                    menuArmas = True
                     continuar = False
                     gerenciamento.modo = "jogo"
                 elif escolha == "continuar":
@@ -117,6 +118,7 @@ while i == 1:
                         minimapa = Minimapa(andar, SCREEN)
                         hud.player = player
                         continuar = True
+                        menuArmas = False
                         gerenciamento.modo = "jogo"
                         print("Jogo carregado com sucesso!")
                     except Exception as e:
@@ -232,15 +234,13 @@ while i == 1:
         # Obtém o offset atual do screen shake
         offset_x, offset_y = screen_shaker.offset
 
-        if not continuar:
-            if menuArmas:
-                hud.desenhaFundo2()
-                menuDeArma.menu_ativo = True
-                menuDeArma.menuEscolherItens(SCREEN)
+        if menuArmas:
+            hud.desenhaFundo2()
+            menuDeArma.menu_ativo = True
+            menuDeArma.menuEscolherItens(SCREEN)
         else:
             hud.desenhaFundo()
-
-            sala_atual.desenhar(SCREEN)  # a própria sala decide se vai mostrar cutscene ou não
+            sala_atual.desenhar(SCREEN)
 
             if not (sala_atual.cutscene and sala_atual.cutscene.ativa):
                 player.desenhar(SCREEN, mouse_pos)

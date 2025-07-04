@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="right-down" width="15" height="8" tilewidth="32" tileheight="32" infinite="0" nextlayerid="39" nextobjectid="163">
+<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="right-down" width="15" height="8" tilewidth="32" tileheight="32" infinite="0" nextlayerid="40" nextobjectid="167">
  <tileset firstgid="1" name="Sprite_sheet_tiles" tilewidth="32" tileheight="32" tilecount="66" columns="11">
   <image source="../assets/TileSet/Sprite_sheet_tiles.png" width="352" height="192"/>
  </tileset>
@@ -81,12 +81,8 @@
   <object id="145" x="290.75" y="100" width="19.5" height="17"/>
   <object id="146" x="291.75" y="135.5" width="19.5" height="17"/>
  </objectgroup>
- <objectgroup id="15" name="colisor">
-  <object id="61" x="0.142348" y="224.226" width="479.685" height="31.9275"/>
-  <object id="66" x="449.255" y="1.78749" width="41.708" height="233.565"/>
-  <object id="67" x="-20.2582" y="-14.2999" width="50.0497" height="257.398"/>
+ <objectgroup id="15" name="colisor_obstaculo">
   <object id="76" name="bau" x="356.5" y="34.4773" width="21.2386" height="21.1705"/>
-  <object id="78" x="7.5" y="-29.5" width="473" height="41.5"/>
   <object id="151" x="292" y="164.48" width="24" height="15.0398"/>
   <object id="153" x="323.5" y="195.48" width="24" height="15.0398"/>
   <object id="157" x="131.5" y="67.9801" width="24" height="15.0398"/>
@@ -95,6 +91,12 @@
   <object id="160" x="99.5" y="195.98" width="24" height="15.0398"/>
   <object id="161" x="292.5" y="67.9801" width="24" height="15.0398"/>
   <object id="162" x="323.5" y="35.9801" width="24" height="15.0398"/>
+ </objectgroup>
+ <objectgroup id="39" name="colisor_parede">
+  <object id="163" x="14.8607" y="-1.69836" width="16.1345" height="262.822"/>
+  <object id="164" x="448.793" y="4.6705" width="16.559" height="253.905"/>
+  <object id="165" x="-2.12295" y="223.759" width="475.117" height="30.5705"/>
+  <object id="166" x="7.64264" y="-13.1623" width="460.257" height="32.6935"/>
  </objectgroup>
  <objectgroup id="33" name="range_bau">
   <object id="77" x="351.875" y="32" width="32.125" height="32.125"/>

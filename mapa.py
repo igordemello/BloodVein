@@ -101,7 +101,7 @@ class Mapa:
 
         for layer in self.tmx_data.visible_layers:
             if isinstance(layer, pytmx.TiledObjectGroup):
-                if layer.name == "colisor":
+                if layer.name == "colisor_obstaculo" or layer.name == "colisor_parede":
                     for obj in layer:
                         if obj.name == 'bau' and not self.gerenciador_andar.grafo.nodes[self.gerenciador_andar.sala_atual]['tipo'] == 'bau':
                             continue
