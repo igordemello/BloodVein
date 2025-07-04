@@ -1,72 +1,53 @@
 {
     "player": {
         "position": [
-            698,
-            585
+            744,
+            764
         ],
         "stats": {
-            "hp": 91.2125000000001,
+            "hp": 91.3075000000001,
             "hpMax": 100,
             "st": 100,
-            "almas": 1017,
+            "almas": 1002,
             "velocidadeMov": 0.6500000000000001
         },
-        "itens": [
-            11
-        ],
+        "itens": [],
         "itemAtivo": null,
         "arma": {
-            "tipo": "Arco",
+            "tipo": "Karambit",
             "raridade": "comum",
-            "dano": 38.2,
-            "velocidade": 2.8,
-            "lifeSteal": 17.0,
-            "chanceCritico": 10.0,
+            "dano": 9.9,
+            "velocidade": 3.1,
+            "lifeSteal": 6.5,
+            "chanceCritico": 5.0,
             "danoCriticoMod": 2.0,
             "modificador": "Rapida",
             "modificador_detalhes": {
                 "nome": "Rapida",
-                "valor": 2.8
+                "valor": 3.1
             }
         }
     },
     "map": {
-        "sala_atual": "sala2",
+        "sala_atual": "sala4",
         "salas_conquistadas": [
-            "sala3",
-            "sala6",
-            "sala4",
-            "sala1",
-            "sala8"
+            "sala6"
         ],
         "salas_visitadas": [
-            "sala2",
-            "sala3",
             "sala6",
-            "sala4",
-            "sala1",
-            "sala8"
+            "sala4"
         ],
         "bau_aberto": {
-            "sala3": true
+            "sala3": false
         }
     },
     "sala": {
         "inimigos": [
             {
                 "tipo": "Orb",
-                "x": 854,
-                "y": 700,
-                "hp": -52.12000000000002,
-                "vivo": false,
-                "nome_base": "Orb",
-                "elite": false
-            },
-            {
-                "tipo": "Orb",
-                "x": 1068,
-                "y": 730,
-                "hp": -192.10000000000008,
+                "x": 747,
+                "y": 830,
+                "hp": -14.270000000000003,
                 "vivo": false,
                 "nome_base": "Orb",
                 "elite": false
@@ -77,6 +58,6 @@
         "bau": null,
         "em_transicao": false
     },
-    "timestamp": "2025-07-03T03:06:33.283811",
+    "timestamp": "2025-07-03T22:03:24.091063",
     "version": "1.0"
 }
