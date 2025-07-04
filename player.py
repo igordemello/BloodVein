@@ -150,7 +150,7 @@ class Player():
         clock = time.Clock()
         self.dt = clock.get_time()
         self.player_img = self.frame_atual
-        self.player_rect = self.get_hitbox()
+        self.player_rect = Rect(self.x, self.y, 45, 120)
         self.dx = 0
         self.dy = 0
 
@@ -537,7 +537,8 @@ class Player():
         frame = self.frame_atual.copy()
         if self.foi_atingido and time.get_ticks() - self.tempo_atingido < 250:
             frame.fill((255, 255, 255), special_flags=BLEND_RGB_ADD)
-        tela.blit(frame, self.player_rect.topleft)
+        img_rect = frame.get_rect(center=self.player_rect.center)
+        tela.blit(frame, img_rect.topleft)
 
         if self.aoe is not None:
             s, rectAoe,tamanho,tempoCriacao = self.aoe
@@ -584,7 +585,6 @@ class Player():
         rotated_hitbox, rotated_rect = self.get_rotated_rect_ataque(mouse_pos)
         #tela.blit(rotated_hitbox, rotated_rect)
 
-        # draw.rect(tela, (0,255,0), self.get_hitbox(), 2)
 
         if hasattr(self, 'dano_recebido') and time.get_ticks() - self.dano_recebido_tempo < 500:
             if self.telaSangue_alpha > 0:
@@ -615,8 +615,7 @@ class Player():
         self.sistemaparticulas.draw(tela)
 
     def get_hitbox(self):
-        rect = Rect(self.player_img.get_rect(topleft=(self.x, self.y)))
-        return rect
+        return self.player_rect
 
     def get_velocidade(self):
         return (self.vx, self.vy)
