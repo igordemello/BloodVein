@@ -157,6 +157,8 @@ class Player():
 
         self.travado = False
 
+        self.som_dash = True
+
     def carregar_animacao(self, caminho):
         frame_largura = 32
         frame_altura = 48
@@ -201,6 +203,7 @@ class Player():
             print("Não tem item ativo")
 
     def atualizar(self, dt, teclas):
+        
         if self.travado:
             return
         self.dt = dt
@@ -245,6 +248,9 @@ class Player():
             self._dash(dt, teclas, 's')
 
         if self.is_dashing:
+            if self.som_dash == True:
+                som.tocar('dash')
+                self.som_dash = False
             self.rastros.append({
                 "imagem": self.frame_atual.copy(),
                 "pos": self.player_rect.topleft,
@@ -268,6 +274,8 @@ class Player():
 
             self.dash_duration += dt
             if self.dash_duration >= self.dash_duration_max:
+                if self.som_dash == False:
+                    self.som_dash = True
                 self.is_dashing = False
                 self.anim_frame = 0
 

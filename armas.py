@@ -187,8 +187,8 @@ class LaminaDaNoite(Arma):
 
     def aplicaModificador(self):
         self.modificador.aplicarMod(self)
-    def ataquePrincipal(self,inimigo,som):
-        som.som.tocar('ataque1')
+    def ataquePrincipal(self,inimigo):
+        
         if randint(1, 100) <= self.chanceCritico:
             inimigo.hp -= self.dano * self.danoCriticoMod * inimigo.modificadorDanoRecebido * self.comboMult
             inimigo.ultimo_dano_critico = True

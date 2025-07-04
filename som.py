@@ -10,7 +10,8 @@ class GerenciadorDeSom:
             "click": mixer.Sound("sons/clicke.mp3"),
             "buy": mixer.Sound("sons/compra.mp3"),
             "ataque1": mixer.Sound("sons/espada1.mp3"),
-            "ataque2": mixer.Sound("sons/espada2.mp3")
+            "ataque2": mixer.Sound("sons/espada2.mp3"),
+            "dash": mixer.Sound("sons/dash.mp3")
         }
 
         for som in self.sons.values():
