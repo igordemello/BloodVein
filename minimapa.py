@@ -33,6 +33,7 @@ class Minimapa:
         self.icon_spawn = image.load('assets/minimapa/icon_spawn.png').convert_alpha()
         self.icon_boss = image.load('assets/minimapa/icon_boss.png').convert_alpha()
         self.icon_bau = image.load('assets/minimapa/icon_bau.png').convert_alpha()
+        self.icon_loja = image.load('assets/minimapa/icon_loja.png').convert_alpha()
 
 
     def toggle(self):
@@ -117,7 +118,7 @@ class Minimapa:
 
         for node in mapa_info['nodes']:
             should_show = node['visitada'] or (
-                any(t in node['tipo'] for t in ['boss', 'bau']) and 
+                any(t in node['tipo'] for t in ['boss', 'bau', 'loja']) and 
                 any(edge['origem'] == self.gerenciador.sala_atual and edge['destino'] == node['id'] or
                     edge['destino'] == self.gerenciador.sala_atual and edge['origem'] == node['id']
                     for edge in mapa_info['edges'])
@@ -159,6 +160,9 @@ class Minimapa:
                 self.surface.blit(icon_resized, (room_pos[0] - icon_size//2, room_pos[1] - icon_size//2))
             elif 'bau' in node['tipo']:
                 icon_resized = transform.scale(self.icon_bau, (icon_size, icon_size))
+                self.surface.blit(icon_resized, (room_pos[0] - icon_size//2, room_pos[1] - icon_size//2))
+            elif 'loja' in node['tipo']:
+                icon_resized = transform.scale(self.icon_loja, (icon_size, icon_size))
                 self.surface.blit(icon_resized, (room_pos[0] - icon_size//2, room_pos[1] - icon_size//2))
         
 
