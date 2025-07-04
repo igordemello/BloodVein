@@ -21,6 +21,12 @@ class GerenciadorAndar:
 
         # i=0
         # for sala in self.grafo.nodes:
+        #     if self.grafo.nodes[sala]["tipo"] == 'boss':
+        #         self.grafo.nodes[sala]["arquivotmx"] = 'boss.tmx'
+        #         continue
+        #     if self.grafo.nodes[sala]["tipo"] == 'loja':
+        #         self.grafo.nodes[sala]["arquivotmx"] = 'loja.tmx'
+        #         continue
         #     arquivotmx = arquivos[i]
         #     self.grafo.nodes[sala]["arquivotmx"] = arquivotmx
         #     i+=1

@@ -1,4 +1,4 @@
-import pygame
+from pygame import *
 from inimigo import Inimigo
 from inimigos.orb import Orb
 import math
@@ -16,7 +16,7 @@ class MouthOrb(Inimigo):
         self.sprite_size = (64, 64)
         self.animacoes = {
             "idle": {
-                "spritesheet": pygame.image.load("./assets/Enemies/MouthOrb-IdleSheet-Sheet2.png").convert_alpha(),
+                "spritesheet": image.load("./assets/Enemies/MouthOrb-IdleSheet-Sheet2.png").convert_alpha(),
                 "total_frames": 12,
                 "frame_width": 64,
                 "frame_height": 64,
@@ -25,7 +25,7 @@ class MouthOrb(Inimigo):
                 "loop": True
             },
             "ataque": {
-                "spritesheet": pygame.image.load("./assets/Enemies/MouthOrb-AttackSheet.png").convert_alpha(),
+                "spritesheet": image.load("./assets/Enemies/MouthOrb-AttackSheet.png").convert_alpha(),
                 "total_frames": 10,
                 "frame_width": 64,
                 "frame_height": 64,
@@ -34,7 +34,7 @@ class MouthOrb(Inimigo):
                 "loop": False
             },
             "invocacao": {
-                "spritesheet": pygame.image.load("./assets/Enemies/MouthOrb-SpawnSheet.png").convert_alpha(),
+                "spritesheet": image.load("./assets/Enemies/MouthOrb-SpawnSheet.png").convert_alpha(),
                 "total_frames": 4,
                 "frame_width": 64,
                 "frame_height": 64,
@@ -67,20 +67,30 @@ class MouthOrb(Inimigo):
         self.ja_invocou = False
         self.executando_ataque = False
 
+
+        self.tipo_colisao = 'voador'
+
+        self.radius = 70
+        self.hitbox_arma = (70, 100)
+        self.orbital_size = (40, 20)
+        self.hitboxArma = (70, 100)
+
+
+
     def get_hitbox(self):
         raio = min(self.largura, self.altura) // 2
         centro_x = self.x + self.largura // 2
         centro_y = self.y + self.altura // 2
-        return pygame.Rect(centro_x - raio, centro_y - raio, raio * 2, raio * 2)
+        return Rect(centro_x - raio, centro_y - raio, raio * 2, raio * 2)
 
     def _carregar_todas_animacoes(self):
         for chave, dados in self.animacoes.items():
             frames = []
             for i in dados["usar_indices"]:
-                rect = pygame.Rect(i * dados["frame_width"], 0, dados["frame_width"], dados["frame_height"])
-                frame = pygame.Surface((dados["frame_width"], dados["frame_height"]), pygame.SRCALPHA)
+                rect = Rect(i * dados["frame_width"], 0, dados["frame_width"], dados["frame_height"])
+                frame = Surface((dados["frame_width"], dados["frame_height"]), SRCALPHA)
                 frame.blit(dados["spritesheet"], (0, 0), rect)
-                frame = pygame.transform.scale(frame, (self.largura, self.altura))
+                frame = transform.scale(frame, (self.largura, self.altura))
                 frames.append(frame)
             dados["frames"] = frames
 
@@ -111,7 +121,7 @@ class MouthOrb(Inimigo):
         if distancia > alcance:
             return False
 
-        now = pygame.time.get_ticks()
+        now = time.get_ticks()
         if now - self.tempo_ultimo_ataque >= self.cooldown_ataque:
             self.trocar_animacao("ataque")
             self.tempo_ultimo_ataque = now
@@ -131,9 +141,9 @@ class MouthOrb(Inimigo):
         proporcao = max(self.hp, 0) / self.hp_max
         barra_atual = int(largura_barra * proporcao)
 
-        pygame.draw.rect(tela, (60, 60, 60), (x, y, largura_barra, altura_barra))
-        pygame.draw.rect(tela, (255, 0, 0), (x, y, barra_atual, altura_barra))
-        pygame.draw.rect(tela, (255, 255, 255), (x, y, largura_barra, altura_barra), 1)
+        draw.rect(tela, (60, 60, 60), (x, y, largura_barra, altura_barra))
+        draw.rect(tela, (255, 0, 0), (x, y, barra_atual, altura_barra))
+        draw.rect(tela, (255, 255, 255), (x, y, largura_barra, altura_barra), 1)
 
     def instanciar_orb(self, grupo_inimigos, colliders):
         if grupo_inimigos is None:
@@ -141,7 +151,7 @@ class MouthOrb(Inimigo):
         if len(self.orbs_instanciados) < self.max_orbs:
             orb_x = self.x + self.largura // 2 - 32
             orb_y = self.y + self.altura
-            orb_rect = pygame.Rect(orb_x, orb_y, 64, 64)
+            orb_rect = Rect(orb_x, orb_y, 64, 64)
 
             for col in colliders:
                 if orb_rect.colliderect(col["rect"]):
@@ -156,7 +166,7 @@ class MouthOrb(Inimigo):
         if not self.vivo:
             return
 
-        now = pygame.time.get_ticks()
+        now = time.get_ticks()
 
         if self.knockback_time:
             if now - self.knockback_time < self.knockback_duration:
@@ -211,7 +221,7 @@ class MouthOrb(Inimigo):
                 if not self.executando_ataque:
                     if self.iniciar_ataque_corpo_a_corpo(player_pos):
                         rot_rect, _ = self.get_hitbox_ataque(player_pos)
-                        player_hitbox = pygame.Rect(player_pos[0], player_pos[1], 64, 64)
+                        player_hitbox = Rect(player_pos[0], player_pos[1], 64, 64)
                         if rot_rect.colliderect(player_hitbox):
                             if hasattr(self, "dar_dano") and callable(self.dar_dano):
                                 self.dar_dano()
@@ -236,9 +246,46 @@ class MouthOrb(Inimigo):
 
         frame = self.animacoes[self.animacao_atual]["frames"][self.frame_index]
 
-        if self.foi_atingido and pygame.time.get_ticks() - self.tempo_atingido < 250:
+        if self.foi_atingido and time.get_ticks() - self.tempo_atingido < 250:
             frame = frame.copy()
-            frame.fill((255, 255, 255), special_flags=pygame.BLEND_RGB_ADD)
+            frame.fill((255, 255, 255), special_flags=BLEND_RGB_ADD)
 
         tela.blit(frame, (self.x, self.y))
         self.desenhar_barra_vida(tela)
+
+
+    def get_hitbox_ataque(self, player_pos):
+        if not hasattr(self, '_last_angle') or self._last_pos != player_pos:
+            player_x, player_y = player_pos
+            dx = (player_x + 32) - (self.x + 32)
+            dy = (player_y + 32) - (self.y + 32)
+            self._last_angle = math.atan2(dy, dx)
+            self._last_pos = player_pos
+
+        # player_x = player_pos[0]
+        # player_y = player_pos[1]
+
+        # inimigo orbital
+        # dx = (player_x+32) - (self.x+32)
+        # dy = (player_y+32) - (self.y+32)
+
+        angulo = self._last_angle
+
+        orb_x = self.x + 32 + math.cos(angulo) * (self.radius + 15)
+        orb_y = self.y + 32 + math.sin(angulo) * (self.radius + 15)
+
+        Orb_rect = Rect(0, 0, *(self.orbital_size))
+        Orb_rect.center = (orb_x, orb_y)
+
+        # esse daqui é a hitbox do ataque do inimigo
+        orb_surf = Surface(self.hitboxArma, SRCALPHA)
+        # draw.rect(orb_surf, (255, 0, 0), orb_surf.get_rect(),
+        #           width=1)  # quadrado sem preenchimento vermelho   que fica com o inimigo
+        rot_surf = transform.rotate(orb_surf, -math.degrees(
+            angulo))  # quadrado sem preenchimento vermelho   que fica com o inimigo
+        rot_rect = rot_surf.get_rect(
+            center=Orb_rect.center)  # quadrado sem preenchimento vermelho   que fica com o inimigo
+
+        # tela.blit(rot_surf, Rot_rect) #quadrado sem preenchimento vermelho   que fica com o inimigo
+
+        return rot_rect, rot_surf
