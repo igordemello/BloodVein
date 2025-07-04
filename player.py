@@ -9,6 +9,7 @@ from armas import *
 from random import *
 from sistemaparticulas import *
 from screen_shake import screen_shaker
+from som import som
 
 
 class Player():
@@ -379,7 +380,7 @@ class Player():
         if self.attack_progress >= 1.0:
             self.attacking = False
             self.sword_trail_particles = []
-            return
+            return 
 
         angle = self.calcular_angulo(mouse.get_pos())
         centro_jogador = (self.player_rect.centerx, self.player_rect.centery)
@@ -702,7 +703,7 @@ class Player():
                 self.hits = 0
                 self.arma.comboMult = 1.0
         else:
-            self.arma.ataquePrincipal(self, mouse_pos)
+            self.arma.ataquePrincipal(self, mouse_pos,som)
             self.ultimo_ataque = current_time
 
 

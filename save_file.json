@@ -1,63 +1,50 @@
 {
     "player": {
         "position": [
-            744,
-            764
+            950,
+            439
         ],
         "stats": {
-            "hp": 91.3075000000001,
+            "hp": 90.83250000000011,
             "hpMax": 100,
             "st": 100,
-            "almas": 1002,
+            "almas": 999,
             "velocidadeMov": 0.6500000000000001
         },
         "itens": [],
         "itemAtivo": null,
         "arma": {
-            "tipo": "Karambit",
+            "tipo": "LaminaDaNoite",
             "raridade": "comum",
-            "dano": 9.9,
-            "velocidade": 3.1,
-            "lifeSteal": 6.5,
-            "chanceCritico": 5.0,
+            "dano": 30.5,
+            "velocidade": 1.0,
+            "lifeSteal": 8.5,
+            "chanceCritico": 8.0,
             "danoCriticoMod": 2.0,
-            "modificador": "Rapida",
+            "modificador": "Afiada",
             "modificador_detalhes": {
-                "nome": "Rapida",
-                "valor": 3.1
+                "nome": "Afiada",
+                "valor": 13.5
             }
         }
     },
     "map": {
-        "sala_atual": "sala4",
-        "salas_conquistadas": [
-            "sala6"
-        ],
+        "sala_atual": "sala3",
+        "salas_conquistadas": [],
         "salas_visitadas": [
-            "sala6",
-            "sala4"
+            "sala3"
         ],
         "bau_aberto": {
-            "sala3": false
+            "sala1": false
         }
     },
     "sala": {
-        "inimigos": [
-            {
-                "tipo": "Orb",
-                "x": 747,
-                "y": 830,
-                "hp": -14.270000000000003,
-                "vivo": false,
-                "nome_base": "Orb",
-                "elite": false
-            }
-        ],
+        "inimigos": [],
         "porta_liberada": true,
         "visitada": true,
         "bau": null,
         "em_transicao": false
     },
-    "timestamp": "2025-07-03T22:03:24.091063",
+    "timestamp": "2025-07-04T04:54:59.313794",
     "version": "1.0"
 }

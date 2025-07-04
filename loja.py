@@ -6,6 +6,8 @@ from botao import Botao
 from itensDic import ConjuntoItens
 from pygame.math import Vector2
 import math
+from som import GerenciadorDeSom
+from som import som
 
 class Loja():
     def __init__(self, conjunto: ConjuntoItens, player):
@@ -195,6 +197,7 @@ class Loja():
     def checar_compra(self, mouse_pos, tela):
 
         if self.botaosair.checkForInput(mouse_pos):
+            som.tocar("clique")
             return 'sair'
         
         for i, botao in enumerate(self.botoes):
@@ -205,6 +208,7 @@ class Loja():
             
 
                 if self.player.almas >= preco and not self.comprado[i]:
+                    som.tocar("buy")
                     self.player.almas -= preco
                     self.player.adicionarItem(item)
                     comprado = self.font_preco.render("COMPRADO", True, ('Green'))

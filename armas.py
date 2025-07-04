@@ -5,6 +5,8 @@ from pygame.locals import QUIT
 import math
 from random import randint,choice
 from abc import ABC, abstractmethod
+from som import GerenciadorDeSom
+from som import som
 #raridade
 RARIDADES = {
     "comum": 1,
@@ -185,7 +187,8 @@ class LaminaDaNoite(Arma):
 
     def aplicaModificador(self):
         self.modificador.aplicarMod(self)
-    def ataquePrincipal(self,inimigo):
+    def ataquePrincipal(self,inimigo,som):
+        som.som.tocar('ataque1')
         if randint(1, 100) <= self.chanceCritico:
             inimigo.hp -= self.dano * self.danoCriticoMod * inimigo.modificadorDanoRecebido * self.comboMult
             inimigo.ultimo_dano_critico = True

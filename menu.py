@@ -5,7 +5,8 @@ from botao import Botao
 from pygame.math import Vector2
 import cv2
 import numpy as np
-
+from som import GerenciadorDeSom
+from som import som
 
 class gerenciamento():
     def __init__(self):
@@ -31,6 +32,7 @@ class Menu():
         ]
 
         self.hover_escala = [Vector2(1.0, 0.0) for _ in self.botoes]
+        self.ultimo_hover = -1
 
         #vídeo
         self.intro_video = cv2.VideoCapture("assets/UI/inicio.mp4")
@@ -82,7 +84,11 @@ class Menu():
             is_hovered = botao.rect.collidepoint(mouse_pos) or i == self.index_selecionado
 
             if is_hovered:
-                self.index_selecionado = i  
+                if i != self.ultimo_hover:  
+                    som.tocar("hover")  
+                    self.ultimo_hover = i  
+
+                self.index_selecionado = i
 
             alvo = Vector2(1.1, -5) if is_hovered else Vector2(1.0, 0.0)
             self.hover_escala[i] = self.hover_escala[i].lerp(alvo, 0.1)

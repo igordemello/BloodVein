@@ -21,7 +21,8 @@ from minimapa import Minimapa
 from menuarmas import *
 from screen_shake import screen_shaker
 from save_manager import SaveManager
-
+from som import GerenciadorDeSom
+from som import som
 init()
 gerenciamento.modo = 'menu'
 
@@ -52,6 +53,7 @@ esperar_soltar_clique = True
 bau = False
 loja = False
 menuArmas = True
+
 
 menuDeArma = MenuArmas(hud)
 
@@ -85,6 +87,7 @@ while i == 1:
             if ev.type == MOUSEBUTTONDOWN and ev.button == 1:
                 escolha = menu.checar_clique(mouse_pos)
                 if escolha == 'jogo':
+                    som.tocar("click")
                     gerenciamento.modo = "jogo"
                 elif escolha == "sair":
                     quit()
@@ -108,6 +111,7 @@ while i == 1:
 
 
         if gerenciamento.modo == 'sair':
+            som.tocar("click")
             quit()
             sys.exit()
 
