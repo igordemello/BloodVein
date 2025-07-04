@@ -151,7 +151,7 @@ class Player():
         clock = time.Clock()
         self.dt = clock.get_time()
         self.player_img = self.frame_atual
-        self.player_rect = Rect(self.x, self.y, 45, 120)
+        self.player_rect = Rect(self.x, self.y, 60, 120)
         self.dx = 0
         self.dy = 0
 
@@ -711,7 +711,7 @@ class Player():
                 self.hits = 0
                 self.arma.comboMult = 1.0
         else:
-            self.arma.ataquePrincipal(self, mouse_pos,som)
+            self.arma.ataquePrincipal(self, mouse_pos)
             self.ultimo_ataque = current_time
 
 

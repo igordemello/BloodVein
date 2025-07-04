@@ -53,7 +53,7 @@ esperar_soltar_clique = True
 bau = False
 loja = False
 menuArmas = True
-
+continuar = False
 
 menuDeArma = MenuArmas(hud)
 
@@ -71,24 +71,56 @@ while i == 1:
     # Atualiza o screen shake
     screen_shaker.update(dt)
 
-
-    if gerenciamento.modo == 'menu':
-        menu.run()
-        menu.desenho(SCREEN)
-
-
+    # FOR DE EVENTOS
     for ev in event.get():
         eventos.append(ev)
+
         if ev.type == QUIT:
             quit()
             sys.exit()
 
+        # apertando no botão sair do menu
+        if gerenciamento.modo == 'sair':
+            som.tocar("click")
+            quit()
+            sys.exit()
+
+        # eventos para se estivermos na tela do menu
         if gerenciamento.modo == 'menu':
             if ev.type == MOUSEBUTTONDOWN and ev.button == 1:
                 escolha = menu.checar_clique(mouse_pos)
                 if escolha == 'jogo':
                     som.tocar("click")
+                    player = Player(950, 600, 32 * 2, 48 * 2)
+                    hud = Hud(player, SCREEN)
+                    andar = GerenciadorAndar("data/andar1.json")
+                    sala_atual = Sala(andar.get_arquivo_atual(), SCREEN, player, andar)
+                    minimapa = Minimapa(andar, SCREEN)
+                    hud.player = player
+                    continuar = False
                     gerenciamento.modo = "jogo"
+                elif escolha == "continuar":
+                    som.tocar("click")
+                    try:
+                        loaded_data = save_manager.load_game("save_file.json")
+
+                        player.load_save_data(loaded_data['player'], sala_atual.itensDisp, player.lista_mods)
+                        andar.load_save_data(loaded_data['map'])
+                        sala_atual = Sala(
+                            andar.get_arquivo_atual(), 
+                            SCREEN, 
+                            player, 
+                            andar
+                        )
+                        sala_atual.load_save_data(loaded_data['sala'], sala_atual.itensDisp)
+                        hud = Hud(player, SCREEN)
+                        minimapa = Minimapa(andar, SCREEN)
+                        hud.player = player
+                        continuar = True
+                        gerenciamento.modo = "jogo"
+                        print("Jogo carregado com sucesso!")
+                    except Exception as e:
+                        print(f"Erro ao carregar jogo: {e}")
                 elif escolha == "sair":
                     quit()
                     sys.exit()
@@ -105,16 +137,7 @@ while i == 1:
                         quit()
                         sys.exit()
 
-
-
-
-
-
-        if gerenciamento.modo == 'sair':
-            som.tocar("click")
-            quit()
-            sys.exit()
-
+        # eventos para se estivermos na tela do jogo
         if gerenciamento.modo == "jogo":
             if esperar_soltar_clique:
                 if not mouse.get_pressed()[0]:
@@ -181,27 +204,6 @@ while i == 1:
                         game_state = save_manager.generate_game_state(player, andar, sala_atual)
                         save_manager.save_game(game_state, "save_file.json")
 
-                    if ev.key == K_F9:
-                        try:
-                            loaded_data = save_manager.load_game("save_file.json")
-                            
-                            player.load_save_data(loaded_data['player'], sala_atual.itensDisp, player.lista_mods)
-                            andar.load_save_data(loaded_data['map'])
-                            
-                            sala_atual = Sala(
-                                andar.get_arquivo_atual(), 
-                                SCREEN, 
-                                player, 
-                                andar
-                            )
-                            sala_atual.load_save_data(loaded_data['sala'], sala_atual.itensDisp)
-                            
-                            hud.player = player
-                            minimapa.andar = andar
-                            
-                            print("Jogo carregado com sucesso!")
-                        except Exception as e:
-                            print(f"Erro ao carregar jogo: {e}")
 
                     if ev.key == K_PERIOD:
                         item_id = int(input("Digite o ID do item para debug: "))
@@ -216,6 +218,13 @@ while i == 1:
                                 encontrado = True
                                 break
 
+    # aqui ficam os if's para oq acontece dependendo de qual tela estamos
+
+    if gerenciamento.modo == 'menu':
+        menu.run()
+        menu.desenho(SCREEN)
+
+
     if gerenciamento.modo == 'jogo':
         # Limpa a tela
         SCREEN.fill((0, 0, 0))
@@ -223,10 +232,11 @@ while i == 1:
         # Obtém o offset atual do screen shake
         offset_x, offset_y = screen_shaker.offset
 
-        if menuArmas:
-            hud.desenhaFundo2()
-            menuDeArma.menu_ativo = True
-            menuDeArma.menuEscolherItens(SCREEN)
+        if not continuar:
+            if menuArmas:
+                hud.desenhaFundo2()
+                menuDeArma.menu_ativo = True
+                menuDeArma.menuEscolherItens(SCREEN)
         else:
             hud.desenhaFundo()
 

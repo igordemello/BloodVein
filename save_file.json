@@ -1,50 +1,87 @@
 {
     "player": {
         "position": [
-            475,
-            385
+            1339,
+            594
         ],
         "stats": {
-            "hp": 84.56250000000018,
-            "hpMax": 100,
-            "st": 45.0,
-            "almas": 999,
-            "velocidadeMov": 0.6500000000000001
+            "hp": 92.95099999999948,
+            "hpMax": 85,
+            "st": 100,
+            "almas": 1008,
+            "velocidadeMov": 0.5500000000000002
         },
-        "itens": [],
+        "itens": [
+            10
+        ],
         "itemAtivo": null,
         "arma": {
-            "tipo": "LaminaDaNoite",
+            "tipo": "Arco",
             "raridade": "comum",
-            "dano": 16.0,
-            "velocidade": 1.0,
-            "lifeSteal": 8.0,
-            "chanceCritico": 13.0,
-            "danoCriticoMod": 2.0,
-            "modificador": "Precisa",
+            "dano": 167.61728395061732,
+            "velocidade": 0.8,
+            "lifeSteal": 19.0,
+            "chanceCritico": 10.0,
+            "danoCriticoMod": 2.9876543209876547,
+            "modificador": "Afiada",
             "modificador_detalhes": {
-                "nome": "Precisa",
-                "valor": 5
+                "nome": "Afiada",
+                "valor": 24.0
             }
         }
     },
     "map": {
-        "sala_atual": "sala3",
-        "salas_conquistadas": [],
+        "sala_atual": "sala4",
+        "salas_conquistadas": [
+            "sala1",
+            "sala3",
+            "sala0"
+        ],
         "salas_visitadas": [
-            "sala3"
+            "sala1",
+            "sala3",
+            "sala4",
+            "sala0"
         ],
         "bau_aberto": {
-            "sala1": false
+            "sala1": true
         }
     },
     "sala": {
-        "inimigos": [],
-        "porta_liberada": true,
+        "inimigos": [
+            {
+                "tipo": "Orb",
+                "x": 884,
+                "y": 518,
+                "hp": 400.0,
+                "vivo": true,
+                "nome_base": "Orb",
+                "elite": false
+            },
+            {
+                "tipo": "Orb",
+                "x": 1079,
+                "y": 524,
+                "hp": -17.902469135802534,
+                "vivo": false,
+                "nome_base": "Orb",
+                "elite": false
+            },
+            {
+                "tipo": "Orb",
+                "x": 1244,
+                "y": 642,
+                "hp": -185.51975308641983,
+                "vivo": false,
+                "nome_base": "Orb",
+                "elite": false
+            }
+        ],
+        "porta_liberada": false,
         "visitada": true,
         "bau": null,
         "em_transicao": false
     },
-    "timestamp": "2025-07-04T05:13:30.482380",
+    "timestamp": "2025-07-04T11:17:42.912937",
     "version": "1.0"
 }

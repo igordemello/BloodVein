@@ -119,7 +119,7 @@ class Sala:
             return [elite,Orb(540,700,64,64,hp=200),Orb(400,700,64,64,hp=200),Orb(690,700,64,64,hp=200) ]
             #depois substituir esses 3 orbs por 3 inimigos aleatórios
         else:
-            return []
+            # return []
             quant = randint(1, 4)
             cords = [(400, 700), (680, 800), (850, 600), (990, 800), (1150, 800)]
             cordsEscolhe = sample(cords, quant)
