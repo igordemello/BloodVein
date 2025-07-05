@@ -54,7 +54,7 @@ class Sala:
         self.leve_atual = 0
         self.max_leves = randint(2,5)
         self.inimigos_por_leva = 1 
-        self.tempo_entrada = 1000 
+        self.tempo_entrada = time.get_ticks() 
         self.cooldown_inicial = 1000  
         self.inimigos_spawnados = False
 
