@@ -66,7 +66,7 @@ class Arma(ABC):
 
 
 #MODIFICADORES:
-class BainhaRapida(Modificador):
+class Rapida(Modificador):
     def __init__(self,arma):
         self.valor = randint(15+arma.raridade,30+arma.raridade)/10
         self.nome = "Rapida"
@@ -131,14 +131,14 @@ class Potente(Modificador):
 class ListaMods:
     def __init__(self):
         self.modificadores_por_raridade = {
-            "comum": [BainhaRapida, Afiada, Precisa],
+            "comum": [Rapida, Afiada, Precisa],
             "rara": [Impactante, Sangrenta, Pesada],
             "lendária": [Sortuda, Potente],
         }
         
         self.modificadores_por_nome = {
             cls.__name__: cls for cls in 
-            [BainhaRapida, Afiada, Precisa, Impactante, Sangrenta, Pesada, Sortuda, Potente]
+            [Rapida, Afiada, Precisa, Impactante, Sangrenta, Pesada, Sortuda, Potente]
         }
 
     def get_mod_by_name(self, nome):
