@@ -1,17 +1,17 @@
 {
     "player": {
         "position": [
-            914,
-            425
+            498,
+            760
         ],
         "stats": {
-            "hp": 79.75250000000042,
+            "hp": 89.40750000000013,
             "hpMax": 100,
             "st": 100,
-            "almas": 1015,
+            "almas": 900,
             "velocidadeMov": 0.6500000000000001,
             "atributos": {
-                "forca": 10,
+                "forca": 1,
                 "destreza": 1,
                 "agilidade": 1,
                 "vigor": 1,
@@ -20,35 +20,45 @@
                 "sorte": 1
             }
         },
-        "itens": [],
+        "itens": [
+            8,
+            8,
+            8
+        ],
         "itemAtivo": null,
         "arma": {
-            "tipo": "EspadaDoTita",
+            "tipo": "LaminaDaNoite",
             "raridade": "comum",
-            "dano": 302.0,
-            "velocidade": 0.5,
-            "lifeSteal": 23.5,
-            "chanceCritico": 12.0,
-            "danoCriticoMod": 3,
-            "modificador": "Afiada",
+            "dano": 17.0,
+            "velocidade": 1.0,
+            "lifeSteal": 8.5,
+            "chanceCritico": 13.0,
+            "danoCriticoMod": 2.0,
+            "modificador": "Precisa",
             "modificador_detalhes": {
-                "nome": "Afiada",
-                "valor": 28.5
+                "nome": "Precisa",
+                "valor": 5
             }
         }
     },
     "map": {
-        "sala_atual": "sala0",
+        "sala_atual": "sala9",
         "salas_conquistadas": [
+            "sala1",
             "sala2",
-            "sala3",
-            "sala1"
+            "sala7",
+            "sala5",
+            "sala0",
+            "sala4"
         ],
         "salas_visitadas": [
+            "sala1",
             "sala2",
+            "sala7",
+            "sala5",
+            "sala9",
             "sala0",
-            "sala3",
-            "sala1"
+            "sala4"
         ],
         "bau_aberto": {
             "sala10": false
@@ -60,6 +70,6 @@
         "bau": null,
         "em_transicao": false
     },
-    "timestamp": "2025-07-05T08:56:48.406435",
+    "timestamp": "2025-07-05T16:23:58.572913",
     "version": "1.0"
 }

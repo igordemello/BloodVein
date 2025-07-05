@@ -77,7 +77,7 @@ class ConjuntoItens:
                     VidaMaxima(-50),
                     DecaimentoVida(0)
                 ],
-                sprite=image.load("assets\itens\ChapeuDeBruxa.png").convert_alpha(),
+                sprite=image.load("assets\itens\coração.png").convert_alpha(),
                 raridade="lendaria",
                 id=7
             ),
@@ -87,7 +87,7 @@ class ConjuntoItens:
                 efeitos=[
                     Revives(1)
                 ],
-                sprite=image.load("assets\itens\ChapeuDeBruxa.png").convert_alpha(),
+                sprite=image.load("assets\itens\caixao.png").convert_alpha(),
                 raridade="lendaria",
                 id=8,
             ),
