@@ -54,9 +54,13 @@ class Sala:
         self.leve_atual = 0
         self.max_leves = randint(2,5)
         self.inimigos_por_leva = 1 
-        self.tempo_entrada = time.get_ticks() 
+        self.tempo_entrada = 1000 
         self.cooldown_inicial = 1000  
-        self.inimigos_spawnados = False 
+        self.inimigos_spawnados = False
+
+        self.fumaça_particula = [] 
+        self.ultima_fumaça = 0
+        self.intervalo_fumaça = 100
 
         tipo = self.gerenciador_andar.grafo.nodes[self.gerenciador_andar.sala_atual]['tipo']
         bau_aberto = self.gerenciador_andar.grafo.nodes[self.gerenciador_andar.sala_atual].get('bau_aberto', False)
@@ -157,8 +161,19 @@ class Sala:
         return inimigo
 
 
+    def particulas_fumaça(self,x,y):
+        return{'x': x + randint(-10,20),
+               'y': y + randint(-10,10),
+               "size": randint(5,15),
+               'alpha': randint(30,100),
+               'life': randint(500,1000),
+               'created': time.get_ticks(),
+               'color': (228, 212, 211)
+               }
+
 
     def atualizar(self,dt,teclas, eventos):
+
         if self.cutscene and self.cutscene.ativa:
             self.cutscene.update(eventos)  # ou eventos se estiver usando eventos
             return  # pausa o resto da sala
@@ -230,6 +245,24 @@ class Sala:
                 self.ativar_menu_bau = True
                 self.bau_interagido = True 
 
+        now = time.get_ticks()
+        if self.inimigos_spawnados:
+            self.fumaça_particula = []
+    
+        elif not self.inimigos_spawnados and not self.gerenciador_andar.sala_foi_conquistada(self.gerenciador_andar.sala_atual):
+            if now - int(self.ultima_fumaça) > self.intervalo_fumaça:
+                for x,y in self.spawn_points:
+                    self.fumaça_particula.append(self.particulas_fumaça(x,y))
+                self.ultima_fumaça = now
+
+
+                for particula in self.fumaça_particula[:]:
+                    particula['alpha'] -= 0.4
+                    particula['size'] += 0.2
+                    if now - particula['created'] > particula['life'] or particula['alpha'] <= 0:
+                        self.fumaça_particula.remove(particula)
+
+
 
 
 
@@ -261,6 +294,25 @@ class Sala:
 
         if self.bau:
             tela.blit(self.bau.image, (self.bau.rect.x + offset_x, self.bau.rect.y + offset_y))
+            
+
+        offset_x, offset_y = screen_shaker.offset
+
+        # Desenhar fumaça nos spawn points
+        for particula in self.fumaça_particula:
+            s = Surface((particula['size'] * 2, particula['size'] * 2), SRCALPHA)
+            draw.circle(
+                s, 
+                (*particula['color'], particula['alpha']),
+                (particula['size'], particula['size']),
+                particula['size']
+            )
+            tela.blit(s, (
+                particula['x'] - particula['size'] + offset_x, 
+                particula['y'] - particula['size'] + offset_y
+            ))
+    
+
 
         
 
