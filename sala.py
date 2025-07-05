@@ -9,7 +9,7 @@ from inimigos.orb import Orb
 import inimigos.MouthOrbBoss as bossmod
 from colisao import Colisao
 from loja import Loja
-from random import randint, sample
+from random import randint, sample, choice
 import gerenciador_andar
 from screen_shake import screen_shaker
 from cutscene import Cutscene
@@ -50,6 +50,14 @@ class Sala:
         self.visitada = False
         self.cutscene = None
 
+        self.spawn_points = self.mapa.get_inimigospawn()  
+        self.leve_atual = 0
+        self.max_leves = randint(2,5)
+        self.inimigos_por_leva = 1 
+        self.tempo_entrada = time.get_ticks() 
+        self.cooldown_inicial = 2000  
+        self.inimigos_spawnados = False 
+
         tipo = self.gerenciador_andar.grafo.nodes[self.gerenciador_andar.sala_atual]['tipo']
         bau_aberto = self.gerenciador_andar.grafo.nodes[self.gerenciador_andar.sala_atual].get('bau_aberto', False)
         self.bau_interagido = False
@@ -89,53 +97,77 @@ class Sala:
         for inimigo in self.inimigos:
             self.colisao.adicionar_entidade(inimigo)
 
-    '''
+  
     def _criar_inimigos(self):
-        if "boss" in self.gerenciador_andar.grafo.nodes[self.gerenciador_andar.sala_atual]["tipo"]:
-            return [bossmod.MouthOrb(400, 700, 192, 192, hp=5000,velocidade=3, dano=30)]
-        else:
-            #bagulho pequeno so pra aleatorizar o numero de inimigos numa sala, só na fase de testes mesmo
-            #return []
-            quant = randint(1, 4)
-            cords = [(400,700), (680,800), (850,600),(990,800), (1150,800)]
-            cordsEscolhe = sample(cords,quant)
-            inimigos = []
-            for i in cordsEscolhe:
-                inimigos.append(Orb(i[0],i[1],64,64,hp=200))
+        if self.gerenciador_andar.sala_foi_conquistada(self.gerenciador_andar.sala_atual):
+            self.leve_atual = self.max_leves + 2
+            return []
+        tipo_sala = self.gerenciador_andar.grafo.nodes[self.gerenciador_andar.sala_atual]["tipo"]
 
-            return inimigos
-            #return [Orb(400,700,64,64,hp=200),Orb(400,700,64,64,hp=200)]
+        if 'spawn' in tipo_sala:
+            self.leve_atual = self.max_leves + 2
+            return []
 
-    '''
-    def _criar_inimigos(self):
-        if "boss" in self.gerenciador_andar.grafo.nodes[self.gerenciador_andar.sala_atual]["tipo"]:
+        #melhorar essa logica de boss para diferentes andares dps
+        if "boss" in tipo_sala:
             boss = bossmod.MouthOrb(400, 700, 192, 192, hp=5000, velocidade=3, dano=30)
-            boss.nome_base = "Mãe Orbe"  # sei lá
+            boss.nome_base = "Mãe Orbe"
             return [boss]
-        elif "bau" in self.gerenciador_andar.grafo.nodes[self.gerenciador_andar.sala_atual]["tipo"]:
-            elite = Orb(400, 700, 64, 64, hp=300)
-            elite.nome_base = "Orb"
-            elite.aplicar_modificadores(elite=True)
-            return [elite,Orb(540,700,64,64,hp=200),Orb(400,700,64,64,hp=200),Orb(690,700,64,64,hp=200) ]
-            #depois substituir esses 3 orbs por 3 inimigos aleatórios
-        else:
-            # return []
-            quant = randint(1, 4)
-            cords = [(400, 700), (680, 800), (850, 600), (990, 800), (1150, 800)]
-            cordsEscolhe = sample(cords, quant)
+        
+        tempo_atual = time.get_ticks()
+        if tempo_atual - self.tempo_entrada < self.cooldown_inicial and not self.inimigos_spawnados:
+            return [] 
+        
+        self.inimigos_spawnados = True
+
+        if not self.visitada:
+            self.leve_atual = 0
+
+        if self.leve_atual < self.max_leves:
+            self.leve_atual += 1
             inimigos = []
-            for i in cordsEscolhe:
-                inimigo = Orb(i[0], i[1], 64, 64, hp=200)
-                inimigo.nome_base = "Orb"
-                inimigo.aplicar_modificadores(elite=False)
+            
+            # Agora cria um inimigo em CADA spawn point
+            for x, y in self.spawn_points:
+                inimigo = self._criar_inimigo_aleatorio(x, y, tipo_sala)
                 inimigos.append(inimigo)
+            
             return inimigos
+        
+        return []
+
+    def _criar_inimigo_aleatorio(self, x, y, tipo_sala):
+        elite = "bau" in tipo_sala
+
+        tipos_disponiveis = ["orb"]
+        tipo_escolhido = choice(tipos_disponiveis)
+
+        if tipo_escolhido == "orb":
+            inimigo = Orb(x, y, 64, 64, hp=200 if not elite else 300)
+            inimigo.nome_base = "Orb"
+            inimigo.aplicar_modificadores(elite=elite)
+
+        # Adicione outros tipos de inimigos aqui no futuro:
+        # elif tipo_escolhido == "novo_inimigo":
+        #     inimigo = NovoInimigo(x, y, ...)
+
+        return inimigo
+
 
 
     def atualizar(self,dt,teclas, eventos):
         if self.cutscene and self.cutscene.ativa:
             self.cutscene.update(eventos)  # ou eventos se estiver usando eventos
             return  # pausa o resto da sala
+        
+
+
+        if not any(inimigo.vivo for inimigo in self.inimigos) and self.leve_atual < self.max_leves:
+            nova_leva = self._criar_inimigos()
+            self.inimigos.extend(nova_leva)
+            
+            for inimigo in nova_leva:
+                self.colisao.adicionar_entidade(inimigo)
 
         for inimigo in self.inimigos:
             if inimigo.vivo:
@@ -156,7 +188,7 @@ class Sala:
             if self.player.x > 50 and self.player.x < self.tela.get_width() - 50:
                 self.visitada = True
         else:
-            self.porta_liberada = not any(inimigo.vivo for inimigo in self.inimigos)
+            self.porta_liberada = (not any(inimigo.vivo for inimigo in self.inimigos) and self.leve_atual >= self.max_leves)
 
         if self.pode_trocar_de_sala() and teclas[K_e]:
             original_pos = (self.player.x, self.player.y)
@@ -227,6 +259,8 @@ class Sala:
         if self.bau:
             tela.blit(self.bau.image, (self.bau.rect.x + offset_x, self.bau.rect.y + offset_y))
 
+        
+
         #debug visual das colisões do player e do mapa:
         # for collider in self.mapa.get_colliders():
         #     draw.rect(tela, (255,0,0), collider['rect'], 1)
@@ -252,7 +286,7 @@ class Sala:
                 self.player.is_dashing = False
 
 
-                if not any(inimigo.vivo for inimigo in self.inimigos):
+                if not any(inimigo.vivo for inimigo in self.inimigos) and self.leve_atual >= self.max_leves:
                     self.gerenciador_andar.marcar_sala_conquistada(self.gerenciador_andar.sala_atual)
 
                 codigo_porta = porta['codigoporta']
