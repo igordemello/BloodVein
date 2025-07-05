@@ -363,18 +363,18 @@ class Sala:
 
     def get_save_data(self):
         return {
-            'inimigos': [
-                {
-                    'tipo': type(inimigo).__name__,
-                    'x': inimigo.x,
-                    'y': inimigo.y,
-                    'hp': inimigo.hp,
-                    'vivo': inimigo.vivo,
-                    'nome_base': getattr(inimigo, 'nome_base', None),
-                    'elite': getattr(inimigo, 'elite', False)
-                }
-                for inimigo in self.inimigos
-            ],
+            # 'inimigos': [
+            #     {
+            #         'tipo': type(inimigo).__name__,
+            #         'x': inimigo.x,
+            #         'y': inimigo.y,
+            #         'hp': inimigo.hp,
+            #         'vivo': inimigo.vivo,
+            #         'nome_base': getattr(inimigo, 'nome_base', None),
+            #         'elite': getattr(inimigo, 'elite', False)
+            #     }
+            #     for inimigo in self.inimigos
+            # ],
             'porta_liberada': self.porta_liberada,
             'visitada': self.visitada,
             'bau': {
@@ -391,30 +391,30 @@ class Sala:
         self.visitada = data['visitada']
         self.em_transicao = data.get('em_transicao', False)
         
-        self.inimigos = []
-        for inimigo_data in data['inimigos']:
-            if inimigo_data['tipo'] == 'MouthOrb':
-                inimigo = bossmod.MouthOrb(
-                    inimigo_data['x'], 
-                    inimigo_data['y'], 
-                    192, 192, 
-                    hp=inimigo_data['hp'],
-                    velocidade=3, 
-                    dano=30
-                )
-            else: 
-                inimigo = Orb(
-                    inimigo_data['x'], 
-                    inimigo_data['y'], 
-                    64, 64, 
-                    hp=inimigo_data['hp']
-                )
+        # self.inimigos = []
+        # for inimigo_data in data['inimigos']:
+        #     if inimigo_data['tipo'] == 'MouthOrb':
+        #         inimigo = bossmod.MouthOrb(
+        #             inimigo_data['x'], 
+        #             inimigo_data['y'], 
+        #             192, 192, 
+        #             hp=inimigo_data['hp'],
+        #             velocidade=3, 
+        #             dano=30
+        #         )
+        #     else: 
+        #         inimigo = Orb(
+        #             inimigo_data['x'], 
+        #             inimigo_data['y'], 
+        #             64, 64, 
+        #             hp=inimigo_data['hp']
+        #         )
                 
-                if 'nome_base' in inimigo_data:
-                    inimigo.nome_base = inimigo_data['nome_base']
+        #         if 'nome_base' in inimigo_data:
+        #             inimigo.nome_base = inimigo_data['nome_base']
             
-            inimigo.vivo = inimigo_data['vivo']
-            self.inimigos.append(inimigo)
+        #     inimigo.vivo = inimigo_data['vivo']
+        #     self.inimigos.append(inimigo)
         
         if data['bau'] and self.bau:
             self.bau.aberto = data['bau']['aberto']

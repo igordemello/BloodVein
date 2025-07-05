@@ -1,17 +1,17 @@
 {
     "player": {
         "position": [
-            1011,
-            606
+            914,
+            425
         ],
         "stats": {
-            "hp": 92.82750000000009,
+            "hp": 79.75250000000042,
             "hpMax": 100,
             "st": 100,
-            "almas": 999,
+            "almas": 1015,
             "velocidadeMov": 0.6500000000000001,
             "atributos": {
-                "forca": 1,
+                "forca": 10,
                 "destreza": 1,
                 "agilidade": 1,
                 "vigor": 1,
@@ -23,164 +23,43 @@
         "itens": [],
         "itemAtivo": null,
         "arma": {
-            "tipo": "Arco",
+            "tipo": "EspadaDoTita",
             "raridade": "comum",
-            "dano": 59.0,
-            "velocidade": 1.0,
-            "lifeSteal": 18.0,
-            "chanceCritico": 10.0,
-            "danoCriticoMod": 2.0,
+            "dano": 302.0,
+            "velocidade": 0.5,
+            "lifeSteal": 23.5,
+            "chanceCritico": 12.0,
+            "danoCriticoMod": 3,
             "modificador": "Afiada",
             "modificador_detalhes": {
                 "nome": "Afiada",
-                "valor": 23.0
+                "valor": 28.5
             }
         }
     },
     "map": {
-        "sala_atual": "sala2",
-        "salas_conquistadas": [],
+        "sala_atual": "sala0",
+        "salas_conquistadas": [
+            "sala2",
+            "sala3",
+            "sala1"
+        ],
         "salas_visitadas": [
-            "sala2"
+            "sala2",
+            "sala0",
+            "sala3",
+            "sala1"
         ],
         "bau_aberto": {
             "sala10": false
         }
     },
     "sala": {
-        "inimigos": [
-            {
-                "tipo": "Orb",
-                "x": 605,
-                "y": 347,
-                "hp": 200,
-                "vivo": true,
-                "nome_base": "Orb",
-                "elite": false
-            },
-            {
-                "tipo": "Orb",
-                "x": 591,
-                "y": 861,
-                "hp": 240.0,
-                "vivo": true,
-                "nome_base": "Orb",
-                "elite": false
-            },
-            {
-                "tipo": "Orb",
-                "x": 1179,
-                "y": 773,
-                "hp": 200,
-                "vivo": true,
-                "nome_base": "Orb",
-                "elite": false
-            },
-            {
-                "tipo": "Orb",
-                "x": 605,
-                "y": 347,
-                "hp": 240.0,
-                "vivo": true,
-                "nome_base": "Orb",
-                "elite": false
-            },
-            {
-                "tipo": "Orb",
-                "x": 591,
-                "y": 861,
-                "hp": 240.0,
-                "vivo": true,
-                "nome_base": "Orb",
-                "elite": false
-            },
-            {
-                "tipo": "Orb",
-                "x": 1179,
-                "y": 773,
-                "hp": 240.0,
-                "vivo": true,
-                "nome_base": "Orb",
-                "elite": false
-            },
-            {
-                "tipo": "Orb",
-                "x": 605,
-                "y": 347,
-                "hp": 200,
-                "vivo": true,
-                "nome_base": "Orb",
-                "elite": false
-            },
-            {
-                "tipo": "Orb",
-                "x": 591,
-                "y": 861,
-                "hp": 400.0,
-                "vivo": true,
-                "nome_base": "Orb",
-                "elite": false
-            },
-            {
-                "tipo": "Orb",
-                "x": 1169,
-                "y": 389,
-                "hp": 105.6,
-                "vivo": true,
-                "nome_base": "Orb",
-                "elite": false
-            },
-            {
-                "tipo": "Orb",
-                "x": 1179,
-                "y": 773,
-                "hp": 200,
-                "vivo": true,
-                "nome_base": "Orb",
-                "elite": false
-            },
-            {
-                "tipo": "Orb",
-                "x": 605,
-                "y": 347,
-                "hp": 240.0,
-                "vivo": true,
-                "nome_base": "Orb",
-                "elite": false
-            },
-            {
-                "tipo": "Orb",
-                "x": 591,
-                "y": 861,
-                "hp": 240.0,
-                "vivo": true,
-                "nome_base": "Orb",
-                "elite": false
-            },
-            {
-                "tipo": "Orb",
-                "x": 1169,
-                "y": 389,
-                "hp": 200,
-                "vivo": true,
-                "nome_base": "Orb",
-                "elite": false
-            },
-            {
-                "tipo": "Orb",
-                "x": 1179,
-                "y": 773,
-                "hp": 200,
-                "vivo": true,
-                "nome_base": "Orb",
-                "elite": false
-            }
-        ],
         "porta_liberada": false,
         "visitada": true,
         "bau": null,
         "em_transicao": false
     },
-    "timestamp": "2025-07-04T22:35:16.808820",
+    "timestamp": "2025-07-05T08:56:48.406435",
     "version": "1.0"
 }
