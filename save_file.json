@@ -1,14 +1,14 @@
 {
     "player": {
         "position": [
-            498,
-            760
+            868,
+            466
         ],
         "stats": {
-            "hp": 89.40750000000013,
+            "hp": 65.23000000000025,
             "hpMax": 100,
             "st": 100,
-            "almas": 900,
+            "almas": 999,
             "velocidadeMov": 0.6500000000000001,
             "atributos": {
                 "forca": 1,
@@ -20,45 +20,31 @@
                 "sorte": 1
             }
         },
-        "itens": [
-            8,
-            8,
-            8
-        ],
+        "itens": [],
         "itemAtivo": null,
         "arma": {
             "tipo": "LaminaDaNoite",
             "raridade": "comum",
-            "dano": 17.0,
-            "velocidade": 1.0,
-            "lifeSteal": 8.5,
-            "chanceCritico": 13.0,
+            "dano": 13.9,
+            "velocidade": 2.1,
+            "lifeSteal": 8.0,
+            "chanceCritico": 8.0,
             "danoCriticoMod": 2.0,
-            "modificador": "Precisa",
+            "modificador": "Rapida",
             "modificador_detalhes": {
-                "nome": "Precisa",
-                "valor": 5
+                "nome": "Rapida",
+                "valor": 2.1
             }
         }
     },
     "map": {
-        "sala_atual": "sala9",
+        "sala_atual": "sala1",
         "salas_conquistadas": [
-            "sala1",
-            "sala2",
-            "sala7",
-            "sala5",
-            "sala0",
-            "sala4"
+            "sala2"
         ],
         "salas_visitadas": [
-            "sala1",
             "sala2",
-            "sala7",
-            "sala5",
-            "sala9",
-            "sala0",
-            "sala4"
+            "sala1"
         ],
         "bau_aberto": {
             "sala10": false
@@ -70,6 +56,6 @@
         "bau": null,
         "em_transicao": false
     },
-    "timestamp": "2025-07-05T16:23:58.572913",
+    "timestamp": "2025-07-05T18:38:35.595795",
     "version": "1.0"
 }
