@@ -53,7 +53,7 @@ player = Player(950, 600, 32 * 2, 48 * 2)
 hud = Hud(player, SCREEN)
 andar = GerenciadorAndar()
 
-fonte = font.SysFont("Arial", 24)
+fonte = font.Font("assets/fontes/alagard.ttf", 48)
 
 minimapa = Minimapa(andar, SCREEN)
 
@@ -309,6 +309,7 @@ while i == 1:
                 fps_text = fps_font.render(f"FPS: {fps}", True, (255, 255, 255))
             SCREEN.blit(fps_text, (10 + offset_x, 10 + offset_y))
             if jogo_pausado:
+                pause.runPause(SCREEN)
                 pause.pauseFuncionamento(SCREEN)
                 if mensagem_salvo and time.get_ticks() - tempo_mensagem_salvo < 2000:
                     SCREEN.blit(mensagem_salvo, (1920 // 2 - mensagem_salvo.get_width() // 2, 900))
