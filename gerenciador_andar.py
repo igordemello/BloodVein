@@ -21,6 +21,9 @@ class GerenciadorAndar:
 
         # i=0
         # for sala in self.grafo.nodes:
+        #     if self.grafo.nodes[sala]["tipo"] == 'spawn':
+        #         self.grafo.nodes[sala]["arquivotmx"] = 'spawn.tmx'
+        #         continue
         #     if self.grafo.nodes[sala]["tipo"] == 'boss':
         #         self.grafo.nodes[sala]["arquivotmx"] = 'boss.tmx'
         #         continue

@@ -57,6 +57,9 @@ class Sala:
         self.tempo_entrada = time.get_ticks() 
         self.cooldown_inicial = 1000  
         self.inimigos_spawnados = False
+        self.cooldown_entre_levas = 1000  
+        self.tempo_ultima_leva = 0  
+        self.aguardando_nova_leva = False 
 
         self.fumaça_particula = [] 
         self.ultima_fumaça = 0
@@ -112,15 +115,19 @@ class Sala:
             self.leve_atual = self.max_leves + 2
             return []
 
-        #melhorar essa logica de boss para diferentes andares dps
-        if "boss" in tipo_sala:
-            boss = bossmod.MouthOrb(400, 700, 192, 192, hp=5000, velocidade=3, dano=30)
-            boss.nome_base = "Mãe Orbe"
-            return [boss]
         
         tempo_atual = time.get_ticks()
         if tempo_atual - self.tempo_entrada < self.cooldown_inicial and not self.inimigos_spawnados:
             return [] 
+        
+        #melhorar essa logica de boss para diferentes andares dps
+        if "boss" in tipo_sala:
+            print(self.spawn_points)
+            xboss,yboss= self.spawn_points[0]
+            boss = bossmod.MouthOrb(xboss, yboss, 192, 192, hp=5000, velocidade=3, dano=30)
+            boss.nome_base = "Mãe Orbe"
+            self.leve_atual = self.max_leves + 2
+            return [boss]
         
         self.inimigos_spawnados = True
 
@@ -131,7 +138,6 @@ class Sala:
             self.leve_atual += 1
             inimigos = []
             
-            # Agora cria um inimigo em CADA spawn point
             for x, y in self.spawn_points:
                 testrect = Rect(x,y,50,50)
                 if self.player.get_hitbox().colliderect(testrect):
@@ -178,14 +184,19 @@ class Sala:
             self.cutscene.update(eventos)  # ou eventos se estiver usando eventos
             return  # pausa o resto da sala
         
-
+        agora = time.get_ticks()
 
         if not any(inimigo.vivo for inimigo in self.inimigos) and self.leve_atual < self.max_leves:
-            nova_leva = self._criar_inimigos()
-            self.inimigos.extend(nova_leva)
+            if not self.aguardando_nova_leva:
+                self.aguardando_nova_leva = True
+                self.tempo_ultima_leva = agora
+            elif agora - self.tempo_ultima_leva >= self.cooldown_entre_levas:
+                self.aguardando_nova_leva = False
+                nova_leva = self._criar_inimigos()
+                self.inimigos.extend(nova_leva)
             
-            for inimigo in nova_leva:
-                self.colisao.adicionar_entidade(inimigo)
+                for inimigo in nova_leva:
+                    self.colisao.adicionar_entidade(inimigo)
 
         for inimigo in self.inimigos:
             if inimigo.vivo:
@@ -206,7 +217,7 @@ class Sala:
             if self.player.x > 50 and self.player.x < self.tela.get_width() - 50:
                 self.visitada = True
         else:
-            self.porta_liberada = (not any(inimigo.vivo for inimigo in self.inimigos) and self.leve_atual >= self.max_leves)
+            self.porta_liberada = (not any(inimigo.vivo for inimigo in self.inimigos) and self.leve_atual >= self.max_leves and not self.aguardando_nova_leva)
 
         if self.pode_trocar_de_sala() and teclas[K_e]:
             original_pos = (self.player.x, self.player.y)
@@ -418,18 +429,6 @@ class Sala:
 
     def get_save_data(self):
         return {
-            # 'inimigos': [
-            #     {
-            #         'tipo': type(inimigo).__name__,
-            #         'x': inimigo.x,
-            #         'y': inimigo.y,
-            #         'hp': inimigo.hp,
-            #         'vivo': inimigo.vivo,
-            #         'nome_base': getattr(inimigo, 'nome_base', None),
-            #         'elite': getattr(inimigo, 'elite', False)
-            #     }
-            #     for inimigo in self.inimigos
-            # ],
             'porta_liberada': self.porta_liberada,
             'visitada': self.visitada,
             'bau': {
@@ -446,30 +445,6 @@ class Sala:
         self.visitada = data['visitada']
         self.em_transicao = data.get('em_transicao', False)
         
-        # self.inimigos = []
-        # for inimigo_data in data['inimigos']:
-        #     if inimigo_data['tipo'] == 'MouthOrb':
-        #         inimigo = bossmod.MouthOrb(
-        #             inimigo_data['x'], 
-        #             inimigo_data['y'], 
-        #             192, 192, 
-        #             hp=inimigo_data['hp'],
-        #             velocidade=3, 
-        #             dano=30
-        #         )
-        #     else: 
-        #         inimigo = Orb(
-        #             inimigo_data['x'], 
-        #             inimigo_data['y'], 
-        #             64, 64, 
-        #             hp=inimigo_data['hp']
-        #         )
-                
-        #         if 'nome_base' in inimigo_data:
-        #             inimigo.nome_base = inimigo_data['nome_base']
-            
-        #     inimigo.vivo = inimigo_data['vivo']
-        #     self.inimigos.append(inimigo)
         
         if data['bau'] and self.bau:
             self.bau.aberto = data['bau']['aberto']

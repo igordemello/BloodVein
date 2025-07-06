@@ -78,7 +78,7 @@
  <objectgroup id="36" name="inimigo_spawn">
   <object id="233" x="222" y="110" width="38" height="27.5"/>
  </objectgroup>
- <objectgroup id="15" name="colisor">
+ <objectgroup id="15" name="colisor_parede">
   <object id="61" x="0.142348" y="224.226" width="479.685" height="31.9275"/>
   <object id="66" x="449.255" y="1.78749" width="41.708" height="233.565"/>
   <object id="67" x="-20.2582" y="-14.2999" width="50.0497" height="257.398"/>

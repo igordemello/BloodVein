@@ -25,7 +25,7 @@
         "arma": {
             "tipo": "LaminaDaNoite",
             "raridade": "comum",
-            "dano": 15.7,
+            "dano": 150.7,
             "velocidade": 2.3,
             "lifeSteal": 9.0,
             "chanceCritico": 8.0,
@@ -38,9 +38,10 @@
         }
     },
     "map": {
-        "sala_atual": "sala1",
+        "sala_atual": "sala7",
         "salas_conquistadas": [
-            "sala2"
+            "sala2",
+            "sala7"
         ],
         "salas_visitadas": [
             "sala2",
