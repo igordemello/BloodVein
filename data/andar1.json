@@ -15,7 +15,7 @@
             ],
             "tipo": "comum",
             "visitada": false,
-            "arquivotmx": "6.tmx",
+            "arquivotmx": "andar1/6.tmx",
             "salaanterior": null,
             "conexoes": [
                 "sala1",
@@ -36,7 +36,7 @@
             ],
             "tipo": "comum",
             "visitada": false,
-            "arquivotmx": "13.tmx",
+            "arquivotmx": "andar1/13.tmx",
             "salaanterior": null,
             "conexoes": [
                 "sala0",
@@ -55,7 +55,7 @@
                 -2
             ],
             "visitada": true,
-            "arquivotmx": "spawn.tmx",
+            "arquivotmx": "andar1/spawn.tmx",
             "salaanterior": null,
             "conexoes": [
                 "sala1"
@@ -72,7 +72,7 @@
             ],
             "tipo": "comum",
             "visitada": false,
-            "arquivotmx": "12.tmx",
+            "arquivotmx": "andar1/12.tmx",
             "salaanterior": null,
             "conexoes": [
                 "sala1"
@@ -91,7 +91,7 @@
             ],
             "tipo": "comum",
             "visitada": false,
-            "arquivotmx": "3.tmx",
+            "arquivotmx": "andar1/3.tmx",
             "salaanterior": null,
             "conexoes": [
                 "sala0",
@@ -112,7 +112,7 @@
             ],
             "tipo": "comum",
             "visitada": false,
-            "arquivotmx": "8.tmx",
+            "arquivotmx": "andar1/8.tmx",
             "salaanterior": null,
             "conexoes": [
                 "sala4",
@@ -132,7 +132,7 @@
             ],
             "tipo": "comum",
             "visitada": false,
-            "arquivotmx": "5.tmx",
+            "arquivotmx": "andar1/5.tmx",
             "salaanterior": null,
             "conexoes": [
                 "sala4",
@@ -151,7 +151,7 @@
             ],
             "tipo": "comum",
             "visitada": false,
-            "arquivotmx": "4.tmx",
+            "arquivotmx": "andar1/4.tmx",
             "salaanterior": null,
             "conexoes": [
                 "sala5",
@@ -170,7 +170,7 @@
             ],
             "tipo": "comum",
             "visitada": false,
-            "arquivotmx": "9.tmx",
+            "arquivotmx": "andar1/9.tmx",
             "salaanterior": null,
             "conexoes": [
                 "sala6",
@@ -188,7 +188,7 @@
                 4
             ],
             "visitada": false,
-            "arquivotmx": "boss.tmx",
+            "arquivotmx": "andar1/boss.tmx",
             "salaanterior": null,
             "conexoes": [
                 "sala7"
@@ -207,7 +207,7 @@
             ],
             "bau_aberto": false,
             "visitada": false,
-            "arquivotmx": "10.tmx",
+            "arquivotmx": "andar1/10.tmx",
             "salaanterior": null,
             "conexoes": [
                 "sala5",
@@ -225,7 +225,7 @@
                 0
             ],
             "visitada": false,
-            "arquivotmx": "loja.tmx",
+            "arquivotmx": "andar1/loja.tmx",
             "salaanterior": null,
             "conexoes": [
                 "sala0"
@@ -242,7 +242,7 @@
             ],
             "tipo": "comum",
             "visitada": false,
-            "arquivotmx": "14.tmx",
+            "arquivotmx": "andar1/14.tmx",
             "salaanterior": null,
             "conexoes": [
                 "sala8"
@@ -259,7 +259,7 @@
             ],
             "tipo": "comum",
             "visitada": false,
-            "arquivotmx": "2.tmx",
+            "arquivotmx": "andar1/2.tmx",
             "salaanterior": null,
             "conexoes": [
                 "sala10"
