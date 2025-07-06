@@ -338,9 +338,10 @@ class Player():
         if self.st > 100:
             self.st = 100
 
+        '''
         if self.hp == 0:
             self.gameOver = True
-            print("GAME OVER")
+        '''
 
         if self.attacking:
             self.atualizar_ataque(dt)
@@ -808,7 +809,7 @@ class Player():
         if hasattr(self.arma, "criticoOg"):
             self.arma.criticoOg *= 1 + ((self.atributos["sorte"] - 1) / 9) * 3
 
-        self.rate = 20 - (self.atributos["vigor"] / 20)  # decaimento da vida - max em 0.5
+        self.rate = 1 - (self.atributos["vigor"] / 20)  # decaimento da vida - max em 0.5
         self.rateSt = 1 + ((self.atributos["estamina"] * 3) / 10)  # velocidade que a stamina recupera - max em 4
         self.velocidadeMov = self.velocidadeMov + (
                     self.atributos["agilidade"] / 20)  # velocidade de movimento - inicial : 0.5 // max : 1
