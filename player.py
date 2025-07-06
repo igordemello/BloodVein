@@ -56,6 +56,8 @@ class Player():
         self.dash_cooldown_max = int(1000 - ((self.atributos["estamina"] - 1) * (750 / 9))) #cooldown entre dashes - inicial : 1000 // max :  250
         self.dash_duration_max = int(150 + ((self.atributos["estamina"] - 1) * (250 / 9))) #duração máxima do dash - inicial : 150 // max : 400
 
+        self.gameOver = False
+
         self.animacoes_principais = 'esquerdadireitabaixocima'
         self.anim_direcao = "baixo"
         self.anim_frame = 0
@@ -335,6 +337,10 @@ class Player():
             self.st = 0
         if self.st > 100:
             self.st = 100
+
+        if self.hp == 0:
+            self.gameOver = True
+            print("GAME OVER")
 
         if self.attacking:
             self.atualizar_ataque(dt)
@@ -802,7 +808,7 @@ class Player():
         if hasattr(self.arma, "criticoOg"):
             self.arma.criticoOg *= 1 + ((self.atributos["sorte"] - 1) / 9) * 3
 
-        self.rate = 1 - (self.atributos["vigor"] / 20)  # decaimento da vida - max em 0.5
+        self.rate = 20 - (self.atributos["vigor"] / 20)  # decaimento da vida - max em 0.5
         self.rateSt = 1 + ((self.atributos["estamina"] * 3) / 10)  # velocidade que a stamina recupera - max em 4
         self.velocidadeMov = self.velocidadeMov + (
                     self.atributos["agilidade"] / 20)  # velocidade de movimento - inicial : 0.5 // max : 1
