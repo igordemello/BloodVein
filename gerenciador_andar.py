@@ -15,17 +15,20 @@ class GerenciadorAndar:
         #  PRO PROJETO COMO UMA FUNC NESSA CLASSE MESMO, ELE JÁ TA PRONTO, VAI SER EZ DE INTEGRAR AQUI :) :) :) :)
         # ALÉM DE FAZER GERAR INIMIGO DE MANEIRA ALEATÓRIA NA SALA, MAS ISSO AI É UMA TASK DE BOA E QUE DEVE SER FEITA QUANDO TIVERMOS MAIS INIMIGOS ALÉM DA BOLA
 
-        # arquivos = [f'{i}.tmx' for i in range(1,15)]
+        # arquivos = [f'andar1/{i}.tmx' for i in range(1,15)]
         # shuffle(arquivos)
         # print(arquivos)
 
         # i=0
         # for sala in self.grafo.nodes:
+        #     if self.grafo.nodes[sala]["tipo"] == 'spawn':
+        #         self.grafo.nodes[sala]["arquivotmx"] = 'andar1/spawn.tmx'
+        #         continue
         #     if self.grafo.nodes[sala]["tipo"] == 'boss':
-        #         self.grafo.nodes[sala]["arquivotmx"] = 'boss.tmx'
+        #         self.grafo.nodes[sala]["arquivotmx"] = 'andar1/boss.tmx'
         #         continue
         #     if self.grafo.nodes[sala]["tipo"] == 'loja':
-        #         self.grafo.nodes[sala]["arquivotmx"] = 'loja.tmx'
+        #         self.grafo.nodes[sala]["arquivotmx"] = 'andar1/loja.tmx'
         #         continue
         #     arquivotmx = arquivos[i]
         #     self.grafo.nodes[sala]["arquivotmx"] = arquivotmx
