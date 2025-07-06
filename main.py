@@ -68,6 +68,7 @@ bau = False
 loja = False
 menuArmas = False
 continuar = False
+pausado = False
 
 menuDeArma = MenuArmas(hud)
 
@@ -205,6 +206,7 @@ while i == 1:
                                  loja = not loja
                         elif jogo_pausado and pause.menu_ativo:
                             if pause.checar_clique_pause(mouse_pos) == "continuar":
+                                pausado = not pausado
                                 jogo_pausado = not jogo_pausado
                             elif pause.checar_clique_pause(mouse_pos) == "sair":
                                 gerenciamento.modo = "menu"
@@ -231,6 +233,7 @@ while i == 1:
 
                     if ev.key == K_ESCAPE:
                         jogo_pausado = not jogo_pausado
+                        pausado = not pausado
 
                     if ev.key == K_q and current_time - player.ativo_ultimo_uso > 2500:
                         player.ativo_ultimo_uso = current_time
@@ -308,7 +311,7 @@ while i == 1:
                 fps = int(clock.get_fps())
                 fps_text = fps_font.render(f"FPS: {fps}", True, (255, 255, 255))
             SCREEN.blit(fps_text, (10 + offset_x, 10 + offset_y))
-            if jogo_pausado:
+            if jogo_pausado and pausado:
                 pause.runPause(SCREEN)
                 pause.pauseFuncionamento(SCREEN)
                 if mensagem_salvo and time.get_ticks() - tempo_mensagem_salvo < 2000:
