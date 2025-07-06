@@ -23,6 +23,7 @@ from screen_shake import screen_shaker
 from save_manager import SaveManager
 from som import GerenciadorDeSom
 from som import som
+from pause import Pause
 import os
 import shutil
 
@@ -42,6 +43,11 @@ imagem_cursor = transform.scale(image.load(r'assets\UI\cursor.png').convert_alph
 mouse.set_visible(False)
 
 jogo_pausado = False
+pause = Pause()
+
+mensagem_salvo = None
+tempo_mensagem_salvo = 0
+
 
 player = Player(950, 600, 32 * 2, 48 * 2)
 hud = Hud(player, SCREEN)
@@ -197,6 +203,18 @@ while i == 1:
                         elif loja:
                             if sala_atual.loja.checar_compra(mouse.get_pos(), SCREEN) == "sair":
                                  loja = not loja
+                        elif jogo_pausado and pause.menu_ativo:
+                            if pause.checar_clique_pause(mouse_pos) == "continuar":
+                                jogo_pausado = not jogo_pausado
+                            elif pause.checar_clique_pause(mouse_pos) == "sair":
+                                gerenciamento.modo = "menu"
+                                jogo_pausado = not jogo_pausado
+                            elif pause.checar_clique_pause(mouse_pos) == "salvar":
+                                game_state = save_manager.generate_game_state(player, andar, sala_atual)
+                                save_manager.save_game(game_state, "save_file.json")
+                                mensagem_salvo = fonte.render("JOGO SALVO", True, (255, 255, 255))
+                                tempo_mensagem_salvo = time.get_ticks()
+
                         else:
                             player.ataque_espadaPrincipal(sala_atual.inimigos, mouse_pos, dt)
                     if ev.button == 3:
@@ -210,6 +228,9 @@ while i == 1:
                         if ev.key == K_LEFT:
                             menuDeArma.scrollMenu("<")
                             print(menuDeArma.pos)
+
+                    if ev.key == K_ESCAPE:
+                        jogo_pausado = not jogo_pausado
 
                     if ev.key == K_q and current_time - player.ativo_ultimo_uso > 2500:
                         player.ativo_ultimo_uso = current_time
@@ -287,8 +308,12 @@ while i == 1:
                 fps = int(clock.get_fps())
                 fps_text = fps_font.render(f"FPS: {fps}", True, (255, 255, 255))
             SCREEN.blit(fps_text, (10 + offset_x, 10 + offset_y))
-
+            if jogo_pausado:
+                pause.pauseFuncionamento(SCREEN)
+                if mensagem_salvo and time.get_ticks() - tempo_mensagem_salvo < 2000:
+                    SCREEN.blit(mensagem_salvo, (1920 // 2 - mensagem_salvo.get_width() // 2, 900))
             minimapa.draw()
+
 
     SCREEN.blit(imagem_cursor, (mouse_pos[0], mouse_pos[1] ))
     display.update()

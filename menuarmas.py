@@ -65,7 +65,7 @@ class MenuArmas:
             "estamina": 1,
             "sorte": 1
         }
-        self.pontos_totais = 70  # Total de pontos disponíveis
+        self.pontos_totais = 10  # Total de pontos disponíveis
         self.pontos_usados = 7  # 1 ponto por atributo inicial
         self.botoes_atributos = {}
 
