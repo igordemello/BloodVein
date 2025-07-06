@@ -26,6 +26,7 @@ from som import som
 from pause import Pause
 import os
 import shutil
+from inventario import Inventario
 
 init()
 gerenciamento.modo = 'menu'
@@ -73,6 +74,8 @@ pausado = False
 menuDeArma = MenuArmas(hud)
 
 save_manager = SaveManager()
+
+inventario = Inventario(SCREEN, player, hud)
 
 i = 1
 while i == 1:
@@ -123,6 +126,7 @@ while i == 1:
                     sala_atual = Sala(f'andar1/spawn.tmx', SCREEN, player, andar, set_minimapa)
                     set_minimapa(Minimapa(andar,SCREEN))
                     hud.player = player
+                    inventario = Inventario(SCREEN, player, hud)
                     menuArmas = True
                     continuar = False
                     
@@ -248,6 +252,10 @@ while i == 1:
                     if ev.key == K_TAB:
                         minimapa.toggle()
 
+                    if ev.key == K_CAPSLOCK:
+                        inventario.toggle()
+                        jogo_pausado = not jogo_pausado
+                        
                     if ev.key == K_F5:
                         game_state = save_manager.generate_game_state(player, andar, sala_atual)
                         save_manager.save_game(game_state, "save_file.json")
@@ -317,6 +325,7 @@ while i == 1:
                 if mensagem_salvo and time.get_ticks() - tempo_mensagem_salvo < 2000:
                     SCREEN.blit(mensagem_salvo, (1920 // 2 - mensagem_salvo.get_width() // 2, 900))
             minimapa.draw()
+            inventario.desenhar()
 
 
     SCREEN.blit(imagem_cursor, (mouse_pos[0], mouse_pos[1] ))
