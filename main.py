@@ -25,6 +25,7 @@ from som import GerenciadorDeSom
 from som import som
 from pause import Pause
 import os
+from gameover import GameOver
 import shutil
 
 init()
@@ -69,6 +70,8 @@ loja = False
 menuArmas = False
 continuar = False
 pausado = False
+
+gameOver = GameOver()
 
 menuDeArma = MenuArmas(hud)
 
@@ -216,6 +219,31 @@ while i == 1:
                                 save_manager.save_game(game_state, "save_file.json")
                                 mensagem_salvo = fonte.render("JOGO SALVO", True, (255, 255, 255))
                                 tempo_mensagem_salvo = time.get_ticks()
+                        elif jogo_pausado and player.gameOver:
+                            if gameOver.checar_clique_pause(mouse_pos) == "nova run":
+                                try:
+                                    os.remove('save_file.json')
+                                except (FileNotFoundError, ValueError):
+                                    print('não existe save para ser apagado')
+
+                                for item in os.listdir('data'):
+                                    caminho_completo_do_item = os.path.join('data', item)
+                                    try:
+                                        os.remove(caminho_completo_do_item)
+                                    except (FileNotFoundError, ValueError):
+                                        print('não existe data para ser apagado')
+                                som.tocar("click")
+                                player = Player(950, 600, 32 * 2, 48 * 2)
+                                hud = Hud(player, SCREEN)
+                                andar = GerenciadorAndar()
+                                sala_atual = Sala(f'andar1/spawn.tmx', SCREEN, player, andar, set_minimapa)
+                                set_minimapa(Minimapa(andar, SCREEN))
+                                hud.player = player
+                                menuArmas = True
+                                jogo_pausado = False
+                            elif gameOver.checar_clique_pause(mouse_pos) == "sair":
+                                gerenciamento.modo = "menu"
+                                jogo_pausado = not jogo_pausado
 
                         else:
                             player.ataque_espadaPrincipal(sala_atual.inimigos, mouse_pos, dt)
@@ -316,6 +344,10 @@ while i == 1:
                 pause.pauseFuncionamento(SCREEN)
                 if mensagem_salvo and time.get_ticks() - tempo_mensagem_salvo < 2000:
                     SCREEN.blit(mensagem_salvo, (1920 // 2 - mensagem_salvo.get_width() // 2, 900))
+
+            if player.gameOver:
+                jogo_pausado = True
+                gameOver.gameOverFuncionamento(SCREEN)
             minimapa.draw()
 
 
