@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="right-down" width="15" height="8" tilewidth="32" tileheight="32" infinite="0" nextlayerid="39" nextobjectid="235">
+<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="right-down" width="15" height="8" tilewidth="32" tileheight="32" infinite="0" nextlayerid="40" nextobjectid="236">
  <tileset firstgid="1" name="Sprite_sheet_tiles" tilewidth="32" tileheight="32" tilecount="77" columns="11">
   <image source="../../assets/TileSet/tileset_andar4.png" width="352" height="224"/>
  </tileset>
@@ -15,6 +15,9 @@
 2147483714,65,65,65,65,65,65,65,65,65,65,65,65,65,66
 </data>
  </layer>
+ <objectgroup id="39" name="range_bau">
+  <object id="235" x="355.807" y="38.6378" width="25.0509" height="22.0787"/>
+ </objectgroup>
  <layer id="37" name="Decorações" width="15" height="8">
   <data encoding="csv">
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,

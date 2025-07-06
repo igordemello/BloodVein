@@ -18,7 +18,7 @@ init()
 fonte = font.SysFont("Arial", 24)
 
 class Sala:
-    def __init__(self, caminho_mapa, tela, player, gerenciador_andar):
+    def __init__(self, caminho_mapa, tela, player, gerenciador_andar, set_minimapa_callback):
         self.tela = tela
         self.gerenciador_andar = gerenciador_andar
         self.mapa = Mapa(caminho_mapa,self.tela,self.tela.get_width(),self.tela.get_height(),self.gerenciador_andar)
@@ -27,7 +27,7 @@ class Sala:
         self.player = player
         self.colisao = Colisao(self.mapa, self.player)
         self.colisao.adicionar_entidade(player)
-
+        self.set_minimapa = set_minimapa_callback
 
         self.porta_liberada = False
 
@@ -52,7 +52,8 @@ class Sala:
 
         self.spawn_points = self.mapa.get_inimigospawn()  
         self.leve_atual = 0
-        self.max_leves = randint(2,5)
+        # self.max_leves = randint(2,5)
+        self.max_leves = 0
         self.inimigos_por_leva = 1 
         self.tempo_entrada = time.get_ticks() 
         self.cooldown_inicial = 1000  
@@ -238,7 +239,34 @@ class Sala:
                     self.player.vx, self.player.vy = original_vel
                 self.player.itemAtivoEsgotado = None
             self.player.player_rect.topleft = (self.player.x, self.player.y)
+
+            
+
             self._trocar_de_sala()
+            
+
+        if self.porta_liberada and self.gerenciador_andar.grafo.nodes[self.gerenciador_andar.sala_atual]['tipo'] == 'boss' and any(self.player.get_hitbox().colliderect(portal) for portal in self.mapa.get_trocar_andar()) and teclas[K_e]:
+            original_pos = (self.player.x, self.player.y)
+            original_vel = (self.player.vx, self.player.vy)
+
+            if self.player.itemAtivo is not None:
+                if not self.player.itemAtivo.afetaIni:
+                    # Remove efeitos mas mantém a posição/velocidade
+                    self.player.itemAtivo.remover_efeitos(self.player)
+                    self.player.x, self.player.y = original_pos
+                    self.player.vx, self.player.vy = original_vel
+
+
+            if self.player.itemAtivoEsgotado is not None :
+                if not self.player.itemAtivoEsgotado.afetaIni:
+                    self.player.itemAtivoEsgotado.remover_efeitos()
+                    self.player.x, self.player.y = original_pos
+                    self.player.vx, self.player.vy = original_vel
+                self.player.itemAtivoEsgotado = None
+            self.player.player_rect.topleft = (self.player.x, self.player.y)
+
+            self.avancar_andar()
+
 
         if self.bau:
             self.bau.update(player_hitbox=self.player.get_hitbox())
@@ -331,6 +359,8 @@ class Sala:
         # for collider in self.mapa.get_colliders():
         #     draw.rect(tela, (255,0,0), collider['rect'], 1)
         # draw.rect(tela, (0,255,0), self.player.player_rect, 2)
+        
+
 
 
     def pode_trocar_de_sala(self):
@@ -363,7 +393,7 @@ class Sala:
                     nova_sala = self.gerenciador_andar.ir_para_proxima_sala(codigo_porta)
 
                     if nova_sala:
-                        nova_instancia = Sala(nova_sala, self.tela, self.player, self.gerenciador_andar)
+                        nova_instancia = Sala(nova_sala, self.tela, self.player, self.gerenciador_andar, self.set_minimapa)
 
                         nova_instancia.player = self.player
                         nova_instancia.gerenciador_andar = self.gerenciador_andar
@@ -427,6 +457,39 @@ class Sala:
                 display.flip()
                 #time.delay(delay)
 
+    def avancar_andar(self):
+        # Verifica se é sala do boss e se colidiu com o portal
+        portal = self.mapa.get_trocar_andar()
+        if (self.gerenciador_andar.grafo.nodes[self.gerenciador_andar.sala_atual]['tipo'] == 'boss' and 
+            self.player.get_hitbox().colliderect(portal[0]) and 
+            self.porta_liberada):
+            
+            # Pré-salva o andar atual (opcional)
+            andar_num = self.gerenciador_andar.numero_andar
+            import shutil
+            shutil.copy('data/andar_atual.json', f'data/backup_andar{andar_num}.json')
+            
+            # Avança para o próximo andar
+            self.gerenciador_andar.numero_andar += 1
+            self.gerenciador_andar.gerar_andar(self.gerenciador_andar.numero_andar)
+            
+            # Recria a sala com o novo andar
+            spawn_id = self.gerenciador_andar.get_sala_spawn()
+            self.gerenciador_andar.sala_atual = spawn_id
+            caminho_tmx = self.gerenciador_andar.get_arquivo_atual()
+
+            from minimapa import Minimapa
+            self.set_minimapa(Minimapa(self.gerenciador_andar, self.tela))
+
+            nova_sala = Sala(
+                caminho_tmx,
+                self.tela,
+                self.player,
+                self.gerenciador_andar,
+                self.set_minimapa
+            )
+            self.__dict__.update(nova_sala.__dict__)
+
     def get_save_data(self):
         return {
             'porta_liberada': self.porta_liberada,
@@ -457,3 +520,5 @@ class Sala:
                 self.bau.image = self.bau.frames[-1]
         
         self.colisao.entidades = [self.player] + self.inimigos
+
+        

@@ -23,6 +23,9 @@ from screen_shake import screen_shaker
 from save_manager import SaveManager
 from som import GerenciadorDeSom
 from som import som
+import os
+import shutil
+
 init()
 gerenciamento.modo = 'menu'
 
@@ -42,11 +45,16 @@ jogo_pausado = False
 
 player = Player(950, 600, 32 * 2, 48 * 2)
 hud = Hud(player, SCREEN)
-andar = GerenciadorAndar("data/andar1.json")
-sala_atual = Sala(andar.get_arquivo_atual(), SCREEN, player, andar)
+andar = GerenciadorAndar()
+
 fonte = font.SysFont("Arial", 24)
+
 minimapa = Minimapa(andar, SCREEN)
 
+def set_minimapa(novo_minimapa):
+    global minimapa
+    minimapa = novo_minimapa
+sala_atual = Sala(andar.get_arquivo_atual(), SCREEN, player, andar, set_minimapa)
 menu = Menu(SCREEN)
 esperar_soltar_clique = True
 
@@ -90,15 +98,28 @@ while i == 1:
             if ev.type == MOUSEBUTTONDOWN and ev.button == 1:
                 escolha = menu.checar_clique(mouse_pos)
                 if escolha == 'jogo':
+                    try:
+                        os.remove('save_file.json')
+                    except (FileNotFoundError, ValueError):
+                        print('não existe save para ser apagado')
+
+                    for item in os.listdir('data'):
+                        caminho_completo_do_item = os.path.join('data', item)
+                        try:
+                            os.remove(caminho_completo_do_item)
+                        except (FileNotFoundError, ValueError):
+                            print('não existe data para ser apagado')
                     som.tocar("click")
                     player = Player(950, 600, 32 * 2, 48 * 2)
                     hud = Hud(player, SCREEN)
-                    andar = GerenciadorAndar("data/andar1.json")
-                    sala_atual = Sala(andar.get_arquivo_atual(), SCREEN, player, andar)
-                    minimapa = Minimapa(andar, SCREEN)
+                    andar = GerenciadorAndar()
+                    sala_atual = Sala(f'andar1/spawn.tmx', SCREEN, player, andar, set_minimapa)
+                    set_minimapa(Minimapa(andar,SCREEN))
                     hud.player = player
                     menuArmas = True
                     continuar = False
+                    
+
                     gerenciamento.modo = "jogo"
                 elif escolha == "continuar":
                     som.tocar("click")
@@ -111,7 +132,8 @@ while i == 1:
                             andar.get_arquivo_atual(), 
                             SCREEN, 
                             player, 
-                            andar
+                            andar,
+                            set_minimapa
                         )
                         sala_atual.load_save_data(loaded_data['sala'], sala_atual.itensDisp)
                         hud = Hud(player, SCREEN)
