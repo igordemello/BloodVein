@@ -888,6 +888,21 @@ class Player():
 
 
     def atualizar_atributos(self):
+        self.base_dano = self.arma.dano
+        self.base_danoCriticoMod = self.arma.danoCriticoMod
+        self.base_velocidade = self.arma.velocidade
+        self.base_chanceCritico = self.arma.chanceCritico
+        self.base_rate = 1
+        self.base_rateSt = 1
+        self.base_velocidadeMov = 0.5
+        self.base_custoDash = 2.75
+        self.base_modificadorDanoRecebido = 1
+        self.base_invencibilidade = 1500
+        self.base_cooldown_st = 3222.22
+        self.base_dash_cooldown_max = 1000
+        self.base_dash_duration_max = 150
+
+
         self.arma.dano = self.base_dano * (1 + (self.atributos["forca"] - 5) / 5)
         self.arma.danoCriticoMod = self.base_danoCriticoMod * (1 + (self.atributos["forca"] - 5) / 5)
         self.arma.velocidade = self.base_velocidade * (1 + ((self.atributos["destreza"] - 5) / 5) * 0.5)
@@ -945,4 +960,5 @@ class Player():
             if arma_class:
                 self.arma = arma_class(data['arma']['raridade'], lista_mods)
                 self.arma.load_save_data(data['arma'], lista_mods)
+                self.arma.aplicaModificador()  # Adicione esta linha
                 self.atualizar_arma()
