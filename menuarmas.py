@@ -252,18 +252,16 @@ class MenuArmas:
 
             tela.blit(titulo, titulo_rect)
 
+        self.seta_esquerda_img = image.load("assets/UI/seta_esquerda.png").convert_alpha()
+        self.seta_direita_img = image.load("assets/UI/seta_direita.png").convert_alpha()
 
-        # Setas de navegação
-        seta_esquerda = image.load("assets/UI/seta_esquerda.png").convert_alpha()
-        seta_direita = image.load("assets/UI/seta_direita.png").convert_alpha()
+        # Usando o mesmo center_x e offset_x para ambos (desenho e clique)
+        self.seta_esq_rect = self.seta_esquerda_img.get_rect(center=(center_x - offset_x - 150, center_y))
+        self.seta_dir_rect = self.seta_direita_img.get_rect(center=(center_x + offset_x + 150, center_y))
 
-        seta_esq_rect = seta_esquerda.get_rect(center=(center_x - offset_x - 150, center_y))
-        seta_dir_rect = seta_direita.get_rect(center=(center_x + offset_x + 150, center_y))
+        tela.blit(self.seta_esquerda_img, self.seta_esq_rect)
+        tela.blit(self.seta_direita_img, self.seta_dir_rect)
 
-        tela.blit(seta_esquerda, seta_esq_rect)
-        tela.blit(seta_direita, seta_dir_rect)
-
-        # Botões de navegação
         self.botao_voltar.changeColor(mouse_pos)
         self.botao_voltar.update(tela)
 
@@ -323,9 +321,9 @@ class MenuArmas:
 
             if carta_rect.collidepoint(mouse_pos):
                 return None
-            elif seta_esquerda_rect.collidepoint(mouse_pos):
+            if self.seta_esq_rect.collidepoint(mouse_pos):
                 self.scrollMenu("<")
-            elif seta_direita_rect.collidepoint(mouse_pos):
+            elif self.seta_dir_rect.collidepoint(mouse_pos):
                 self.scrollMenu(">")
             elif self.botao_voltar.checkForInput(mouse_pos):
                 self.tela_atual = "atributos"
