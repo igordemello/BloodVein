@@ -215,7 +215,7 @@ class ConjuntoItens:
             ),
             "Adaga Sangrenta": ItemAtivo(
                 nome="Adaga Sangrenta",
-                descricao="Quando ativado, aplica sangramento a todos os inimigo\nduplicando dano recebido",
+                descricao="Quando ativado, aplica sangramento a todos os inimigo duplicando dano recebido",
                 usos=2,
                 efeitos=[
                     ModificadorDanoRecebido(2)

@@ -178,6 +178,7 @@ class LaminaDaNoite(Arma):
 
         self.spriteIcon = "assets/UI/LaminaDaNoite.png"
         self.sprite = 'espada.png'
+        self.carta = 'assets/Itens/Carta_espada_lunar.png'
         self.size = (20 * 2, 54 * 2)
         self.pivot = (self.size[0] / 2, 0)
 
@@ -226,6 +227,7 @@ class Chigatana(Arma):
 
         self.spriteIcon = "assets/UI/chigatana.png"
         self.sprite = 'assets/player/chigatana.png'
+        self.carta = 'assets/Itens/Carta_espada_sangue.png'
         self.size = (20 * 2, 54 * 2)
         self.pivot = (self.size[0] / 2, 0)
 
@@ -275,6 +277,7 @@ class Karambit(Arma):
 
         self.spriteIcon = "assets/UI/Karambit.png"
         self.sprite = 'assets/player/Karambit.png'
+        self.carta = 'assets/Itens/Carta_semcarta.png'
         self.size = (32*2,32*2)
         self.pivot = (self.size[0] / 2, 0)
 
@@ -325,6 +328,7 @@ class EspadaDoTita(Arma):
 
         self.spriteIcon = "assets/UI/espadadotita.png"
         self.sprite = 'assets/player/espadadotita.png'
+        self.carta = 'assets/Itens/Carta_semcarta.png'
         self.size = (25 * 2, 70 * 2)
         self.pivot = (self.size[0] / 2, 0)
 
@@ -384,6 +388,7 @@ class MachadoDoInverno(Arma):
 
         self.spriteIcon = "assets/UI/machadodoinverno.png"
         self.sprite = 'assets/player/machadodoinverno.png'
+        self.carta = 'assets/Itens/Carta_semcarta.png'
         self.size = (23 * 2, 54 * 2)
         self.pivot = (self.size[0] / 2, 0)
 
@@ -447,6 +452,7 @@ class EspadaEstelar(Arma):
 
         self.spriteIcon = "assets/UI/espadaestelar.png"
         self.sprite = 'assets/player/espadaestelar.png'
+        self.carta = 'assets/Itens/Carta_espada_laser.png'
         self.size = (23 * 2, 54 * 2)
         self.pivot = (self.size[0] / 2, 0)
 
@@ -503,6 +509,7 @@ class MarteloSolar(Arma):
 
         self.spriteIcon = "assets/UI/martelo_icone.png"
         self.sprite = 'assets/player/martelo_solar.png'
+        self.carta = 'assets/Itens/Carta_Sol.png'
         self.size = (27 * 2, 51 * 2)
         self.pivot = (self.size[0] / 2, 0)
 
@@ -557,6 +564,7 @@ class Arco(Arma):
 
         self.spriteIcon = "assets/UI/arco.png"
         self.sprite = 'assets/player/arco.png'
+        self.carta = 'assets/Itens/Carta_Arco.png'
         self.size = (51 * 2, 27 * 2)
         self.pivot = (self.size[0]/2, 0)
 
