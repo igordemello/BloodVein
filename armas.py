@@ -277,7 +277,7 @@ class Karambit(Arma):
 
         self.spriteIcon = "assets/UI/Karambit.png"
         self.sprite = 'assets/player/Karambit.png'
-        self.carta = 'assets/Itens/Carta_semcarta.png'
+        self.carta = 'assets/Itens/Carta_Adaga.png'
         self.size = (32*2,32*2)
         self.pivot = (self.size[0] / 2, 0)
 
@@ -328,7 +328,7 @@ class EspadaDoTita(Arma):
 
         self.spriteIcon = "assets/UI/espadadotita.png"
         self.sprite = 'assets/player/espadadotita.png'
-        self.carta = 'assets/Itens/Carta_semcarta.png'
+        self.carta = 'assets/Itens/Carta_titã.png'
         self.size = (25 * 2, 70 * 2)
         self.pivot = (self.size[0] / 2, 0)
 
@@ -389,7 +389,7 @@ class MachadoDoInverno(Arma):
 
         self.spriteIcon = "assets/UI/machadodoinverno.png"
         self.sprite = 'assets/player/machadodoinverno.png'
-        self.carta = 'assets/Itens/Carta_semcarta.png'
+        self.carta = 'assets/Itens/Carta_machado_gelo.png'
         self.size = (23 * 2, 54 * 2)
         self.pivot = (self.size[0] / 2, 0)
 
