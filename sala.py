@@ -18,6 +18,7 @@ from som import musica
 from som import GerenciadorDeSom
 from som import som
 from loja import Loja
+from inimigos.morcegosuicida import MorcegoSuicida
 
 init()
 fonte = font.SysFont("Arial", 24)
@@ -170,12 +171,16 @@ class Sala:
     def _criar_inimigo_aleatorio(self, x, y, tipo_sala):
         elite = "bau" in tipo_sala
 
-        tipos_disponiveis = ["orb"]
+        tipos_disponiveis = ["orb", "morcegosuicida"]
         tipo_escolhido = choice(tipos_disponiveis)
 
         if tipo_escolhido == "orb":
             inimigo = Orb(x, y, 64, 64, hp=200 if not elite else 300)
             inimigo.nome_base = "Orb"
+            inimigo.aplicar_modificadores(elite=elite)
+        elif tipo_escolhido == "morcegosuicida":
+            inimigo = MorcegoSuicida(x, y, 64, 64, hp=150 if not elite else 250)
+            inimigo.nome_base = "Morcego Suicida"
             inimigo.aplicar_modificadores(elite=elite)
 
         # Adicione outros tipos de inimigos aqui no futuro:
@@ -305,6 +310,7 @@ class Sala:
 
         if not self.gerenciador_andar.sala_foi_conquistada(self.gerenciador_andar.sala_atual):
             if (not any(inimigo.vivo for inimigo in self.inimigos)) and self.leve_atual < self.max_leves:
+                som.tocar("Spawn")
                 # entre levas, mostrar fumaça
                 if now - int(self.ultima_fumaça) > self.intervalo_fumaça:
                     for x, y in self.spawn_points:
@@ -399,6 +405,7 @@ class Sala:
         if self.em_transicao:
             return
         self.fade(fade_in=False, duration=2000)
+        som.tocar('passar_porta')
         for porta in self.ranges_doors:
             if self.player.get_hitbox().colliderect(porta['colisor']) and self.porta_liberada:
                 

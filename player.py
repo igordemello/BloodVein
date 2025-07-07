@@ -727,6 +727,17 @@ class Player():
 
             _, hitbox_espada = self.get_rotated_rect_ataque(mouse_pos)
 
+
+            if self.arma.tipoDeArma == 'Adaga':
+                som.tocar(choice(['faca1','faca2']))
+
+            elif self.arma.tipoDeArma == 'Martelo Solar':
+                som.tocar('Martelo')
+
+            else:
+                som.tocar(choice(['espada1','espada2','espada3']))
+
+
             if current_time - self.tempo_ultimo_hit > self.tempo_max_combo:
                 self.hits = 0
                 self.arma.comboMult = 1.0
@@ -764,6 +775,7 @@ class Player():
                 self.hits = 0
                 self.arma.comboMult = 1.0
         else:
+            som.tocar('arco')
             self.arma.ataquePrincipal(self, mouse_pos)
             self.ultimo_ataque = current_time
 
@@ -784,6 +796,7 @@ class Player():
                 angle = self.calcular_angulo(mouse_pos)
                 self.base_sword_angle = math.degrees(angle) - 90
                 self.attack_direction = 1 if random() > 0.5 else -1
+                
 
                 _, hitbox_espada = self.get_rotated_rect_ataque(mouse_pos)
                 for inimigo in inimigos:
@@ -794,6 +807,7 @@ class Player():
                             dx = inimigo.x - self.x
                             dy = inimigo.y - self.y
                             inimigo.aplicar_knockback(dx, dy, intensidade=0.5)
+                            
             elif self.arma.ehAOE:
                 self.aoe = self.arma.ataqueSecundario(self, mouse_pos)
                 self.ultimo_ataque = current_time
@@ -817,11 +831,15 @@ class Player():
         else:
             self.arma.ataqueSecundario(self)
 
+
     def tomar_dano(self, valor):
         now = time.get_ticks()
         if now - self.ultimo_dano < self.invencibilidade:
             return
         self.ultimo_dano = now
+        som.set_volume((0.15))
+        som.tocar(choice(['Dano1','Dano2','Dano3']))
+        som.set_volume((0.5))
         self.hp -= valor * self.modificadorDanoRecebido
         self.foi_atingido = True
         self.tempo_atingido = now

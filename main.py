@@ -125,7 +125,7 @@ while i == 1:
                             os.remove(caminho_completo_do_item)
                         except (FileNotFoundError, ValueError):
                             print('não existe data para ser apagado')
-                    som.tocar("click3")
+                    som.tocar("Startar")
                     player = Player(950, 600, 32 * 2, 48 * 2)
                     hud = Hud(player, SCREEN)
                     andar = GerenciadorAndar()
@@ -173,6 +173,7 @@ while i == 1:
                 if ev.key == K_RETURN or ev.key == K_SPACE:
                     escolha = menu.botoes[menu.index_selecionado].value
                     if escolha == 'jogo':
+                        som.tocar('clicke3')
                         gerenciamento.modo = "jogo"
                     elif escolha == "sair":
                         quit()
@@ -195,6 +196,7 @@ while i == 1:
                                 player.atualizar_atributos()
 
                                 if player.arma:
+                                    som.tocar('clique3')
                                     menuArmas = False
                                     hud.atualizar_arma_icon()
                                     player.atualizar_arma()
