@@ -83,6 +83,8 @@ class Player():
         self.frame_atual = self.animacoes[self.anim_direcao][self.anim_frame]
         self.rastros = []
 
+        self.macarronada = 0
+
 
 
 
@@ -889,10 +891,14 @@ class Player():
 
 
     def atualizar_atributos(self):
-        self.base_dano = self.arma.dano
-        self.base_danoCriticoMod = self.arma.danoCriticoMod
-        self.base_velocidade = self.arma.velocidade
-        self.base_chanceCritico = self.arma.chanceCritico
+        if self.macarronada == 0:
+            self.base_dano = self.arma.dano
+            self.base_danoCriticoMod = self.arma.danoCriticoMod
+            self.base_velocidade = self.arma.velocidade
+            self.base_chanceCritico = self.arma.chanceCritico
+            self.macarronada += 1
+            #O PROBLEMA ESTÁ AQUI
+
         self.base_rate = 1
         self.base_rateSt = 1
         self.base_velocidadeMov = 0.5

@@ -185,32 +185,32 @@ class Sala:
             inimigo.nome_base = "Furacão"
             inimigo.aplicar_modificadores(elite=elite)
 
-        if tipo_escolhido == "fasntasmagastp":
+        elif tipo_escolhido == "fasntasmagastp":
             inimigo = FantasmaTp(x, y, 64, 64, hp=200 if not elite else 300)
             inimigo.nome_base = "Morcego Padrão"
             inimigo.aplicar_modificadores(elite=elite)
 
-        if tipo_escolhido == "caveiradefogo":
+        elif tipo_escolhido == "caveiradefogo":
             inimigo = CaveiraDeFogo(x, y, 64, 64, hp=200 if not elite else 300)
             inimigo.nome_base = "Caveira de Fogo"
             inimigo.aplicar_modificadores(elite=elite)
 
-        if tipo_escolhido == "fantasmagaspar":
+        elif tipo_escolhido == "fantasmagaspar":
             inimigo = FantasmaGasp(x, y, 64, 64, hp=200 if not elite else 300)
             inimigo.nome_base = "Fantasma Gaspar"
             inimigo.aplicar_modificadores(elite=elite)
 
-        if tipo_escolhido == "morcegopadrao":
+        elif tipo_escolhido == "morcegopadrao":
             inimigo = MorcegoPadrao(x, y, 64, 64, hp=200 if not elite else 300)
             inimigo.nome_base = "Morcego Padrão"
             inimigo.aplicar_modificadores(elite=elite)
 
-        if tipo_escolhido == "morcegosuicida":
+        elif tipo_escolhido == "morcegosuicida":
             inimigo = MorcegoSuicida(x, y, 64, 64, hp=200 if not elite else 300)
             inimigo.nome_base = "Morcego Suicida"
             inimigo.aplicar_modificadores(elite=elite)
 
-        if tipo_escolhido == "orb":
+        elif tipo_escolhido == "orb":
             inimigo = Orb(x, y, 64, 64, hp=200 if not elite else 300)
             inimigo.nome_base = "Orb"
             inimigo.aplicar_modificadores(elite=elite)
