@@ -61,23 +61,6 @@ class Inimigo:
 
         self.rect = self.get_hitbox()
 
-    def adicionar_particula_dano(self, x, y, valor):
-        cor = (255, 50, 50)
-        if valor > 20:
-            cor = (255, 215, 0) 
-
-        for _ in range(10): 
-            angulo = randint(0, 360)
-            velocidade = randint(1, 3)
-            self.particulas_dano.append({
-                'x': x,
-                'y': y,
-                'vx': math.cos(angulo) * velocidade,
-                'vy': math.sin(angulo) * velocidade,
-                'cor': cor,
-                'tempo': randint(300, 500),
-                'tamanho': randint(2, 5)
-            })
 
     def get_velocidade(self):
         return (self.vx, self.vy)
@@ -128,64 +111,6 @@ class Inimigo:
         self.veneno_proximo_tick = time.get_ticks() + self.veneno_intervalo
         self.veneno_ativo = True
 
-    def atualizar(self, player_pos, tela):
-
-        now = time.get_ticks()
-
-        if now - self.knockback_time < self.knockback_duration:
-            # O knockback ainda está ativo → não atualiza perseguição
-            return
-        else:
-            # Knockback acabou → zera velocidade
-            self.knockback_x = 0
-            self.knockback_y = 0
-            self.set_velocidade_x(0)
-            self.set_velocidade_y(0)
-        self.old_x = self.x
-        self.old_y = self.y
-        # inimigo morrendo
-        if self.hp <= 0:
-            self.vivo = False
-            self.alma_coletada = False
-            self.vx = 0
-            self.vy = 0
-            self.rect.topleft = (self.x, self.y)
-            return
-
-        player_x = player_pos[0]
-        player_y = player_pos[1]
-
-        self.vx = 0
-        self.vy = 0
-
-        
-        if abs(player_x - self.x) > 100:
-            self.vx = self.velocidade if player_x > self.x else -self.velocidade
-        if abs(player_y - self.y) > 100:
-            self.vy = self.velocidade if player_y > self.y else -self.velocidade
-
-        rot_rect, _ = self.get_hitbox_ataque((player_x, player_y))
-        player_hitbox = Rect(player_x, player_y, 64, 64)
-
-        if rot_rect.colliderect(player_hitbox):
-            if hasattr(self, "dar_dano") and callable(self.dar_dano):
-                self.dar_dano()
-
-        self.x, self.y = self.rect.topleft
-        self.atualizar_animacao()
-
-        if hasattr(self, 'veneno_ativo') and self.veneno_ativo:
-            if now >= self.veneno_proximo_tick and self.veneno_ticks > 0:
-                self.hp -= self.veneno_dano_por_tick
-                self.veneno_ticks -= 1
-                self.veneno_proximo_tick = now + self.veneno_intervalo
-
-                # Inicia animação de hit como feedback visual (opcional)
-                self.anima_hit = True
-                self.time_last_hit_frame = now
-
-            if self.veneno_ticks <= 0:
-                self.veneno_ativo = False
     
     def get_hitbox(self):
         return Rect(self.x, self.y, self.largura, self.altura)
