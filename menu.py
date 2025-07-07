@@ -44,7 +44,7 @@ class Menu():
 
         self.index_selecionado = 0
         self.espada_img = image.load("assets/UI/Espada menu.png").convert_alpha()
-        self.espada_img = transform.scale(self.espada_img, (50, 50))
+        self.espada_img = transform.scale(self.espada_img, (100, 50))
 
     def cv2_to_pygame(self, frame):
         frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
