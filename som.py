@@ -208,4 +208,4 @@ class GerenciadorDeMusica:
             mixer.music.set_volume(self.volume)
 
 
-musica = GerenciadorDeMusica(volume=0.1)
+musica = GerenciadorDeMusica(volume=0.3)

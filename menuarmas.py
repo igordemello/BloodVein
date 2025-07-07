@@ -6,6 +6,8 @@ from itensDic import ConjuntoItens
 from random import sample
 from botao import Botao
 from armas import *
+from player import Player
+
 
 
 class MenuArmas:
@@ -227,33 +229,19 @@ class MenuArmas:
             pos_x = carta["x"] - width // 2
             pos_y = carta["y"] - height // 2 + deslocamento_y
 
-            sprite_raridade = image.load(f"assets/itens/carta_{carta['arma'].raridadeStr}.png").convert_alpha()
-            sprite_carta = transform.scale(sprite_raridade, (width, height))
+            arma = carta['arma']
+            if hasattr(arma, "carta"):
+                carta_img = image.load(arma.carta).convert_alpha()
+                sprite_carta = transform.scale(carta_img, (width, height))
 
             if carta["opacity"] < 255:
                 sprite_carta.fill((255, 255, 255, carta["opacity"]), special_flags=BLEND_RGBA_MULT)
 
             tela.blit(sprite_carta, (pos_x, pos_y))
 
-            spriteIcon = image.load(carta['arma'].spriteIcon).convert_alpha()
-            sprite_arma = transform.scale(spriteIcon, (int(128 * scale), int(128 * scale)))
-
-            if carta["opacity"] < 255:
-                sprite_arma.fill((255, 255, 255, carta["opacity"]), special_flags=BLEND_RGBA_MULT)
-
-            arma_center_x = pos_x + width // 2 - sprite_arma.get_width() // 2
-            tela.blit(sprite_arma, (arma_center_x, pos_y + int(40 * scale)))
-
-            titulo = self.font.render(carta['arma'].nome, True, (0, 0, 0))
-            titulo_rect = titulo.get_rect(center=(pos_x + width // 2, pos_y + 20 + int(height * 0.42)))
-
-            if carta["opacity"] < 255:
-                titulo.set_alpha(carta["opacity"])
-
-            tela.blit(titulo, titulo_rect)
-
-        self.seta_esquerda_img = image.load("assets/UI/seta_esquerda.png").convert_alpha()
-        self.seta_direita_img = image.load("assets/UI/seta_direita.png").convert_alpha()
+        # Setas de navegação
+        seta_esquerda = image.load("assets/UI/seta_esquerda.png").convert_alpha()
+        seta_direita = image.load("assets/UI/seta_direita.png").convert_alpha()
 
         # Usando o mesmo center_x e offset_x para ambos (desenho e clique)
         self.seta_esq_rect = self.seta_esquerda_img.get_rect(center=(center_x - offset_x - 150, center_y))
