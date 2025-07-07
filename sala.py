@@ -19,6 +19,7 @@ from som import GerenciadorDeSom
 from som import som
 from loja import Loja
 from inimigos.morcegosuicida import MorcegoSuicida
+from inimigos.caveiradefogo import CaveiraDeFogo
 
 init()
 fonte = font.SysFont("Arial", 24)
@@ -171,16 +172,13 @@ class Sala:
     def _criar_inimigo_aleatorio(self, x, y, tipo_sala):
         elite = "bau" in tipo_sala
 
-        tipos_disponiveis = ["orb", "morcegosuicida"]
+        tipos_disponiveis = ["caveiradefogo"]
         tipo_escolhido = choice(tipos_disponiveis)
 
-        if tipo_escolhido == "orb":
-            inimigo = Orb(x, y, 64, 64, hp=200 if not elite else 300)
-            inimigo.nome_base = "Orb"
-            inimigo.aplicar_modificadores(elite=elite)
-        elif tipo_escolhido == "morcegosuicida":
-            inimigo = MorcegoSuicida(x, y, 64, 64, hp=150 if not elite else 250)
-            inimigo.nome_base = "Morcego Suicida"
+
+        if tipo_escolhido == "caveiradefogo":
+            inimigo = CaveiraDeFogo(x, y, 64, 64, hp=200 if not elite else 300)
+            inimigo.nome_base = "Caveira de Fogo"
             inimigo.aplicar_modificadores(elite=elite)
 
         # Adicione outros tipos de inimigos aqui no futuro:
