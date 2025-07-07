@@ -281,7 +281,7 @@ while i == 1:
                     if ev.key == K_TAB:
                         minimapa.toggle()
 
-                    if ev.key == K_CAPSLOCK:
+                    if ev.key == K_i:
                         pode_abrir = not pausado and not (sala_atual.bau and sala_atual.bau.menu_ativo) and not loja
                         if inventario.visible:
                             inventario.toggle()

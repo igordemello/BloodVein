@@ -154,44 +154,44 @@ class Inventario():
         # --- ATRIBUTOS DA ARMA ---
         if self.player.arma:
             arma = self.player.arma
-            fonte_attr = font.Font("assets/fontes/alagard.ttf", 20)
+            fonte_attr = font.Font("assets/fontes/alagard.ttf", 32)
             cor_attr = (253, 246, 225)
 
             atributos = [
                 f"Dano: {round(arma.dano, 1)}",
                 f"Rapidez: {round(arma.velocidade, 1)}",
                 f"Roubo de Vida: {round(arma.lifeSteal, 1)}",
-                f"Chance de Crítico: {round(arma.chanceCritico, 1)}%",
+                f"% Crítico: {round(arma.chanceCritico, 1)}",
                 f"Dano Crítico: {round(arma.danoCriticoMod * arma.dano, 1)}",  # dano total crítico
-                f"Modificador: {arma.modificador.nome if hasattr(arma, 'modificador') else 'Nenhum'}"
+                f"Mod: {arma.modificador.nome if hasattr(arma, 'modificador') else 'Nenhum'}"
             ]
 
             base_x = 365   # posição x na tela
-            base_y = 650  # posição y inicial
+            base_y = 640  # posição y inicial
 
             for i, linha in enumerate(atributos):
                 texto = fonte_attr.render(linha, True, cor_attr)
-                self.screen.blit(texto, (base_x, base_y + i * 50))
+                self.screen.blit(texto, (base_x, base_y + i * 48))
 
         # --- ATRIBUTOS DO PLAYER ---
         if self.player:
             player = self.player
-            fonte_attr = font.Font("assets/fontes/alagard.ttf", 20)
+            fonte_attr = font.Font("assets/fontes/alagard.ttf", 32)
             cor_attr = (253, 246, 225)
 
             atributos = [
-                f"Força: {round(player.atributos["forca"], 1)}",
-                f"Destreza: {round(player.atributos["destreza"], 1)}",
-                f"Agilidade: {round(player.atributos["agilidade"], 1)}",
-                f"Chance de Crítico: {round(player.atributos["vigor"], 1)}",
-                f"Resistência: {round(player.atributos["resistencia"], 1)}",  # dano total crítico
-                f"Estamina: {round(player.atributos["estamina"], 1)}"
-                f"Sorte: {round(player.atributos["sorte"], 1)}"
+                f'Força: {round(player.atributos["forca"], 1)}',
+                f'Destreza: {round(player.atributos["destreza"], 1)}',
+                f'Agilidade: {round(player.atributos["agilidade"], 1)}',
+                f'Vigor: {round(player.atributos["vigor"], 1)}',
+                f'Resistência: {round(player.atributos["resistencia"], 1)}',  # dano total crítico
+                f'Estamina: {round(player.atributos["estamina"], 1)}',
+                f'Sorte: {round(player.atributos["sorte"], 1)}'
             ]
 
             base_x = 1300   # posição x na tela
-            base_y = 650  # posição y inicial
+            base_y = 640  # posição y inicial
 
             for i, linha in enumerate(atributos):
                 texto = fonte_attr.render(linha, True, cor_attr)
-                self.screen.blit(texto, (base_x, base_y + i * 50))
+                self.screen.blit(texto, (base_x, base_y + i * 42))
