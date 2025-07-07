@@ -57,17 +57,29 @@ class MenuArmas:
 
         # Atributos do jogador
         self.atributos = {
-            "forca": 1,
-            "destreza": 1,
-            "agilidade": 1,
-            "vigor": 1,
-            "resistencia": 1,
-            "estamina": 1,
-            "sorte": 1
+            "forca": 5,
+            "destreza": 5,
+            "agilidade": 5,
+            "vigor": 5,
+            "resistencia": 5,
+            "estamina": 5,
+            "sorte": 5
         }
         self.pontos_totais = 10  # Total de pontos disponíveis
         self.pontos_usados = 7  # 1 ponto por atributo inicial
         self.botoes_atributos = {}
+
+        # Traits system
+        self.traits = [
+            "Vampira",
+            "Translúcido",
+            "Peçonhento",
+            "Mercúrio",
+            "Ancião",
+            "Humano"
+        ]
+        self.trait_selecionada = 0
+        self.botoes_traits = {}
 
     def desenhaAtributos(self, tela):
         # Variáveis para tamanho das fontes
@@ -125,6 +137,33 @@ class MenuArmas:
             (255, 255, 255) if self.pontos_usados <= self.pontos_totais else (255, 0, 0)
         )
         tela.blit(pontos_texto, (470, y_pos + 5))
+
+        # Desenha as traits abaixo dos atributos
+        y_pos += 100  # Espaço entre atributos e traits
+        traits_titulo = font.Font('assets/Fontes/alagard.ttf', 48).render("TRAITS", True, (255, 255, 255))
+        traits_titulo_rect = traits_titulo.get_rect(center=(atributos_width // 2, y_pos))
+        tela.blit(traits_titulo, traits_titulo_rect)
+        y_pos += 60
+
+        # Desenha a trait selecionada (centralizada)
+        trait_font = font.Font('assets/Fontes/alagard.ttf', 32)
+        trait_text = trait_font.render(self.traits[self.trait_selecionada], True, (255, 255, 255))
+        trait_rect = trait_text.get_rect(center=(atributos_width // 2, y_pos + trait_text.get_height() // 2))
+        tela.blit(trait_text, trait_rect)
+
+        # Desenha setas para navegar entre traits (posições fixas como antes)
+        seta_esquerda = image.load("assets/UI/seta_esquerda.png").convert_alpha()
+        seta_direita = image.load("assets/UI/seta_direita.png").convert_alpha()
+
+        seta_esq_rect = seta_esquerda.get_rect(center=(160, y_pos + trait_text.get_height() // 2))  # Posição fixa X=40
+        seta_dir_rect = seta_direita.get_rect(center=(600, y_pos + trait_text.get_height() // 2))  # Posição fixa X=600
+
+        tela.blit(seta_esquerda, seta_esq_rect)
+        tela.blit(seta_direita, seta_dir_rect)
+
+        # Armazena os retângulos das setas para verificação de clique
+        self.botoes_traits["trait_esquerda"] = seta_esq_rect
+        self.botoes_traits["trait_direita"] = seta_dir_rect
 
     def menuEscolherItens(self, tela):
         overlay = Surface(tela.get_size(), SRCALPHA)
@@ -248,11 +287,20 @@ class MenuArmas:
                 if operacao == "menos" and self.atributos[atributo] > 1:
                     self.atributos[atributo] -= 1
                     self.pontos_usados -= 1
-                elif operacao == "mais" and self.atributos[atributo] < 17:
+                elif operacao == "mais" and self.atributos[atributo] < 10:
                     # Verifica se há pontos disponíveis
                     if self.pontos_usados < self.pontos_totais:
                         self.atributos[atributo] += 1
                         self.pontos_usados += 1
+                return None
+
+        # Verifica cliques nas setas de traits
+        for nome, rect in self.botoes_traits.items():
+            if rect.collidepoint(mouse_pos):
+                if nome == "trait_esquerda":
+                    self.trait_selecionada = (self.trait_selecionada - 1) % len(self.traits)
+                elif nome == "trait_direita":
+                    self.trait_selecionada = (self.trait_selecionada + 1) % len(self.traits)
                 return None
 
         if carta_rect.collidepoint(mouse_pos):
@@ -260,10 +308,11 @@ class MenuArmas:
             print("Atributos selecionados:")
             for nome, valor in self.atributos.items():
                 print(f"{nome.capitalize()}: {valor}")
+            print(f"Trait selecionada: {self.traits[self.trait_selecionada]}")
             self.menu_ativo = False
 
-            # Retorna tanto a arma quanto os atributos selecionados
-            return self.arma_sorteada, self.atributos.copy()
+            # Retorna a arma, atributos e a trait selecionada
+            return self.arma_sorteada, self.atributos.copy(), self.traits[self.trait_selecionada]
         elif seta_esquerda_rect.collidepoint(mouse_pos):
             self.scrollMenu("<")
         elif seta_direita_rect.collidepoint(mouse_pos):

@@ -105,7 +105,7 @@ while i == 1:
 
         # apertando no botão sair do menu
         if gerenciamento.modo == 'sair':
-            som.tocar("click")
+            som.tocar("click3")
             quit()
             sys.exit()
 
@@ -125,7 +125,7 @@ while i == 1:
                             os.remove(caminho_completo_do_item)
                         except (FileNotFoundError, ValueError):
                             print('não existe data para ser apagado')
-                    som.tocar("click")
+                    som.tocar("Startar")
                     player = Player(950, 600, 32 * 2, 48 * 2)
                     hud = Hud(player, SCREEN)
                     andar = GerenciadorAndar()
@@ -139,7 +139,7 @@ while i == 1:
 
                     gerenciamento.modo = "jogo"
                 elif escolha == "continuar":
-                    som.tocar("click")
+                    som.tocar("click3")
                     try:
                         loaded_data = save_manager.load_game("save_file.json")
 
@@ -173,6 +173,7 @@ while i == 1:
                 if ev.key == K_RETURN or ev.key == K_SPACE:
                     escolha = menu.botoes[menu.index_selecionado].value
                     if escolha == 'jogo':
+                        som.tocar('clicke3')
                         gerenciamento.modo = "jogo"
                     elif escolha == "sair":
                         quit()
@@ -189,16 +190,18 @@ while i == 1:
                         if menuArmas and menuDeArma.menu_ativo:
                             resultado = menuDeArma.checar_clique_menu(mouse_pos)
                             if resultado is not None:
-                                arma, atributos = resultado
+                                arma, atributos, trait = resultado
                                 player.arma = arma
                                 player.atributos = atributos
                                 player.atualizar_atributos()
 
                                 if player.arma:
+                                    som.tocar('clique3')
                                     menuArmas = False
                                     hud.atualizar_arma_icon()
                                     player.atualizar_arma()
                                     player.atualizar_atributos()
+                                    player.atualizar_traits(trait)
 
                         elif sala_atual.bau and sala_atual.ativar_menu_bau:
                             item = sala_atual.bau.checar_clique_bau(mouse.get_pos())
@@ -239,7 +242,7 @@ while i == 1:
                                         os.remove(caminho_completo_do_item)
                                     except (FileNotFoundError, ValueError):
                                         print('não existe data para ser apagado')
-                                som.tocar("click")
+                                som.tocar("click3")
                                 player = Player(950, 600, 32 * 2, 48 * 2)
                                 hud = Hud(player, SCREEN)
                                 andar = GerenciadorAndar()
@@ -252,6 +255,8 @@ while i == 1:
                                 gerenciamento.modo = "menu"
                                 jogo_pausado = not jogo_pausado
 
+                        elif inventario.visible:
+                            inventario.checar_clique_inventario()
                         else:
                             player.ataque_espadaPrincipal(sala_atual.inimigos, mouse_pos, dt)
                     if ev.button == 3:
