@@ -224,6 +224,8 @@ while i == 1:
                             elif pause.checar_clique_pause(mouse_pos) == "sair":
                                 gerenciamento.modo = "menu"
                                 jogo_pausado = not jogo_pausado
+                                pause.menu_ativo = False
+                                pausado = False
                             elif pause.checar_clique_pause(mouse_pos) == "salvar":
                                 game_state = save_manager.generate_game_state(player, andar, sala_atual)
                                 save_manager.save_game(game_state, "save_file.json")
@@ -275,6 +277,7 @@ while i == 1:
                     if ev.key == K_ESCAPE and not inventarioexibe:
                         jogo_pausado = not jogo_pausado
                         pausado = not pausado
+                        pause.menu_ativo = True
 
                     if ev.key == K_q and current_time - player.ativo_ultimo_uso > 2500:
                         player.ativo_ultimo_uso = current_time

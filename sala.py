@@ -224,7 +224,7 @@ class Sala:
                     self.colisao.adicionar_entidade(inimigo)
 
         for inimigo in self.inimigos:
-            if inimigo.vivo:
+            if inimigo.vivo and self.player.hp > 0:
                 try:
                     inimigo.atualizar((self.player.x, self.player.y), self.tela, self.inimigos, self.colliders)
                 except TypeError:
