@@ -353,10 +353,12 @@ class Player():
         if self.st > 100:
             self.st = 100
 
-        '''
+  
         if self.hp == 0:
             self.gameOver = True
-        '''
+            musica.tocar("BloodVein SCORE/OST/Game Over.mp3")
+            
+
 
         if self.attacking:
             self.atualizar_ataque(dt)

@@ -302,24 +302,25 @@ class Sala:
                 self.bau_interagido = True 
 
         now = time.get_ticks()
-        if self.inimigos_spawnados:
-            self.fumaça_particula = []
-    
-        elif not self.inimigos_spawnados and not self.gerenciador_andar.sala_foi_conquistada(self.gerenciador_andar.sala_atual):
-            if now - int(self.ultima_fumaça) > self.intervalo_fumaça:
-                for x,y in self.spawn_points:
-                    self.fumaça_particula.append(self.particulas_fumaça(x,y))
-                self.ultima_fumaça = now
 
+        if not self.gerenciador_andar.sala_foi_conquistada(self.gerenciador_andar.sala_atual):
+            if (not any(inimigo.vivo for inimigo in self.inimigos)) and self.leve_atual < self.max_leves:
+                # entre levas, mostrar fumaça
+                if now - int(self.ultima_fumaça) > self.intervalo_fumaça:
+                    for x, y in self.spawn_points:
+                        self.fumaça_particula.append(self.particulas_fumaça(x, y))
+                    self.ultima_fumaça = now
 
                 for particula in self.fumaça_particula[:]:
                     particula['alpha'] -= 0.4
                     particula['size'] += 0.2
                     if now - particula['created'] > particula['life'] or particula['alpha'] <= 0:
                         self.fumaça_particula.remove(particula)
+            else:
+                self.fumaça_particula.clear()
 
 
-        if any((inimigo.vivo for inimigo in self.inimigos) or self.leve_atual < self.max_leves):
+        if (any((inimigo.vivo for inimigo in self.inimigos)) or self.leve_atual < self.max_leves) and not self.gerenciador_andar.sala_foi_conquistada(self.gerenciador_andar.sala_atual):
             if self.boss_musica == 0:
                 musica.tocar(self.musica_escolhida)
         elif self.boss_musica == 0 and self.loja.musica == 0:

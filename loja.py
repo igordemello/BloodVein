@@ -204,7 +204,6 @@ class Loja():
 
         if self.botaosair.checkForInput(mouse_pos):
             som.tocar("clique")
-            musica.musica_atual = 'andar'
             self.musica = 0
             return 'sair'
         
