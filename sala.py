@@ -305,6 +305,7 @@ class Sala:
 
         if not self.gerenciador_andar.sala_foi_conquistada(self.gerenciador_andar.sala_atual):
             if (not any(inimigo.vivo for inimigo in self.inimigos)) and self.leve_atual < self.max_leves:
+                som.tocar("Spawn")
                 # entre levas, mostrar fumaça
                 if now - int(self.ultima_fumaça) > self.intervalo_fumaça:
                     for x, y in self.spawn_points:
@@ -399,6 +400,7 @@ class Sala:
         if self.em_transicao:
             return
         self.fade(fade_in=False, duration=2000)
+        som.tocar('passar_porta')
         for porta in self.ranges_doors:
             if self.player.get_hitbox().colliderect(porta['colisor']) and self.porta_liberada:
                 

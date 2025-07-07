@@ -31,11 +31,6 @@ class GerenciadorDeSom:
             "Startar": mixer.Sound("sons/StartNewRun.mp3"),
             "tripleshota": mixer.Sound("sons/TripleShot.mp3"),
             "carrega_critico": mixer.Sound("sons/CarrendoCriticoEspadaDoTita.mp3"),
-            
-
-
-
-
 
         }
 

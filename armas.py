@@ -357,6 +357,7 @@ class EspadaDoTita(Arma):
         if self.chanceCritico > 100 or player.st <= 0:
             return
         else:
+            som.tocar('carrega_critico')
             self.chanceCritico *= 2
             self.danoCriticoMod *= 1.5
             player.st -= 50
@@ -535,6 +536,7 @@ class MarteloSolar(Arma):
         if player.st-50 <= 0:
             return #revisar isso
         else:
+            som.tocar('martelo2')
             player.st -= 50
             player.last_dash_time = current_time
             return player.criarAOE(mouse_pos, 300)
@@ -575,19 +577,20 @@ class Arco(Arma):
     def aplicaModificador(self):
         self.modificador.aplicarMod(self)
     def ataquePrincipal(self,player,mouse_pos):
+        som.tocar('arco_acerto')
         sprite_projetil = image.load("assets/player/flecha.png").convert_alpha()
         player.criar_projetil(mouse_pos, dano=self.dano, cor=None, sprite=sprite_projetil)
 
 
     def ataqueSecundario(self,player,mouse_pos):
         sprite_projetil = image.load("assets/player/flecha.png").convert_alpha()
-
         angulo_central = player.calcular_angulo(mouse_pos)
         angulo_abertura = math.radians(5)  # 15 graus em radianos
         current_time = time.get_ticks()
         if player.st <= 0:
             return
         else:
+            som.tocar('tripleshota')
             player.st -= 20
             player.last_dash_time = current_time
             player.criar_projetil(mouse_pos, dano=self.dano, cor=None, sprite=sprite_projetil, angulo_personalizado=angulo_central)
