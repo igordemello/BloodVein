@@ -26,7 +26,7 @@ class Colisao:
             if isinstance(ent1, Player):
                 continue
             for ent2 in self.entidades[i+1:]:
-                if isinstance(ent1, Player):
+                if isinstance(ent2, Player):
                     continue
                 self._colisao_entidade_entidade(ent1, ent2)
 
