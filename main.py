@@ -189,7 +189,7 @@ while i == 1:
                         if menuArmas and menuDeArma.menu_ativo:
                             resultado = menuDeArma.checar_clique_menu(mouse_pos)
                             if resultado is not None:
-                                arma, atributos = resultado
+                                arma, atributos, trait = resultado
                                 player.arma = arma
                                 player.atributos = atributos
                                 player.atualizar_atributos()
@@ -199,6 +199,7 @@ while i == 1:
                                     hud.atualizar_arma_icon()
                                     player.atualizar_arma()
                                     player.atualizar_atributos()
+                                    player.atualizar_traits(trait)
 
                         elif sala_atual.bau and sala_atual.ativar_menu_bau:
                             item = sala_atual.bau.checar_clique_bau(mouse.get_pos())
@@ -252,6 +253,8 @@ while i == 1:
                                 gerenciamento.modo = "menu"
                                 jogo_pausado = not jogo_pausado
 
+                        elif inventario.visible:
+                            inventario.checar_clique_inventario()
                         else:
                             player.ataque_espadaPrincipal(sala_atual.inimigos, mouse_pos, dt)
                     if ev.button == 3:

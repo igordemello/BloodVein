@@ -29,6 +29,7 @@ import shutil
 
 class Inventario():
     def __init__(self, screen, player, hud):
+        self.botoes_atributos = []
         self.screen = screen
         self.visible = False
         self.player = player
@@ -36,7 +37,7 @@ class Inventario():
         self.fundo = image.load('assets/UI/inventario_fundo.png').convert_alpha()
 
         self.item_width, self.item_height = 230, 240
-        
+
         self.carta_imgs = {
             "comum": transform.scale(image.load("assets/itens/carta_comum.png").convert_alpha(), (self.item_width + 40, self.item_height + 130)),
             "rara": transform.scale(image.load("assets/itens/carta_rara.png").convert_alpha(), (self.item_width + 40, self.item_height + 130)),
@@ -49,7 +50,7 @@ class Inventario():
     def toggle(self):
         self.visible = not self.visible
 
-    
+
 
     def desenhar(self):
         if not self.visible:
@@ -81,7 +82,7 @@ class Inventario():
             sprite = transform.scale(item_ativo.sprite, (100, 100))
             self.screen.blit(sprite, (ativo_x, ativo_y))
 
-            
+
 
             rect_ativo = Rect(ativo_x, ativo_y, 100, 100)
             if rect_ativo.collidepoint(mouse_x, mouse_y):
@@ -96,11 +97,11 @@ class Inventario():
             carta_img = self.carta_imgs.get(item_hover.raridade, self.carta_imgs["comum"])
             self.screen.blit(carta_img, (carta_x, carta_y))
 
-            
+
             fonte_nome = font.Font("assets/fontes/alagard.ttf", 20)
             fonte_desc = font.Font("assets/fontes/alagard.ttf", 16)
 
-            
+
             icon_size = 80
             icon = transform.scale(item_hover.sprite, (icon_size, icon_size))
             icon_x = carta_x + (self.carta_imgs["comum"].get_width() - icon_size) // 2
@@ -111,13 +112,13 @@ class Inventario():
                 for x in range(item_hover.usos):
                     draw.rect(self.screen, (0, 255, 0), (1340 + (x * 25), 483, 20, 8))
 
-            
+
             texto_nome = fonte_nome.render(item_hover.nome, True, (0,0,0))
             nome_x = carta_x + (self.carta_imgs["comum"].get_width() - texto_nome.get_width()) // 2
             nome_y = icon_y + icon_size + 35
             self.screen.blit(texto_nome, (nome_x, nome_y))
 
-            
+
             descricao = item_hover.descricao
             linhas = []
             palavras = descricao.split(" ")
@@ -139,7 +140,7 @@ class Inventario():
                 desc_y = nome_y + 55 + i * 24
                 self.screen.blit(texto_desc, (desc_x, desc_y))
 
-        
+
         # Exibir a carta da arma
         arma = self.player.arma
         if hasattr(arma, "carta"):
@@ -192,6 +193,55 @@ class Inventario():
             base_x = 1300   # posição x na tela
             base_y = 640  # posição y inicial
 
+            nivel = fonte_attr.render(str(player.nivel), True, cor_attr)
+            self.screen.blit(nivel, (base_x+150, base_y+7*40))
+
             for i, linha in enumerate(atributos):
                 texto = fonte_attr.render(linha, True, cor_attr)
                 self.screen.blit(texto, (base_x, base_y + i * 42))
+
+            # --- LEVEL UP ---
+            if player.almas >= (10 + (player.nivel * 2)):
+                y_pos = 640
+                mouse_pos = mouse.get_pos()
+                self.botoes_atributos = []  # Limpa a lista de botões antes de recriá-los
+
+                atributos_ordenados = [
+                    "forca",
+                    "destreza",
+                    "agilidade",
+                    "vigor",
+                    "resistencia",
+                    "estamina",
+                    "sorte"
+                ]
+
+                for i, atributo in enumerate(atributos_ordenados):
+                    # Só mostra o botão se o atributo for menor que 10
+                    if player.atributos[atributo] < 10:
+                        # Botão para aumentar (+)
+                        botao_mais_rect = Rect(1520, y_pos, 32, 32)
+                        draw.rect(self.screen,
+                                  (0, 200, 0) if botao_mais_rect.collidepoint(mouse_pos) else (0, 150, 0),
+                                  botao_mais_rect)
+                        mais_texto = fonte_attr.render("+", True, (255, 255, 255))
+                        self.screen.blit(mais_texto, (1525, y_pos))
+                        self.botoes_atributos.append(
+                            (atributo, botao_mais_rect))  # Armazena o atributo junto com o retângulo
+
+                    y_pos += 42  # Incrementa a posição Y em qualquer caso
+
+    def checar_clique_inventario(self):
+        mouse_pos = mouse.get_pos()
+        for atributo, rect in self.botoes_atributos:
+            if rect.collidepoint(mouse_pos):
+                custo = 10 + (self.player.nivel * 2)
+
+                if self.player.almas >= custo and self.player.atributos[atributo] < 10:
+                    self.player.atributos[atributo] += 1
+                    self.player.almas -= custo
+                    self.player.atualizar_atributos()
+                    return True
+        return False
+
+

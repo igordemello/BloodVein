@@ -38,26 +38,40 @@ class Player():
         }
 
         self.atributos = {
-            "forca" : 1, #influencia DANO DA ARMA, DANO DO CRÍTICO
-            "destreza": 1, #influencia VELOCIDADE DE ATAQUE DA ARMA
-            "agilidade": 1, # influencia VELOCIDADE DE MOVIMENTO DO PERSONAGEM
-            "vigor": 1, #influencia VELOCIDADE DO DECAIMENTO
-            "resistencia": 1, #influencia DANO RECEBIDO
-            "estamina": 1, #influencia COOLDOWN DE DASH, GASTO E COOLDOWN STAMINA
-            "sorte": 1, #influencia CHANCE DE CRÍTICO E UM POUCO DE TUDO
+            "forca" : 5, #influencia DANO DA ARMA, DANO DO CRÍTICO
+            "destreza": 5, #influencia VELOCIDADE DE ATAQUE DA ARMA
+            "agilidade": 5, # influencia VELOCIDADE DE MOVIMENTO DO PERSONAGEM
+            "vigor": 5, #influencia VELOCIDADE DO DECAIMENTO
+            "resistencia": 5, #influencia DANO RECEBIDO
+            "estamina": 5, #influencia COOLDOWN DE DASH, GASTO E COOLDOWN STAMINA
+            "sorte": 5, #influencia CHANCE DE CRÍTICO E UM POUCO DE TUDO
         }
-        #1-2 normal / 3-4 melhorzinho / 5-6 bom / 7-8 muito bom / 9-10 peak
+
+        self.nivel = 1
         self.hp = hp
         self.hpMax = 100
-        self.rate = 1 - (self.atributos["vigor"]/20) #decaimento da vida - max em 0.5
-        self.rateSt = 1 + ((self.atributos["estamina"]*3)/10) #velocidade que a stamina recupera - max em 4
-        self.velocidadeMov = velocidadeMov + (self.atributos["agilidade"]/20) #velocidade de movimento - inicial : 0.5 // max : 1
-        self.custoDash = 2.75 - ((self.atributos["estamina"] - 1) * (0.75 / 9)) #custo do dash - inicial : 2.75 // max : 2
-        self.modificadorDanoRecebido = 1 - (self.atributos["resistencia"]/20) #modificador de resistencia - inicial : 1 // max : 0.5
-        self.invencibilidade = int(1500 + ((self.atributos["resistencia"] - 1) * (500 / 9))) #tempo de invencibilidade - inicial : 1500 // max : 2000
-        self.cooldown_st = round(3222.22 - (self.atributos["estamina"] * 222.22)) #cooldown de stamina - inicial : 3000 // max : 1000
-        self.dash_cooldown_max = int(1000 - ((self.atributos["estamina"] - 1) * (750 / 9))) #cooldown entre dashes - inicial : 1000 // max :  250
-        self.dash_duration_max = int(150 + ((self.atributos["estamina"] - 1) * (250 / 9))) #duração máxima do dash - inicial : 150 // max : 400
+
+        self.efeitos = []
+        self.tipo_colisao = 'obstaculo'
+
+        #ARMA
+        self.sistemaparticulas = ParticleSystem()
+        self.lista_mods = ListaMods()
+        self.arma = arma if arma else EspadaEstelar("comum", self.lista_mods)
+
+        self.base_dano = self.arma.dano
+        self.base_danoCriticoMod = self.arma.danoCriticoMod
+        self.base_velocidade = self.arma.velocidade
+        self.base_chanceCritico = self.arma.chanceCritico
+        self.base_rate = 1
+        self.base_rateSt = 1
+        self.base_velocidadeMov = 0.5
+        self.base_custoDash = 2.75
+        self.base_modificadorDanoRecebido = 1
+        self.base_invencibilidade = 1500
+        self.base_cooldown_st = 3222.22
+        self.base_dash_cooldown_max = 1000
+        self.base_dash_duration_max = 150
 
         self.gameOver = False
 
@@ -69,10 +83,8 @@ class Player():
         self.frame_atual = self.animacoes[self.anim_direcao][self.anim_frame]
         self.rastros = []
 
-        self.sistemaparticulas = ParticleSystem()
-        self.lista_mods = ListaMods()
-        #ARMA
-        self.arma = arma if arma else EspadaEstelar("comum", self.lista_mods)
+
+
 
         self.telaSangue = image.load('assets/UI/sangueTelaDano.png').convert_alpha()
         self.telaSangue_alpha = 0
@@ -531,7 +543,6 @@ class Player():
         base_x = centro_jogador[0] + math.cos(angle) * (self.radius - 5)
         base_y = centro_jogador[1] + math.sin(angle) * (self.radius - 5)
 
-
         if not self.attacking:
             self.base_sword_angle = math.degrees(angle) - 90
             self.sword_angle = self.base_sword_angle
@@ -567,11 +578,20 @@ class Player():
                                       temp_surface.get_height() // 2 - self.sword_pivot[1]))
         rotated_surface = transform.rotate(temp_surface, -self.sword_angle)
         final_rect = rotated_surface.get_rect(center=(base_x, base_y))
+
+        # Aplicar transparência à espada se o efeito fantasma estiver ativo
+        if 'fantasma' in self.efeitos:
+            rotated_surface.set_alpha(150)  # 150 de 255 (cerca de 60% de opacidade)
         tela.blit(rotated_surface, final_rect.topleft)
 
         frame = self.frame_atual.copy()
         if self.foi_atingido and time.get_ticks() - self.tempo_atingido < 250:
             frame.fill((255, 255, 255), special_flags=BLEND_RGB_ADD)
+
+        # Aplicar transparência ao jogador se o efeito fantasma estiver ativo
+        if 'fantasma' in self.efeitos:
+            frame.set_alpha(150)  # 150 de 255 (cerca de 60% de opacidade)
+
         img_rect = frame.get_rect(center=self.player_rect.center)
         tela.blit(frame, img_rect.topleft)
 
@@ -646,9 +666,6 @@ class Player():
 
             dano_text = fonte_atual.render(texto_str, True, cor)
             tela.blit(dano_text, (pos_x - dano_text.get_width() / 2, pos_y))
-
-
-
 
 
     def get_hitbox(self):
@@ -733,6 +750,14 @@ class Player():
                     inimigo.aplicar_knockback(dx, dy, intensidade=4)
 
                     self.criar_efeito_sangue(hitbox_espada.centerx, hitbox_espada.centery)
+
+                    #efeitos
+                    for i in self.efeitos:
+                        if i == ("lentidao"):
+                            inimigo.velocidade *= 0.5
+                        elif i == ("veneno"):
+                            inimigo.envenenar(5, self.arma.dano)
+
                     display.flip()
 
             if not self.hit_landed and current_time - self.tempo_ultimo_hit > self.tempo_max_combo:
@@ -816,37 +841,46 @@ class Player():
         self.radius = self.arma.radius - 50
         self.hitbox_arma = self.arma.range
 
+    def atualizar_traits(self,trait):
+        '''
+        Ancião - Todo ataque aplica lentidão (lista de efeitos no jogador, aplica cada um se nao for vazio)
+        Nojento - Todo ataque aplica veneno (lista de efeitos no jogador, aplica cada um se nao for vazio)
+        Mercúrio - Mais velocidade, Menos dano
+        Humano - Vida não decai, mas tem menos dano e menos life steal
+        Translûcido - Não tem colisão com caixa (SFC)
+        '''
+        if trait == "Mercúrio":
+            self.velocidadeMov += 0.2
+            self.arma.dano -= 5
+        elif trait == "Humano":
+            self.rate = 0
+            self.arma.dano -= 10
+            self.arma.lifeSteal /=2
+        elif trait == "Ancião":
+            self.efeitos.append("lentidao")
+        elif trait == "Nojento":
+            self.efeitos.append("veneno")
+        elif trait == "Translúcido":
+            self.tipo_colisao = 'voador'
+            self.efeitos.append('fantasma')
+            self.arma.dano -= 13
+
 
     def atualizar_atributos(self):
-        #dano da arma e dano do crítico - força
-        self.arma.dano *= 1 + (self.atributos["forca"] - 1) / 9#mínimo é o proprio dano da arma, máximo é o dobro
-        self.arma.danoCriticoMod *=  1 + (self.atributos["forca"] - 1) / 9#mínimo é o proprioCriticoMod, maximo é o dobro
-
-        #velocidade de ataque da arma - destreza
-        self.arma.velocidade *= 1 + ((self.atributos["destreza"] - 1) / 9) * 0.5
-
-        #chance de critico - sorte
-        self.arma.chanceCritico *= 1 + ((self.atributos["sorte"] - 1) / 9) * 3
-        if hasattr(self.arma, "criticoOg"):
-            self.arma.criticoOg *= 1 + ((self.atributos["sorte"] - 1) / 9) * 3
-
-        self.rate = 1 - (self.atributos["vigor"] / 20)  # decaimento da vida - max em 0.5
-        self.rateSt = 1 + ((self.atributos["estamina"] * 3) / 10)  # velocidade que a stamina recupera - max em 4
-        self.velocidadeMov = self.velocidadeMov + (
-                    self.atributos["agilidade"] / 20)  # velocidade de movimento - inicial : 0.5 // max : 1
-        self.custoDash = 2.75 - (
-                    (self.atributos["estamina"] - 1) * (0.75 / 9))  # custo do dash - inicial : 2.75 // max : 2
-        self.modificadorDanoRecebido = 1 - (
-                    self.atributos["resistencia"] / 20)  # modificador de resistencia - inicial : 1 // max : 0.5
-        self.invencibilidade = int(1500 + ((self.atributos["resistencia"] - 1) * (
-                    500 / 9)))  # tempo de invencibilidade - inicial : 1500 // max : 2000
-        self.cooldown_st = round(
-            3222.22 - (self.atributos["estamina"] * 222.22))  # cooldown de stamina - inicial : 3000 // max : 1000
-        self.dash_cooldown_max = int(1000 - ((self.atributos["estamina"] - 1) * (
-                    750 / 9)))  # cooldown entre dashes - inicial : 1000 // max :  250
-        self.dash_duration_max = int(
-            150 + ((self.atributos["estamina"] - 1) * (250 / 9)))  # duração máxima do dash - inicial : 150 // max : 400
-
+        self.arma.dano = self.base_dano * (1 + (self.atributos["forca"] - 5) / 5)
+        self.arma.danoCriticoMod = self.base_danoCriticoMod * (1 + (self.atributos["forca"] - 5) / 5)
+        self.arma.velocidade = self.base_velocidade * (1 + ((self.atributos["destreza"] - 5) / 5) * 0.5)
+        self.arma.chanceCritico = self.base_chanceCritico * (1 + ((self.atributos["sorte"] - 5) / 5) * 3)
+        self.rate = self.base_rate - (self.atributos["vigor"] - 5) / 20
+        self.rateSt = self.base_rateSt + ((self.atributos["estamina"] - 5) / 5) * 0.6
+        self.velocidadeMov = self.base_velocidadeMov + ((self.atributos["agilidade"] - 5) / 5) * 0.5
+        self.custoDash = self.base_custoDash - ((self.atributos["estamina"] - 5) / 5) * 0.75
+        self.modificadorDanoRecebido = self.base_modificadorDanoRecebido - (
+                    (self.atributos["resistencia"] - 5) / 5) * 0.5
+        self.invencibilidade = int(self.base_invencibilidade + ((self.atributos["resistencia"] - 5) / 5) * 500)
+        self.cooldown_st = round(self.base_cooldown_st - (self.atributos["estamina"] - 5) * 444.44)
+        self.dash_cooldown_max = int(self.base_dash_cooldown_max - ((self.atributos["estamina"] - 5) / 5) * 750)
+        self.dash_duration_max = int(self.base_dash_duration_max + ((self.atributos["estamina"] - 5) / 5) * 250)
 
     def get_save_data(self):
         return {
