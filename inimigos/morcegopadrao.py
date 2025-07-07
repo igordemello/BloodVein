@@ -148,7 +148,12 @@ class MorcegoPadrao(Inimigo):
         draw_y = round(self.y) + offset_y
 
         frame = self.frames[self.frame_index]
+        if self.anima_hit:
+            frame = self.aplicar_efeito_hit(frame)  # Aplica o efeito de hit se necessário
+
+
         tela.blit(frame, (draw_x, draw_y))
+
 
         # Barra de vida
         vida_maxima = getattr(self, "hp_max", 100)

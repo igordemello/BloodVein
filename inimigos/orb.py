@@ -3,9 +3,12 @@ import sys
 from pygame.locals import QUIT
 import math
 from inimigo import Inimigo
+from random import uniform, randint
+
+
 class Orb(Inimigo):
-    def __init__(self, x, y, largura, altura, nome="Orb",hp=100,velocidade=2,dano=10):
-        super().__init__(x, y, largura, altura, hp,velocidade,dano)
+    def __init__(self, x, y, largura, altura, nome="Orb", hp=100, velocidade=2, dano=10):
+        super().__init__(x, y, largura, altura, hp, velocidade, dano)
         self.spritesheet = image.load('./assets/Enemies/EyeOrbSprite.png').convert_alpha()
         self.nome = nome
         self.frame_width = 32
@@ -27,13 +30,17 @@ class Orb(Inimigo):
         self.time_last_hit_frame = 0
         self.anima_hit = False
 
-        self.carregar_hit_sprites()
-
         self.tipo_colisao = 'voador'
 
+        # Atributos para ataque com projéteis
+        self.projeteis = []
+        self.ultimo_ataque = 0
+        self.cooldown_ataque = 1000  # 2 segundos entre ataques
+        self.distancia_ideal = 300  # Distância que o Orb tenta manter do jogador
+        self.trail_projetil_max = 5
+        self.trail_projetil_fade = 25
 
-    def desenhar(self, tela, player_pos, offset=(0,0)):
-        clock = time.Clock()
+    def desenhar(self, tela, player_pos, offset=(0, 0)):
         offset_x, offset_y = offset
 
         if self.anima_hit:
@@ -46,12 +53,12 @@ class Orb(Inimigo):
                     self.anima_hit = False
                     return
 
-        # Aplica o offset na posição do inimigo
         draw_x = self.x + offset_x
         draw_y = self.y + offset_y
 
         if self.anima_hit:
-            frame = self.frames_hit[self.frame_hit_index]
+            frame = self.frames[self.frame_index]  # Obtém o frame normal
+            frame = self.aplicar_efeito_hit(frame)  # Aplica o efeito de hit se necessário
         elif self.frames:
             frame = self.frames[self.frame_index]
         else:
@@ -66,18 +73,36 @@ class Orb(Inimigo):
                 frozen_sprite.fill((165, 242, 255, 100), special_flags=BLEND_MULT)
                 tela.blit(frozen_sprite, (draw_x, draw_y))
 
+        # Desenha projéteis
+        for projetil in self.projeteis:
+            # Desenha o rastro
+            for part in projetil["trail"]:
+                s = Surface((part["tamanho"], part["tamanho"]), SRCALPHA)
+                draw.circle(s, part["cor"],
+                            (part["tamanho"] // 2, part["tamanho"] // 2),
+                            part["tamanho"] // 2)
+                s.set_alpha(part["alpha"])
+                tela.blit(s, (part["x"] - part["tamanho"] // 2 + offset_x,
+                              part["y"] - part["tamanho"] // 2 + offset_y))
+
+            # Desenha o projétil principal
+            s = Surface((projetil["tamanho"], projetil["tamanho"]), SRCALPHA)
+            draw.circle(s, projetil["cor"],
+                        (projetil["tamanho"] // 2, projetil["tamanho"] // 2),
+                        projetil["tamanho"] // 2)
+            tela.blit(s, (projetil["x"] - projetil["tamanho"] // 2 + offset_x,
+                          projetil["y"] - projetil["tamanho"] // 2 + offset_y))
+
         vida_maxima = getattr(self, "hp_max", 100)
         largura_barra = 100
         porcentagem = max(0, min(self.hp / vida_maxima, 1))
         largura_hp = porcentagem * largura_barra
 
         if hasattr(self, 'ultimo_dano') and time.get_ticks() - self.ultimo_dano_tempo < 2500:
-            # Aplica offset na barra de vida
             draw.rect(tela, (255, 200, 200), (draw_x - 20, draw_y + 70, largura_barra, 5))
             draw.rect(tela, (255, 0, 0), (draw_x - 20, draw_y + 70, largura_hp, 5))
             draw.rect(tela, (255, 255, 255), (draw_x - 20, draw_y + 70, largura_barra, 5), 1)
 
-        # Aplica offset na hitbox de ataque
         rot_rect, rot_surf = self.get_hitbox_ataque((player_pos[0] + offset_x, player_pos[1] + offset_y))
         tela.blit(rot_surf, rot_rect)
 
@@ -122,13 +147,6 @@ class Orb(Inimigo):
             self._last_angle = math.atan2(dy, dx)
             self._last_pos = player_pos
 
-        # player_x = player_pos[0]
-        # player_y = player_pos[1]
-
-        # inimigo orbital
-        # dx = (player_x+32) - (self.x+32)
-        # dy = (player_y+32) - (self.y+32)
-
         angulo = self._last_angle
 
         orb_x = self.x + 32 + math.cos(angulo) * (self.radius + 15)
@@ -137,35 +155,26 @@ class Orb(Inimigo):
         Orb_rect = Rect(0, 0, *(self.orbital_size))
         Orb_rect.center = (orb_x, orb_y)
 
-        # esse daqui é a hitbox do ataque do inimigo
         orb_surf = Surface(self.hitboxArma, SRCALPHA)
-        # draw.rect(orb_surf, (255, 0, 0), orb_surf.get_rect(),
-        #           width=1)  # quadrado sem preenchimento vermelho   que fica com o inimigo
-        rot_surf = transform.rotate(orb_surf, -math.degrees(
-            angulo))  # quadrado sem preenchimento vermelho   que fica com o inimigo
-        rot_rect = rot_surf.get_rect(
-            center=Orb_rect.center)  # quadrado sem preenchimento vermelho   que fica com o inimigo
-
-        # tela.blit(rot_surf, Rot_rect) #quadrado sem preenchimento vermelho   que fica com o inimigo
+        rot_surf = transform.rotate(orb_surf, -math.degrees(angulo))
+        rot_rect = rot_surf.get_rect(center=Orb_rect.center)
 
         return rot_rect, rot_surf
-    
-    def atualizar(self, player_pos, tela):
 
+    def atualizar(self, player_pos, tela):
         now = time.get_ticks()
 
         if now - self.knockback_time < self.knockback_duration:
-            # O knockback ainda está ativo → não atualiza perseguição
             return
         else:
-            # Knockback acabou → zera velocidade
             self.knockback_x = 0
             self.knockback_y = 0
             self.set_velocidade_x(0)
             self.set_velocidade_y(0)
+
         self.old_x = self.x
         self.old_y = self.y
-        # inimigo morrendo
+
         if self.hp <= 0:
             self.vivo = False
             self.alma_coletada = False
@@ -174,26 +183,62 @@ class Orb(Inimigo):
             self.rect.topleft = (self.x, self.y)
             return
 
-        player_x = player_pos[0]
-        player_y = player_pos[1]
-
+        player_x, player_y = player_pos
         self.vx = 0
         self.vy = 0
 
-        
-        if abs(player_x - self.x) > 100:
+        # Calcula distância até o jogador
+        distancia = math.sqrt((player_x - self.x) ** 2 + (player_y - self.y) ** 2)
+
+        # Comportamento de movimento
+        if distancia > self.distancia_ideal + 50:
+            # Se estiver muito longe, se aproxima
             self.vx = self.velocidade if player_x > self.x else -self.velocidade
-        if abs(player_y - self.y) > 100:
             self.vy = self.velocidade if player_y > self.y else -self.velocidade
+        elif distancia < self.distancia_ideal - 50:
+            # Se estiver muito perto, se afasta
+            self.vx = -self.velocidade if player_x > self.x else self.velocidade
+            self.vy = -self.velocidade if player_y > self.y else self.velocidade
+        else:
+            # Se estiver na distância ideal, fica parado e atira
+            if now - self.ultimo_ataque > self.cooldown_ataque:
+                self.atirar_projetil(player_pos)
+                self.ultimo_ataque = now
 
-        rot_rect, _ = self.get_hitbox_ataque((player_x, player_y))
-        player_hitbox = Rect(player_x, player_y, 64, 64)
+        # Atualiza posição usando o sistema de colisão
+        # (O sistema de colisão já está configurado em colisao.py)
+        # Apenas defina a velocidade e a colisão será tratada automaticamente
+        self.set_velocidade_x(self.vx)
+        self.set_velocidade_y(self.vy)
 
-        if rot_rect.colliderect(player_hitbox):
-            if hasattr(self, "dar_dano") and callable(self.dar_dano):
-                self.dar_dano()
+        # Atualiza projéteis
+        for projetil in self.projeteis[:]:
+            # Adiciona partículas ao rastro
+            if len(projetil["trail"]) < self.trail_projetil_max or uniform(0, 1) < 0.4:
+                projetil["trail"].append({
+                    "x": projetil["x"],
+                    "y": projetil["y"],
+                    "alpha": randint(150, 200),
+                    "cor": (255, 100 + randint(0, 50), 100 + randint(0, 50)),
+                    "tamanho": randint(10, 15),
+                    "lifetime": randint(200, 255)
+                })
 
-        self.x, self.y = self.rect.topleft
+            # Atualiza partículas existentes
+            for part in projetil["trail"][:]:
+                part["alpha"] = max(0, part["alpha"] - self.trail_projetil_fade)
+                if part["alpha"] <= 0:
+                    projetil["trail"].remove(part)
+
+            # Move o projétil
+            projetil["x"] += projetil["vx"]
+            projetil["y"] += projetil["vy"]
+            projetil["lifetime"] -= 1
+
+            # Remove se expirar
+            if projetil["lifetime"] <= 0:
+                self.projeteis.remove(projetil)
+
         self.atualizar_animacao()
 
         if hasattr(self, 'veneno_ativo') and self.veneno_ativo:
@@ -201,14 +246,11 @@ class Orb(Inimigo):
                 self.hp -= self.veneno_dano_por_tick
                 self.veneno_ticks -= 1
                 self.veneno_proximo_tick = now + self.veneno_intervalo
-
-                # Inicia animação de hit como feedback visual (opcional)
                 self.anima_hit = True
                 self.time_last_hit_frame = now
-
             if self.veneno_ticks <= 0:
                 self.veneno_ativo = False
-    
+
     def carregar_hit_sprites(self):
         for i in range(self.total_frames_hit):
             rect = Rect(i * self.frame_width, 0, self.frame_width, self.frame_height)
@@ -216,3 +258,24 @@ class Orb(Inimigo):
             frame.blit(self.sprite_hit, (0, 0), rect)
             frame = transform.scale(frame, (self.largura, self.altura))
             self.frames_hit.append(frame)
+
+    def atirar_projetil(self, player_pos):
+        """Cria um novo projétil direcionado ao jogador"""
+        player_x = player_pos[0] + 32
+        player_y = player_pos[1] + 50
+        angle = math.atan2(player_y - (self.y + self.altura / 2),
+                           player_x - (self.x + self.largura / 2))
+
+        projetil = {
+            "x": self.x + self.largura / 2,
+            "y": self.y + self.altura / 2,
+            "vx": math.cos(angle) * 12,  # Velocidade aumentada
+            "vy": math.sin(angle) * 12,  # Velocidade aumentada
+            "dano": self.dano,
+            "lifetime": 1000,  # 1 segundo de vida
+            "raio_hitbox": 10,
+            "cor": (255, 100, 100),  # Vermelho claro
+            "tamanho": 20,
+            "trail": []  # Partículas de rastro
+        }
+        self.projeteis.append(projetil)

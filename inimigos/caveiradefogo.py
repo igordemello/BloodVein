@@ -129,6 +129,9 @@ class CaveiraDeFogo(Inimigo):
         draw_y = self.y + offset_y
 
         frame = self.frames[self.frame_index]
+        if self.anima_hit:
+            frame = self.frames[self.frame_index]
+            frame = self.aplicar_efeito_hit(frame)
         tela.blit(frame, (draw_x, draw_y))
 
         vida_maxima = getattr(self, "hp_max", 100)

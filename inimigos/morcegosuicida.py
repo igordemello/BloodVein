@@ -153,6 +153,7 @@ class MorcegoSuicida(Inimigo):
         draw_y = self.y + offset_y
 
 
+
         vida_maxima = getattr(self, "hp_max", 100)
         largura_barra = 100
         porcentagem = max(0, min(self.hp / vida_maxima, 1))
@@ -166,11 +167,15 @@ class MorcegoSuicida(Inimigo):
         
         if len(self.frames) == 0:  # Proteção adicional
             return
-            
+
         if self.explodindo:
             frame = self.frames_explosao[self.frame_index]
+        elif self.anima_hit:
+            frame = self.frames[self.frame_index]  # Obtém o frame normal
+            frame = self.aplicar_efeito_hit(frame)  # Aplica o efeito de hit se necessário
         else:
             frame = self.frames_idle[self.frame_index]
+
             
         # Aplica efeito visual se estiver prestes a explodir
         if self.preparando_explosao:

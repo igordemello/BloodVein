@@ -93,7 +93,11 @@ class FantasmaGasp(Inimigo):
 
         if self.current_frames:
             frame = self.current_frames[self.frame_index]
+            if self.anima_hit:
+                frame = self.frames[self.frame_index]
+                frame = self.aplicar_efeito_hit(frame)
             tela.blit(frame, (draw_x, draw_y))
+
 
             if self.congelado:
                 frozen_sprite = frame.copy()

@@ -26,7 +26,6 @@ class Inimigo:
         self.knockback_time = 0
         self.knockback_duration = 200
 
-        
         self.old_x = x
         self.old_y = y
 
@@ -61,6 +60,26 @@ class Inimigo:
 
         self.rect = self.get_hitbox()
 
+        # Adicionando atributos para animação de hit
+        self.anima_hit = False
+        self.hit_frame_duration = 2000  # ms
+        self.time_last_hit_frame = 0
+        self.hit_alpha = 200  # Transparência do efeito de hit (0-255)
+        self.hit_color = (255, 0, 0)  # Cor vermelha para o efeito de hit
+
+    def aplicar_efeito_hit(self, frame):
+        """Aplica um efeito vermelho temporário ao frame quando o inimigo leva dano"""
+        if self.anima_hit:
+            now = time.get_ticks()
+            if now - self.time_last_hit_frame > self.hit_frame_duration:
+                self.anima_hit = False
+                return frame
+
+            hit_frame = frame.copy()
+            hit_frame.fill(self.hit_color, special_flags=BLEND_MULT)
+            hit_frame.set_alpha(self.hit_alpha)
+            return hit_frame
+        return frame
 
     def get_velocidade(self):
         return (self.vx, self.vy)
@@ -111,10 +130,9 @@ class Inimigo:
         self.veneno_proximo_tick = time.get_ticks() + self.veneno_intervalo
         self.veneno_ativo = True
 
-    
     def get_hitbox(self):
         return Rect(self.x, self.y, self.largura, self.altura)
 
     def aplicar_modificadores(self, elite=False):
-       gerenciador = GerenciadorModificadores()
-       gerenciador.aplicar_modificadores(self, elite)
+        gerenciador = GerenciadorModificadores()
+        gerenciador.aplicar_modificadores(self, elite)

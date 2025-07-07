@@ -41,6 +41,7 @@ class Colisao:
         self._colisao_entidade_projetil()
         self._colisao_entidade_AOE()
         self._colisao_projetil_mapa()
+        self._colisao_projetil_inimigo_player()
 
 
     def _colisao_entidade_mapa_contando_obstaculo(self,entidade):
@@ -83,23 +84,23 @@ class Colisao:
     def _colisao_entidade_mapa_sem_obstaculo(self,entidade):
         vx, vy = entidade.get_velocidade()
         new_rect = entidade.get_hitbox().copy()
-        
+
 
         area_interesse = Rect(
             new_rect.x - 100, new_rect.y - 100,
             new_rect.width + 200, new_rect.height + 200
         )
-        
+
 
         can_move_x, can_move_y = True, True
-        
+
 
         new_rect.x += vx
         for collider in self.mapa.colliders_sem_obstaculo:
             if area_interesse.colliderect(collider['rect']) and new_rect.colliderect(collider['rect']):
                 can_move_x = False
                 break
-        
+
 
         new_rect.x = entidade.get_hitbox().x
         new_rect.y += vy
@@ -107,7 +108,7 @@ class Colisao:
             if area_interesse.colliderect(collider['rect']) and new_rect.colliderect(collider['rect']):
                 can_move_y = False
                 break
-        
+
 
         entidade.mover_se(can_move_x, can_move_y, vx, vy)
 
@@ -229,5 +230,34 @@ class Colisao:
                     if projetil in self.player.projeteis:
                         self.player.projeteis.remove(projetil)
                     break
+
+    def _colisao_projetil_inimigo_player(self):
+        for inimigo in self.entidades:
+            if hasattr(inimigo, 'projeteis'):
+                for projetil in inimigo.projeteis[:]:
+                    # Criar hitbox circular mais precisa
+                    projetil_raio = projetil["raio_hitbox"]
+                    centro_projetil = (projetil["x"], projetil["y"])
+
+                    # Verificar colisão com player (também circular)
+                    player_rect = self.player.get_hitbox()
+                    player_centro = (player_rect.centerx, player_rect.centery)
+                    player_raio = max(player_rect.width, player_rect.height) // 2
+
+                    distancia = math.sqrt((centro_projetil[0] - player_centro[0]) ** 2 +
+                                          (centro_projetil[1] - player_centro[1]) ** 2)
+
+                    if distancia < (projetil_raio + player_raio):
+                        self.player.tomar_dano(projetil["dano"])
+                        inimigo.projeteis.remove(projetil)
+                        break
+
+                    # Colisão com o mapa (opcional)
+                    for collider in self.mapa.colliders:
+                        if Rect(projetil["x"] - projetil_raio, projetil["y"] - projetil_raio,
+                                projetil_raio * 2, projetil_raio * 2).colliderect(collider['rect']):
+                            if projetil in inimigo.projeteis:
+                                inimigo.projeteis.remove(projetil)
+                            break
 
 

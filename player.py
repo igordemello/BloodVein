@@ -68,7 +68,7 @@ class Player():
         self.base_velocidadeMov = 0.5
         self.base_custoDash = 2.75
         self.base_modificadorDanoRecebido = 1
-        self.base_invencibilidade = 1500
+        self.base_invencibilidade = 1000
         self.base_cooldown_st = 3222.22
         self.base_dash_cooldown_max = 1000
         self.base_dash_duration_max = 150
@@ -753,6 +753,7 @@ class Player():
                     screen_shaker.start(intensity=9, duration=150)
 
                     inimigo.anima_hit = True
+                    inimigo.time_last_hit_frame = time.get_ticks()
                     self.hits += 1
                     self.tempo_ultimo_hit = current_time
                     self.arma.comboMult = 1.0 + (0.1 * self.hits)
@@ -897,7 +898,7 @@ class Player():
         self.base_velocidadeMov = 0.5
         self.base_custoDash = 2.75
         self.base_modificadorDanoRecebido = 1
-        self.base_invencibilidade = 1500
+        self.base_invencibilidade = 1000
         self.base_cooldown_st = 3222.22
         self.base_dash_cooldown_max = 1000
         self.base_dash_duration_max = 150
