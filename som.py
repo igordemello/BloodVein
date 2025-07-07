@@ -3,10 +3,9 @@ from pygame import mixer
 import time
 from threading import Thread
 
-
+mixer.init(frequency=44100, size=-16, channels=2, buffer=512)
 class GerenciadorDeSom:
-    def __init__(self, volume=0.5, max_channels=32):
-        mixer.init(frequency=44100, size=-16, channels=2, buffer=512)
+    def __init__(self, volume=0.1, max_channels=32):
         mixer.set_num_channels(max_channels)
         self.volume = volume
         self.max_channels = max_channels
@@ -58,29 +57,24 @@ class GerenciadorDeSom:
         if nome not in self.sons:
             return None
 
-        # Encontra um canal livre
         canal = mixer.find_channel()
         if canal is None:
-            # Se todos os canais estão ocupados, interrompe o mais antigo
             canal = self._obter_canal_mais_antigo()
             if canal is None:
                 return None
 
-        # Configura o volume
-        if volume is not None:
-            volume = max(0.0, min(1.0, volume))
-            canal.set_volume(volume * self.volume)
-        else:
-            canal.set_volume(self.volume)
+        # Configura o volume - garante que não ultrapasse o volume global
+        target_volume = self.volume if volume is None else min(volume, self.volume)
+        canal.set_volume(target_volume)
 
         # Toca o som
         canal.play(self.sons[nome], loops, fade_ms=fade_ms)
 
-        # Registra o canal
         self.canais_ocupados[id(canal)] = {
             "canal": canal,
             "inicio": time.time(),
-            "nome": nome
+            "nome": nome,
+            "volume": target_volume  # Armazena o volume configurado
         }
 
         return canal
@@ -116,12 +110,11 @@ class GerenciadorDeSom:
                 self.canais_ocupados.pop(canal_id)
 
 
-som = GerenciadorDeSom(volume=0.5)
+som = GerenciadorDeSom(volume=0.1)
 
 
 class GerenciadorDeMusica:
     def __init__(self, volume=0.5, fade_duration=1000):
-        mixer.init(frequency=44100, size=-16, channels=2, buffer=512)
         self.volume = volume
         self.fade_duration = fade_duration  # ms para transições
         self.musica_atual = None
@@ -175,6 +168,9 @@ class GerenciadorDeMusica:
                 self.musica_fade_in = False
             else:
                 mixer.music.set_volume(self.volume * progresso)
+
+        # Garante que o volume dos efeitos sonoros não seja alterado
+        som.set_volume(som.volume)
 
     def pausar(self):
         """Pausa a música atual"""

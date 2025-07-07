@@ -841,9 +841,7 @@ class Player():
         if now - self.ultimo_dano < self.invencibilidade:
             return
         self.ultimo_dano = now
-        som.set_volume((0.15))
         som.tocar(choice(['Dano1','Dano2','Dano3']))
-        som.set_volume((0.5))
         self.hp -= valor * self.modificadorDanoRecebido
         self.foi_atingido = True
         self.tempo_atingido = now
