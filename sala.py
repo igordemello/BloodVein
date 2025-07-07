@@ -23,6 +23,7 @@ from inimigos.caveiradefogo import CaveiraDeFogo
 from inimigos.morcegopadrao import MorcegoPadrao
 from inimigos.fantasmagaspar import FantasmaGasp
 from inimigos.fantasmatp import FantasmaTp
+from inimigos.furação import Furacao
 
 init()
 fonte = font.SysFont("Arial", 24)
@@ -180,7 +181,7 @@ class Sala:
 
 
         if tipo_escolhido == "fasntasmagastp":
-            inimigo = FantasmaTp(x, y, 64, 64, hp=200 if not elite else 300)
+            inimigo = Furacao(x, y, 64, 64, hp=200 if not elite else 300)
             inimigo.nome_base = "Morcego Padrão"
             inimigo.aplicar_modificadores(elite=elite)
 
