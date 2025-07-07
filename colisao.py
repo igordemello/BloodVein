@@ -23,7 +23,11 @@ class Colisao:
     def checar_colisoes(self,dt):
         from player import Player
         for i, ent1 in enumerate(self.entidades):
+            if isinstance(ent1, Player):
+                continue
             for ent2 in self.entidades[i+1:]:
+                if isinstance(ent2, Player):
+                    continue
                 self._colisao_entidade_entidade(ent1, ent2)
 
         for entidade in self.entidades:
