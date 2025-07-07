@@ -46,6 +46,7 @@ mouse.set_visible(False)
 
 jogo_pausado = False
 pause = Pause()
+inventarioexibe = False
 
 mensagem_salvo = None
 tempo_mensagem_salvo = 0
@@ -263,7 +264,7 @@ while i == 1:
                             menuDeArma.scrollMenu("<")
                             print(menuDeArma.pos)
 
-                    if ev.key == K_ESCAPE:
+                    if ev.key == K_ESCAPE and not inventarioexibe:
                         jogo_pausado = not jogo_pausado
                         pausado = not pausado
 
@@ -271,7 +272,7 @@ while i == 1:
                         player.ativo_ultimo_uso = current_time
                         player.usarItemAtivo(sala_atual)
 
-                    if ev.key == K_l:
+                    if ev.key == K_l and not inventarioexibe:
                         loja = not loja
 
                     if ev.key == K_o:
@@ -281,8 +282,19 @@ while i == 1:
                         minimapa.toggle()
 
                     if ev.key == K_CAPSLOCK:
-                        inventario.toggle()
-                        jogo_pausado = not jogo_pausado
+                        pode_abrir = not pausado and not (sala_atual.bau and sala_atual.bau.menu_ativo) and not loja
+                        if inventario.visible:
+                            inventario.toggle()
+                            jogo_pausado = False
+                            inventarioexibe = False
+                        elif pode_abrir:
+                            inventario.toggle()
+                            jogo_pausado = True
+                            inventarioexibe = True
+
+
+                    
+                        
                         
                     if ev.key == K_F5:
                         game_state = save_manager.generate_game_state(player, andar, sala_atual)
@@ -326,7 +338,10 @@ while i == 1:
 
             if not (sala_atual.cutscene and sala_atual.cutscene.ativa):
                 player.desenhar(SCREEN, mouse_pos)
-                hud.desenhar()
+                if inventario.visible:
+                    hud.desenhar(minimal=True)
+                else:
+                    hud.desenhar()
 
             if not jogo_pausado:
                 sala_atual.atualizar(dt, keys, eventos)

@@ -81,7 +81,7 @@ class Hud:
         self.combo_shake_intensity = min(10 + self.player.hits * 0.5, 30)
         self.combo_shake_duration = 300
 
-    def desenhar(self):
+    def desenhar(self, minimal=False):
         offset_x, offset_y = screen_shaker.offset
         almas_font = font.Font('assets/Fontes/alagard.ttf', 48)
         almas = almas_font.render(f"{self.player.almas}x", True, (243, 236, 215))
@@ -114,8 +114,8 @@ class Hud:
         comboMult_rect.centerx = base_combo_rect.centerx + self.shake_offset[0] * 0.7
         comboMult_rect.top = base_combo_rect.bottom - 15 + self.shake_offset[1] * 0.7
 
-
-        self.tela.blit(self.hud, (0, 0))
+        if not minimal:
+            self.tela.blit(self.hud, (0, 0))
 
         # HP Bar
         larguraHp_total = self.bracoHp_cima.get_width()
@@ -129,6 +129,25 @@ class Hud:
             y_corte = self.bracoHp_cima.get_height() - altura_visivelHp
             barra_cheia_cortada = self.bracoHp_cima.subsurface((0, y_corte, larguraHp_total, altura_visivelHp)).copy()
             self.tela.blit(barra_cheia_cortada, (15 + offset_x, 510 + y_corte + offset_y))
+
+
+        # Stamina Bar
+        braco_stamina = self.bracoSt_fundo
+        larguraSt_total = self.bracoSt_cima.get_width()
+        alturaSt_total = self.bracoSt_cima.get_height() - 70
+        proporcaoSt = max(0, min(1, self.player.st / 100))
+        altura_visivelSt = int(alturaSt_total * proporcaoSt)
+
+        self.tela.blit(braco_stamina, (1715+ offset_x, 510+offset_y))
+
+        if altura_visivelSt > 0:
+            y_corte = self.bracoSt_cima.get_height() - altura_visivelSt
+            barra_cheia_cortada = self.bracoSt_cima.subsurface((0, y_corte, larguraSt_total, altura_visivelSt)).copy()
+            self.tela.blit(barra_cheia_cortada, (1715, 510 + y_corte))
+
+        if minimal:
+            return
+
 
         # Desenha itens
         for i, (item, qtd) in enumerate(self.player.itens.items()):
@@ -166,19 +185,7 @@ class Hud:
             self.tela.blit(comboMult, comboMult_rect.topleft)
 
 
-        # Stamina Bar
-        braco_stamina = self.bracoSt_fundo
-        larguraSt_total = self.bracoSt_cima.get_width()
-        alturaSt_total = self.bracoSt_cima.get_height() - 70
-        proporcaoSt = max(0, min(1, self.player.st / 100))
-        altura_visivelSt = int(alturaSt_total * proporcaoSt)
-
-        self.tela.blit(braco_stamina, (1715+ offset_x, 510+offset_y))
-
-        if altura_visivelSt > 0:
-            y_corte = self.bracoSt_cima.get_height() - altura_visivelSt
-            barra_cheia_cortada = self.bracoSt_cima.subsurface((0, y_corte, larguraSt_total, altura_visivelSt)).copy()
-            self.tela.blit(barra_cheia_cortada, (1715, 510 + y_corte))
+        
 
     def atualizar_arma_icon(self):
         self.armaIcon = transform.scale(image.load(self.player.arma.spriteIcon).convert_alpha(), (96, 96))
