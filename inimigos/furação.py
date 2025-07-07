@@ -8,26 +8,49 @@ import random
 class Furacao(Inimigo):
     def __init__(self, x, y, largura, altura, hp, velocidade=4, dano=20):
         super().__init__(x, y, largura, altura, hp, velocidade, dano)
+        
+        # Estados do inimigo
+        self.estado = "idle"  # Pode ser "idle" ou "ataque"
+        self.ultima_mudanca_estado = time.get_ticks()
+        self.cooldown_idle = 2000  # 3 segundos em idle
+        self.duracao_ataque = 5000  # 5 segundos em ataque
+        
+        # Controle de velocidade progressiva
+        self.velocidade_base = velocidade
+        self.velocidade_atual = 0
+        self.velocidade_max = 10
+        self.aceleracao = 0.1
+        self.desaceleracao = 0.08
+        
+        # Spritesheets com dimensões específicas
+        self.spritesheet_idle = image.load('./assets/Enemies/furacão_idle.png').convert_alpha()
+        self.spritesheet_ataque = image.load('./assets/Enemies/furação_ataque.png').convert_alpha()
+        self.spritesheet = self.spritesheet_idle  # Começa com idle
 
-        self.spritesheet_idle = image.load('./assets/Enemies/furação_idle.png').convert_alpha()
-        self.spritesheet_ataque = image.load('./assets/Enemies/furacão_ataque.png').convert_alpha()
-
+        # Configuração de animação
         self.frame_width = 32
-        self.frame_height = 32
-        self.total_frames = 16
+        self.frame_height = 38  # Altura ajustada
+        
+        # Configurações específicas para cada estado
+        self.idle_frames = 4
+        self.ataque_frames = 7
         self.animation_speed = 0.15
+        
+        # Carrega os frames iniciais (idle)
+        self.usar_indices = list(range(self.idle_frames))
+        self.carregar_sprites()
+        self.frame_index = 0
 
+        # Configurações específicas do Furacão
         self.tipo_colisao = 'voador'
-
         self.dano_area = self.dano
         self.raio_dano = 60
         self.tempo_ultimo_dano = 0
         self.intervalo_dano = 1000
 
-        # Configurações de movimento aleatório
+        # Configurações de movimento
         self.direcao = self.gerar_direcao()
-        self.tempo_mudanca_direcao = 2000
-        self.ultimo_tempo_mudanca = time.get_ticks()
+        self.ultimo_frame = time.get_ticks()
 
         # Limites do mapa
         self.limite_x_min = 400
@@ -36,30 +59,65 @@ class Furacao(Inimigo):
         self.limite_y_max = 800
 
     def gerar_direcao(self):
+        """Gera uma direção aleatória normalizada"""
         angulo = random.uniform(0, 2 * math.pi)
         return [math.cos(angulo), math.sin(angulo)]
 
-    def get_frame(self, index):
-        rect = Rect(index * self.frame_width, 0, self.frame_width, self.frame_height)
-        frame = Surface((self.frame_width, self.frame_height), SRCALPHA)
-        frame.blit(self.spritesheet, (0, 0), rect)
-        return transform.scale(frame, (self.largura, self.altura))
-    
+    def carregar_sprites(self):
+        """Carrega os frames de animação da spritesheet atual"""
+        if self.spritesheet:
+            self.frames = [self.get_frame(i) for i in self.usar_indices]
+            if not self.frames:  # Se não carregou frames, cria um fallback
+                self.frames = [Surface((self.largura, self.altura), SRCALPHA)]
+
+    def mudar_estado(self, novo_estado):
+        """Muda o estado do inimigo entre idle e ataque"""
+        if self.estado != novo_estado:
+            self.estado = novo_estado
+            self.ultima_mudanca_estado = time.get_ticks()
+            self.frame_index = 0  # Reseta o frame index
+            
+            # Configura a animação conforme o estado
+            if novo_estado == "ataque":
+                self.spritesheet = self.spritesheet_ataque
+                self.usar_indices = list(range(self.ataque_frames))
+                self.velocidade_atual = self.velocidade_base * 0.5
+                self.direcao = self.gerar_direcao()
+            else:
+                self.spritesheet = self.spritesheet_idle
+                self.usar_indices = list(range(self.idle_frames))
+                self.velocidade_atual = 0
+            
+            self.carregar_sprites()
+
+    def atualizar_animacao(self):
+        """Atualiza a animação do inimigo com comportamentos diferentes por estado"""
+        agora = time.get_ticks()
+        if agora - self.ultimo_frame > self.animation_speed * 1000:
+            self.ultimo_frame = agora
+            
+            if self.estado == "idle":
+                # Animação idle (cicla normalmente)
+                self.frame_index = (self.frame_index + 1) % len(self.frames)
+            elif self.estado == "ataque":
+                # Animação ataque (não volta para o primeiro frame)
+                if self.frame_index < len(self.frames) - 1:
+                    self.frame_index += 1
+
     def atualizar(self, player_pos, tela):
         now = time.get_ticks()
         
+        # Verifica se precisa mudar de estado
+        if self.estado == "idle" and now - self.ultima_mudanca_estado > self.cooldown_idle:
+            self.mudar_estado("ataque")
+        elif self.estado == "ataque" and now - self.ultima_mudanca_estado > self.duracao_ataque:
+            self.mudar_estado("idle")
+
+        # Knockback - não se move durante knockback
         if now - self.knockback_time < self.knockback_duration:
-            # O knockback ainda está ativo → não atualiza perseguição
             return
-        else:
-            # Knockback acabou → zera velocidade
-            self.knockback_x = 0
-            self.knockback_y = 0
-            self.set_velocidade_x(0)
-            self.set_velocidade_y(0)
-        self.old_x = self.x
-        self.old_y = self.y
-        # inimigo morrendo
+        
+        # Inimigo morrendo
         if self.hp <= 0:
             self.vivo = False
             self.alma_coletada = False
@@ -68,73 +126,88 @@ class Furacao(Inimigo):
             self.rect.topleft = (self.x, self.y)
             return
 
-        # Muda direção aleatoriamente a cada X ms
-        if now - self.ultimo_tempo_mudanca > self.tempo_mudanca_direcao:
-            self.direcao = self.gerar_direcao()
-            self.ultimo_tempo_mudanca = now
+        # Controle de velocidade durante o ataque
+        if self.estado == "ataque":
+            tempo_decorrido = now - self.ultima_mudanca_estado
+            
+            # Fases do ataque:
+            # 0-30%: aceleração
+            # 30-70%: velocidade máxima
+            # 70-100%: desaceleração
+            if tempo_decorrido < self.duracao_ataque * 0.3:
+                self.velocidade_atual = min(
+                    self.velocidade_atual + self.aceleracao,
+                    self.velocidade_max
+                )
+            elif tempo_decorrido < self.duracao_ataque * 0.7:
+                self.velocidade_atual = self.velocidade_max
+            else:
+                self.velocidade_atual = max(
+                    self.velocidade_atual - self.desaceleracao,
+                    self.velocidade_base * 0.5
+                )
 
-        # Movimento com direção suavizada
-        self.vx = self.direcao[0] * self.velocidade
-        self.vy = self.direcao[1] * self.velocidade
+            # Movimento
+            self.vx = self.direcao[0] * self.velocidade_atual
+            self.vy = self.direcao[1] * self.velocidade_atual
 
-        self.x += self.vx
-        self.y += self.vy
+            self.x += self.vx
+            self.y += self.vy
 
-        rebateu = False
-        if self.x < self.limite_x_min or self.x > self.limite_x_max:
-            self.direcao[0] *= -1
-            rebateu = True
-        if self.y < self.limite_y_min or self.y > self.limite_y_max:
-            self.direcao[1] *= -1
-            rebateu = True
-        if rebateu:
-            self.vx = self.direcao[0] * self.velocidade
-            self.vy = self.direcao[1] * self.velocidade
-            self.ultimo_tempo_mudanca = now
+            # Rebate nas paredes
+            rebateu = False
+            if self.x < self.limite_x_min or self.x > self.limite_x_max:
+                self.direcao[0] *= -1
+                rebateu = True
+            if self.y < self.limite_y_min or self.y > self.limite_y_max:
+                self.direcao[1] *= -1
+                rebateu = True
+                
+            if rebateu:
+                # Aumenta um pouco a velocidade ao rebater
+                self.velocidade_atual = min(
+                    self.velocidade_atual * 1.1,
+                    self.velocidade_max
+                )
+                self.vx = self.direcao[0] * self.velocidade_atual
+                self.vy = self.direcao[1] * self.velocidade_atual
 
-        self.x = max(self.limite_x_min, min(self.x, self.limite_x_max))
-        self.y = max(self.limite_y_min, min(self.y, self.limite_y_max))
+            # Mantém dentro dos limites
+            self.x = max(self.limite_x_min, min(self.x, self.limite_x_max))
+            self.y = max(self.limite_y_min, min(self.y, self.limite_y_max))
+        
+        # Atualiza a posição do retângulo de colisão
         self.rect.topleft = (round(self.x), round(self.y))
 
-        # Define direção visual com base na movimentação
-        if abs(self.vx) > abs(self.vy):
-            direcao = 'direita' if self.vx > 0 else 'esquerda'
-        else:
-            direcao = 'baixo' if self.vy > 0 else 'cima'
-        self.frames = self.frames_direcoes[direcao]
-
-        # Dano por proximidade
-        player_rect = Rect(player_pos[0], player_pos[1], 64, 64)
-        if self.rect.colliderect(player_rect.inflate(self.raio_dano, self.raio_dano)):
-            if now - self.tempo_ultimo_dano > self.intervalo_dano:
-                if hasattr(self, "dar_dano") and callable(self.dar_dano):
-                    self.dar_dano()
-                self.tempo_ultimo_dano = now 
+        # Dano por proximidade (só durante o ataque)
+        if self.estado == "ataque":
+            player_rect = Rect(player_pos[0], player_pos[1], 64, 64)
+            if self.rect.colliderect(player_rect.inflate(self.raio_dano, self.raio_dano)):
+                if now - self.tempo_ultimo_dano > self.intervalo_dano:
+                    if hasattr(self, "dar_dano") and callable(self.dar_dano):
+                        self.dar_dano()
+                    self.tempo_ultimo_dano = now 
 
         self.atualizar_animacao()
 
     def desenhar(self, tela, player_pos, offset=(0, 0)):
-        if not self.vivo or len(self.frames) == 0:
+        if not self.vivo or not self.frames:
             return
 
         offset_x, offset_y = offset
         draw_x = self.x + offset_x
         draw_y = self.y + offset_y
 
-        frame = self.frames[self.frame_index]
+        # Desenha o frame atual
+        frame = self.frames[min(self.frame_index, len(self.frames) - 1)]  # Garante que não ultrapasse
         tela.blit(frame, (draw_x, draw_y))
 
-        vida_maxima = getattr(self, "hp_max", 100)
-        largura_barra = 100
-        porcentagem = max(0, min(self.hp / vida_maxima, 1))
-        largura_hp = porcentagem * largura_barra
-        
-        if hasattr(self, 'ultimo_dano') and time.get_ticks() - self.ultimo_dano_tempo < 2500:
-            # Aplica offset na barra de vida
-            draw.rect(tela, (255, 200, 200), (draw_x - 20, draw_y + 70, largura_barra, 5))
-            draw.rect(tela, (255, 0, 0), (draw_x - 20, draw_y + 70, largura_hp, 5))
-            draw.rect(tela, (255, 255, 255), (draw_x - 20, draw_y + 70, largura_barra, 5), 1)
-
+        # Desenha a barra de vida se tomou dano recentemente
         if time.get_ticks() - self.ultimo_dano_tempo < 2500:
+            vida_maxima = self.hp_max
+            largura_barra = 100
+            porcentagem = max(0, min(self.hp / vida_maxima, 1))
+            largura_hp = porcentagem * largura_barra
+            
             draw.rect(tela, (255, 0, 0), (draw_x - 20, draw_y + 70, largura_hp, 5))
             draw.rect(tela, (255, 255, 255), (draw_x - 20, draw_y + 70, largura_barra, 5), 1)

@@ -200,7 +200,13 @@ class LaminaDaNoite(Arma):
             inimigo.ultimo_dano = self.dano * self.comboMult
 
     def ataqueSecundario(self,inimigo,player):
-        return False
+        current_time = time.get_ticks()
+        if player.st <= 0:
+            return
+        else:
+            inimigo.congelado = True
+            player.st -= 50
+            player.last_dash_time = current_time
 
 #falta sprite e animação de ataque
 class Chigatana(Arma):

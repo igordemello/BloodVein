@@ -23,6 +23,7 @@ from inimigos.caveiradefogo import CaveiraDeFogo
 from inimigos.morcegopadrao import MorcegoPadrao
 from inimigos.fantasmagaspar import FantasmaGasp
 from inimigos.fantasmatp import FantasmaTp
+from inimigos.furação import Furacao
 
 init()
 fonte = font.SysFont("Arial", 24)
@@ -175,12 +176,12 @@ class Sala:
     def _criar_inimigo_aleatorio(self, x, y, tipo_sala):
         elite = "bau" in tipo_sala
 
-        tipos_disponiveis = ["orb"]
+        tipos_disponiveis = ["fasntasmagastp"]
         tipo_escolhido = choice(tipos_disponiveis)
 
 
-        if tipo_escolhido == "orb":
-            inimigo = Orb(x, y, 64, 64, hp=200 if not elite else 300)
+        if tipo_escolhido == "fasntasmagastp":
+            inimigo = Furacao(x, y, 64, 64, hp=200 if not elite else 300)
             inimigo.nome_base = "Morcego Padrão"
             inimigo.aplicar_modificadores(elite=elite)
 
@@ -561,3 +562,11 @@ class Sala:
         self.colisao.entidades = [self.player] + self.inimigos
 
         
+    def hitbox_loja(self):
+        tipo_sala = self.gerenciador_andar.grafo.nodes[self.gerenciador_andar.sala_atual]["tipo"]
+        if not 'loja' in tipo_sala:
+            return []
+        
+        range_loja = self.mapa.get_rangeloja()
+
+        return range_loja if range_loja else []
