@@ -864,6 +864,7 @@ class Player():
             self.arma.dano -= 13
 
 
+
     def atualizar_atributos(self):
         self.arma.dano = self.base_dano * (1 + (self.atributos["forca"] - 5) / 5)
         self.arma.danoCriticoMod = self.base_danoCriticoMod * (1 + (self.atributos["forca"] - 5) / 5)

@@ -71,8 +71,9 @@ class MenuArmas:
 
         # Traits system
         self.traits = [
+            "Vampira",
             "Translúcido",
-            "Nojento",
+            "Peçonhento",
             "Mercúrio",
             "Ancião",
             "Humano"
