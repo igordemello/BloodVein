@@ -10,6 +10,9 @@ from random import *
 from sistemaparticulas import *
 from screen_shake import screen_shaker
 from som import som
+from som import GerenciadorDeMusica
+from som import musica
+
 
 
 class Player():

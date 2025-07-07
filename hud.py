@@ -145,9 +145,40 @@ class Hud:
             barra_cheia_cortada = self.bracoSt_cima.subsurface((0, y_corte, larguraSt_total, altura_visivelSt)).copy()
             self.tela.blit(barra_cheia_cortada, (1715, 510 + y_corte))
 
+
+
         if minimal:
             return
 
+        #legendas de teclas
+        base_y = self.tela.get_height() - 40
+
+        fonte_tecla = font.Font("assets/fontes/212 Keyboard.otf", 32)
+        fonte_texto = font.Font("assets/fontes/alagard.ttf", 28)
+
+        partes = [
+            ("w", fonte_tecla, (243, 236, 215)),
+            (" dash   ", fonte_texto, (243, 236, 215)),
+            ("I", fonte_tecla, (243, 236, 215)),
+            (" inventário   ", fonte_texto, (243, 236, 215)),
+            ("e", fonte_tecla, (243, 236, 215)),
+            (" mapa   ", fonte_texto, (243, 236, 215)),
+            ("Q", fonte_tecla, (243, 236, 215)),
+            (" item ativo", fonte_texto, (243, 236, 215))
+        ]
+
+        # Calcular largura total do conjunto
+        largura_total = sum(fonte.size(texto)[0] for texto, fonte, _ in partes)
+
+        # Começar no centro da tela, alinhado à esquerda
+        x = (self.tela.get_width() - largura_total) // 2
+
+        # Desenhar tudo alinhado a partir do centro
+        for texto, fonte, cor in partes:
+            renderizado = fonte.render(texto, True, cor)
+            self.tela.blit(renderizado, (x, base_y))
+            x += renderizado.get_width()
+    
 
         # Desenha itens
         for i, (item, qtd) in enumerate(self.player.itens.items()):
