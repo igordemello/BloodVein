@@ -62,6 +62,7 @@ class FantasmaTp(Inimigo):
         if self.hp <= 0:
             self.vivo = False
             self.alma_coletada = False
+            self.rect.topleft = (self.x, self.y)
             return
 
         if self.teleportando:
