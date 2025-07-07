@@ -343,8 +343,10 @@ while i == 1:
             hud.desenhaFundo()
             sala_atual.desenhar(SCREEN)
 
+
             if not (sala_atual.cutscene and sala_atual.cutscene.ativa):
                 player.desenhar(SCREEN, mouse_pos)
+                sala_atual.desenhar_inimigos(SCREEN)
                 if inventario.visible:
                     hud.desenhar(minimal=True)
                 else:

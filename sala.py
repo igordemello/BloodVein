@@ -335,18 +335,8 @@ class Sala:
 
 
 
-
-
-
-
-    def desenhar(self, tela):
-        if self.cutscene and self.cutscene.ativa:
-            self.cutscene.draw(self.tela)
-            return
-        
+    def desenhar_inimigos(self, tela):
         offset_x, offset_y = screen_shaker.offset
-        self.mapa.desenhar(self.porta_liberada)
-
         for inimigo in self.inimigos:
             if inimigo.vivo:
                 inimigo.desenhar(tela, (self.player.x, self.player.y), offset=(offset_x, offset_y))
@@ -363,6 +353,18 @@ class Sala:
                     if self.player.get_hitbox().colliderect(alma_hitbox):
                         self.player.almas += 1
                         inimigo.alma_coletada = True
+
+
+
+    def desenhar(self, tela):
+        if self.cutscene and self.cutscene.ativa:
+            self.cutscene.draw(self.tela)
+            return
+        
+        offset_x, offset_y = screen_shaker.offset
+        self.mapa.desenhar(self.porta_liberada)
+
+        
 
         if self.bau:
             tela.blit(self.bau.image, (self.bau.rect.x + offset_x, self.bau.rect.y + offset_y))
