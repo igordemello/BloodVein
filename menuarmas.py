@@ -12,6 +12,8 @@ class MenuArmas:
     def __init__(self, hud):
         self.lista_mods = ListaMods()
         self.hud = hud
+
+        # Armamentos disponíveis
         self.armasDisp = [
             LaminaDaNoite("comum", self.lista_mods),
             Chigatana("comum", self.lista_mods),
@@ -35,24 +37,12 @@ class MenuArmas:
 
         self.estado_hover = Vector2(1.0, 0.0)
 
-        self.image_fundo = Surface((375, 500), SRCALPHA)
-        self.image_fundo.fill((0, 0, 0, 0))
+        self.atributosFundo = image.load("assets/ui/atributo_fundo.png").convert_alpha()
+        self.armasFundo = image.load("assets/ui/armas_fundo.png").convert_alpha()
 
-        screen_width, screen_height = display.get_surface().get_size()
-        self.botao = Botao(
-            image=self.image_fundo,
-            pos=(screen_width // 2, screen_height // 2),
-            text_input="",
-            font=self.font,
-            base_color=(255, 255, 255),
-            hovering_color=(0, 0, 0)
-        )
-
-        self.botaosair = Botao(image=None, pos=(200, 980), text_input="Sair",
-                               font=font.Font('assets/Fontes/alagard.ttf', 32),
-                               base_color=(244, 26, 43), hovering_color=(202, 56, 68))
-
+        # Estados do menu
         self.menu_ativo = False
+        self.tela_atual = "atributos"  # "atributos" ou "armas"
         self.arma_escolhida = None
 
         # Atributos do jogador
@@ -65,8 +55,8 @@ class MenuArmas:
             "estamina": 5,
             "sorte": 5
         }
-        self.pontos_totais = 10  # Total de pontos disponíveis
-        self.pontos_usados = 7  # 1 ponto por atributo inicial
+        self.pontos_totais = 10
+        self.pontos_usados = 7
         self.botoes_atributos = {}
 
         # Traits system
@@ -81,94 +71,115 @@ class MenuArmas:
         self.trait_selecionada = 0
         self.botoes_traits = {}
 
-    def desenhaAtributos(self, tela):
-        # Variáveis para tamanho das fontes
-        TAMANHO_FONTE_ATRIBUTOS = 56  # Tamanho da fonte para os atributos
-        TAMANHO_FONTE_PONTOS = 36  # Tamanho da fonte para os pontos restantes
+        # Botões de navegação
+        screen_width, screen_height = display.get_surface().get_size()
+        self.botao_prosseguir = Botao(
+            image=None,
+            pos=(screen_width - 400, screen_height - 100),
+            text_input="SELECIONAR ARMA",
+            font=font.Font('assets/Fontes/alagard.ttf', 58),
+            base_color=(255, 255, 255),
+            hovering_color=(200, 200, 200)
+        )
 
-        atributos_width = int(tela.get_width() * 0.4)
-        atributos_bg = Surface((atributos_width, tela.get_height()), SRCALPHA)
+        self.botao_voltar = Botao(
+            image=None,
+            pos=(200, screen_height - 100),
+            text_input="VOLTAR",
+            font=font.Font('assets/Fontes/alagard.ttf', 58),
+            base_color=(255, 255, 255),
+            hovering_color=(200, 200, 200)
+        )
+
+        self.botao_iniciar = Botao(
+            image=None,
+            pos=(screen_width // 2 + 800, screen_height - 100),
+            text_input="INICIAR",
+            font=font.Font('assets/Fontes/alagard.ttf', 58),
+            base_color=(255, 255, 255),
+            hovering_color=(200, 200, 200)
+        )
+
+    def tela_atributos(self, tela):
+        tela.blit(self.atributosFundo, (0, 0))
+
+        atributos_width = int(tela.get_width() * 0.5)
+        atributos_height = int(tela.get_height() * 0.75)
+        atributos_bg = Surface((atributos_width, atributos_height), SRCALPHA)
         atributos_bg.fill((0, 0, 0, 150))
-        tela.blit(atributos_bg, (0, 0))
+        atributos_bg_rect = atributos_bg.get_rect(center=(665, tela.get_height() // 2 + 100))
+        tela.blit(atributos_bg, atributos_bg_rect)
 
-        # Título "ATRIBUTOS" (mantém fonte original)
-        atributos_titulo = self.fontTitulo.render("ATRIBUTOS", False, (255, 255, 255))
-        tela.blit(atributos_titulo, (215, 40))
-
-        # Posição inicial para desenhar os atributos
-        y_pos = 150
+        # Atributos
+        y_pos = 300
         mouse_pos = mouse.get_pos()
-
-        # Cria fontes
-        font_atributos = font.Font('assets/Fontes/alagard.ttf', TAMANHO_FONTE_ATRIBUTOS)
-        font_pontos = font.Font('assets/Fontes/alagard.ttf', TAMANHO_FONTE_PONTOS)
+        font_atributos = font.Font('assets/Fontes/alagard.ttf', 48)
 
         for nome, valor in self.atributos.items():
-            # Desenha o nome do atributo
             nome_texto = font_atributos.render(nome.capitalize() + ":", True, (255, 255, 255))
-            tela.blit(nome_texto, (80, y_pos))
+            tela.blit(nome_texto, (635 - 300, y_pos))
 
-            # Desenha o valor do atributo
             valor_texto = font_atributos.render(str(valor), True, (255, 255, 255))
-            tela.blit(valor_texto, (555, y_pos))
+            tela.blit(valor_texto, (635 + 215, y_pos))
 
-            # Botão para diminuir (-)
-            botao_menos_rect = Rect(440, y_pos, 48, 48)
+            # Botão -
+            botao_menos_rect = Rect(635 + 100, y_pos, 48, 48)
             draw.rect(tela, (200, 0, 0) if botao_menos_rect.collidepoint(mouse_pos) else (150, 0, 0), botao_menos_rect)
             menos_texto = font_atributos.render("-", True, (255, 255, 255))
-            tela.blit(menos_texto, (453, y_pos - 5))
+            tela.blit(menos_texto, (botao_menos_rect.x + 10, botao_menos_rect.y - 5))
 
-            # Botão para aumentar (+)
-            botao_mais_rect = Rect(640, y_pos, 48, 48)
+            # Botão +
+            botao_mais_rect = Rect(635 + 300, y_pos, 48, 48)
             draw.rect(tela, (0, 200, 0) if botao_mais_rect.collidepoint(mouse_pos) else (0, 150, 0), botao_mais_rect)
             mais_texto = font_atributos.render("+", True, (255, 255, 255))
-            tela.blit(mais_texto, (647, y_pos))
+            tela.blit(mais_texto, (botao_mais_rect.x + 10, botao_mais_rect.y))
 
-            # Armazena os retângulos dos botões para verificação de clique
             self.botoes_atributos[f"{nome}_menos"] = botao_menos_rect
             self.botoes_atributos[f"{nome}_mais"] = botao_mais_rect
 
-            y_pos += 90
+            y_pos += 70
 
-        # Mostra pontos disponíveis (usando fonte específica)
-        pontos_texto = font_pontos.render(
+        # Pontos disponíveis
+        pontos_texto = font.Font('assets/Fontes/alagard.ttf', 36).render(
             f"Pontos: {self.pontos_usados}/{self.pontos_totais}",
             True,
             (255, 255, 255) if self.pontos_usados <= self.pontos_totais else (255, 0, 0)
         )
-        tela.blit(pontos_texto, (470, y_pos + 5))
+        tela.blit(pontos_texto, (635 - pontos_texto.get_width() // 2, y_pos + 20))
 
-        # Desenha as traits abaixo dos atributos
-        y_pos += 100  # Espaço entre atributos e traits
-        traits_titulo = font.Font('assets/Fontes/alagard.ttf', 48).render("TRAITS", True, (255, 255, 255))
-        traits_titulo_rect = traits_titulo.get_rect(center=(atributos_width // 2, y_pos))
-        tela.blit(traits_titulo, traits_titulo_rect)
-        y_pos += 60
+        # Traits
+        y_pos += 105
+        traits_titulo = font.Font('assets/Fontes/alagard.ttf', 48).render("TRAÇO SELECIONADO", True, (255, 255, 255))
+        tela.blit(traits_titulo, (635 - traits_titulo.get_width() // 2, y_pos))
 
-        # Desenha a trait selecionada (centralizada)
+        y_pos += 90
         trait_font = font.Font('assets/Fontes/alagard.ttf', 32)
         trait_text = trait_font.render(self.traits[self.trait_selecionada], True, (255, 255, 255))
-        trait_rect = trait_text.get_rect(center=(atributos_width // 2, y_pos + trait_text.get_height() // 2))
+        trait_rect = trait_text.get_rect(center=(635, y_pos))
         tela.blit(trait_text, trait_rect)
 
-        # Desenha setas para navegar entre traits (posições fixas como antes)
+        #fundos
+
+
+        # Setas para navegar entre traits
         seta_esquerda = image.load("assets/UI/seta_esquerda.png").convert_alpha()
         seta_direita = image.load("assets/UI/seta_direita.png").convert_alpha()
 
-        seta_esq_rect = seta_esquerda.get_rect(center=(160, y_pos + trait_text.get_height() // 2))  # Posição fixa X=40
-        seta_dir_rect = seta_direita.get_rect(center=(600, y_pos + trait_text.get_height() // 2))  # Posição fixa X=600
+        seta_esq_rect = seta_esquerda.get_rect(center=(635 - 200, y_pos))
+        seta_dir_rect = seta_direita.get_rect(center=(635 + 200, y_pos))
 
         tela.blit(seta_esquerda, seta_esq_rect)
         tela.blit(seta_direita, seta_dir_rect)
 
-        # Armazena os retângulos das setas para verificação de clique
         self.botoes_traits["trait_esquerda"] = seta_esq_rect
         self.botoes_traits["trait_direita"] = seta_dir_rect
 
-    def menuEscolherItens(self, tela):
-        overlay = Surface(tela.get_size(), SRCALPHA)
-        overlay.fill((0, 0, 0, 180))
-        tela.blit(overlay, (0, 0))
+        # Botão para prosseguir
+        self.botao_prosseguir.changeColor(mouse_pos)
+        self.botao_prosseguir.update(tela)
+
+    def tela_armas(self, tela):
+        tela.blit(self.armasFundo, (0, 0))
 
         mouse_pos = mouse.get_pos()
         carta_width, carta_height = 375, 500
@@ -180,22 +191,19 @@ class MenuArmas:
         arma_atual = self.armasDisp[self.pos]
         arma_proxima = self.armasDisp[self.pos + 1] if self.pos < len(self.armasDisp) - 1 else self.armasDisp[0]
 
-        center_x = tela.get_width() * 0.75
+        center_x = tela.get_width() // 2 + 200
         center_y = tela.get_height() // 2
         offset_x = 220
 
-        # Lista de cartas ordenadas por profundidade (renderizar da esquerda para a direita)
         cartas = [
             {"arma": arma_anterior, "x": center_x - offset_x, "y": center_y, "scale": scale_lateral,
              "opacity": opacity_lateral, "z_index": 1},
             {"arma": arma_atual, "x": center_x, "y": center_y, "scale": scale_central, "opacity": 255, "z_index": 2},
-            # Prioridade máxima
             {"arma": arma_proxima, "x": center_x + offset_x, "y": center_y, "scale": scale_lateral,
              "opacity": opacity_lateral, "z_index": 1}
         ]
 
-        # Renderiza as cartas em ordem correta (evita sobreposição incorreta)
-        for carta in sorted(cartas, key=lambda x: x["z_index"]):  # Ordena da esquerda para a direita
+        for carta in sorted(cartas, key=lambda x: x["z_index"]):
             carta_rect = Rect(0, 0, carta_width * carta["scale"], carta_height * carta["scale"])
             carta_rect.center = (carta["x"], carta["y"])
 
@@ -230,7 +238,6 @@ class MenuArmas:
             spriteIcon = image.load(carta['arma'].spriteIcon).convert_alpha()
             sprite_arma = transform.scale(spriteIcon, (int(128 * scale), int(128 * scale)))
 
-            # Aplica opacidade ao ícone também
             if carta["opacity"] < 255:
                 sprite_arma.fill((255, 255, 255, carta["opacity"]), special_flags=BLEND_RGBA_MULT)
 
@@ -240,18 +247,11 @@ class MenuArmas:
             titulo = self.font.render(carta['arma'].nome, True, (0, 0, 0))
             titulo_rect = titulo.get_rect(center=(pos_x + width // 2, pos_y + 20 + int(height * 0.42)))
 
-            # Aplica opacidade ao título
             if carta["opacity"] < 255:
                 titulo.set_alpha(carta["opacity"])
 
             tela.blit(titulo, titulo_rect)
 
-        # Desenha os atributos do jogador
-        self.desenhaAtributos(tela)
-
-        # Título "ARMAS"
-        armasTitulo = self.fontTitulo.render("ARMAS", False, (255, 255, 255))
-        tela.blit(armasTitulo, (1320, 40, 24, 24))
 
         # Setas de navegação
         seta_esquerda = image.load("assets/UI/seta_esquerda.png").convert_alpha()
@@ -263,60 +263,76 @@ class MenuArmas:
         tela.blit(seta_esquerda, seta_esq_rect)
         tela.blit(seta_direita, seta_dir_rect)
 
+        # Botões de navegação
+        self.botao_voltar.changeColor(mouse_pos)
+        self.botao_voltar.update(tela)
+
+        self.botao_iniciar.changeColor(mouse_pos)
+        self.botao_iniciar.update(tela)
+
+    def menuEscolherItens(self, tela):
+        if self.tela_atual == "atributos":
+            self.tela_atributos(tela)
+        elif self.tela_atual == "armas":
+            self.tela_armas(tela)
+
     def checar_clique_menu(self, mouse_pos):
-        screen_width = display.get_surface().get_width()
-        center_x = screen_width * 0.75
-        center_y = display.get_surface().get_height() // 2
-        offset_x = 220
+        if self.tela_atual == "atributos":
+            # Verifica cliques nos botões de atributos
+            for nome, rect in self.botoes_atributos.items():
+                if rect.collidepoint(mouse_pos):
+                    atributo = nome.split("_")[0]
+                    operacao = nome.split("_")[1]
 
-        carta_rect = Rect(0, 0, 375, 500)
-        carta_rect.center = (center_x, center_y)
+                    if operacao == "menos" and self.atributos[atributo] > 1:
+                        self.atributos[atributo] -= 1
+                        self.pontos_usados -= 1
+                    elif operacao == "mais" and self.atributos[atributo] < 10:
+                        if self.pontos_usados < self.pontos_totais:
+                            self.atributos[atributo] += 1
+                            self.pontos_usados += 1
+                    return None
 
-        seta_esquerda_rect = Rect(0, 0, 64, 64)
-        seta_esquerda_rect.center = (center_x - offset_x - 150, center_y)
+            # Verifica cliques nas setas de traits
+            for nome, rect in self.botoes_traits.items():
+                if rect.collidepoint(mouse_pos):
+                    if nome == "trait_esquerda":
+                        self.trait_selecionada = (self.trait_selecionada - 1) % len(self.traits)
+                    elif nome == "trait_direita":
+                        self.trait_selecionada = (self.trait_selecionada + 1) % len(self.traits)
+                    return None
 
-        seta_direita_rect = Rect(0, 0, 64, 64)
-        seta_direita_rect.center = (center_x + offset_x + 150, center_y)
-
-        # Verifica cliques nos botões de atributos
-        for nome, rect in self.botoes_atributos.items():
-            if rect.collidepoint(mouse_pos):
-                atributo = nome.split("_")[0]
-                operacao = nome.split("_")[1]
-
-                if operacao == "menos" and self.atributos[atributo] > 1:
-                    self.atributos[atributo] -= 1
-                    self.pontos_usados -= 1
-                elif operacao == "mais" and self.atributos[atributo] < 10:
-                    # Verifica se há pontos disponíveis
-                    if self.pontos_usados < self.pontos_totais:
-                        self.atributos[atributo] += 1
-                        self.pontos_usados += 1
+            # Verifica clique no botão de prosseguir
+            if self.botao_prosseguir.checkForInput(mouse_pos):
+                self.tela_atual = "armas"
                 return None
 
-        # Verifica cliques nas setas de traits
-        for nome, rect in self.botoes_traits.items():
-            if rect.collidepoint(mouse_pos):
-                if nome == "trait_esquerda":
-                    self.trait_selecionada = (self.trait_selecionada - 1) % len(self.traits)
-                elif nome == "trait_direita":
-                    self.trait_selecionada = (self.trait_selecionada + 1) % len(self.traits)
+        elif self.tela_atual == "armas":
+            center_x = display.get_surface().get_width() // 2
+            center_y = display.get_surface().get_height() // 2
+            offset_x = 220
+
+            carta_rect = Rect(0, 0, 375, 500)
+            carta_rect.center = (center_x, center_y)
+
+            seta_esquerda_rect = Rect(0, 0, 64, 64)
+            seta_esquerda_rect.center = (center_x - offset_x - 150, center_y)
+
+            seta_direita_rect = Rect(0, 0, 64, 64)
+            seta_direita_rect.center = (center_x + offset_x + 150, center_y)
+
+            if carta_rect.collidepoint(mouse_pos):
                 return None
-
-        if carta_rect.collidepoint(mouse_pos):
-            print(f"Arma escolhida: {self.arma_sorteada.nome}")
-            print("Atributos selecionados:")
-            for nome, valor in self.atributos.items():
-                print(f"{nome.capitalize()}: {valor}")
-            print(f"Trait selecionada: {self.traits[self.trait_selecionada]}")
-            self.menu_ativo = False
-
-            # Retorna a arma, atributos e a trait selecionada
-            return self.arma_sorteada, self.atributos.copy(), self.traits[self.trait_selecionada]
-        elif seta_esquerda_rect.collidepoint(mouse_pos):
-            self.scrollMenu("<")
-        elif seta_direita_rect.collidepoint(mouse_pos):
-            self.scrollMenu(">")
+            elif seta_esquerda_rect.collidepoint(mouse_pos):
+                self.scrollMenu("<")
+            elif seta_direita_rect.collidepoint(mouse_pos):
+                self.scrollMenu(">")
+            elif self.botao_voltar.checkForInput(mouse_pos):
+                self.tela_atual = "atributos"
+                return None
+            elif self.botao_iniciar.checkForInput(mouse_pos):
+                self.menu_ativo = False
+                return self.arma_sorteada, self.atributos.copy(), self.traits[self.trait_selecionada]
 
         return None
 
