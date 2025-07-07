@@ -8,6 +8,8 @@ from pygame.math import Vector2
 import math
 from som import GerenciadorDeSom
 from som import som
+from som import GerenciadorDeMusica
+from som import musica
 
 class Loja():
     def __init__(self, conjunto: ConjuntoItens, player):
@@ -34,8 +36,10 @@ class Loja():
         self.font_preco = font.Font("assets/Fontes/alagard.ttf", 35, )
         self.font_chata = font.Font("assets/Fontes/alagard.ttf", 20, )
 
+        self.musica = 0
 
-        
+
+    
 
         self.estados_hover = [Vector2(1.0, 0.0) for _ in self.itens_sorteados]
         self.descricao_visivel = [False] * 3
@@ -79,6 +83,8 @@ class Loja():
     
 
     def desenhar_loja(self, tela):
+        self.musica = 1
+        musica.tocar("BloodVein SCORE/OST/Loja.mp3")
         tela.fill((0, 0, 0))
         tela.blit(self.fundo,(0,0))
         tela.blit(self.personagem_img, (1100, 300))
@@ -198,6 +204,8 @@ class Loja():
 
         if self.botaosair.checkForInput(mouse_pos):
             som.tocar("clique")
+            musica.musica_atual = 'andar'
+            self.musica = 0
             return 'sair'
         
         for i, botao in enumerate(self.botoes):

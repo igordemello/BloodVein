@@ -26,6 +26,8 @@ from som import som
 from pause import Pause
 import os
 import shutil
+from som import GerenciadorDeMusica
+from som import musica
 
 init()
 gerenciamento.modo = 'menu'
@@ -317,7 +319,7 @@ while i == 1:
                 if mensagem_salvo and time.get_ticks() - tempo_mensagem_salvo < 2000:
                     SCREEN.blit(mensagem_salvo, (1920 // 2 - mensagem_salvo.get_width() // 2, 900))
             minimapa.draw()
-
-
+            
     SCREEN.blit(imagem_cursor, (mouse_pos[0], mouse_pos[1] ))
     display.update()
+    

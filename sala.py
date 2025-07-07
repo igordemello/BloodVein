@@ -13,9 +13,15 @@ from random import randint, sample, choice
 import gerenciador_andar
 from screen_shake import screen_shaker
 from cutscene import Cutscene
+from som import GerenciadorDeMusica
+from som import musica
+from som import GerenciadorDeSom
+from som import som
+from loja import Loja
 
 init()
 fonte = font.SysFont("Arial", 24)
+
 
 class Sala:
     def __init__(self, caminho_mapa, tela, player, gerenciador_andar, set_minimapa_callback):
@@ -52,8 +58,8 @@ class Sala:
 
         self.spawn_points = self.mapa.get_inimigospawn()  
         self.leve_atual = 0
-        # self.max_leves = randint(2,5)
-        self.max_leves = 0
+        self.max_leves = 1
+        #self.max_leves = 0
         self.inimigos_por_leva = 1 
         self.tempo_entrada = time.get_ticks() 
         self.cooldown_inicial = 1000  
@@ -95,7 +101,7 @@ class Sala:
 
 
 
-        if not gerenciador_andar.sala_foi_conquistada(gerenciador_andar.sala_atual):
+        if not gerenciador_andar.sala_foi_conquistada(gerenciador_andar.sala_atual):  
             self.inimigos = self._criar_inimigos()
         else:
             self.inimigos = []
@@ -104,6 +110,15 @@ class Sala:
 
         for inimigo in self.inimigos:
             self.colisao.adicionar_entidade(inimigo)
+
+
+        self.musicas_de_combate = [
+        "BloodVein SCORE/OST/MusicaDeCombate.mp3",
+        "BloodVein SCORE/OST/MusicaDeCombate2.mp3"
+        ]
+
+        self.musica_escolhida = choice(self.musicas_de_combate)
+        self.boss_musica = 0
 
   
     def _criar_inimigos(self):
@@ -123,6 +138,8 @@ class Sala:
         
         #melhorar essa logica de boss para diferentes andares dps
         if "boss" in tipo_sala:
+            self.boss_musica = "suicidio"
+            musica.tocar("BloodVein SCORE/OST/MusicaDoBoss.mp3")
             print(self.spawn_points)
             xboss,yboss= self.spawn_points[0]
             boss = bossmod.MouthOrb(xboss, yboss, 192, 192, hp=5000, velocidade=3, dano=30)
@@ -302,6 +319,14 @@ class Sala:
                         self.fumaça_particula.remove(particula)
 
 
+        if any((inimigo.vivo for inimigo in self.inimigos) or self.leve_atual < self.max_leves):
+            if self.boss_musica == 0:
+                musica.tocar(self.musica_escolhida)
+        elif self.boss_musica == 0 and self.loja.musica == 0:
+            musica.tocar("BloodVein SCORE/OST/MapaForadoCombate.mp3")
+            self.musica_escolhida = choice(self.musicas_de_combate)
+
+
 
 
 
@@ -464,6 +489,8 @@ class Sala:
             self.player.get_hitbox().colliderect(portal[0]) and 
             self.porta_liberada):
             
+            self.boss_musica = 0
+
             # Pré-salva o andar atual (opcional)
             andar_num = self.gerenciador_andar.numero_andar
             import shutil

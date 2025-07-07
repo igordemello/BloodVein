@@ -7,6 +7,9 @@ import cv2
 import numpy as np
 from som import GerenciadorDeSom
 from som import som
+from som import GerenciadorDeMusica
+from som import musica
+
 
 class gerenciamento():
     def __init__(self):
@@ -73,6 +76,7 @@ class Menu():
 
 
     def desenho(self, tela):
+        musica.tocar("BloodVein SCORE/OST/MainMenuTheme.mp3")
         titulo_sombra = self.fonte.render("Blood Vein", True, (30, 30, 30))
         tela.blit(titulo_sombra, (200 + 4, 100 + 4))
 
