@@ -280,8 +280,10 @@ while i == 1:
                         player.ativo_ultimo_uso = current_time
                         player.usarItemAtivo(sala_atual)
 
-                    if ev.key == K_l and not inventarioexibe:
-                        loja = not loja
+                    if sala_atual.hitbox_loja() != []:
+                        print(sala_atual.hitbox_loja())
+                        if ev.key == K_e and not inventarioexibe and player.get_hitbox().colliderect(sala_atual.hitbox_loja()[0]):
+                            loja = not loja
 
                     if ev.key == K_o:
                         player.infoArma()

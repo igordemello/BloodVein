@@ -562,3 +562,11 @@ class Sala:
         self.colisao.entidades = [self.player] + self.inimigos
 
         
+    def hitbox_loja(self):
+        tipo_sala = self.gerenciador_andar.grafo.nodes[self.gerenciador_andar.sala_atual]["tipo"]
+        if not 'loja' in tipo_sala:
+            return []
+        
+        range_loja = self.mapa.get_rangeloja()
+
+        return range_loja if range_loja else []
