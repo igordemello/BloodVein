@@ -218,14 +218,15 @@ while i == 1:
                             if sala_atual.loja.checar_compra(mouse.get_pos(), SCREEN) == "sair":
                                  loja = not loja
                         elif jogo_pausado and pause.menu_ativo:
-                            if pause.checar_clique_pause(mouse_pos) == "continuar":
-                                pausado = not pausado
-                                jogo_pausado = not jogo_pausado
-                            elif pause.checar_clique_pause(mouse_pos) == "sair":
-                                gerenciamento.modo = "menu"
-                                jogo_pausado = not jogo_pausado
-                                pause.menu_ativo = False
-                                pausado = False
+                            if not esperar_soltar_clique:
+                                escolha = gameOver.checar_clique_pause(mouse_pos)
+                                if escolha == "nova run":
+                                    # lógica de reset
+                                    esperar_soltar_clique = True  # Evita múltiplos cliques
+                                elif escolha == "sair":
+                                    gerenciamento.modo = "menu"
+                                    jogo_pausado = not jogo_pausado
+                                    esperar_soltar_clique = True
                             elif pause.checar_clique_pause(mouse_pos) == "salvar":
                                 game_state = save_manager.generate_game_state(player, andar, sala_atual)
                                 save_manager.save_game(game_state, "save_file.json")
@@ -335,6 +336,7 @@ while i == 1:
 
 
     if gerenciamento.modo == 'jogo':
+        print(esperar_soltar_clique)
         # Limpa a tela
         SCREEN.fill((0, 0, 0))
 
