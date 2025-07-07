@@ -250,6 +250,7 @@ while i == 1:
                                 set_minimapa(Minimapa(andar, SCREEN))
                                 hud.player = player
                                 menuArmas = True
+                                menuDeArma.tela_atual = "atributos"
                                 jogo_pausado = False
                             elif gameOver.checar_clique_pause(mouse_pos) == "sair":
                                 gerenciamento.modo = "menu"
