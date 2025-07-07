@@ -1,6 +1,8 @@
 from pygame import *
 from pygame.math import Vector2
 import cv2
+from som import GerenciadorDeMusica
+from som import musica
 
 class BotaoAnimado:
     def __init__(self, pos, text_input, font, base_color, hovering_color):
@@ -78,6 +80,7 @@ class Pause:
             tela.blit(pygame_frame, (0, 0))
 
     def pauseFuncionamento(self, tela):
+        musica.pausar()
         self.menu_ativo = True
 
         # Título
@@ -96,6 +99,7 @@ class Pause:
         if not self.menu_ativo:
             return None
         if self.botaocontinuar.checkForInput(mouse_pos):
+            musica.retomar()
             self.menu_ativo = False
             return "continuar"
         if self.botaoopcoes.checkForInput(mouse_pos):

@@ -8,11 +8,35 @@ class GerenciadorDeSom:
         self.volume = volume
         self.sons = {
             "hover": mixer.Sound("sons/hover.mp3"),
-            "click": mixer.Sound("sons/clicke.mp3"),
             "buy": mixer.Sound("sons/compra.mp3"),
-            "ataque1": mixer.Sound("sons/espada1.mp3"),
-            "ataque2": mixer.Sound("sons/espada2.mp3"),
-            "dash": mixer.Sound("sons/dash.mp3")
+            "martelo2": mixer.Sound("sons/AOEMartelo.mp3"),
+            "arco": mixer.Sound("sons/Arco.mp3"),
+            "arco_acerto": mixer.Sound("sons/ArcoAcerto.mp3"),
+            "click2": mixer.Sound("sons/Click2.mp3"),
+            "click3": mixer.Sound("sons/Click2.mp3"),
+            "Dano1": mixer.Sound("sons/Dano1.mp3"),
+            "Dano2": mixer.Sound("sons/Dano2.mp3"),
+            "Dano3": mixer.Sound("sons/Dano3.mp3"),
+            "dash": mixer.Sound("sons/dash.mp3"),
+            "espada1": mixer.Sound("sons/espada1.mp3"),
+            "espada2": mixer.Sound("sons/espada2.mp3"),
+            "espada3": mixer.Sound("sons/espada3.mp3"),
+            "faca1": mixer.Sound("sons/Faca1.mp3"),
+            "faca2": mixer.Sound("sons/Faca2.mp3"),
+            "Inimigomorre": mixer.Sound("sons/InimigoMorrendo.mp3"),
+            "Inimigomorre2": mixer.Sound("sons/InimigoMorrendo2.mp3"),
+            "Martelo": mixer.Sound("sons/Martelo.mp3"),
+            "passar_porta": mixer.Sound("sons/PassarPorta.mp3"),
+            "Spawn": mixer.Sound("sons/Spawn.mp3"),
+            "Startar": mixer.Sound("sons/StartNewRun.mp3"),
+            "tripleshota": mixer.Sound("sons/TripleShot.mp3"),
+            "carrega_critico": mixer.Sound("sons/CarrendoCriticoEspadaDoTita.mp3"),
+            
+
+
+
+
+
         }
 
         for som in self.sons.values():
@@ -67,6 +91,6 @@ class GerenciadorDeMusica:
         self.volume = max(0.0, min(volume, 1.0))
         mixer.music.set_volume(self.volume)
 
-musica = GerenciadorDeMusica(volume=0.3)
+musica = GerenciadorDeMusica(volume=0.1)
 musica_tocando = None
 

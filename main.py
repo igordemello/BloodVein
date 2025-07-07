@@ -105,7 +105,7 @@ while i == 1:
 
         # apertando no botão sair do menu
         if gerenciamento.modo == 'sair':
-            som.tocar("click")
+            som.tocar("click3")
             quit()
             sys.exit()
 
@@ -125,7 +125,7 @@ while i == 1:
                             os.remove(caminho_completo_do_item)
                         except (FileNotFoundError, ValueError):
                             print('não existe data para ser apagado')
-                    som.tocar("click")
+                    som.tocar("click3")
                     player = Player(950, 600, 32 * 2, 48 * 2)
                     hud = Hud(player, SCREEN)
                     andar = GerenciadorAndar()
@@ -139,7 +139,7 @@ while i == 1:
 
                     gerenciamento.modo = "jogo"
                 elif escolha == "continuar":
-                    som.tocar("click")
+                    som.tocar("click3")
                     try:
                         loaded_data = save_manager.load_game("save_file.json")
 
@@ -239,7 +239,7 @@ while i == 1:
                                         os.remove(caminho_completo_do_item)
                                     except (FileNotFoundError, ValueError):
                                         print('não existe data para ser apagado')
-                                som.tocar("click")
+                                som.tocar("click3")
                                 player = Player(950, 600, 32 * 2, 48 * 2)
                                 hud = Hud(player, SCREEN)
                                 andar = GerenciadorAndar()
