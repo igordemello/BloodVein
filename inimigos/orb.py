@@ -59,6 +59,7 @@ class Orb(Inimigo):
         if self.anima_hit:
             frame = self.frames[self.frame_index]  # Obtém o frame normal
             frame = self.aplicar_efeito_hit(frame)  # Aplica o efeito de hit se necessário
+            tela.blit(frame, (draw_x, draw_y))
         elif self.frames:
             frame = self.frames[self.frame_index]
         else:

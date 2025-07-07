@@ -128,15 +128,13 @@ class FantasmaTp(Inimigo):
 
         if self.current_frames:
             frame = self.current_frames[self.frame_index]
-            if self.anima_hit:
-                frame = self.frames[self.frame_index]
-                frame = self.aplicar_efeito_hit(frame)
             tela.blit(frame, (draw_x, draw_y))
 
             if self.congelado:
                 frozen_sprite = frame.copy()
                 frozen_sprite.fill((165, 242, 255, 100), special_flags=BLEND_MULT)
                 tela.blit(frozen_sprite, (draw_x, draw_y))
+            
 
         if time.get_ticks() - self.ultimo_dano_tempo < 2500:
             vida_maxima = getattr(self, "hp_max", 100)

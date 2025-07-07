@@ -178,6 +178,7 @@ class Inventario():
         if self.player:
             player = self.player
             fonte_attr = font.Font("assets/fontes/alagard.ttf", 32)
+            fonte_custo = font.Font("assets/fontes/alagard.ttf", 24)
             cor_attr = (253, 246, 225)
 
             atributos = [
@@ -193,8 +194,12 @@ class Inventario():
             base_x = 1300   # posição x na tela
             base_y = 640  # posição y inicial
 
+
+            nivelCusto = fonte_custo.render(f'Custo do Nível: {str((10 + (player.nivel * 2)))} almas', True, cor_attr)
+            self.screen.blit(nivelCusto, (base_x, base_y+7*40+34))
+
             nivel = fonte_attr.render(str(player.nivel), True, cor_attr)
-            self.screen.blit(nivel, (base_x+150, base_y+7*40))
+            self.screen.blit(nivel, (base_x + 150, base_y + 7 * 40))
 
             for i, linha in enumerate(atributos):
                 texto = fonte_attr.render(linha, True, cor_attr)

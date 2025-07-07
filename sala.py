@@ -176,14 +176,45 @@ class Sala:
     def _criar_inimigo_aleatorio(self, x, y, tipo_sala):
         elite = "bau" in tipo_sala
 
-        tipos_disponiveis = ["fasntasmagastp"]
+        tipos_disponiveis = ["fasntasmagastp","furacao","caveiradefogo","fantasmagaspar","morcegopadrao","morcegosuicida","orb"]
         tipo_escolhido = choice(tipos_disponiveis)
 
 
-        if tipo_escolhido == "fasntasmagastp":
+        if tipo_escolhido == "furacao":
             inimigo = Furacao(x, y, 64, 64, hp=200 if not elite else 300)
+            inimigo.nome_base = "Furacão"
+            inimigo.aplicar_modificadores(elite=elite)
+
+        if tipo_escolhido == "fasntasmagastp":
+            inimigo = FantasmaTp(x, y, 64, 64, hp=200 if not elite else 300)
             inimigo.nome_base = "Morcego Padrão"
             inimigo.aplicar_modificadores(elite=elite)
+
+        if tipo_escolhido == "caveiradefogo":
+            inimigo = CaveiraDeFogo(x, y, 64, 64, hp=200 if not elite else 300)
+            inimigo.nome_base = "Caveira de Fogo"
+            inimigo.aplicar_modificadores(elite=elite)
+
+        if tipo_escolhido == "fantasmagaspar":
+            inimigo = FantasmaGasp(x, y, 64, 64, hp=200 if not elite else 300)
+            inimigo.nome_base = "Fantasma Gaspar"
+            inimigo.aplicar_modificadores(elite=elite)
+
+        if tipo_escolhido == "morcegopadrao":
+            inimigo = MorcegoPadrao(x, y, 64, 64, hp=200 if not elite else 300)
+            inimigo.nome_base = "Morcego Padrão"
+            inimigo.aplicar_modificadores(elite=elite)
+
+        if tipo_escolhido == "morcegosuicida":
+            inimigo = MorcegoSuicida(x, y, 64, 64, hp=200 if not elite else 300)
+            inimigo.nome_base = "Morcego Suicida"
+            inimigo.aplicar_modificadores(elite=elite)
+
+        if tipo_escolhido == "orb":
+            inimigo = Orb(x, y, 64, 64, hp=200 if not elite else 300)
+            inimigo.nome_base = "Orb"
+            inimigo.aplicar_modificadores(elite=elite)
+
 
         # Adicione outros tipos de inimigos aqui no futuro:
         # elif tipo_escolhido == "novo_inimigo":
