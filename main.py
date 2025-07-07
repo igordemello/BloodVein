@@ -27,6 +27,8 @@ from pause import Pause
 import os
 from gameover import GameOver
 import shutil
+from som import GerenciadorDeMusica
+from som import musica
 from inventario import Inventario
 
 init()
@@ -373,7 +375,7 @@ while i == 1:
                 gameOver.gameOverFuncionamento(SCREEN)
             minimapa.draw()
             inventario.desenhar()
-
-
+            
     SCREEN.blit(imagem_cursor, (mouse_pos[0], mouse_pos[1] ))
     display.update()
+    
