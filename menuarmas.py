@@ -298,8 +298,6 @@ class MenuArmas:
             center_y = display.get_surface().get_height() // 2
             offset_x = 220
 
-            carta_rect = Rect(0, 0, 375, 500)
-            carta_rect.center = (center_x, center_y)
 
             seta_esquerda_rect = Rect(0, 0, 64, 64)
             seta_esquerda_rect.center = (center_x - offset_x - 150, center_y)
@@ -307,8 +305,6 @@ class MenuArmas:
             seta_direita_rect = Rect(0, 0, 64, 64)
             seta_direita_rect.center = (center_x + offset_x + 150, center_y)
 
-            if carta_rect.collidepoint(mouse_pos):
-                return None
             if self.seta_esq_rect.collidepoint(mouse_pos):
                 self.scrollMenu("<")
             elif self.seta_dir_rect.collidepoint(mouse_pos):
