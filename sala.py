@@ -470,7 +470,7 @@ class Sala:
             fade_in (bool): Se True, fade de preto para tela (entrada). Se False, fade para preto (saída).
             duration (int): Duração total do efeito em milissegundos.
         """
-        fade_surface = Surface((1472, 780), SRCALPHA)
+        fade_surface = Surface((1323, 720), SRCALPHA)
         steps = 30
         #delay = max(1, duration // steps)  # Garante pelo menos 1ms de delay
 
@@ -479,7 +479,7 @@ class Sala:
             for alpha in range(255, -1, -255 // steps):
                 self.desenhar(self.tela)
                 fade_surface.fill((0, 0, 0, alpha))
-                self.tela.blit(fade_surface, (224, 248))
+                self.tela.blit(fade_surface, (300, 275))
                 display.flip()
                 #time.delay(delay)
         else:
@@ -487,7 +487,7 @@ class Sala:
             for alpha in range(0, 256, 255 // steps):
                 self.desenhar(self.tela)
                 fade_surface.fill((0, 0, 0, alpha))
-                self.tela.blit(fade_surface, (224, 248))
+                self.tela.blit(fade_surface, (300, 275))
                 display.flip()
                 #time.delay(delay)
 

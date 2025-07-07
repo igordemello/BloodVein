@@ -110,7 +110,7 @@ class GerenciadorDeSom:
                 self.canais_ocupados.pop(canal_id)
 
 
-som = GerenciadorDeSom(volume=0.1)
+som = GerenciadorDeSom(volume=0.3)
 
 
 class GerenciadorDeMusica:

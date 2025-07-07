@@ -332,6 +332,8 @@ class MenuArmas:
                 return None
             elif self.botao_iniciar.checkForInput(mouse_pos):
                 self.menu_ativo = False
+                # Aplica modificador antes de retornar a arma
+                self.arma_sorteada.aplicaModificador()
                 return self.arma_sorteada, self.atributos.copy(), self.traits[self.trait_selecionada]
 
         return None
