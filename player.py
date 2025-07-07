@@ -59,6 +59,8 @@ class Player():
         self.dash_cooldown_max = int(1000 - ((self.atributos["estamina"] - 1) * (750 / 9))) #cooldown entre dashes - inicial : 1000 // max :  250
         self.dash_duration_max = int(150 + ((self.atributos["estamina"] - 1) * (250 / 9))) #duração máxima do dash - inicial : 150 // max : 400
 
+        self.gameOver = False
+
         self.animacoes_principais = 'esquerdadireitabaixocima'
         self.anim_direcao = "baixo"
         self.anim_frame = 0
@@ -339,6 +341,11 @@ class Player():
         if self.st > 100:
             self.st = 100
 
+        '''
+        if self.hp == 0:
+            self.gameOver = True
+        '''
+
         if self.attacking:
             self.atualizar_ataque(dt)
 
@@ -381,7 +388,18 @@ class Player():
             projetil["lifetime"] -= dt
             if projetil["lifetime"] <= 0:
                 self.projeteis.remove(projetil)
-
+        if move_input:
+            for _ in range(1):  # duas partículas
+                offset_x = randint(-10, 5)
+                offset_y = randint(-5, 5)
+                self.sistemaparticulas.add_particle(
+                    self.player_rect.centerx + offset_x,
+                    self.player_rect.centery + offset_y + 40,  # um pouco mais pra baixo
+                    (255, 255, 255),  # cor branca
+                    (uniform(-0.05, 0.05), uniform(-0.05, 0.05)),  # leve movimento
+                    lifetime=200,  # vida curta (ms)
+                    size=3  # tamanho da partícula
+                )
 
     def atualizar_ataque(self, dt):
         current_time = time.get_ticks()
@@ -511,6 +529,7 @@ class Player():
         base_x = centro_jogador[0] + math.cos(angle) * (self.radius - 5)
         base_y = centro_jogador[1] + math.sin(angle) * (self.radius - 5)
 
+
         if not self.attacking:
             self.base_sword_angle = math.degrees(angle) - 90
             self.sword_angle = self.base_sword_angle
@@ -537,6 +556,8 @@ class Player():
             rotated_surface = transform.rotate(temp_surface, -particle['angle'])
             final_rect = rotated_surface.get_rect(center=(particle['x'], particle['y']))
             tela.blit(rotated_surface, final_rect.topleft)
+
+        self.sistemaparticulas.draw(tela)
 
         sword_img = self.sword.copy()
         temp_surface = Surface((sword_img.get_width() * 2, sword_img.get_height() * 2), SRCALPHA)
@@ -624,7 +645,9 @@ class Player():
             dano_text = fonte_atual.render(texto_str, True, cor)
             tela.blit(dano_text, (pos_x - dano_text.get_width() / 2, pos_y))
 
-        self.sistemaparticulas.draw(tela)
+
+
+
 
     def get_hitbox(self):
         return self.player_rect

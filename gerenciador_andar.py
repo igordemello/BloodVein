@@ -27,7 +27,7 @@ class GerenciadorAndar:
 
     def gerar_andar(self, num_andar):
         self.numero_andar = num_andar
-        numsalas = randint(10,12)
+        numsalas = randint(12,15)
         maior_distancia = -1
         sala_inicio = None
         sala_fim = None

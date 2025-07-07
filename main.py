@@ -25,9 +25,11 @@ from som import GerenciadorDeSom
 from som import som
 from pause import Pause
 import os
+from gameover import GameOver
 import shutil
 from som import GerenciadorDeMusica
 from som import musica
+from inventario import Inventario
 
 init()
 gerenciamento.modo = 'menu'
@@ -46,6 +48,7 @@ mouse.set_visible(False)
 
 jogo_pausado = False
 pause = Pause()
+inventarioexibe = False
 
 mensagem_salvo = None
 tempo_mensagem_salvo = 0
@@ -72,9 +75,13 @@ menuArmas = False
 continuar = False
 pausado = False
 
+gameOver = GameOver()
+
 menuDeArma = MenuArmas(hud)
 
 save_manager = SaveManager()
+
+inventario = Inventario(SCREEN, player, hud)
 
 i = 1
 while i == 1:
@@ -125,6 +132,7 @@ while i == 1:
                     sala_atual = Sala(f'andar1/spawn.tmx', SCREEN, player, andar, set_minimapa)
                     set_minimapa(Minimapa(andar,SCREEN))
                     hud.player = player
+                    inventario = Inventario(SCREEN, player, hud)
                     menuArmas = True
                     continuar = False
                     
@@ -218,6 +226,31 @@ while i == 1:
                                 save_manager.save_game(game_state, "save_file.json")
                                 mensagem_salvo = fonte.render("JOGO SALVO", True, (255, 255, 255))
                                 tempo_mensagem_salvo = time.get_ticks()
+                        elif jogo_pausado and player.gameOver:
+                            if gameOver.checar_clique_pause(mouse_pos) == "nova run":
+                                try:
+                                    os.remove('save_file.json')
+                                except (FileNotFoundError, ValueError):
+                                    print('não existe save para ser apagado')
+
+                                for item in os.listdir('data'):
+                                    caminho_completo_do_item = os.path.join('data', item)
+                                    try:
+                                        os.remove(caminho_completo_do_item)
+                                    except (FileNotFoundError, ValueError):
+                                        print('não existe data para ser apagado')
+                                som.tocar("click")
+                                player = Player(950, 600, 32 * 2, 48 * 2)
+                                hud = Hud(player, SCREEN)
+                                andar = GerenciadorAndar()
+                                sala_atual = Sala(f'andar1/spawn.tmx', SCREEN, player, andar, set_minimapa)
+                                set_minimapa(Minimapa(andar, SCREEN))
+                                hud.player = player
+                                menuArmas = True
+                                jogo_pausado = False
+                            elif gameOver.checar_clique_pause(mouse_pos) == "sair":
+                                gerenciamento.modo = "menu"
+                                jogo_pausado = not jogo_pausado
 
                         else:
                             player.ataque_espadaPrincipal(sala_atual.inimigos, mouse_pos, dt)
@@ -233,7 +266,7 @@ while i == 1:
                             menuDeArma.scrollMenu("<")
                             print(menuDeArma.pos)
 
-                    if ev.key == K_ESCAPE:
+                    if ev.key == K_ESCAPE and not inventarioexibe:
                         jogo_pausado = not jogo_pausado
                         pausado = not pausado
 
@@ -241,7 +274,7 @@ while i == 1:
                         player.ativo_ultimo_uso = current_time
                         player.usarItemAtivo(sala_atual)
 
-                    if ev.key == K_l:
+                    if ev.key == K_l and not inventarioexibe:
                         loja = not loja
 
                     if ev.key == K_o:
@@ -250,6 +283,21 @@ while i == 1:
                     if ev.key == K_TAB:
                         minimapa.toggle()
 
+                    if ev.key == K_i:
+                        pode_abrir = not pausado and not (sala_atual.bau and sala_atual.bau.menu_ativo) and not loja
+                        if inventario.visible:
+                            inventario.toggle()
+                            jogo_pausado = False
+                            inventarioexibe = False
+                        elif pode_abrir:
+                            inventario.toggle()
+                            jogo_pausado = True
+                            inventarioexibe = True
+
+
+                    
+                        
+                        
                     if ev.key == K_F5:
                         game_state = save_manager.generate_game_state(player, andar, sala_atual)
                         save_manager.save_game(game_state, "save_file.json")
@@ -292,7 +340,10 @@ while i == 1:
 
             if not (sala_atual.cutscene and sala_atual.cutscene.ativa):
                 player.desenhar(SCREEN, mouse_pos)
-                hud.desenhar()
+                if inventario.visible:
+                    hud.desenhar(minimal=True)
+                else:
+                    hud.desenhar()
 
             if not jogo_pausado:
                 sala_atual.atualizar(dt, keys, eventos)
@@ -318,7 +369,12 @@ while i == 1:
                 pause.pauseFuncionamento(SCREEN)
                 if mensagem_salvo and time.get_ticks() - tempo_mensagem_salvo < 2000:
                     SCREEN.blit(mensagem_salvo, (1920 // 2 - mensagem_salvo.get_width() // 2, 900))
+
+            if player.gameOver:
+                jogo_pausado = True
+                gameOver.gameOverFuncionamento(SCREEN)
             minimapa.draw()
+            inventario.desenhar()
             
     SCREEN.blit(imagem_cursor, (mouse_pos[0], mouse_pos[1] ))
     display.update()

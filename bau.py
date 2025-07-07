@@ -4,12 +4,32 @@ from efeito import *
 from itensDic import ConjuntoItens
 from random import sample
 from botao import Botao
+from random import choices
 
 class Bau:
-    def __init__(self, conjunto: ConjuntoItens,posx,posy):
+    def __init__(self, conjunto: ConjuntoItens, posx, posy):
         self.itensDisp = conjunto
         self.ids_disponiveis = list(conjunto.itens_por_id)
-        self.ids_sorteados = sample(self.ids_disponiveis, 3)
+
+        raridade_pesos = {
+            "comum": 60,
+            "rara": 30,
+            "lendaria": 10,
+            "ativo": 35
+        }
+
+        ids_restantes = self.ids_disponiveis.copy()
+        self.ids_sorteados = []
+
+        for _ in range(3):
+            pesos = []
+            for id_ in ids_restantes:
+                item = self.itensDisp.itens_por_id[id_]
+                pesos.append(raridade_pesos.get(item.raridade, 10))
+            escolhido = choices(ids_restantes, weights=pesos, k=1)[0]
+            self.ids_sorteados.append(escolhido)
+            ids_restantes.remove(escolhido)
+
         self.itens_sorteados = [self.itensDisp.itens_por_id[id_] for id_ in self.ids_sorteados]
         self.font = font.Font('assets/Fontes/alagard.ttf', 24)
         self.fontDesc = font.Font('assets/Fontes/alagard.ttf', 24)

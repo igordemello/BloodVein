@@ -248,7 +248,7 @@ class MenuArmas:
                 if operacao == "menos" and self.atributos[atributo] > 1:
                     self.atributos[atributo] -= 1
                     self.pontos_usados -= 1
-                elif operacao == "mais" and self.atributos[atributo] < 10:
+                elif operacao == "mais" and self.atributos[atributo] < 17:
                     # Verifica se há pontos disponíveis
                     if self.pontos_usados < self.pontos_totais:
                         self.atributos[atributo] += 1
