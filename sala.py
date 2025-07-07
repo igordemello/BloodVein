@@ -52,8 +52,8 @@ class Sala:
 
         self.spawn_points = self.mapa.get_inimigospawn()  
         self.leve_atual = 0
-        # self.max_leves = randint(2,5)
-        self.max_leves = 0
+        self.max_leves = randint(2,5)
+        #self.max_leves = 0
         self.inimigos_por_leva = 1 
         self.tempo_entrada = time.get_ticks() 
         self.cooldown_inicial = 1000  
@@ -314,16 +314,17 @@ class Sala:
         
         offset_x, offset_y = screen_shaker.offset
         self.mapa.desenhar(self.porta_liberada)
+
         for inimigo in self.inimigos:
             if inimigo.vivo:
                 inimigo.desenhar(tela, (self.player.x, self.player.y), offset=(offset_x, offset_y))
-
                 if isinstance(inimigo, bossmod.MouthOrb):
                     inimigo.desenhar_barra_vida(tela)
-
             elif not getattr(inimigo, "alma_coletada", True):
-                    pos = (inimigo.x+16, inimigo.y+16)
-
+                if not hasattr(inimigo, "vai_dropar_alma"):
+                    inimigo.vai_dropar_alma = randint(0, 1) == 1  # decide 50/50 uma vez
+                if inimigo.vai_dropar_alma:
+                    pos = (inimigo.x + 16, inimigo.y + 16)
                     self.desenha_alma(pos)
                     alma_hitbox = Rect(0, 0, 50, 50)
                     alma_hitbox.center = pos
