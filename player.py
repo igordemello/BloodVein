@@ -14,6 +14,7 @@ from som import GerenciadorDeMusica
 from som import musica
 
 
+
 class Player():
     def __init__(self, x, y, largura, altura, hp=100, st=100, velocidadeMov=0.5, sprite='hero.png', arma=None):
         # animações
@@ -36,14 +37,6 @@ class Player():
                          self.carregar_animacao("assets/Player/IDLE_LADO.png")],
         }
 
-        # Animação de efeito de ataque
-        self.animacao_ataque = self.carregar_animacao_ataque("assets/Player/ataque.png")
-        self.ataque_frame = 0
-        self.ataque_alpha = 0
-        self.ataque_angle = 0
-        self.ataque_pos = (0, 0)
-        self.ataque_flip = False
-
         self.atributos = {
             "forca" : 5, #influencia DANO DA ARMA, DANO DO CRÍTICO
             "destreza": 5, #influencia VELOCIDADE DE ATAQUE DA ARMA
@@ -61,7 +54,7 @@ class Player():
         self.efeitos = []
         self.tipo_colisao = 'obstaculo'
 
-        # ARMA
+        #ARMA
         self.sistemaparticulas = ParticleSystem()
         self.lista_mods = ListaMods()
         self.arma = arma if arma else EspadaEstelar("comum", self.lista_mods)
@@ -91,6 +84,9 @@ class Player():
         self.rastros = []
 
         self.macarronada = 0
+
+
+
 
         self.telaSangue = image.load('assets/UI/sangueTelaDano.png').convert_alpha()
         self.telaSangue_alpha = 0
@@ -182,8 +178,9 @@ class Player():
 
         self.som_dash = True
 
-    def carregar_animacao(self, caminho, frame_altura=48):
+    def carregar_animacao(self, caminho):
         frame_largura = 32
+        frame_altura = 48
         escala = 2.7
         folha = transform.scale(image.load(caminho).convert_alpha(), (
             image.load(caminho).convert_alpha().get_width() * escala,
@@ -192,20 +189,6 @@ class Player():
 
         return [
             folha.subsurface((i * frame_largura * escala, 0, frame_largura * escala, frame_altura * escala))
-            for i in range(num_frames)
-        ]
-
-    def carregar_animacao_ataque(self, caminho):
-        escala = 2.7
-        folha = image.load(caminho).convert_alpha()
-        folha = transform.scale(folha, (folha.get_width() * escala, folha.get_height() * escala))
-
-        frame_largura = 48 * escala  # 48px original * escala
-        frame_altura = 32 * escala  # 32px original * escala
-        num_frames = 12
-
-        return [
-            folha.subsurface((i * frame_largura, 0, frame_largura, frame_altura))
             for i in range(num_frames)
         ]
 
@@ -328,37 +311,35 @@ class Player():
             rastro["tempo"] -= dt
         self.rastros = [r for r in self.rastros if r["tempo"] > 0]
 
-        if not self.attacking:  # Só atualiza animação normal se não estiver atacando
-            if self.is_dashing or move_input:
-                self.tempo_por_frame = 100
-                self.tempo_animacao += dt
-                if self.tempo_animacao > self.tempo_por_frame:
-                    self.tempo_animacao = 0
-                    self.anim_frame += 1
-                    if self.anim_frame >= len(
-                            self.animacoes[self.anim_direcao]) and self.anim_direcao in self.animacoes_principais:
-                        self.anim_frame = 4
+        if self.is_dashing or move_input:
+            self.tempo_por_frame = 100
+            self.tempo_animacao += dt
+            if self.tempo_animacao > self.tempo_por_frame:
+                self.tempo_animacao = 0
+                self.anim_frame += 1
+                if self.anim_frame >= len(self.animacoes[self.anim_direcao]) and self.anim_direcao in self.animacoes_principais:
+                    self.anim_frame = 4
+        else:
+            angulo = self.calcular_angulo(mouse.get_pos())
+            angulo_deg = math.degrees(angulo) % 360
+
+
+            if 45 < angulo_deg <= 135:
+                self.anim_direcao = "idle"
+            elif 135 < angulo_deg <= 225:
+                self.anim_direcao = "idle_lado2"
+            elif 225 < angulo_deg <= 315:
+                self.anim_direcao = "idle_costas"
             else:
-                angulo = self.calcular_angulo(mouse.get_pos())
-                angulo_deg = math.degrees(angulo) % 360
+                self.anim_direcao = "idle_lado1"
 
-                if 45 < angulo_deg <= 135:
-                    self.anim_direcao = "idle"
-                elif 135 < angulo_deg <= 225:
-                    self.anim_direcao = "idle_lado2"
-                elif 225 < angulo_deg <= 315:
-                    self.anim_direcao = "idle_costas"
-                else:
-                    self.anim_direcao = "idle_lado1"
-
-                self.tempo_animacao += dt
-                self.tempo_por_frame = 200
-                if self.tempo_animacao > self.tempo_por_frame:
-                    self.tempo_animacao = 0
-                    self.anim_frame += 1
-                    if self.anim_frame >= len(
-                            self.animacoes[self.anim_direcao]) and self.anim_direcao in self.animacoes_principais:
-                        self.anim_frame = 0
+            self.tempo_animacao += dt
+            self.tempo_por_frame = 200
+            if self.tempo_animacao > self.tempo_por_frame:
+                self.tempo_animacao = 0
+                self.anim_frame += 1
+                if self.anim_frame >= len(self.animacoes[self.anim_direcao]) and self.anim_direcao in self.animacoes_principais:
+                    self.anim_frame = 0
 
         self.hp -= 0.05 * self.rate
 
@@ -374,24 +355,26 @@ class Player():
         if self.st > 100:
             self.st = 100
 
+
         if self.hp == 0:
             if self.revives <= 0:
                 self.gameOver = True
                 musica.tocar("BloodVein SCORE/OST/Game Over.mp3")
             else:
-                self.hp += self.hpMax / 2
+                self.hp += self.hpMax/2
                 self.revives -= 1
+
+
 
         if self.attacking:
             self.atualizar_ataque(dt)
 
-        if not self.attacking:  # Só atualiza o frame atual se não estiver atacando
-            if self.anim_direcao in self.animacoes:
-                animacao = self.animacoes[self.anim_direcao]
-                self.anim_frame %= len(animacao)
-                self.frame_atual = animacao[self.anim_frame]
-            else:
-                self.frame_atual = self.animacoes["baixo"][0]
+        if self.anim_direcao in self.animacoes:
+            animacao = self.animacoes[self.anim_direcao]
+            self.anim_frame %= len(animacao)
+            self.frame_atual = animacao[self.anim_frame]
+        else:
+            self.frame_atual = self.animacoes["baixo"][0]
 
         self.player_rect = self.get_hitbox()
         self.sistemaparticulas.update(dt)
@@ -409,10 +392,10 @@ class Player():
                 projetil["trail"].append({
                     "x": projetil["x"],
                     "y": projetil["y"],
-                    "alpha": randint(150, 200),
-                    "angle": projetil["angulo"] + randint(-5, 5),
-                    "lifetime": randint(200, 255),
-                    "scale": 0.5 + random() * 0.5
+                    "alpha": randint(150, 200),  # Variação de transparência
+                    "angle": projetil["angulo"] + randint(-5, 5),  # Pequena variação angular
+                    "lifetime": randint(200, 255),  # Variação de tempo de vida
+                    "scale": 0.5 + random() * 0.5  # Variação de escala
                 })
 
             for part in projetil["trail"][:]:
@@ -426,16 +409,16 @@ class Player():
             if projetil["lifetime"] <= 0:
                 self.projeteis.remove(projetil)
         if move_input:
-            for _ in range(1):
+            for _ in range(1):  # duas partículas
                 offset_x = randint(-10, 5)
                 offset_y = randint(-5, 5)
                 self.sistemaparticulas.add_particle(
                     self.player_rect.centerx + offset_x,
-                    self.player_rect.centery + offset_y + 40,
-                    (255, 255, 255),
-                    (uniform(-0.05, 0.05), uniform(-0.05, 0.05)),
-                    lifetime=200,
-                    size=3
+                    self.player_rect.centery + offset_y + 40,  # um pouco mais pra baixo
+                    (255, 255, 255),  # cor branca
+                    (uniform(-0.05, 0.05), uniform(-0.05, 0.05)),  # leve movimento
+                    lifetime=200,  # vida curta (ms)
+                    size=3  # tamanho da partícula
                 )
 
     def atualizar_ataque(self, dt):
@@ -446,28 +429,37 @@ class Player():
         if self.attack_progress >= 1.0:
             self.attacking = False
             self.sword_trail_particles = []
-            self.ataque_alpha = 0
             return
 
-        # Atualiza apenas o frame do efeito de ataque
-        total_frames = len(self.animacao_ataque)
-        frame_index = min(int(self.attack_progress * total_frames), total_frames - 1)
-        self.ataque_frame = frame_index
-        self.ataque_alpha = int(255 * (1 - self.attack_progress * 0.7))
+        angle = self.calcular_angulo(mouse.get_pos())
+        centro_jogador = (self.player_rect.centerx, self.player_rect.centery)
+        base_x = centro_jogador[0] + math.cos(angle) * (self.radius - 5)
+        base_y = centro_jogador[1] + math.sin(angle) * (self.radius - 5)
 
-        # Mantém a animação normal do personagem
-        mouse_x, mouse_y = mouse.get_pos()
-        player_center = (self.player_rect.centerx, self.player_rect.centery)
-        dx = player_center[0] - mouse_x
-        dy = player_center[1] - mouse_y
-        self.ataque_angle = math.degrees(math.atan2(dy, dx)) - 90
+        # Adiciona nova partícula ao rastro
+        if (len(self.sword_trail_particles) < self.trail_max_particles and
+            random() < self.trail_spawn_rate):
+            size_variation = 1 + (random() - 0.5) * self.trail_size_variation
+            self.sword_trail_particles.append({
+                'x': base_x,
+                'y': base_y,
+                'angle': self.sword_angle,
+                'size': size_variation,
+                'alpha': self.trail_start_alpha,  # Usando o valor definido no init
+                'lifetime': 255,
+                'color_mod': (min(255, 200 + randint(0, 55)),
+                              min(255, 200 + randint(0, 55)),
+                              min(255, 200 + randint(0, 55)))
+            })
 
-        angle_to_mouse = math.atan2(mouse_y - player_center[1], mouse_x - player_center[0])
-        distancia = self.radius + 70
-        self.ataque_pos = (
-            player_center[0] + math.cos(angle_to_mouse) * distancia * 0.7,
-            player_center[1] + math.sin(angle_to_mouse) * distancia * 0.7
-        )
+        for particle in self.sword_trail_particles[:]:
+            particle['alpha'] = max(0, particle['alpha'] - self.trail_fade_speed)
+            particle['lifetime'] -= self.trail_fade_speed
+            if particle['lifetime'] <= 0:
+                self.sword_trail_particles.remove(particle)
+
+        swing_angle = self.sword_start_angle + self.sword_arc * self.attack_progress
+        self.sword_angle = self.base_sword_angle + swing_angle * self.attack_direction
 
     def adicionarItem(self, item):
         if isinstance(item, Item):
@@ -505,9 +497,9 @@ class Player():
             "dano": dano,
             "lifetime": lifetime,
             "raio_hitbox": tamanho // 2 if not sprite else max(sprite.get_width(), sprite.get_height()) // 2,
-            "trail": [],
+            "trail": [],  # Partículas de rastro para este projétil
             "sprite_original": sprite_original,
-            "angulo": math.degrees(angle) - 90
+            "angulo": math.degrees(angle) - 90  # Ângulo em graus para rotação
         }
 
         if sprite:
@@ -524,7 +516,7 @@ class Player():
         rect.center = (mouse_x, mouse_y)
         s = Surface((tamanho, tamanho), SRCALPHA)
         tempoCriacao = time.get_ticks()
-        return s, rect, tamanho, tempoCriacao
+        return s, rect,tamanho,tempoCriacao
 
     def calcular_angulo(self, mouse_pos):
         mouse_x, mouse_y = mouse_pos
@@ -541,6 +533,7 @@ class Player():
         hitbox_surf = Surface(self.hitbox_arma, SRCALPHA)
         draw.rect(hitbox_surf, (255, 0, 0), hitbox_surf.get_rect(), width=1)
 
+        # Rotação idêntica à da espada
         temp_surface = Surface((hitbox_surf.get_width() * 2, hitbox_surf.get_height() * 2), SRCALPHA)
         temp_surface.blit(hitbox_surf, (temp_surface.get_width() // 2 - self.sword_pivot[0],
                                         temp_surface.get_height() // 2 - self.sword_pivot[1]))
@@ -551,32 +544,65 @@ class Player():
         return rotated_hitbox, rotated_rect
 
     def desenhar(self, tela, mouse_pos):
-        # Desenha o jogador normalmente (sem alterações durante o ataque)
+        angle = self.calcular_angulo(mouse_pos)
+        centro_jogador = (self.player_rect.centerx, self.player_rect.centery)
+        base_x = centro_jogador[0] + math.cos(angle) * (self.radius - 5)
+        base_y = centro_jogador[1] + math.sin(angle) * (self.radius - 5)
+
+        if not self.attacking:
+            self.base_sword_angle = math.degrees(angle) - 90
+            self.sword_angle = self.base_sword_angle
+
+        for particle in sorted(self.sword_trail_particles, key=lambda p: p['alpha']):
+            alpha = particle['alpha']
+            if alpha <= 0:
+                continue
+
+            sword_copy = transform.scale(self.sword,
+                                         (int(self.sword.get_width() * particle['size']),
+                                          int(self.sword.get_height() * particle['size'])))
+
+            colored_sword = Surface(sword_copy.get_size(), SRCALPHA)
+            colored_sword.blit(sword_copy, (0, 0))
+            colored_sword.fill(particle['color_mod'], special_flags=BLEND_MULT)
+            colored_sword.set_alpha(alpha)
+
+            temp_surface = Surface((colored_sword.get_width() * 2, colored_sword.get_height() * 2), SRCALPHA)
+            temp_surface.blit(colored_sword,
+                              (temp_surface.get_width() // 2 - self.sword_pivot[0],
+                               temp_surface.get_height() // 2 - self.sword_pivot[1]))
+
+            rotated_surface = transform.rotate(temp_surface, -particle['angle'])
+            final_rect = rotated_surface.get_rect(center=(particle['x'], particle['y']))
+            tela.blit(rotated_surface, final_rect.topleft)
+
+        self.sistemaparticulas.draw(tela)
+
+        sword_img = self.sword.copy()
+        temp_surface = Surface((sword_img.get_width() * 2, sword_img.get_height() * 2), SRCALPHA)
+        temp_surface.blit(sword_img, (temp_surface.get_width() // 2 - self.sword_pivot[0],
+                                      temp_surface.get_height() // 2 - self.sword_pivot[1]))
+        rotated_surface = transform.rotate(temp_surface, -self.sword_angle)
+        final_rect = rotated_surface.get_rect(center=(base_x, base_y))
+
+        # Aplicar transparência à espada se o efeito fantasma estiver ativo
+        if 'fantasma' in self.efeitos:
+            rotated_surface.set_alpha(150)  # 150 de 255 (cerca de 60% de opacidade)
+        tela.blit(rotated_surface, final_rect.topleft)
+
         frame = self.frame_atual.copy()
         if self.foi_atingido and time.get_ticks() - self.tempo_atingido < 250:
             frame.fill((255, 255, 255), special_flags=BLEND_RGB_ADD)
 
+        # Aplicar transparência ao jogador se o efeito fantasma estiver ativo
         if 'fantasma' in self.efeitos:
-            frame.set_alpha(150)
+            frame.set_alpha(150)  # 150 de 255 (cerca de 60% de opacidade)
 
         img_rect = frame.get_rect(center=self.player_rect.center)
         tela.blit(frame, img_rect.topleft)
 
-        # Desenha o efeito de ataque se estiver ativo
-        if self.attacking and self.ataque_alpha > 0:
-            efeito_frame = self.animacao_ataque[self.ataque_frame].copy()
-            efeito_frame.set_alpha(self.ataque_alpha)
-
-            # Rotaciona para apontar para o jogador
-            efeito_rotacionado = transform.rotate(efeito_frame, -self.ataque_angle)
-            rect_efeito = efeito_rotacionado.get_rect(center=self.ataque_pos)
-            tela.blit(efeito_rotacionado, rect_efeito.topleft)
-
-
-
-        # Resto do código de desenho (partículas, projéteis, etc.)
         if self.aoe is not None:
-            s, rectAoe, tamanho, tempoCriacao = self.aoe
+            s, rectAoe,tamanho,tempoCriacao = self.aoe
             tempo_atual = time.get_ticks()
             if tempo_atual - tempoCriacao < 2000:
                 s.fill((0, 0, 0, 0))
@@ -584,6 +610,9 @@ class Player():
                 tela.blit(s, rectAoe.topleft)
             else:
                 self.aoe = None
+
+
+        #projeteis
 
         for projetil in self.projeteis:
             for part in projetil["trail"]:
@@ -610,6 +639,14 @@ class Player():
                 tela.blit(s, (projetil["x"] - projetil["tamanho"] // 2,
                               projetil["y"] - projetil["tamanho"] // 2))
 
+
+
+
+        # Hitbox de ataque (debug)
+        rotated_hitbox, rotated_rect = self.get_rotated_rect_ataque(mouse_pos)
+        #tela.blit(rotated_hitbox, rotated_rect)
+
+
         if hasattr(self, 'dano_recebido') and time.get_ticks() - self.dano_recebido_tempo < 500:
             if self.telaSangue_alpha > 0:
                 self.telaSangue_alpha = max(0, 255 - (time.get_ticks() - self.dano_recebido_tempo) * 1.02)
@@ -635,6 +672,7 @@ class Player():
 
             dano_text = fonte_atual.render(texto_str, True, cor)
             tela.blit(dano_text, (pos_x - dano_text.get_width() / 2, pos_y))
+
 
     def get_hitbox(self):
         return self.player_rect
@@ -673,6 +711,7 @@ class Player():
                 randint(8, 10)
             )
 
+
     def ataque_espadaPrincipal(self, inimigos, mouse_pos, dt):
         current_time = time.get_ticks()
         cooldown = self.cooldown_ataque_base / self.arma.velocidade
@@ -686,8 +725,6 @@ class Player():
             self.attacking = True
             self.attack_start_time = current_time
             self.attack_progress = 0
-            self.anim_frame = 0
-
             angle = self.calcular_angulo(mouse_pos)
             self.base_sword_angle = math.degrees(angle) - 90
 
@@ -696,12 +733,16 @@ class Player():
 
             _, hitbox_espada = self.get_rotated_rect_ataque(mouse_pos)
 
+
             if self.arma.tipoDeArma == 'Adaga':
-                som.tocar(choice(['faca1', 'faca2']))
+                som.tocar(choice(['faca1','faca2']))
+
             elif self.arma.tipoDeArma == 'Martelo Solar':
                 som.tocar('Martelo')
+
             else:
-                som.tocar(choice(['espada1', 'espada2', 'espada3']))
+                som.tocar(choice(['espada1','espada2','espada3']))
+
 
             if current_time - self.tempo_ultimo_hit > self.tempo_max_combo:
                 self.hits = 0
@@ -710,7 +751,9 @@ class Player():
             for inimigo in inimigos:
                 if inimigo.vivo and inimigo.get_hitbox().colliderect(hitbox_espada):
                     self.hit_landed = True
+
                     screen_shaker.start(intensity=9, duration=150)
+
                     inimigo.anima_hit = True
                     inimigo.time_last_hit_frame = time.get_ticks()
                     self.hits += 1
@@ -726,7 +769,7 @@ class Player():
 
                     self.criar_efeito_sangue(hitbox_espada.centerx, hitbox_espada.centery)
 
-                    # efeitos
+                    #efeitos
                     for i in self.efeitos:
                         if i == ("lentidao"):
                             inimigo.velocidade *= 0.5
@@ -743,6 +786,7 @@ class Player():
             self.arma.ataquePrincipal(self, mouse_pos)
             self.ultimo_ataque = current_time
 
+
     def ataque_espadaSecundario(self, inimigos, mouse_pos, dt):
         current_time = time.get_ticks()
 
@@ -756,18 +800,17 @@ class Player():
                 self.attacking = True
                 self.attack_start_time = current_time
                 self.attack_progress = 0
-                self.anim_direcao = "ataque"
-                self.anim_frame = 0
                 angle = self.calcular_angulo(mouse_pos)
                 self.base_sword_angle = math.degrees(angle) - 90
                 self.attack_direction = 1 if random() > 0.5 else -1
+
 
                 _, hitbox_espada = self.get_rotated_rect_ataque(mouse_pos)
                 for inimigo in inimigos:
                     if inimigo.vivo:
                         if inimigo.get_hitbox().colliderect(hitbox_espada):
                             inimigo.anima_hit = True
-                            self.arma.ataqueSecundario(inimigo, self)
+                            self.arma.ataqueSecundario(inimigo,self)
                             dx = inimigo.x - self.x
                             dy = inimigo.y - self.y
                             inimigo.aplicar_knockback(dx, dy, intensidade=0.5)
@@ -778,8 +821,6 @@ class Player():
                 self.attacking = True
                 self.attack_start_time = current_time
                 self.attack_progress = 0
-                self.anim_direcao = "ataque"
-                self.anim_frame = 0
                 angle = self.calcular_angulo(mouse_pos)
                 self.base_sword_angle = math.degrees(angle) - 90
                 self.attack_direction = 1 if random() > 0.5 else -1
@@ -789,8 +830,6 @@ class Player():
                     self.attacking = True
                     self.attack_start_time = current_time
                     self.attack_progress = 0
-                    self.anim_direcao = "ataque"
-                    self.anim_frame = 0
                     angle = self.calcular_angulo(mouse_pos)
                     self.base_sword_angle = math.degrees(angle) - 90
                     self.attack_direction = 1 if random() > 0.5 else -1
@@ -799,12 +838,13 @@ class Player():
         else:
             self.arma.ataqueSecundario(self)
 
+
     def tomar_dano(self, valor):
         now = time.get_ticks()
         if now - self.ultimo_dano < self.invencibilidade:
             return
         self.ultimo_dano = now
-        som.tocar(choice(['Dano1', 'Dano2', 'Dano3']))
+        som.tocar(choice(['Dano1','Dano2','Dano3']))
         self.hp -= valor * self.modificadorDanoRecebido
         self.foi_atingido = True
         self.tempo_atingido = now
@@ -815,6 +855,7 @@ class Player():
         if self.telaSangue_surface is None:
             self.telaSangue_surface = self.telaSangue.copy()
 
+
     def atualizar_arma(self):
         self.sword = transform.scale(transform.flip(image.load(self.arma.sprite).convert_alpha(), True, True),
                                      (self.arma.size))
@@ -823,14 +864,21 @@ class Player():
         self.radius = self.arma.radius - 50
         self.hitbox_arma = self.arma.range
 
-    def atualizar_traits(self, trait):
+    def atualizar_traits(self,trait):
+        '''
+        Ancião - Todo ataque aplica lentidão (lista de efeitos no jogador, aplica cada um se nao for vazio)
+        Nojento - Todo ataque aplica veneno (lista de efeitos no jogador, aplica cada um se nao for vazio)
+        Mercúrio - Mais velocidade, Menos dano
+        Humano - Vida não decai, mas tem menos dano e menos life steal
+        Translûcido - Não tem colisão com caixa (SFC)
+        '''
         if trait == "Mercúrio":
             self.velocidadeMov += 0.2
             self.arma.dano -= 5
         elif trait == "Humano":
             self.rate = 0
             self.arma.dano -= 10
-            self.arma.lifeSteal /= 2
+            self.arma.lifeSteal /=2
         elif trait == "Ancião":
             self.efeitos.append("lentidao")
         elif trait == "Nojento":
@@ -840,6 +888,8 @@ class Player():
             self.efeitos.append('fantasma')
             self.arma.dano -= 13
 
+
+
     def atualizar_atributos(self):
         if self.macarronada == 0:
             self.base_dano = self.arma.dano
@@ -847,6 +897,7 @@ class Player():
             self.base_velocidade = self.arma.velocidade
             self.base_chanceCritico = self.arma.chanceCritico
             self.macarronada += 1
+            #O PROBLEMA ESTÁ AQUI
 
         self.base_rate = 1
         self.base_rateSt = 1
@@ -858,6 +909,7 @@ class Player():
         self.base_dash_cooldown_max = 1000
         self.base_dash_duration_max = 150
 
+
         self.arma.dano = self.base_dano * (1 + (self.atributos["forca"] - 5) / 5)
         self.arma.danoCriticoMod = self.base_danoCriticoMod * (1 + (self.atributos["forca"] - 5) / 5)
         self.arma.velocidade = self.base_velocidade * (1 + ((self.atributos["destreza"] - 5) / 5) * 0.5)
@@ -867,7 +919,7 @@ class Player():
         self.velocidadeMov = self.base_velocidadeMov + ((self.atributos["agilidade"] - 5) / 5) * 0.5
         self.custoDash = self.base_custoDash - ((self.atributos["estamina"] - 5) / 5) * 0.75
         self.modificadorDanoRecebido = self.base_modificadorDanoRecebido - (
-                (self.atributos["resistencia"] - 5) / 5) * 0.5
+                    (self.atributos["resistencia"] - 5) / 5) * 0.5
         self.invencibilidade = int(self.base_invencibilidade + ((self.atributos["resistencia"] - 5) / 5) * 500)
         self.cooldown_st = round(self.base_cooldown_st - (self.atributos["estamina"] - 5) * 444.44)
         self.dash_cooldown_max = int(self.base_dash_cooldown_max - ((self.atributos["estamina"] - 5) / 5) * 750)
@@ -875,19 +927,20 @@ class Player():
 
     def get_save_data(self):
         return {
-            'position': [self.x, self.y],
-            'stats': {
-                'hp': self.hp,
-                'hpMax': self.hpMax,
-                'st': self.st,
-                'almas': self.almas,
-                'velocidadeMov': self.velocidadeMov,
-                'atributos': self.atributos
-            },
-            'itens': [item.id for item in self.itens],
-            'itemAtivo': self.itemAtivo.id if self.itemAtivo else None,
-            'arma': self.arma.get_save_data() if hasattr(self.arma, 'get_save_data') else None
-        }
+        'position': [self.x, self.y],
+        'stats': {
+            'hp': self.hp,
+            'hpMax': self.hpMax,
+            'st': self.st,
+            'almas': self.almas,
+            'velocidadeMov': self.velocidadeMov,
+            'atributos' : self.atributos
+        },
+        'itens': [item.id for item in self.itens],
+        'itemAtivo': self.itemAtivo.id if self.itemAtivo else None,
+        'arma': self.arma.get_save_data() if hasattr(self.arma, 'get_save_data') else None
+    }
+
 
     def load_save_data(self, data, conjunto_itens, lista_mods):
         self.x, self.y = data['position']
@@ -914,5 +967,5 @@ class Player():
             if arma_class:
                 self.arma = arma_class(data['arma']['raridade'], lista_mods)
                 self.arma.load_save_data(data['arma'], lista_mods)
-                self.arma.aplicaModificador()
+                self.arma.aplicaModificador()  # Adicione esta linha
                 self.atualizar_arma()
