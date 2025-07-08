@@ -232,8 +232,9 @@ class Colisao:
                     break
 
     def _colisao_projetil_inimigo_player(self):
+        from player import Player
         for inimigo in self.entidades:
-            if hasattr(inimigo, 'projeteis'):
+            if hasattr(inimigo, 'projeteis') and not isinstance(inimigo, Player):
                 for projetil in inimigo.projeteis[:]:
                     # Criar hitbox circular mais precisa
                     projetil_raio = projetil["raio_hitbox"]
