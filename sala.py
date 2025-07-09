@@ -64,8 +64,8 @@ class Sala:
 
         self.spawn_points = self.mapa.get_inimigospawn()  
         self.leve_atual = 0
-        self.max_leves = randint(2,5)
-        #self.max_leves = 0
+        #self.max_leves = randint(2,5)
+        self.max_leves = 0
         self.inimigos_por_leva = 1 
         self.tempo_entrada = time.get_ticks() 
         self.cooldown_inicial = 1000  
