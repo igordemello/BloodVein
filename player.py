@@ -16,14 +16,14 @@ from som import musica
 
 
 class Player():
-    def __init__(self, x, y, largura, altura, hp=100000, st=100, velocidadeMov=0.5, sprite='hero.png', arma=None):
+    def __init__(self, x, y, largura, altura, hp=100, st=100, velocidadeMov=0.5, sprite='hero.png', arma=None):
         # animações
         self.hit_landed = None
         self.animacoes = {
             "baixo": self.carregar_animacao("assets/Player/vampira_andando_frente.png"),
             "cima": self.carregar_animacao("assets/Player/vampira_andando_tras.png"),
-            "D_cima": self.carregar_animacao("assets/Player/dash_frente.png"),
-            "D_baixo": self.carregar_animacao("assets/Player/dash_costas.png"),
+            "D_cima": self.carregar_animacao("assets/Player/dash_costas.png"),
+            "D_baixo": self.carregar_animacao("assets/Player/dash_frente.png"),
             "D_direita": self.carregar_animacao("assets/Player/dash _lado.png"),
             "D_esquerda": [transform.flip(img, True, False) for img in
                            self.carregar_animacao("assets/Player/dash _lado.png")],
@@ -49,7 +49,7 @@ class Player():
 
         self.nivel = 1
         self.hp = hp
-        self.hpMax = 100000
+        self.hpMax = 100
 
         self.efeitos = []
         self.tipo_colisao = 'obstaculo'
@@ -343,7 +343,7 @@ class Player():
                 if self.anim_frame >= len(self.animacoes[self.anim_direcao]) and self.anim_direcao in self.animacoes_principais:
                     self.anim_frame = 0
 
-        self.hp += 0.05 * self.rate
+        self.hp -= 0.05 * self.rate
 
         if current_time - self.last_dash_time >= self.cooldown_st:
             self.st += 0.7 * self.rateSt
