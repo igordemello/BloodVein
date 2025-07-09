@@ -184,7 +184,7 @@ class Colisao:
 
                     dx = inimigo.x - self.player.x
                     dy = inimigo.y - self.player.y
-                    inimigo.aplicar_knockback(dx, dy, intensidade=1)
+                    inimigo.aplicar_knockback(dx, dy, intensidade=0.8)
 
                     self.player.criar_efeito_sangue(projetil["x"], projetil["y"])
 

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="right-down" width="15" height="8" tilewidth="32" tileheight="32" infinite="0" nextlayerid="40" nextobjectid="238">
+<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="right-down" width="15" height="8" tilewidth="32" tileheight="32" infinite="0" nextlayerid="40" nextobjectid="236">
  <tileset firstgid="1" name="Sprite_sheet_tiles" tilewidth="32" tileheight="32" tilecount="77" columns="11">
-  <image source="../../assets/TileSet/tileset_andar2.png" width="352" height="224"/>
+  <image source="../../assets/TileSet/tileset_andar3.png" width="352" height="224"/>
  </tileset>
  <layer id="11" name="chao e paredes" width="15" height="8">
   <data encoding="csv">
@@ -192,8 +192,5 @@
  </layer>
  <objectgroup id="25" name="esquerda">
   <object id="72" x="23.5" y="100.5" width="11" height="20"/>
- </objectgroup>
- <objectgroup id="39" name="range_trocar_andar">
-  <object id="237" x="420.345" y="167.926" width="21.2295" height="23.3525"/>
  </objectgroup>
 </map>

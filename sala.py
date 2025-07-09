@@ -22,8 +22,8 @@ from inimigos.morcegosuicida import MorcegoSuicida
 from inimigos.caveiradefogo import CaveiraDeFogo
 from inimigos.morcegopadrao import MorcegoPadrao
 from inimigos.fantasmagaspar import FantasmaGasp
-from inimigos.fantasmatp import FantasmaTp
 from inimigos.furação import Furacao
+from inimigos.nuvemBoss import NuvemBoss
 
 init()
 fonte = font.SysFont("Arial", 24)
@@ -99,11 +99,23 @@ class Sala:
 
         if tipo == "boss" and not gerenciador_andar.sala_foi_conquistada(gerenciador_andar.sala_atual):
             fundo = self.tela.copy()
-            cenas = [
-                {"imagem": image.load("heroi_teste_cutscene.png").convert_alpha(), "fala": "Chegamos ao covil da criatura...", "lado": "esquerda"},
-                {"imagem": image.load("boss_teste_cutscene.png").convert_alpha(), "fala": "Você ousa me desafiar, humano?", "lado": "direita"}
-            ]
-            self.cutscene = Cutscene(cenas, fundo, self.tela.get_width(), self.tela.get_height())
+            numerodoandar = self.gerenciador_andar.numero_andar
+
+            if numerodoandar == 2:
+                cenas = [
+                    {"imagem": transform.scale(image.load("assets/cutscene/player.png").convert_alpha(), (640,960)), "fala": "Por essa eu não esperava, agora tem um gigante ter um gigante desse olho maldito....", "lado": "esquerda"},
+                    {"imagem": transform.scale(image.load("assets/cutscene/olhoBoss.png").convert_alpha(), (640,640)), "fala": "Você realmente achou que iria assasinar meus filhos e ficar impune? Você sangra? VAI SANGRAR", "lado": "direita"}
+                ]
+                self.cutscene = Cutscene(cenas, fundo, self.tela.get_width(), self.tela.get_height())
+
+            if numerodoandar == 1:
+                cenas = [
+                    {"imagem": transform.scale(image.load("assets/cutscene/nuvemBoss.png").convert_alpha(), (400,400)), "fala": "Matar aquele olho nojento é fácil, quero ver conseguir desviar de algo que está por todo canto!", "lado": "direita"},
+                    {"imagem": transform.scale(image.load("assets/cutscene/player.png").convert_alpha(), (640,960)), "fala": "Vai ser ez, eu nunca perderia pra uma nuvem", "lado": "esquerda"}
+                    
+                ]
+                self.cutscene = Cutscene(cenas, fundo, self.tela.get_width(), self.tela.get_height())
+
 
 
 
@@ -146,12 +158,17 @@ class Sala:
         if "boss" in tipo_sala:
             self.boss_musica = "suicidio"
             musica.tocar("BloodVein SCORE/OST/MusicaDoBoss.mp3")
-            print(self.spawn_points)
             xboss,yboss= self.spawn_points[0]
-            boss = bossmod.MouthOrb(xboss, yboss, 192, 192, hp=5000, velocidade=3, dano=30)
-            boss.nome_base = "Mãe Orbe"
-            self.leve_atual = self.max_leves + 2
-            return [boss]
+            numero = self.gerenciador_andar.numero_andar
+            if numero == 1:
+                boss = bossmod.MouthOrb(xboss, yboss)
+                boss.nome_base = "Mãe Orbe"
+            elif numero == 2:
+                boss = NuvemBoss(xboss, yboss)
+                boss.nome_base = "Nuvem Sombria"
+
+        self.leve_atual = self.max_leves + 2
+        return []
         
         self.inimigos_spawnados = True
 
@@ -176,7 +193,7 @@ class Sala:
     def _criar_inimigo_aleatorio(self, x, y, tipo_sala):
         elite = "bau" in tipo_sala
 
-        tipos_disponiveis = ["fasntasmagastp","furacao","caveiradefogo","fantasmagaspar","morcegopadrao","morcegosuicida","orb"]
+        tipos_disponiveis = ["furacao","caveiradefogo","fantasmagaspar","morcegopadrao","morcegosuicida","orb"]
         tipo_escolhido = choice(tipos_disponiveis)
 
 
@@ -185,10 +202,6 @@ class Sala:
             inimigo.nome_base = "Furacão"
             inimigo.aplicar_modificadores(elite=elite)
 
-        elif tipo_escolhido == "fasntasmagastp":
-            inimigo = FantasmaTp(x, y, 64, 64, hp=200 if not elite else 300)
-            inimigo.nome_base = "Morcego Padrão"
-            inimigo.aplicar_modificadores(elite=elite)
 
         elif tipo_escolhido == "caveiradefogo":
             inimigo = CaveiraDeFogo(x, y, 64, 64, hp=200 if not elite else 300)
@@ -214,7 +227,6 @@ class Sala:
             inimigo = Orb(x, y, 64, 64, hp=200 if not elite else 300)
             inimigo.nome_base = "Orb"
             inimigo.aplicar_modificadores(elite=elite)
-
 
         # Adicione outros tipos de inimigos aqui no futuro:
         # elif tipo_escolhido == "novo_inimigo":
@@ -373,8 +385,6 @@ class Sala:
         for inimigo in self.inimigos:
             if inimigo.vivo:
                 inimigo.desenhar(tela, (self.player.x, self.player.y), offset=(offset_x, offset_y))
-                if isinstance(inimigo, bossmod.MouthOrb):
-                    inimigo.desenhar_barra_vida(tela)
             elif not getattr(inimigo, "alma_coletada", True):
                 if not hasattr(inimigo, "vai_dropar_alma"):
                     inimigo.vai_dropar_alma = randint(0, 1) == 1  # decide 50/50 uma vez

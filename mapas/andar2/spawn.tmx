@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="right-down" width="15" height="8" tilewidth="32" tileheight="32" infinite="0" nextlayerid="40" nextobjectid="236">
  <tileset firstgid="1" name="Sprite_sheet_tiles" tilewidth="32" tileheight="32" tilecount="77" columns="11">
-  <image source="../../assets/TileSet/tileset_andar2.png" width="352" height="224"/>
+  <image source="../../assets/TileSet/tileset_andar3.png" width="352" height="224"/>
  </tileset>
  <layer id="11" name="chao e paredes" width="15" height="8">
   <data encoding="csv">
@@ -15,6 +15,9 @@
 2147483714,65,65,65,65,65,65,65,65,65,65,65,65,65,66
 </data>
  </layer>
+ <objectgroup id="39" name="range_bau">
+  <object id="235" x="358.355" y="39.487" width="28.8722" height="23.3525"/>
+ </objectgroup>
  <layer id="37" name="Decorações" width="15" height="8">
   <data encoding="csv">
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -75,9 +78,6 @@
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 </data>
  </layer>
- <objectgroup id="39" name="range_bau">
-  <object id="235" x="354.109" y="35.241" width="30.5705" height="26.3246"/>
- </objectgroup>
  <objectgroup id="15" name="colisor_parede">
   <object id="61" x="0.142348" y="224.226" width="479.685" height="31.9275"/>
   <object id="66" x="449.255" y="1.78749" width="41.708" height="233.565"/>

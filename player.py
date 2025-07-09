@@ -178,6 +178,8 @@ class Player():
 
         self.som_dash = True
 
+        self.trait = None
+
     def carregar_animacao(self, caminho):
         frame_largura = 32
         frame_altura = 48
@@ -765,7 +767,7 @@ class Player():
 
                     dx = inimigo.x - self.x
                     dy = inimigo.y - self.y
-                    inimigo.aplicar_knockback(dx, dy, intensidade=4)
+                    inimigo.aplicar_knockback(dx, dy, intensidade=0.8)
 
                     self.criar_efeito_sangue(hitbox_espada.centerx, hitbox_espada.centery)
 
@@ -938,7 +940,8 @@ class Player():
         },
         'itens': [item.id for item in self.itens],
         'itemAtivo': self.itemAtivo.id if self.itemAtivo else None,
-        'arma': self.arma.get_save_data() if hasattr(self.arma, 'get_save_data') else None
+        'arma': self.arma.get_save_data() if hasattr(self.arma, 'get_save_data') else None,
+        'trait': self.trait
     }
 
 
@@ -969,3 +972,10 @@ class Player():
                 self.arma.load_save_data(data['arma'], lista_mods)
                 self.arma.aplicaModificador()  # Adicione esta linha
                 self.atualizar_arma()
+
+        if 'trait' in data:
+            self.trait = data['trait']
+            self.atualizar_traits(self.trait)
+
+        
+        self.atualizar_atributos()
