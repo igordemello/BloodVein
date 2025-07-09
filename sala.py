@@ -167,8 +167,7 @@ class Sala:
                 boss = NuvemBoss(xboss, yboss)
                 boss.nome_base = "Nuvem Sombria"
 
-        self.leve_atual = self.max_leves + 2
-        return []
+        
         
         self.inimigos_spawnados = True
 
