@@ -218,20 +218,19 @@ while i == 1:
                             if sala_atual.loja.checar_compra(mouse.get_pos(), SCREEN) == "sair":
                                  loja = not loja
                         elif jogo_pausado and pause.menu_ativo:
-                            if not esperar_soltar_clique:
-                                escolha = gameOver.checar_clique_pause(mouse_pos)
-                                if escolha == "nova run":
-                                    # lógica de reset
-                                    esperar_soltar_clique = True  # Evita múltiplos cliques
-                                elif escolha == "sair":
-                                    gerenciamento.modo = "menu"
-                                    jogo_pausado = not jogo_pausado
-                                    esperar_soltar_clique = True
-                            elif pause.checar_clique_pause(mouse_pos) == "salvar":
-                                game_state = save_manager.generate_game_state(player, andar, sala_atual)
-                                save_manager.save_game(game_state, "save_file.json")
-                                mensagem_salvo = fonte.render("JOGO SALVO", True, (255, 255, 255))
-                                tempo_mensagem_salvo = time.get_ticks()
+                             escolha = pause.checar_clique_pause(mouse_pos)
+                             if escolha == "continuar":
+                                 jogo_pausado = False
+                                 pause.menu_ativo = False
+                                 musica.retomar()
+                             elif escolha == "salvar":
+                                 game_state = save_manager.generate_game_state(player, andar, sala_atual)
+                                 save_manager.save_game(game_state, "save_file.json")
+                                 mensagem_salvo = fonte.render("JOGO SALVO", True, (255, 255, 255))
+                                 tempo_mensagem_salvo = time.get_ticks()
+                             elif escolha == "sair":
+                                 gerenciamento.modo = "menu"
+                                 jogo_pausado = False
                         elif jogo_pausado and player.gameOver:
                             if gameOver.checar_clique_pause(mouse_pos) == "nova run":
                                 try:
@@ -276,8 +275,8 @@ while i == 1:
                             print(menuDeArma.pos)
 
                     if ev.key == K_ESCAPE and not inventarioexibe:
-                        jogo_pausado = not jogo_pausado
-                        pausado = not pausado
+                        jogo_pausado = True
+                        pausado = True
                         pause.menu_ativo = True
 
                     if ev.key == K_q and current_time - player.ativo_ultimo_uso > 2500:

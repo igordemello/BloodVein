@@ -224,7 +224,7 @@ class Player():
             print("Não tem item ativo")
 
     def atualizar(self, dt, teclas):
-        
+
         if self.travado:
             return
         self.dt = dt
@@ -357,7 +357,7 @@ class Player():
         if self.st > 100:
             self.st = 100
 
-  
+
         if self.hp == 0:
             if self.revives <= 0:
                 self.gameOver = True
@@ -365,7 +365,7 @@ class Player():
             else:
                 self.hp += self.hpMax/2
                 self.revives -= 1
-            
+
 
 
         if self.attacking:
@@ -431,7 +431,7 @@ class Player():
         if self.attack_progress >= 1.0:
             self.attacking = False
             self.sword_trail_particles = []
-            return 
+            return
 
         angle = self.calcular_angulo(mouse.get_pos())
         centro_jogador = (self.player_rect.centerx, self.player_rect.centery)
@@ -805,7 +805,7 @@ class Player():
                 angle = self.calcular_angulo(mouse_pos)
                 self.base_sword_angle = math.degrees(angle) - 90
                 self.attack_direction = 1 if random() > 0.5 else -1
-                
+
 
                 _, hitbox_espada = self.get_rotated_rect_ataque(mouse_pos)
                 for inimigo in inimigos:
@@ -816,7 +816,7 @@ class Player():
                             dx = inimigo.x - self.x
                             dy = inimigo.y - self.y
                             inimigo.aplicar_knockback(dx, dy, intensidade=0.5)
-                            
+
             elif self.arma.ehAOE:
                 self.aoe = self.arma.ataqueSecundario(self, mouse_pos)
                 self.ultimo_ataque = current_time
