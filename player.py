@@ -107,7 +107,7 @@ class Player():
         self.itemAtivoEsgotado = None
         self.st = st
 
-        self.almas = 999
+        self.almas = 0
         self.old_x = x
         self.old_y = y
         self.vx = 0

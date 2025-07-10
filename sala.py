@@ -101,16 +101,16 @@ class Sala:
             fundo = self.tela.copy()
             numerodoandar = self.gerenciador_andar.numero_andar
 
-            if numerodoandar == 2:
+            if numerodoandar == 1:
                 cenas = [
                     {"imagem": transform.scale(image.load("assets/cutscene/player.png").convert_alpha(), (640,960)), "fala": "Por essa eu não esperava, agora tem um gigante ter um gigante desse olho maldito....", "lado": "esquerda"},
-                    {"imagem": transform.scale(image.load("assets/cutscene/olhoBoss.png").convert_alpha(), (640,640)), "fala": "Você realmente achou que iria assasinar meus filhos e ficar impune? Você sangra? VAI SANGRAR", "lado": "direita"}
+                    {"imagem": transform.scale(image.load("assets/cutscene/olhoBoss.png").convert_alpha(), (840,840)), "fala": "Você realmente achou que iria assasinar meus filhos e ficar impune? Você sangra? VAI SANGRAR", "lado": "direita"}
                 ]
                 self.cutscene = Cutscene(cenas, fundo, self.tela.get_width(), self.tela.get_height())
 
-            if numerodoandar == 1:
+            if numerodoandar == 2:
                 cenas = [
-                    {"imagem": transform.scale(image.load("assets/cutscene/nuvemBoss.png").convert_alpha(), (400,400)), "fala": "Matar aquele olho nojento é fácil, quero ver conseguir desviar de algo que está por todo canto!", "lado": "direita"},
+                    {"imagem": transform.scale(image.load("assets/cutscene/nuvemBoss.png").convert_alpha(), (800,800)), "fala": "Matar aquele olho nojento é fácil, quero ver conseguir desviar de algo que está por todo canto!", "lado": "direita"},
                     {"imagem": transform.scale(image.load("assets/cutscene/player.png").convert_alpha(), (640,960)), "fala": "Vai ser ez, eu nunca perderia pra uma nuvem", "lado": "esquerda"}
                     
                 ]
@@ -154,7 +154,6 @@ class Sala:
         if tempo_atual - self.tempo_entrada < self.cooldown_inicial and not self.inimigos_spawnados:
             return [] 
         
-        #melhorar essa logica de boss para diferentes andares dps
         if "boss" in tipo_sala:
             self.boss_musica = "suicidio"
             musica.tocar("BloodVein SCORE/OST/MusicaDoBoss.mp3")
@@ -163,9 +162,13 @@ class Sala:
             if numero == 1:
                 boss = bossmod.MouthOrb(xboss, yboss)
                 boss.nome_base = "Mãe Orbe"
+                self.leve_atual = self.max_leves + 2
+                return[boss]
             elif numero == 2:
                 boss = NuvemBoss(xboss, yboss)
                 boss.nome_base = "Nuvem Sombria"
+                self.leve_atual = self.max_leves + 2
+                return[boss]
 
         
         
