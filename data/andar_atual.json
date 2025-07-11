@@ -6,8 +6,8 @@
         {
             "portas": {
                 "cima": "sala1",
-                "baixo": "sala2",
-                "esquerda": "sala3"
+                "baixo": "sala3",
+                "esquerda": "sala4"
             },
             "pos": [
                 0,
@@ -15,19 +15,20 @@
             ],
             "tipo": "comum",
             "visitada": false,
-            "arquivotmx": "andar1/12.tmx",
+            "arquivotmx": "andar1/29.tmx",
             "salaanterior": null,
             "conexoes": [
                 "sala1",
-                "sala2",
-                "sala3"
+                "sala3",
+                "sala4"
             ],
             "id": "sala0"
         },
         {
             "portas": {
                 "baixo": "sala0",
-                "cima": "sala5"
+                "cima": "sala2",
+                "direita": "sala7"
             },
             "pos": [
                 0,
@@ -35,78 +36,19 @@
             ],
             "tipo": "comum",
             "visitada": false,
-            "arquivotmx": "andar1/23.tmx",
+            "arquivotmx": "andar1/3.tmx",
             "salaanterior": null,
             "conexoes": [
                 "sala0",
-                "sala5"
+                "sala2",
+                "sala7"
             ],
             "id": "sala1"
         },
         {
             "portas": {
-                "cima": "sala0",
-                "baixo": "sala4",
-                "esquerda": "sala6"
-            },
-            "pos": [
-                0,
-                1
-            ],
-            "tipo": "comum",
-            "visitada": false,
-            "arquivotmx": "andar1/7.tmx",
-            "salaanterior": null,
-            "conexoes": [
-                "sala0",
-                "sala4",
-                "sala6"
-            ],
-            "id": "sala2"
-        },
-        {
-            "portas": {
-                "direita": "sala0",
-                "cima": "sala9"
-            },
-            "pos": [
-                -1,
-                0
-            ],
-            "tipo": "comum",
-            "visitada": false,
-            "arquivotmx": "andar1/17.tmx",
-            "salaanterior": null,
-            "conexoes": [
-                "sala0",
-                "sala9"
-            ],
-            "id": "sala3"
-        },
-        {
-            "portas": {
-                "cima": "sala2",
-                "baixo": "sala7"
-            },
-            "pos": [
-                0,
-                2
-            ],
-            "tipo": "comum",
-            "visitada": false,
-            "arquivotmx": "andar1/22.tmx",
-            "salaanterior": null,
-            "conexoes": [
-                "sala2",
-                "sala7"
-            ],
-            "id": "sala4"
-        },
-        {
-            "portas": {
                 "baixo": "sala1",
-                "cima": "sala8",
-                "esquerda": "sala11"
+                "cima": "sala6"
             },
             "pos": [
                 0,
@@ -114,27 +56,82 @@
             ],
             "tipo": "comum",
             "visitada": false,
-            "arquivotmx": "andar1/24.tmx",
+            "arquivotmx": "andar1/1.tmx",
             "salaanterior": null,
             "conexoes": [
                 "sala1",
-                "sala8",
-                "sala11"
+                "sala6"
+            ],
+            "id": "sala2"
+        },
+        {
+            "portas": {
+                "cima": "sala0"
+            },
+            "pos": [
+                0,
+                1
+            ],
+            "tipo": "comum",
+            "visitada": false,
+            "arquivotmx": "andar1/2.tmx",
+            "salaanterior": null,
+            "conexoes": [
+                "sala0"
+            ],
+            "id": "sala3"
+        },
+        {
+            "portas": {
+                "direita": "sala0",
+                "cima": "sala5",
+                "baixo": "sala8"
+            },
+            "pos": [
+                -1,
+                0
+            ],
+            "tipo": "comum",
+            "visitada": false,
+            "arquivotmx": "andar1/18.tmx",
+            "salaanterior": null,
+            "conexoes": [
+                "sala0",
+                "sala5",
+                "sala8"
+            ],
+            "id": "sala4"
+        },
+        {
+            "portas": {
+                "baixo": "sala4",
+                "cima": "sala9"
+            },
+            "pos": [
+                -1,
+                -1
+            ],
+            "tipo": "comum",
+            "visitada": false,
+            "arquivotmx": "andar1/12.tmx",
+            "salaanterior": null,
+            "conexoes": [
+                "sala4",
+                "sala9"
             ],
             "id": "sala5"
         },
         {
             "portas": {
-                "direita": "sala2"
+                "baixo": "sala2"
             },
-            "tipo": "bau",
             "pos": [
-                -1,
-                1
+                0,
+                -3
             ],
-            "bau_aberto": false,
+            "tipo": "comum",
             "visitada": false,
-            "arquivotmx": "andar1/11.tmx",
+            "arquivotmx": "andar1/19.tmx",
             "salaanterior": null,
             "conexoes": [
                 "sala2"
@@ -143,90 +140,112 @@
         },
         {
             "portas": {
-                "cima": "sala4"
+                "esquerda": "sala1",
+                "cima": "sala10"
             },
-            "tipo": "spawn",
             "pos": [
-                0,
-                3
+                1,
+                -1
             ],
-            "visitada": true,
-            "arquivotmx": "andar1/spawn.tmx",
+            "tipo": "comum",
+            "visitada": false,
+            "arquivotmx": "andar1/26.tmx",
             "salaanterior": null,
             "conexoes": [
-                "sala4"
+                "sala1",
+                "sala10"
             ],
             "id": "sala7"
         },
         {
             "portas": {
-                "baixo": "sala5",
-                "cima": "sala10"
+                "cima": "sala4",
+                "baixo": "sala11"
             },
             "pos": [
-                0,
-                -3
+                -1,
+                1
             ],
             "tipo": "comum",
             "visitada": false,
-            "arquivotmx": "andar1/13.tmx",
+            "arquivotmx": "andar1/25.tmx",
             "salaanterior": null,
             "conexoes": [
-                "sala5",
-                "sala10"
+                "sala4",
+                "sala11"
             ],
             "id": "sala8"
         },
         {
             "portas": {
-                "baixo": "sala3"
+                "baixo": "sala5"
             },
+            "tipo": "spawn",
             "pos": [
                 -1,
-                -1
+                -2
             ],
-            "tipo": "comum",
-            "visitada": false,
-            "arquivotmx": "andar1/9.tmx",
+            "visitada": true,
+            "arquivotmx": "andar1/spawn.tmx",
             "salaanterior": null,
             "conexoes": [
-                "sala3"
+                "sala5"
             ],
             "id": "sala9"
         },
         {
             "portas": {
-                "baixo": "sala8"
-            },
-            "tipo": "boss",
-            "pos": [
-                0,
-                -4
-            ],
-            "visitada": false,
-            "arquivotmx": "andar1/boss.tmx",
-            "salaanterior": null,
-            "conexoes": [
-                "sala8"
-            ],
-            "id": "sala10"
-        },
-        {
-            "portas": {
-                "direita": "sala5"
+                "baixo": "sala7",
+                "cima": "sala12"
             },
             "tipo": "loja",
             "pos": [
-                -1,
+                1,
                 -2
             ],
             "visitada": false,
             "arquivotmx": "andar1/loja.tmx",
             "salaanterior": null,
             "conexoes": [
-                "sala5"
+                "sala7",
+                "sala12"
+            ],
+            "id": "sala10"
+        },
+        {
+            "portas": {
+                "cima": "sala8"
+            },
+            "tipo": "bau",
+            "pos": [
+                -1,
+                2
+            ],
+            "bau_aberto": false,
+            "visitada": false,
+            "arquivotmx": "andar1/22.tmx",
+            "salaanterior": null,
+            "conexoes": [
+                "sala8"
             ],
             "id": "sala11"
+        },
+        {
+            "portas": {
+                "baixo": "sala10"
+            },
+            "tipo": "boss",
+            "pos": [
+                1,
+                -3
+            ],
+            "visitada": false,
+            "arquivotmx": "andar1/boss.tmx",
+            "salaanterior": null,
+            "conexoes": [
+                "sala10"
+            ],
+            "id": "sala12"
         }
     ],
     "links": [
@@ -236,43 +255,47 @@
         },
         {
             "source": "sala0",
-            "target": "sala2"
-        },
-        {
-            "source": "sala0",
             "target": "sala3"
         },
         {
-            "source": "sala1",
-            "target": "sala5"
+            "source": "sala0",
+            "target": "sala4"
         },
         {
-            "source": "sala2",
-            "target": "sala4"
+            "source": "sala1",
+            "target": "sala2"
+        },
+        {
+            "source": "sala1",
+            "target": "sala7"
         },
         {
             "source": "sala2",
             "target": "sala6"
         },
         {
-            "source": "sala3",
-            "target": "sala9"
+            "source": "sala4",
+            "target": "sala5"
         },
         {
             "source": "sala4",
-            "target": "sala7"
-        },
-        {
-            "source": "sala5",
             "target": "sala8"
         },
         {
             "source": "sala5",
-            "target": "sala11"
+            "target": "sala9"
+        },
+        {
+            "source": "sala7",
+            "target": "sala10"
         },
         {
             "source": "sala8",
-            "target": "sala10"
+            "target": "sala11"
+        },
+        {
+            "source": "sala10",
+            "target": "sala12"
         }
     ],
     "numero_andar": 1

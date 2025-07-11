@@ -12,14 +12,14 @@ class Hud:
     def __init__(self, player,tela):
         self.player = player
         self.bracoHp_fundo = transform.scale(image.load('assets/UI/HDEmptyHealthUI - Rotacionada.png').convert_alpha(),
-                                             (192, 576))
+                                             (192 * 1.4, 576 * 1.4))
         self.bracoHp_cima = transform.scale(image.load('assets/UI/HDFillHealthUI - Rotacionada.png').convert_alpha(),
-                                            (192, 576))
+                                            (192 * 1.4, 576 * 1.4))
         self.bracoSt_fundo = transform.flip(
-            transform.scale(image.load('assets/UI/HDEmptyManaUI - Rotacionada.png').convert_alpha(), (192, 576)), True,
+            transform.scale(image.load('assets/UI/HDEmptyManaUI - Rotacionada.png').convert_alpha(), (192 * 1.4, 576 * 1.4)), True,
             False)
         self.bracoSt_cima = transform.flip(
-            transform.scale(image.load('assets/UI/HDFillManaUI - Rotacionada.png').convert_alpha(), (192, 576)), True,
+            transform.scale(image.load('assets/UI/HDFillManaUI - Rotacionada.png').convert_alpha(), (192 * 1.4, 576 * 1.4)), True,
             False)
 
         self.almaIcon = transform.scale(image.load('assets/Itens/alma.png').convert_alpha(), (96, 96))
@@ -115,7 +115,7 @@ class Hud:
         comboMult_rect.top = base_combo_rect.bottom - 15 + self.shake_offset[1] * 0.7
 
         if not minimal:
-            self.tela.blit(self.hud, (0, 0))
+            self.tela.blit(self.hud, (240, 0))
 
         # HP Bar
         larguraHp_total = self.bracoHp_cima.get_width()
@@ -123,12 +123,12 @@ class Hud:
         proporcaoHp = max(0, min(1, self.player.hp / 100))
         altura_visivelHp = int(alturaHp_total * proporcaoHp)
 
-        self.tela.blit(self.bracoHp_fundo, (15 + offset_x, 510 + offset_y))
+        self.tela.blit(self.bracoHp_fundo, (65 + offset_x, 275 + offset_y))
 
         if altura_visivelHp > 0:
             y_corte = self.bracoHp_cima.get_height() - altura_visivelHp
             barra_cheia_cortada = self.bracoHp_cima.subsurface((0, y_corte, larguraHp_total, altura_visivelHp)).copy()
-            self.tela.blit(barra_cheia_cortada, (15 + offset_x, 510 + y_corte + offset_y))
+            self.tela.blit(barra_cheia_cortada, (65 + offset_x, 275 + y_corte + offset_y))
 
 
         # Stamina Bar
@@ -138,12 +138,12 @@ class Hud:
         proporcaoSt = max(0, min(1, self.player.st / 100))
         altura_visivelSt = int(alturaSt_total * proporcaoSt)
 
-        self.tela.blit(braco_stamina, (1715+ offset_x, 510+offset_y))
+        self.tela.blit(braco_stamina, (1585+ offset_x, 275+offset_y))
 
         if altura_visivelSt > 0:
             y_corte = self.bracoSt_cima.get_height() - altura_visivelSt
             barra_cheia_cortada = self.bracoSt_cima.subsurface((0, y_corte, larguraSt_total, altura_visivelSt)).copy()
-            self.tela.blit(barra_cheia_cortada, (1715, 510 + y_corte))
+            self.tela.blit(barra_cheia_cortada, (1585, 275 + y_corte))
 
 
 
