@@ -1,14 +1,14 @@
 {
     "player": {
         "position": [
-            914,
-            462
+            706,
+            339
         ],
         "stats": {
             "hp": 100,
             "hpMax": 100,
             "st": 100,
-            "almas": 0,
+            "almas": 999,
             "velocidadeMov": 0.5,
             "atributos": {
                 "forca": 5,
@@ -25,31 +25,40 @@
         "arma": {
             "tipo": "LaminaDaNoite",
             "raridade": "comum",
-            "dano": 16.6,
-            "velocidade": 1.7,
-            "lifeSteal": 10.0,
+            "dano": 8.0,
+            "velocidade": 2.5,
+            "lifeSteal": 9.0,
             "chanceCritico": 8.0,
             "danoCriticoMod": 2.0,
             "modificador": "Rapida",
             "modificador_detalhes": {
                 "nome": "Rapida",
-                "valor": 1.7
+                "valor": 2.5
             }
         },
         "trait": null
     },
     "map": {
-        "sala_atual": "sala11",
+        "sala_atual": "sala7",
         "salas_conquistadas": [
-            "sala10",
-            "sala11"
+            "sala4",
+            "sala5",
+            "sala0",
+            "sala3",
+            "sala6",
+            "sala2"
         ],
         "salas_visitadas": [
-            "sala10",
-            "sala11"
+            "sala4",
+            "sala5",
+            "sala7",
+            "sala0",
+            "sala3",
+            "sala6",
+            "sala2"
         ],
         "bau_aberto": {
-            "sala10": false
+            "sala9": false
         }
     },
     "sala": {
@@ -58,6 +67,6 @@
         "bau": null,
         "em_transicao": false
     },
-    "timestamp": "2025-07-11T23:29:51.285701",
+    "timestamp": "2025-07-12T13:45:02.017306",
     "version": "1.0"
 }

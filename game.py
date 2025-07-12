@@ -166,10 +166,16 @@ class Game:
 
                     if resultado == "sair":
                         self.estado = EstadoDoJogo.JOGANDO
+                        self.sala_atual.bau.menu_ativo = False
+                        self.sala_atual.ativar_menu_bau = False
+                        self.sala_atual.player.travado = False
                     elif resultado:
                         self.player.adicionarItem(resultado)
                         self.sala_atual.gerenciador_andar.grafo.nodes[self.sala_atual.gerenciador_andar.sala_atual]["bau_aberto"] = True
                         self.estado = EstadoDoJogo.JOGANDO
+                        self.sala_atual.bau.menu_ativo = False
+                        self.sala_atual.ativar_menu_bau = False
+                        self.sala_atual.player.travado = False
 
                     if resultado:
                         self.sala_atual.bau.menu_ativo = False
@@ -245,10 +251,10 @@ class Game:
                 self.sala_atual.ativar_menu_bau and
                 not self.bau_foi_aberto_esse_frame
             ):
-                self.estado = EstadoDoJogo.BAU
-                self.sala_atual.bau.menu_ativo = True
-                self.player.travado = True
-                self.bau_foi_aberto_esse_frame = True
+                if self.sala_atual.bau.menu_ativo:
+                    self.estado = EstadoDoJogo.BAU
+                    self.player.travado = True
+                    self.bau_foi_aberto_esse_frame = True
 
 
             if self.player.gameOver:

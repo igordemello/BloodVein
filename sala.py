@@ -149,8 +149,8 @@ class Sala:
             self.leve_atual = self.max_leves + 2
             return []
 
-        self.leve_atual = self.max_leves + 2
-        return []
+        # self.leve_atual = self.max_leves + 2
+        # return []
         
         tempo_atual = time.get_ticks()
         if tempo_atual - self.tempo_entrada < self.cooldown_inicial and not self.inimigos_spawnados:
@@ -354,6 +354,10 @@ class Sala:
             if (self.bau.aberto and not self.bau.animando and not self.ativar_menu_bau and not self.bau_interagido and self.player.get_hitbox().colliderect(self.bau.rect)):
                 self.ativar_menu_bau = True
                 self.bau_interagido = True 
+
+            if not self.bau.menu_ativo and self.ativar_menu_bau:
+                self.ativar_menu_bau = False
+                self.player.travado = False
 
         now = time.get_ticks()
 
