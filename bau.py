@@ -182,7 +182,7 @@ class Bau:
         for i, botao in enumerate(self.botoes):
             if self.botaosair.checkForInput(mouse_pos):
                 self.menu_ativo = False
-                return None
+                return 'sair'
             if botao.checkForInput(mouse_pos):
                 item_escolhido = self.itens_sorteados[i]
                 print(f"Item escolhido: {item_escolhido.nome}")

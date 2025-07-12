@@ -343,7 +343,7 @@ class Player():
                 if self.anim_frame >= len(self.animacoes[self.anim_direcao]) and self.anim_direcao in self.animacoes_principais:
                     self.anim_frame = 0
 
-        self.hp -= 0.05 * self.rate
+        # self.hp -= 0.05 * self.rate
 
         if current_time - self.last_dash_time >= self.cooldown_st:
             self.st += 0.7 * self.rateSt
