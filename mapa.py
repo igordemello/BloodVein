@@ -38,8 +38,9 @@ class Mapa:
         ))
         self.tela.blit(self.mapa_cache, rect_mapa)
 
-        for col in self.get_colliders():
-            draw.rect(self.tela, (255, 0, 0), col["rect"], 2)
+        # Desenhar colisões
+        # for col in self.get_colliders():
+        #     draw.rect(self.tela, (255, 0, 0), col["rect"], 2)
 
     def _recriar_cache(self, porta_liberada):
         largura = self.tmx_data.width * self.tmx_data.tilewidth * self.escala
