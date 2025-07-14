@@ -24,6 +24,8 @@ from inimigos.morcegopadrao import MorcegoPadrao
 from inimigos.fantasmagaspar import FantasmaGasp
 from inimigos.furação import Furacao
 from inimigos.nuvemBoss import NuvemBoss
+from armas import LaminaDaNoite, Chigatana, Karambit, EspadaDoTita, MachadoDoInverno, EspadaEstelar, MarteloSolar, Arco, ListaMods
+from botao import Botao
 
 init()
 fonte = font.SysFont("Arial", 24)
@@ -34,7 +36,9 @@ class Sala:
         self.tela = tela
         self.gerenciador_andar = gerenciador_andar
         self.mapa = Mapa(caminho_mapa,self.tela,self.tela.get_width(),self.tela.get_height(),self.gerenciador_andar)
-        
+
+        self.lista_mods = ListaMods()
+        self.loots = []
 
         self.player = player
         self.colisao = Colisao(self.mapa, self.player)
@@ -149,8 +153,8 @@ class Sala:
             self.leve_atual = self.max_leves + 2
             return []
 
-        self.leve_atual = self.max_leves + 2
-        return []
+        #self.leve_atual = self.max_leves + 2
+        #return []
         
         tempo_atual = time.get_ticks()
         if tempo_atual - self.tempo_entrada < self.cooldown_inicial and not self.inimigos_spawnados:
@@ -251,6 +255,7 @@ class Sala:
 
 
     def atualizar(self,dt,teclas, eventos):
+
 
         if self.cutscene and self.cutscene.ativa:
             self.cutscene.update(eventos)  # ou eventos se estiver usando eventos
@@ -386,6 +391,13 @@ class Sala:
             musica.tocar("BloodVein SCORE/OST/MapaForadoCombate.mp3")
             self.musica_escolhida = choice(self.musicas_de_combate)
 
+        for evento in eventos:
+            if evento.type == MOUSEBUTTONDOWN and evento.button == 1:
+                for botao, arma in self.loots[:]:
+                    if botao.checkForInput(mouse.get_pos()):
+                        self.player.inventario.append(arma)
+                        self.loots.remove((botao, arma))
+
 
 
     def desenhar_inimigos(self, tela):
@@ -393,21 +405,71 @@ class Sala:
         for inimigo in self.inimigos:
             if inimigo.vivo:
                 inimigo.desenhar(tela, (self.player.x, self.player.y), offset=(offset_x, offset_y))
-            elif not getattr(inimigo, "alma_coletada", True):
-                if not hasattr(inimigo, "vai_dropar_alma"):
-                    inimigo.vai_dropar_alma = randint(0, 1) == 1  # decide 50/50 uma vez
-                if inimigo.vai_dropar_alma:
-                    pos = (inimigo.x + 16, inimigo.y + 16)
-                    self.desenha_alma(pos)
-                    alma_hitbox = Rect(0, 0, 50, 50)
-                    alma_hitbox.center = pos
-                    if self.player.get_hitbox().colliderect(alma_hitbox):
-                        self.player.almas += 1
-                        inimigo.alma_coletada = True
+            else:
+                if not getattr(inimigo, "alma_coletada", True):
+                    if not hasattr(inimigo, "vai_dropar_alma"):
+                        inimigo.vai_dropar_alma = randint(0, 1) == 1  # decide 50/50 uma vez
+                    if inimigo.vai_dropar_alma:
+                        pos = (inimigo.x + 16, inimigo.y + 16)
+                        self.desenha_alma(pos)
+                        alma_hitbox = Rect(0, 0, 50, 50)
+                        alma_hitbox.center = pos
+                        if self.player.get_hitbox().colliderect(alma_hitbox):
+                            self.player.almas += 1
+                            inimigo.alma_coletada = True
+                if not getattr(inimigo, "loot_coletado", True):
+                    if not hasattr(inimigo, "vai_dropar_loot"):
+                        inimigo.vai_dropar_loot = randint(1, 100) <= 100  # 30% de chance de cair loot
 
+                    if getattr(inimigo, "vai_dropar_loot", False) and not hasattr(inimigo, "loot_botao_criado"):
+                        pos = (inimigo.x + 16, inimigo.y + 32)
+                        chance = randint(1, 100)
+                        if chance <= 70:
+                            raridade = "comum"
+                            cor = (255, 255, 255)
+                            hover = (100, 100, 100)
+                        elif chance <= 90:
+                            raridade = "incomum"
+                            cor = (0, 255, 0)
+                            hover = (0, 100, 0)
+                        elif chance <= 97:
+                            raridade = "raro"
+                            cor = (128, 0, 128)
+                            hover = (28, 0, 28)
+                        else:
+                            raridade = "lendaria"
+                            cor = (255, 255, 0)
+                            hover = (100, 100, 0)
 
+                        arma_tipo = choice([
+                            LaminaDaNoite, Chigatana, Karambit, EspadaDoTita,
+                            MachadoDoInverno, EspadaEstelar, MarteloSolar, Arco
+                        ])
+                        arma = arma_tipo(raridade, self.lista_mods)
+
+                        fontinha = font.Font("assets/fontes/alagard.ttf", 18)
+                        texto_render = fontinha.render(arma.nome, True, cor)
+                        largura = texto_render.get_width() + 20
+                        altura = texto_render.get_height() + 10
+
+                        fundo = Surface((largura, altura), SRCALPHA)
+                        fundo.fill((0, 0, 0, 160))  # fundo preto semi-transparente
+
+                        botao = Botao(
+                            image=fundo,
+                            pos=pos,
+                            text_input=arma.nome,
+                            font=fontinha,
+                            base_color=cor,
+                            hovering_color=hover,
+                            value=arma
+                        )
+
+                        self.loots.append((botao, arma))
+                        inimigo.loot_botao_criado = True
 
     def desenhar(self, tela):
+
         if self.cutscene and self.cutscene.ativa:
             self.cutscene.draw(self.tela)
             return
@@ -445,6 +507,9 @@ class Sala:
         # for collider in self.mapa.get_colliders():
         #     draw.rect(tela, (255,0,0), collider['rect'], 1)
         # draw.rect(tela, (0,255,0), self.player.player_rect, 2)
+        for botao, _ in self.loots:
+            botao.update(tela)
+            botao.changeColor(mouse.get_pos())
         
 
 
@@ -619,3 +684,4 @@ class Sala:
         range_loja = self.mapa.get_rangeloja()
 
         return range_loja if range_loja else []
+

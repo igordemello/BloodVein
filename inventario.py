@@ -50,9 +50,139 @@ class Inventario():
     def toggle(self):
         self.visible = not self.visible
 
+    def desenhar(self): #armas
+        if not self.visible:
+            return
+
+        self.screen.blit(self.fundo, (0, 0))
+
+        mouse_x, mouse_y = mouse.get_pos()
+        arma_hover = None
+        arma_hover_pos = (0, 0)
+        cores_raridade = {
+            "comum": (255, 255, 255, 80),
+            "incomum": (0, 255, 0, 80),
+            "raro": (128, 0, 128, 80),
+            "lendaria": (255, 255, 0, 80)
+        }
+        for i, arma in enumerate(self.player.inventario):
+            x = 765 + (i % 3) * 150
+            y = 425 + (i // 3) * 175
+
+            raridade = getattr(arma, "raridadeStr", "comum")  # fallback para comum
+            cor_fundo = cores_raridade.get(raridade, (255, 255, 255, 80))
+
+            fundo = Surface((100, 100), SRCALPHA)
+            fundo.fill(cor_fundo)
+            self.screen.blit(fundo, (x, y))
+
+            spriteArma = image.load(arma.spriteIcon).convert_alpha()
+            sprite = transform.scale(spriteArma, (100, 100))
+            self.screen.blit(sprite, (x, y))
+
+            rect_item = Rect(x, y, 100, 100)
+            if rect_item.collidepoint(mouse_x, mouse_y):
+                arma_hover = arma
+                arma_hover_pos = (x, y)
 
 
-    def desenhar(self):
+        if arma_hover:
+            fonte_attr = font.Font("assets/fontes/alagard.ttf", 32)
+            cor_attr = (253, 246, 225)
+
+            atributos = [
+                f"Tipo: {arma_hover.tipoDeArma}",
+                f"Dano: {round(arma_hover.dano, 1)}",
+                f"Rapidez: {round(arma_hover.velocidade, 1)}",
+                f"Roubo de Vida: {round(arma_hover.lifeSteal, 1)}",
+                f"% Crítico: {round(arma_hover.chanceCritico, 1)}",
+                f"Dano Crítico: {round(arma_hover.danoCriticoMod * arma_hover.dano, 1)}",  # dano total crítico
+                f"Mod: {arma_hover.modificador.nome if hasattr(arma_hover, 'modificador') else 'Nenhum'}"
+            ]
+
+            base_x = 1300  # posição x na tela
+            base_y = 640  # posição y inicial
+
+            for i, linha in enumerate(atributos):
+                texto = fonte_attr.render(linha, True, cor_attr)
+                self.screen.blit(texto, (base_x, base_y + i * 48))
+
+        # Exibir a carta da arma
+        arma = self.player.arma
+        if hasattr(arma, "carta"):
+            carta_img = image.load(arma.carta).convert_alpha()
+            fator_escala = (self.item_width + 40) / 53  # manter proporção original
+            nova_largura = int(53 * fator_escala)
+            nova_altura = int(72 * fator_escala)
+            carta_escalada = transform.scale(carta_img, (nova_largura, nova_altura))
+            self.screen.blit(carta_escalada, (365, 160))  # ajuste a posição como quiser
+
+        # --- ATRIBUTOS DA ARMA ---
+        if self.player.arma:
+            arma = self.player.arma
+            fonte_attr = font.Font("assets/fontes/alagard.ttf", 32)
+            cor_attr = (253, 246, 225)
+
+            atributos = [
+                f"Dano: {round(arma.dano, 1)}",
+                f"Rapidez: {round(arma.velocidade, 1)}",
+                f"Roubo de Vida: {round(arma.lifeSteal, 1)}",
+                f"% Crítico: {round(arma.chanceCritico, 1)}",
+                f"Dano Crítico: {round(arma.danoCriticoMod * arma.dano, 1)}",  # dano total crítico
+                f"Mod: {arma.modificador.nome if hasattr(arma, 'modificador') else 'Nenhum'}"
+            ]
+
+            base_x = 365  # posição x na tela
+            base_y = 640  # posição y inicial
+
+            for i, linha in enumerate(atributos):
+                texto = fonte_attr.render(linha, True, cor_attr)
+                self.screen.blit(texto, (base_x, base_y + i * 48))
+
+
+
+    def checar_clique_inventario(self):
+        mouse_pos = mouse.get_pos()
+        for atributo, rect in self.botoes_atributos:
+            if rect.collidepoint(mouse_pos):
+                custo = 10 + (self.player.nivel * 2)
+
+                if self.player.almas >= custo and self.player.atributos[atributo] < 10:
+                    self.player.atributos[atributo] += 1
+                    self.player.almas -= custo
+                    self.player.atualizar_atributos()
+                    return True
+        return False
+
+    def checar_clique_armas(self, eventos):
+        if not self.visible:
+            return
+
+        mouse_x, mouse_y = mouse.get_pos()
+
+        for evento in eventos:
+            if evento.type == MOUSEBUTTONDOWN and evento.button == 1:
+                for i, arma in enumerate(self.player.inventario):
+                    x = 765 + (i % 3) * 150
+                    y = 425 + (i // 3) * 175
+                    rect_item = Rect(x, y, 100, 100)
+
+                    if rect_item.collidepoint(mouse_x, mouse_y):
+                        self.player.inventario.remove(arma)
+
+                        if self.player.arma:
+                            self.player.inventario.append(self.player.arma)
+
+                        self.player.arma = arma
+                        self.player.atualizar_arma()
+                        self.hud.atualizar_arma_icon()
+                        break
+
+
+
+
+    '''
+    def desenharOld(self):
         if not self.visible:
             return
 
@@ -248,5 +378,5 @@ class Inventario():
                     self.player.atualizar_atributos()
                     return True
         return False
-
+    '''
 

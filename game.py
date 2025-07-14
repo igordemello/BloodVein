@@ -207,6 +207,7 @@ class Game:
                 if ev.type == KEYDOWN and ev.key == K_i:
                     self.inventario.toggle()
                     self.estado = EstadoDoJogo.JOGANDO
+            self.inventario.checar_clique_armas(eventos)
 
         elif self.estado == EstadoDoJogo.GAME_OVER:
             for ev in eventos:
@@ -270,6 +271,7 @@ class Game:
     def desenhar(self, mouse_pos):
         self.screen.fill((0, 0, 0))
         offset_x, offset_y = screen_shaker.offset
+        eventos = event.get()
 
         if self.estado == EstadoDoJogo.MENU:
             self.menu.run()
@@ -307,6 +309,7 @@ class Game:
             self.hud.update(self.clock.get_time())
             self.minimapa.draw()
             self.inventario.desenhar()
+
 
         elif self.estado == EstadoDoJogo.PAUSADO:
             self.pause.runPause(self.screen)

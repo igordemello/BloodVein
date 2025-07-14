@@ -3,34 +3,37 @@ from pygame import *
 import sys
 from pygame.locals import QUIT
 import math
-from random import randint,choice
+from random import randint, choice
 from abc import ABC, abstractmethod
 from som import GerenciadorDeSom
 from som import som
-#raridade
+
+# raridade
 RARIDADES = {
     "comum": 1,
-    "rara": 2,
-    "lendária": 3
+    "incomum": 2,
+    "rara": 3,
+    "lendária": 4
 }
 
 
-#classe modificador
+# classe modificador
 class Modificador(ABC):
     @abstractmethod
-
     def aplicarMod(self, arma):
         pass
 
-#classe arma
+
+# classe arma
 class Arma(ABC):
     @abstractmethod
-
     def aplicaModificador(self):
         pass
-    def ataquePrincipal(self,inimigo):
+
+    def ataquePrincipal(self, inimigo):
         pass
-    def ataqueSecundario(self,inimigo):
+
+    def ataqueSecundario(self, inimigo):
         pass
 
     def get_save_data(self):
@@ -55,74 +58,107 @@ class Arma(ABC):
         self.lifeSteal = data['lifeSteal']
         self.chanceCritico = data['chanceCritico']
         self.danoCriticoMod = data['danoCriticoMod']
-        
+
         if data['modificador'] and lista_mods:
             mod_class = getattr(sys.modules[__name__], data['modificador'])
             self.modificador = mod_class(self)
             if data.get('modificador_detalhes'):
                 self.modificador.valor = data['modificador_detalhes']['valor']
-        
+
         self.aplicaModificador()
 
 
-#MODIFICADORES:
+# MODIFICADORES:
+class Amaldicoado(Modificador):
+    def __init__(self, arma):
+        self.nome = "Amaldicoado"
+        self.atributos = ["dano", "velocidade", "lifeSteal", "chanceCritico", "danoCriticoMod"]
+
+        self.atributo_bom = choice(self.atributos)
+        self.atributo_ruim = choice([a for a in self.atributos if a != self.atributo_bom])
+
+        self.valor = {
+            "bom": round(randint(100, 200) / 10, 1),   # de +10.0 até +20.0
+            "ruim": round(randint(50, 150) / 10, 1)   # de -10.0 até -20.0
+        }
+
+    def aplicarMod(self, arma):
+        valor_bom = self.valor["bom"]
+        setattr(arma, self.atributo_bom, getattr(arma, self.atributo_bom) + valor_bom)
+        valor_ruim = self.valor["ruim"]
+        setattr(arma, self.atributo_ruim, max(0, getattr(arma, self.atributo_ruim) - valor_ruim))
+
 class Rapida(Modificador):
-    def __init__(self,arma):
-        self.valor = randint(15+arma.raridade,30+arma.raridade)/10
+    def __init__(self, arma):
+        self.valor = randint(15 + arma.raridade, 30 + arma.raridade) / 10
         self.nome = "Rapida"
 
     def aplicarMod(self, arma):
         arma.velocidade = self.valor
         arma.dano -= self.valor
 
+
 class Afiada(Modificador):
-    def __init__(self,arma):
-        self.valor = arma.dano*0.5+arma.raridade*5
+    def __init__(self, arma):
+        self.valor = arma.dano * 0.5 + arma.raridade * 5
         self.nome = "Afiada"
+
     def aplicarMod(self, arma):
         arma.dano += self.valor
 
+
 class Precisa(Modificador):
-    def __init__(self,arma):
-        self.valor = 5*arma.raridade
+    def __init__(self, arma):
+        self.valor = 5 * arma.raridade
         self.nome = "Precisa"
+
     def aplicarMod(self, arma):
         arma.chanceCritico += self.valor
 
+
 class Impactante(Modificador):
-    def __init__(self,arma):
+    def __init__(self, arma):
         self.valor = arma.raridade
         self.nome = "Impactante"
+
     def aplicarMod(self, arma):
         arma.danoCriticoMod += self.valor
 
+
 class Sangrenta(Modificador):
-    def __init__(self,arma):
-        self.valor = arma.lifeSteal/2
+    def __init__(self, arma):
+        self.valor = arma.lifeSteal / 2
         self.nome = "Sangrenta"
+
     def aplicarMod(self, arma):
         arma.lifeSteal += self.valor
 
+
 class Pesada(Modificador):
-    def __init__(self,arma):
+    def __init__(self, arma):
         self.valor = arma.dano
         self.nome = "Pesada"
+
     def aplicarMod(self, arma):
         arma.dano += self.valor
         arma.velocidade *= 0.5
 
+
 class Sortuda(Modificador):
-    def __init__(self,arma):
-        self.valor = arma.chanceCritico * 10
+    def __init__(self, arma):
+        self.valor = arma.chanceCritico * 4
         self.nome = "Sortuda"
+
     def aplicarMod(self, arma):
         arma.chanceCritico += self.valor
         arma.danoCriticoMod *= 0.8
 
+
 class Potente(Modificador):
-    def __init__(self,arma):
-        self.valor = 2*arma.raridade
+    def __init__(self, arma):
+        self.valor = 2 * arma.raridade
         self.nome = "Potente"
+
     def aplicarMod(self, arma):
         arma.danoCriticoMod += self.valor
         arma.chanceCritico *= 0.5
@@ -130,15 +166,14 @@ class Potente(Modificador):
 
 class ListaMods:
     def __init__(self):
-        self.modificadores_por_raridade = {
-            "comum": [Rapida, Afiada, Precisa],
-            "rara": [Impactante, Sangrenta, Pesada],
-            "lendária": [Sortuda, Potente],
-        }
-        
+        self.modificadores = [
+            Rapida, Afiada, Precisa,
+            Impactante, Sangrenta, Pesada,
+            Sortuda, Potente, Amaldicoado
+        ]
+
         self.modificadores_por_nome = {
-            cls.__name__: cls for cls in 
-            [Rapida, Afiada, Precisa, Impactante, Sangrenta, Pesada, Sortuda, Potente]
+            cls.__name__: cls for cls in self.modificadores
         }
 
     def get_mod_by_name(self, nome):
@@ -146,11 +181,8 @@ class ListaMods:
         return self.modificadores_por_nome.get(nome)
 
     def getMod(self, raridade_str):
-        mods = self.modificadores_por_raridade.get(raridade_str.lower(), [])
-        if mods:
-            return choice(mods)
-
-
+        """Retorna um modificador aleatório, sem restrição por raridade"""
+        return choice(self.modificadores)
 
 
 #ARMAS:

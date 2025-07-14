@@ -10,6 +10,7 @@ from screen_shake import screen_shaker
 class Inimigo:
     def __init__(self, x, y, largura, altura, hp, velocidade=2, dano=0):
         self.alma_coletada = None
+        self.loot_coletado = None
         self.x = x
         self.y = y
         self.largura = largura

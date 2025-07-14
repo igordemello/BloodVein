@@ -47,6 +47,8 @@ class Player():
             "sorte": 5, #influencia CHANCE DE CRÍTICO E UM POUCO DE TUDO
         }
 
+        self.inventario = []
+
         self.nivel = 1
         self.hp = hp
         self.hpMax = 100
@@ -107,7 +109,7 @@ class Player():
         self.itemAtivoEsgotado = None
         self.st = st
 
-        self.almas = 0
+        self.almas = 999
         self.old_x = x
         self.old_y = y
         self.vx = 0
