@@ -62,6 +62,7 @@ class Sala:
         self.colliders = self.mapa.get_colliders()
 
         self.loja = Loja(self.itensDisp,self.player)
+        self.player.sala_atual = self
 
 
         self.em_transicao = False
@@ -83,6 +84,10 @@ class Sala:
         self.fumaça_particula = [] 
         self.ultima_fumaça = 0
         self.intervalo_fumaça = 100
+
+        self.inventario_cheio_msg = ""
+        self.inventario_cheio_tempo = 0
+        self.inventario_cheio_duracao = 2000
 
         tipo = self.gerenciador_andar.grafo.nodes[self.gerenciador_andar.sala_atual]['tipo']
         bau_aberto = self.gerenciador_andar.grafo.nodes[self.gerenciador_andar.sala_atual].get('bau_aberto', False)
@@ -155,8 +160,8 @@ class Sala:
             self.leve_atual = self.max_leves + 2
             return []
 
-        self.leve_atual = self.max_leves + 2
-        return []
+        #self.leve_atual = self.max_leves + 2
+        #return []
         
         tempo_atual = time.get_ticks()
         if tempo_atual - self.tempo_entrada < self.cooldown_inicial and not self.inimigos_spawnados:
@@ -417,9 +422,13 @@ class Sala:
             if evento.type == MOUSEBUTTONDOWN and evento.button == 1:
                 for botao, arma in self.loots[:]:
                     if botao.checkForInput(mouse.get_pos()):
-                        arma.aplicaModificador()
-                        self.player.inventario.append(arma)
-                        self.loots.remove((botao, arma))
+                        if len(self.player.inventario) < 21:
+                            arma.aplicaModificador()
+                            self.player.inventario.append(arma)
+                            self.loots.remove((botao, arma))
+                        else:
+                            self.inventario_cheio_msg = "Inventário cheio!"
+                            self.inventario_cheio_tempo = time.get_ticks()
 
 
 
@@ -534,6 +543,19 @@ class Sala:
         for botao, _ in self.loots:
             botao.update(tela)
             botao.changeColor(mouse.get_pos())
+        if time.get_ticks() - self.inventario_cheio_tempo < self.inventario_cheio_duracao and self.inventario_cheio_msg:
+            font_msg = font.Font("assets/fontes/alagard.ttf", 36)
+            texto = font_msg.render(self.inventario_cheio_msg, True, (255, 0, 0))
+            texto_rect = texto.get_rect(center=(self.tela.get_width() // 2, self.tela.get_height() - 75))
+
+            # Add background for better visibility
+            bg_rect = Rect(0, 0, texto.get_width() + 20, texto.get_height() + 10)
+            bg_rect.center = (self.tela.get_width() // 2, self.tela.get_height() - 50)
+            bg_surface = Surface(bg_rect.size, SRCALPHA)
+            bg_surface.fill((0, 0, 0, 180))
+            self.tela.blit(bg_surface, bg_rect)
+
+            self.tela.blit(texto, texto_rect)
         
 
 

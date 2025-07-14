@@ -141,7 +141,7 @@ class Pesada(Modificador):
 
     def aplicarMod(self, arma):
         arma.dano += self.valor
-        arma.velocidade *= 0.5
+        arma.velocidade *= 0.8
 
 
 class Sortuda(Modificador):

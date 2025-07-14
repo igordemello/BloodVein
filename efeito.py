@@ -53,7 +53,7 @@ class ModificadorDanoRecebido(Efeito):
     def __init__(self, valor):
         self.valor = valor
     def aplicar(self,jogador):
-        jogador.modificadorDanoRecebido *= self.valor
+        jogador.base_modificadorDanoRecebido *= self.valor
 
 class CooldownStamina(Efeito):
     def __init__(self, valor):
@@ -105,14 +105,14 @@ class VelocidadeMovimento(Efeito):
     
     def aplicar(self, jogador):
         if not self.ativo:
-            self.valor_original = jogador.velocidadeMov
-            jogador.velocidadeMov += self.valor
+            self.valor_original = jogador.atributos["agilidade"]
+            jogador.atributos["agilidade"] += self.valor
             self.ativo = True
     
     def remover(self, jogador):
         if self.ativo and self.valor_original is not None:
             # Aplica um fade out suave da velocidade
-            jogador.velocidadeMov = self.valor_original
+            jogador.atributos["agilidade"] = self.valor_original
             jogador.vx *= 0.5  # Reduz gradualmente
             jogador.vy *= 0.5
             self.ativo = False
@@ -121,7 +121,7 @@ class DecaimentoVida(Efeito):
     def __init__(self, valor):
         self.valor = valor
     def aplicar(self, jogador):
-        jogador.rate = jogador.rate*self.valor
+        jogador.base_rate = jogador.base_rate*self.valor
 
 class Revives(Efeito):
     def __init__(self, valor):

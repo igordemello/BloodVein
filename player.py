@@ -46,9 +46,21 @@ class Player():
             "estamina": 5, #influencia COOLDOWN DE DASH, GASTO E COOLDOWN STAMINA
             "sorte": 5, #influencia CHANCE DE CRÍTICO E UM POUCO DE TUDO
         }
+        self.lista_mods = ListaMods()
 
-        self.inventario = []
+        self.inventario = [
+            LaminaDaNoite("comum", self.lista_mods),
+            Chigatana("incomum", self.lista_mods),
+            Karambit("incomum", self.lista_mods),
+            EspadaDoTita("raro", self.lista_mods),
+            MachadoDoInverno("raro", self.lista_mods),
+            EspadaEstelar("lendaria", self.lista_mods),
+            MarteloSolar("lendaria", self.lista_mods),
+            Arco("lendaria", self.lista_mods)
+        ]
+        for i in self.inventario: i.aplicaModificador()
 
+        #self.inventario = []
         self.nivel = 1
         self.hp = hp
         self.hpMax = 100
@@ -103,13 +115,25 @@ class Player():
         self.ultimo_dano = 0
         self.foi_atingido = False
         self.tempo_atingido = 0
+
+
         self.itens = {}
-        self.itemAtivo = None
+        #só comentar isso daqui em baixo e volta ao normal:
+        conjunto = ConjuntoItens()
+        itens_iniciais_ids = [1, 2, 4, 5, 13]
+        for item_id in itens_iniciais_ids:
+            item = conjunto.itens_por_id[item_id]
+            self.adicionarItem(item)
+
+
+        #self.itemAtivo = None
+        self.itemAtivo = conjunto.itens_por_id[19]
         self.salaAtivoUsado = None
         self.itemAtivoEsgotado = None
         self.st = st
 
         self.almas = 999
+        self.pontosHabilidade = 0
         self.old_x = x
         self.old_y = y
         self.vx = 0
@@ -956,7 +980,8 @@ class Player():
         'itens': [item.id for item in self.itens],
         'itemAtivo': self.itemAtivo.id if self.itemAtivo else None,
         'arma': self.arma.get_save_data() if hasattr(self.arma, 'get_save_data') else None,
-        'trait': self.trait
+        'trait': self.trait,
+        #'inventario': [x.get_save_data() for x in self.inventario] resolver isso depois
     }
 
 
@@ -973,6 +998,7 @@ class Player():
         self.atributos = stats['atributos']
 
         self.itens = {}
+        #self.inventario = data["inventario"] resolver isso depois
         for item_id in data['itens']:
             item = conjunto_itens.itens_por_id[item_id]
             self.adicionarItem(item)

@@ -222,6 +222,8 @@ class Game:
                     self.inventario.toggle()
                     self.estado = EstadoDoJogo.JOGANDO
             self.inventario.checar_clique_armas(eventos)
+            self.inventario.checar_clique_navegacao(eventos)
+            self.inventario.checar_clique_inventario(eventos)
 
         elif self.estado == EstadoDoJogo.GAME_OVER:
             for ev in eventos:
