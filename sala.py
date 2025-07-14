@@ -415,6 +415,7 @@ class Sala:
             if evento.type == MOUSEBUTTONDOWN and evento.button == 1:
                 for botao, arma in self.loots[:]:
                     if botao.checkForInput(mouse.get_pos()):
+                        arma.aplicaModificador()
                         self.player.inventario.append(arma)
                         self.loots.remove((botao, arma))
 
