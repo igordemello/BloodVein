@@ -240,6 +240,13 @@ class Game:
                         self.estado = EstadoDoJogo.JOGANDO
 
     def atualizar(self, dt, keys, eventos):
+        if self.sala_atual.cutscene and self.sala_atual.cutscene.ativa:
+            self.estado = EstadoDoJogo.CUTSCENE
+        if self.estado == EstadoDoJogo.CUTSCENE:
+            self.sala_atual.cutscene.update(eventos)
+            if not self.sala_atual.cutscene.ativa:
+                self.estado = EstadoDoJogo.JOGANDO
+            return
         if self.estado == EstadoDoJogo.JOGANDO:
             self.sala_atual.atualizar(dt, keys, eventos)
             self.player.atualizar(dt, keys)
@@ -307,6 +314,9 @@ class Game:
 
         elif self.estado == EstadoDoJogo.GAME_OVER:
             self.game_over.gameOverFuncionamento(self.screen)
+
+        elif self.estado == EstadoDoJogo.CUTSCENE:
+            self.sala_atual.cutscene.draw(self.screen)
 
         if time.get_ticks() % 500 < 16:
             fps = int(self.clock.get_fps())
