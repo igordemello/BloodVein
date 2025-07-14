@@ -464,9 +464,7 @@ class Sala:
                 
                 
                 self.em_transicao = True
-                self.player.set_velocidade_x(0)
-                self.player.set_velocidade_y(0)
-                self.player.is_dashing = False
+
 
 
                 if not any(inimigo.vivo for inimigo in self.inimigos) and self.leve_atual >= self.max_leves:
@@ -497,6 +495,11 @@ class Sala:
                             nova_instancia.player.player_rect.topleft = (self.tela.get_width() // 2, self.tela.get_height() // 2)
 
                         self.__dict__.update(nova_instancia.__dict__)
+
+                        self.player.proibir_dash_ate = time.get_ticks() + 300
+
+                        self.player.resetar_estado_temporario()
+
 
 
 
