@@ -43,7 +43,7 @@ class Minimapa:
         rect = Rect(rect)
         
 
-        temp = Surface((rect.width, rect.height), SRCALPHA)
+        temp = Surface((rect.width+100, rect.height), SRCALPHA)
         
 
         draw.rect(temp, color, (radius, 0, rect.width - 2*radius, rect.height),border_radius=radius)
