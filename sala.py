@@ -264,7 +264,7 @@ class Sala:
         if em_espinhos:
             if not self.player.em_espinhos:
                 self.player.em_espinhos = True
-                self.player.velocidadeMov = 0.3 
+                self.player.velocidadeMov = 0.4
                 self.player.tomar_dano(10)
                 self.player.tempo_ultimo_dano_espinhos = time.get_ticks()
             
