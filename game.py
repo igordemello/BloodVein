@@ -266,7 +266,7 @@ class Game:
 
             if self.player.gameOver:
                 self.estado = EstadoDoJogo.GAME_OVER
-pip install noise
+
     def desenhar(self, mouse_pos):
         self.screen.fill((0, 0, 0))
         offset_x, offset_y = screen_shaker.offset
