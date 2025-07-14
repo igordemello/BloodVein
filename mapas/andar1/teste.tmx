@@ -86,7 +86,7 @@
 </data>
  </layer>
  <objectgroup id="41" name="range_espinhos">
-  <object id="145" x="256.877" y="96.8067" width="29.2968" height="60.2919"/>
+  <object id="145" x="258.877" y="98.5567" width="25.2968" height="57.2919"/>
  </objectgroup>
  <objectgroup id="36" name="inimigo_spawn">
   <object id="125" x="314.667" y="68" width="27.5" height="28"/>
