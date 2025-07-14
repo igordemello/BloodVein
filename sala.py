@@ -263,6 +263,26 @@ class Sala:
         
         agora = time.get_ticks()
 
+        temp_rect_player = Rect(self.player.get_hitbox().x, self.player.get_hitbox().y+90, self.player.get_hitbox().width, self.player.get_hitbox().height-90)
+        em_espinhos = any(temp_rect_player.colliderect(e) for e in self.mapa.get_espinhos())
+
+        if em_espinhos:
+            if not self.player.em_espinhos:
+                self.player.em_espinhos = True
+                self.player.velocidadeMov = 0.2
+                self.player.tomar_dano(10)
+                self.player.tempo_ultimo_dano_espinhos = time.get_ticks()
+            
+            elif time.get_ticks() - self.player.tempo_ultimo_dano_espinhos >= self.player.cooldown_dano_espinhos:
+                self.player.tomar_dano(10)
+                self.player.tempo_ultimo_dano_espinhos = time.get_ticks()
+                
+
+        else:
+            if self.player.em_espinhos:
+                self.player.em_espinhos = False
+                self.player.velocidadeMov = self.player.velocidade_base  
+
         if not any(inimigo.vivo for inimigo in self.inimigos) and self.leve_atual < self.max_leves:
             if not self.aguardando_nova_leva:
                 self.aguardando_nova_leva = True
@@ -529,9 +549,7 @@ class Sala:
                 
                 
                 self.em_transicao = True
-                self.player.set_velocidade_x(0)
-                self.player.set_velocidade_y(0)
-                self.player.is_dashing = False
+
 
 
                 if not any(inimigo.vivo for inimigo in self.inimigos) and self.leve_atual >= self.max_leves:
@@ -562,6 +580,11 @@ class Sala:
                             nova_instancia.player.player_rect.topleft = (self.tela.get_width() // 2, self.tela.get_height() // 2)
 
                         self.__dict__.update(nova_instancia.__dict__)
+
+                        self.player.proibir_dash_ate = time.get_ticks() + 300
+
+                        self.player.resetar_estado_temporario()
+
 
 
 

@@ -178,9 +178,16 @@ class Player():
 
         self.travado = False
 
+        self.proibir_dash_ate = 0
         self.som_dash = True
 
         self.trait = None
+
+        self.velocidade_base = self.base_velocidadeMov
+        self.em_espinhos = False
+        self.tempo_ultimo_dano_espinhos = 0  
+        self.cooldown_dano_espinhos = 1000  
+
 
     def carregar_animacao(self, caminho):
         frame_largura = 32
@@ -198,6 +205,8 @@ class Player():
 
     def _dash(self, dt, teclas, direcao):
         current_time = time.get_ticks()
+        if current_time < self.proibir_dash_ate:
+            return
 
         if (current_time - self.last_dash_time > self.dash_cooldown_max and
                 not self.is_dashing and teclas[K_SPACE] and self.st >= self.custoDash):
@@ -229,6 +238,10 @@ class Player():
 
         if self.travado:
             return
+        
+        if not hasattr(self, 'dash_timer'):
+            self.dash_timer = 0
+
         self.dt = dt
         current_time = time.get_ticks()
         self.old_x = self.x
@@ -981,3 +994,12 @@ class Player():
 
         
         self.atualizar_atributos()
+
+    def resetar_estado_temporario(self):
+        self.vx = 0
+        self.vy = 0
+        self.is_dashing = False
+        self.dash_timer = 0
+        self.travado = False
+        self.direcao = "baixo"  # ou o que quiser como default
+        self.rect = self.player_rect

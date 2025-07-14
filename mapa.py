@@ -243,6 +243,30 @@ class Mapa:
                         rangeloja.append(rect)
         return rangeloja
     
+    def get_espinhos(self):
+        range_espinho = []
+        tile_w = self.tmx_data.tilewidth
+        tile_h = self.tmx_data.tileheight
+
+        largura_total = self.tmx_data.width * tile_w * self.escala
+        altura_total = self.tmx_data.height * tile_h * self.escala
+        mapa_rect = Rect(0, 0, largura_total, altura_total)
+        mapa_rect.center = (self.tela_width // 2, (self.tela_heigth + 184) // 2)
+        offset_x, offset_y = mapa_rect.topleft
+
+        for layer in self.tmx_data.visible_layers:
+            if isinstance(layer, pytmx.TiledObjectGroup):
+                if layer.name == "range_espinhos":
+                    for obj in layer:
+                        rect = Rect(
+                            obj.x * self.escala + offset_x,
+                            obj.y * self.escala + offset_y,
+                            obj.width * self.escala,
+                            obj.height * self.escala
+                        )
+                        range_espinho.append(rect)
+        return range_espinho
+    
     def get_trocar_andar(self):
         portal = []
         tile_w = self.tmx_data.tilewidth

@@ -135,6 +135,20 @@ class Game:
         elif self.estado == EstadoDoJogo.JOGANDO:
             for ev in eventos:
                 if ev.type == KEYDOWN:
+                    
+                    if ev.key == K_PERIOD:
+                        item_id = int(input("Digite o ID do item para debug: "))
+                        encontrado = False
+                        for item_nome, item in self.sala_atual.itensDisp.itens.items():
+                            if hasattr(item, 'id') and item.id == item_id:
+                                if isinstance(item, Item):
+                                    self.player.adicionarItem(item)
+                                elif isinstance(item, ItemAtivo):
+                                    self.player.adicionarItem(item)
+                                print(f"Item '{item_nome}' (ID {item_id}) adicionado ao jogador.")
+                                encontrado = True
+                                break
+
                     if ev.key == K_ESCAPE:
                         self.estado = EstadoDoJogo.PAUSADO
                     elif ev.key == K_i:
