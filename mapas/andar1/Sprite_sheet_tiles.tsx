@@ -82,4 +82,17 @@
    <object id="1" x="5" y="0.125" width="22.875" height="8.875"/>
   </objectgroup>
  </tile>
+ <tile id="74">
+  <properties>
+   <property name="tipo_colisao" value="obstaculo"/>
+  </properties>
+  <objectgroup draworder="index" id="2">
+   <object id="1" x="0.952877" y="5.00261" width="30.0156" height="26.9188"/>
+  </objectgroup>
+ </tile>
+ <tile id="75">
+  <properties>
+   <property name="tipo_colisao" value="obstaculo"/>
+  </properties>
+ </tile>
 </tileset>
