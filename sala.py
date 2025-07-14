@@ -50,6 +50,8 @@ class Sala:
         self.ranges_doors = self.mapa.get_rangesdoors()
 
         self.almaspritesheet = image.load('./assets/Itens/almaSpriteSheet.png').convert_alpha()
+        
+        self.lojista_img = transform.scale(image.load('./assets/Player/Ikoojista.png').convert_alpha(),(62.5,120))
 
         self.frames_alma = [self.almaspritesheet.subsurface(Rect(i * 32, 0, 32, 32)) for i in range(4)]
 
@@ -153,8 +155,8 @@ class Sala:
             self.leve_atual = self.max_leves + 2
             return []
 
-        #self.leve_atual = self.max_leves + 2
-        #return []
+        self.leve_atual = self.max_leves + 2
+        return []
         
         tempo_atual = time.get_ticks()
         if tempo_atual - self.tempo_entrada < self.cooldown_inicial and not self.inimigos_spawnados:
@@ -521,7 +523,8 @@ class Sala:
             ))
     
 
-
+        if self.gerenciador_andar.grafo.nodes[self.gerenciador_andar.sala_atual]['tipo'] == 'loja':
+            self.tela.blit(self.lojista_img, (950 + offset_x, 650 + offset_y))
         
 
         #debug visual das colisões do player e do mapa:

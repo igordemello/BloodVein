@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="right-down" width="15" height="8" tilewidth="32" tileheight="32" infinite="0" nextlayerid="39" nextobjectid="90">
+<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="right-down" width="15" height="8" tilewidth="32" tileheight="32" infinite="0" nextlayerid="39" nextobjectid="91">
  <tileset firstgid="1" source="Sprite_sheet_tiles.tsx"/>
  <layer id="11" name="chao e paredes" width="15" height="8">
   <data encoding="csv">
@@ -64,6 +64,7 @@
  <objectgroup id="36" name="inimigo_spawn"/>
  <objectgroup id="15" name="colisor_obstaculo">
   <object id="76" name="venda" x="191.833" y="97.8106" width="95.2386" height="35.2311"/>
+  <object id="90" x="243.5" y="130.125" width="9.875" height="12.5"/>
  </objectgroup>
  <objectgroup id="33" name="range_loja">
   <object id="77" x="232.58" y="130.82" width="50.8052" height="35.2413"/>
