@@ -36,45 +36,8 @@ class Menu():
         self.hover_escala = [Vector2(1.0, 0.0) for _ in self.botoes]
         self.ultimo_hover = -1
 
-        #vídeo
-        self.intro_video = cv2.VideoCapture("assets/UI/inicio.mp4")
-        self.loop_video = cv2.VideoCapture("assets/UI/loop.mp4")
-        self.showing_intro = True
-        self.menu_active = False
-
-        self.index_selecionado = 0
-        self.espada_img = image.load("assets/UI/Espada menu.png").convert_alpha()
-        self.espada_img = transform.scale(self.espada_img, (100, 50))
-
-    def cv2_to_pygame(self, frame):
-        frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-        return image.frombuffer(frame.tobytes(), frame.shape[1::-1], "RGB")
-    
-
-    def run(self):  
-
-        if self.showing_intro:
-            ret, frame = self.intro_video.read()
-            if ret and frame is not None:
-                frame = cv2.resize(frame, (self.screen_width, self.screen_height))
-                pygame_frame = self.cv2_to_pygame(frame)
-                self.screen.blit(pygame_frame, (0, 0))
-            else:
-                self.showing_intro = False
-                self.intro_video.set(cv2.CAP_PROP_POS_FRAMES, 0)
-        else:
-            ret, frame = self.loop_video.read()
-            if not ret or frame is None:
-                self.loop_video.set(cv2.CAP_PROP_POS_FRAMES, 0)
-                ret, frame = self.loop_video.read()
-
-            if ret and frame is not None:
-                frame = cv2.resize(frame, (self.screen_width, self.screen_height))
-                pygame_frame = self.cv2_to_pygame(frame)
-                self.screen.blit(pygame_frame, (0, 0))
-
-
     def desenho(self, tela):
+        tela.blit(self.menu, (0,0))
         musica.tocar("BloodVein SCORE/OST/MainMenuTheme.mp3")
         titulo_sombra = self.fonte.render("Blood Vein", True, (30, 30, 30))
         tela.blit(titulo_sombra, (200 + 4, 100 + 4))
