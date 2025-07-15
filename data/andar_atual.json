@@ -88,13 +88,13 @@
                 "baixo": "sala5",
                 "esquerda": "sala9"
             },
-            "tipo": "loja",
             "pos": [
                 0,
                 1
             ],
+            "tipo": "comum",
             "visitada": false,
-            "arquivotmx": "andar1/loja.tmx",
+            "arquivotmx": "andar1/14.tmx",
             "salaanterior": null,
             "conexoes": [
                 "sala0",
@@ -109,7 +109,10 @@
                 "baixo": "sala6",
                 "esquerda": "sala7"
             },
+            "tipo": "spawn",
             "pos": [
+                0,
+                2
                 0,
                 2
             ],
@@ -147,11 +150,11 @@
             "portas": {
                 "direita": "sala5"
             },
+            "tipo": "loja",
             "pos": [
                 -1,
                 2
             ],
-            "tipo": "comum",
             "visitada": false,
             "arquivotmx": "andar1/24.tmx",
             "salaanterior": null,
@@ -249,6 +252,10 @@
         {
             "source": "sala2",
             "target": "sala3"
+        },
+        {
+            "source": "sala1",
+            "target": "sala4"
         },
         {
             "source": "sala2",

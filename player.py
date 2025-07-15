@@ -1151,7 +1151,7 @@ class Player():
     def fonte_arcana(self):
         if "Fonte Arcana" not in self.habilidades:
             return
-        self.mp += 0.15
+        if not self.mp >= self.mpMaximo: self.mp += 0.15
 
     def escudo(self):
         if "Escudo" not in self.habilidades:
