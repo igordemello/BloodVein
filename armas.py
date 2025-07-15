@@ -237,7 +237,7 @@ class LaminaDaNoite(Arma):
             return
         else:
             inimigo.congelado = True
-            player.mp -= 50
+            player.mp -= 50 * player.mpModificador
             player.last_dash_time = current_time
 
 #falta sprite e animação de ataque
@@ -398,7 +398,7 @@ class EspadaDoTita(Arma):
             som.tocar('carrega_critico')
             self.chanceCritico *= 2
             self.danoCriticoMod *= 1.5
-            player.mp -= 50
+            player.mp -= 50 * player.mpModificador
 
 
 class MachadoDoInverno(Arma):
@@ -464,7 +464,7 @@ class MachadoDoInverno(Arma):
         else:
             inimigo.velocidade *= 0.25
             inimigo.congelado = True
-            player.mp -= 35
+            player.mp -= 35 * player.mpModificador
             player.last_dash_time = current_time
 
 class EspadaEstelar(Arma):
@@ -518,7 +518,7 @@ class EspadaEstelar(Arma):
             return
         else:
             player.criar_projetil(mouse_pos,(self.dano/2.5),cor=(24,212,59))
-            player.mp -= 20
+            player.mp -= 20 * player.mpModificador
             player.last_dash_time = current_time
 
 
@@ -571,14 +571,14 @@ class MarteloSolar(Arma):
 
     def ataqueSecundario(self,player,mouse_pos):
         current_time = time.get_ticks()
-        if player.mp-30 < 0:
+        if player.mp-(30* player.mpModificador) < 0:
             return #revisar isso
         else:
             som.tocar('martelo2')
             aoeMartelo = player.criarAOE(mouse_pos, 300)
             if aoeMartelo is None:
                 return
-            player.mp -= 30
+            player.mp -= 30 * player.mpModificador
             player.last_dash_time = current_time
             return aoeMartelo
 
@@ -632,7 +632,7 @@ class Arco(Arma):
             return
         else:
             som.tocar('tripleshota')
-            player.mp -= 20
+            player.mp -= 20 * player.mpModificador
             player.last_dash_time = current_time
             player.criar_projetil(mouse_pos, dano=self.dano, cor=None, sprite=sprite_projetil, angulo_personalizado=angulo_central)
             player.criar_projetil(mouse_pos, dano=self.dano, cor=None, sprite=sprite_projetil, angulo_personalizado=angulo_central - angulo_abertura)

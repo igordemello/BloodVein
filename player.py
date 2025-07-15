@@ -71,7 +71,8 @@ class Player():
         self.hp = hp
         self.hpMax = 100
 
-        self.mpModificador = 0
+
+        self.mpModificador = 1
 
         self.efeitos = []
         self.tipo_colisao = 'obstaculo'
