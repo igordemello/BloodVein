@@ -66,12 +66,21 @@ class Game:
         self.game_over = GameOver()
         self.menu = Menu(self.screen)
 
-        self.resetar_jogo(com_nova_run=True)
+        
 
         self.mensagem_salvo = None
         self.tempo_mensagem_salvo = 0
 
         self.bau_foi_aberto_esse_frame = False
+
+        self.player = None
+        self.hud = None
+        self.andar = None
+        self.minimapa = None
+        self.sala_atual = None
+        self.menu_armas = None
+        self.inventario = None
+        self.menu_armas_ativo = None
 
     def resetar_jogo(self, com_nova_run=False):
         self.player = Player(950, 600, 32 * 2, 48 * 2)
@@ -204,12 +213,8 @@ class Game:
                     self.estado = EstadoDoJogo.JOGANDO
                 if ev.type == MOUSEBUTTONDOWN and ev.button == 1:
                     escolha = self.pause.checar_clique_pause(mouse_pos)
-                    if escolha == "salvar":
-                        game_state = self.save_manager.generate_game_state(self.player, self.andar, self.sala_atual)
-                        self.save_manager.save_game(game_state, "save_file.json")
-                        self.mensagem_salvo = self.fonte.render("JOGO SALVO", True, (255, 255, 255))
-                        self.tempo_mensagem_salvo = time.get_ticks()
-                    elif escolha == "sair":
+
+                    if escolha == "sair":
                         self.estado = EstadoDoJogo.MENU
                         self.pausado = False
                     elif escolha == "continuar":
@@ -257,8 +262,9 @@ class Game:
                         self.estado = EstadoDoJogo.JOGANDO
 
     def atualizar(self, dt, keys, eventos):
-        if self.sala_atual.cutscene and self.sala_atual.cutscene.ativa:
-            self.estado = EstadoDoJogo.CUTSCENE
+        if self.sala_atual:
+            if self.sala_atual.cutscene and self.sala_atual.cutscene.ativa:
+                self.estado = EstadoDoJogo.CUTSCENE
         if self.estado == EstadoDoJogo.CUTSCENE:
             self.sala_atual.cutscene.update(eventos)
             if not self.sala_atual.cutscene.ativa:

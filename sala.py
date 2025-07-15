@@ -26,6 +26,7 @@ from inimigos.furação import Furacao
 from inimigos.nuvemBoss import NuvemBoss
 from armas import LaminaDaNoite, Chigatana, Karambit, EspadaDoTita, MachadoDoInverno, EspadaEstelar, MarteloSolar, Arco, ListaMods
 from botao import Botao
+from save_manager import SaveManager
 
 init()
 fonte = font.SysFont("Arial", 24)
@@ -148,6 +149,10 @@ class Sala:
 
         self.musica_escolhida = choice(self.musicas_de_combate)
         self.boss_musica = 0
+
+        self.save_manager = SaveManager()
+        game_state = self.save_manager.generate_game_state(self.player, self.gerenciador_andar, self)
+        self.save_manager.save_game(game_state, "save_file.json")
 
   
     def _criar_inimigos(self):

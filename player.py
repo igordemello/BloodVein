@@ -212,6 +212,8 @@ class Player():
         self.tempo_ultimo_dano_espinhos = 0  
         self.cooldown_dano_espinhos = 1000  
 
+        self.velocidadeMov = self.base_velocidadeMov
+
 
     def carregar_animacao(self, caminho):
         frame_largura = 32
