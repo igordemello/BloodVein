@@ -15,7 +15,7 @@ from som import musica
 
 
 class Player():
-    def __init__(self, x, y, largura, altura, hp=100, st=100, velocidadeMov=0.5, sprite='hero.png', arma=None):
+    def __init__(self, x, y, largura, altura, hp=100, mp=100, velocidadeMov=0.5, sprite='hero.png', arma=None):
         # animações
         self.hit_landed = None
         self.animacoes = {
@@ -132,7 +132,7 @@ class Player():
         self.salaAtivoUsado = None
         self.itemAtivoEsgotado = None
         self.mpMaximo = 100
-        self.st = self.mpMaximo
+        self.mp = self.mpMaximo
 
 
         self.almas = 999
@@ -397,10 +397,10 @@ class Player():
             self.hp = 0
         if self.hp > 100:
             self.hp = 100
-        if self.st < 0:
-            self.st = 0
-        if self.st > self.mpMaximo:
-            self.st = self.mpMaximo
+        if self.mp < 0:
+            self.mp = 0
+        if self.mp > self.mpMaximo:
+            self.mp = self.mpMaximo
 
         if self.hp == 0:
             if self.revives <= 0:
@@ -984,7 +984,7 @@ class Player():
             'stats': {
                 'hp': self.hp,
                 'hpMax': self.hpMax,
-                'st': self.st,
+                'mp': self.mp,
                 'almas': self.almas,
                 'velocidadeMov': self.velocidadeMov,
                 'atributos': self.atributos
@@ -1003,7 +1003,7 @@ class Player():
         stats = data['stats']
         self.hp = stats['hp']
         self.hpMax = stats['hpMax']
-        self.st = stats['st']
+        self.mp = stats['mp']
         self.almas = stats['almas']
         self.velocidadeMov = stats['velocidadeMov']
         self.atributos = stats['atributos']
@@ -1048,11 +1048,11 @@ class Player():
         mouse_pos = mouse.get_pos()
         sprite_projetil = image.load("assets/player/bola_de_fogo.png").convert_alpha()
         current_time = time.get_ticks()
-        if self.st - 30 <= 0:
+        if self.mp - 30 <= 0:
             return
         else:
             self.criar_projetil(mouse_pos, dano=50, cor=None, sprite=sprite_projetil)
-            self.st -= 30
+            self.mp -= 30
             self.last_dash_time = current_time
 
     def clarao(self):
@@ -1060,7 +1060,7 @@ class Player():
             return
         current_time = time.get_ticks()
 
-        if self.st < 75:
+        if self.mp < 75:
             return
 
         if hasattr(self, 'ultimo_clarao') and current_time - self.ultimo_clarao < 4000:
@@ -1084,7 +1084,7 @@ class Player():
         self.ultimo_clarao = current_time
 
         # Consome recursos
-        self.st -= 75
+        self.mp -= 75
         self.last_dash_time = current_time
 
     def nevasca(self):
@@ -1094,11 +1094,11 @@ class Player():
         mouse_pos = mouse.get_pos()
         sprite_projetil = image.load("assets/player/bola_de_gelo.png").convert_alpha()
         current_time = time.get_ticks()
-        if self.st - 30 <= 0:
+        if self.mp - 30 <= 0:
             return
         else:
             self.criar_projetil(mouse_pos, dano=30, cor=None, sprite=sprite_projetil)
-            self.st -= 30
+            self.mp -= 30
             self.last_dash_time = current_time
 
     def trovao(self):
@@ -1108,11 +1108,11 @@ class Player():
         mouse_pos = mouse.get_pos()
         sprite_projetil = image.load("assets/player/Raio.png").convert_alpha()
         current_time = time.get_ticks()
-        if self.st - 40 <= 0:
+        if self.mp - 40 <= 0:
             return
         else:
             self.criar_projetil(mouse_pos, dano=80, cor=None, sprite=sprite_projetil)
-            self.st -= 40
+            self.mp -= 40
             self.last_dash_time = current_time
 
     def nuvem_de_veneno(self):
@@ -1120,7 +1120,7 @@ class Player():
             return
         current_time = time.get_ticks()
 
-        if self.st < 75:
+        if self.mp < 75:
             return
 
         if hasattr(self, 'ultimo_clarao') and current_time - self.ultimo_clarao < 4000:
@@ -1139,13 +1139,13 @@ class Player():
             return
         self.ultimo_clarao = current_time
 
-        self.st -= 75
+        self.mp -= 75
         self.last_dash_time = current_time
 
     def fonte_arcana(self):
         if "Fonte Arcana" not in self.habilidades:
             return
-        self.st += 0.15
+        self.mp += 0.15
 
     def escudo(self):
         if "Escudo" not in self.habilidades:

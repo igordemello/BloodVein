@@ -233,11 +233,11 @@ class LaminaDaNoite(Arma):
 
     def ataqueSecundario(self,inimigo,player):
         current_time = time.get_ticks()
-        if player.st <= 0:
+        if player.mp <= 0:
             return
         else:
             inimigo.congelado = True
-            player.st -= 50
+            player.mp -= 50
             player.last_dash_time = current_time
 
 #falta sprite e animação de ataque
@@ -392,13 +392,13 @@ class EspadaDoTita(Arma):
 
 
     def ataqueSecundario(self,player):
-        if self.chanceCritico > 100 or player.st <= 0:
+        if self.chanceCritico > 100 or player.mp <= 0:
             return
         else:
             som.tocar('carrega_critico')
             self.chanceCritico *= 2
             self.danoCriticoMod *= 1.5
-            player.st -= 50
+            player.mp -= 50
 
 
 class MachadoDoInverno(Arma):
@@ -459,12 +459,12 @@ class MachadoDoInverno(Arma):
 
     def ataqueSecundario(self, inimigo,player):
         current_time = time.get_ticks()
-        if player.st <= 0:
+        if player.mp <= 0:
             return
         else:
             inimigo.velocidade *= 0.25
             inimigo.congelado = True
-            player.st -= 35
+            player.mp -= 35
             player.last_dash_time = current_time
 
 class EspadaEstelar(Arma):
@@ -514,11 +514,11 @@ class EspadaEstelar(Arma):
 
     def ataqueSecundario(self,player,mouse_pos):
         current_time = time.get_ticks()
-        if player.st <= 0:
+        if player.mp <= 0:
             return
         else:
             player.criar_projetil(mouse_pos,(self.dano/2.5),cor=(24,212,59))
-            player.st -= 20
+            player.mp -= 20
             player.last_dash_time = current_time
 
 
@@ -571,14 +571,14 @@ class MarteloSolar(Arma):
 
     def ataqueSecundario(self,player,mouse_pos):
         current_time = time.get_ticks()
-        if player.st-30 < 0:
+        if player.mp-30 < 0:
             return #revisar isso
         else:
             som.tocar('martelo2')
             aoeMartelo = player.criarAOE(mouse_pos, 300)
             if aoeMartelo is None:
                 return
-            player.st -= 30
+            player.mp -= 30
             player.last_dash_time = current_time
             return aoeMartelo
 
@@ -628,11 +628,11 @@ class Arco(Arma):
         angulo_central = player.calcular_angulo(mouse_pos)
         angulo_abertura = math.radians(5)  # 15 graus em radianos
         current_time = time.get_ticks()
-        if player.st <= 0:
+        if player.mp <= 0:
             return
         else:
             som.tocar('tripleshota')
-            player.st -= 20
+            player.mp -= 20
             player.last_dash_time = current_time
             player.criar_projetil(mouse_pos, dano=self.dano, cor=None, sprite=sprite_projetil, angulo_personalizado=angulo_central)
             player.criar_projetil(mouse_pos, dano=self.dano, cor=None, sprite=sprite_projetil, angulo_personalizado=angulo_central - angulo_abertura)
