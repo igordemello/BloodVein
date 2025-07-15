@@ -165,8 +165,8 @@ class Sala:
             self.leve_atual = self.max_leves + 2
             return []
 
-        self.leve_atual = self.max_leves + 2
-        return []
+        #self.leve_atual = self.max_leves + 2
+        #return []
         
         tempo_atual = time.get_ticks()
         if tempo_atual - self.tempo_entrada < self.cooldown_inicial and not self.inimigos_spawnados:

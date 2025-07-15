@@ -49,6 +49,9 @@ class Player():
 
         self.pontosHabilidade = 99
         self.habilidades = []
+        self.nevascaAtivada = False
+        self.trovaoAtivado = False
+        self.venenoDano = 40
 
         self.lista_mods = ListaMods()
 
@@ -189,7 +192,9 @@ class Player():
 
         self.projeteis = []
         self.aoe = None
+        self.aoeVeneno = None
         self.claraoDano = None
+        self.nuvemAtivado = False
         self.claraoAtivado = False
         self.hits_projetil = 0
         self.tempo_ultimo_hit_projetil = 0
@@ -269,6 +274,8 @@ class Player():
     def atualizar(self, dt, teclas):
 
         if self.travado:
+            self.vx = 0
+            self.vy = 0
             return
         
         if not hasattr(self, 'dash_timer'):
@@ -599,6 +606,39 @@ class Player():
         base_x = centro_jogador[0] + math.cos(angle) * (self.radius - 5)
         base_y = centro_jogador[1] + math.sin(angle) * (self.radius - 5)
 
+        if self.aoe is not None:
+            s, rectAoe, tamanho, tempoCriacao = self.aoe
+            tempo_atual = time.get_ticks()
+
+
+            if tempo_atual - tempoCriacao < 500:
+                s.fill((0, 0, 0, 0))
+                draw.rect(s, (255, 228, 76, 50), s.get_rect(), border_radius=int(tamanho / 2))
+                tela.blit(s, rectAoe.topleft)
+            else:
+                self.aoe = None
+                self.travado = False
+
+
+                if hasattr(self, 'claraoAtivado') and self.claraoAtivado:
+                    self.claraoAtivado = False
+                    self.claraoDano = None
+                    if hasattr(self, 'inimigos_atingidos_este_clarao'):
+                        del self.inimigos_atingidos_este_clarao
+        if self.aoeVeneno is not None:
+            s, rectAoe, tamanho, tempoCriacao = self.aoeVeneno
+            tempo_atual = time.get_ticks()
+
+            rectAoe.center = self.player_rect.center
+
+            if tempo_atual - tempoCriacao < 5000:
+                s.fill((0, 0, 0, 0))
+                draw.rect(s, (0, 228, 0, 50), s.get_rect(), border_radius=int(tamanho / 2))
+                tela.blit(s, rectAoe.topleft)
+            else:
+                self.aoeVeneno = None
+                self.nuvemAtivado = False
+
         if not self.attacking:
             self.base_sword_angle = math.degrees(angle) - 90
             self.sword_angle = self.base_sword_angle
@@ -650,27 +690,6 @@ class Player():
 
         img_rect = frame.get_rect(center=self.player_rect.center)
         tela.blit(frame, img_rect.topleft)
-
-        if self.aoe is not None:
-            s, rectAoe, tamanho, tempoCriacao = self.aoe
-            tempo_atual = time.get_ticks()
-
-            rectAoe.center = self.player_rect.center
-
-            if tempo_atual - tempoCriacao < 500:
-                s.fill((0, 0, 0, 0))
-                draw.rect(s, (255, 228, 76, 50), s.get_rect(), border_radius=int(tamanho / 2))
-                tela.blit(s, rectAoe.topleft)
-            else:
-                self.aoe = None
-                self.travado = False
-
-
-                if hasattr(self, 'claraoAtivado') and self.claraoAtivado:
-                    self.claraoAtivado = False
-                    self.claraoDano = None
-                    if hasattr(self, 'inimigos_atingidos_este_clarao'):
-                        del self.inimigos_atingidos_este_clarao
 
 
         #projeteis
@@ -1058,7 +1077,7 @@ class Player():
         mouse_pos = mouse.get_pos()
         sprite_projetil = image.load("assets/player/bola_de_fogo.png").convert_alpha()
         current_time = time.get_ticks()
-        if self.st <= 0:
+        if self.st-30 <= 0:
             return
         else:
             self.criar_projetil(mouse_pos, dano=50, cor=None, sprite=sprite_projetil)
@@ -1094,9 +1113,48 @@ class Player():
         self.last_dash_time = current_time
 
     def nevasca(self):
-        pass
+        self.nevascaAtivada = True
+        mouse_pos = mouse.get_pos()
+        sprite_projetil = image.load("assets/player/bola_de_gelo.png").convert_alpha()
+        current_time = time.get_ticks()
+        if self.st-30 <= 0:
+            return
+        else:
+            self.criar_projetil(mouse_pos, dano=30, cor=None, sprite=sprite_projetil)
+            self.st -= 30
+            self.last_dash_time = current_time
     def trovao(self):
-        pass
+        self.trovaoAtivado = True
+        mouse_pos = mouse.get_pos()
+        sprite_projetil = image.load("assets/player/Raio.png").convert_alpha()
+        current_time = time.get_ticks()
+        if self.st-40 <= 0:
+            return
+        else:
+            self.criar_projetil(mouse_pos, dano=80, cor=None, sprite=sprite_projetil)
+            self.st -= 40
+            self.last_dash_time = current_time
+
     def nuvem_de_veneno(self):
-        pass
+        current_time = time.get_ticks()
+
+        if self.st < 75:
+            return
+
+        if hasattr(self, 'ultimo_clarao') and current_time - self.ultimo_clarao < 4000:
+            return
+
+        if hasattr(self, 'claraoAtivado') and self.claraoAtivado:
+            return
+
+        self.nuvemAtivado = True
+
+        tamanho_aoe = 300
+        centro_x = self.player_rect.centerx
+        centro_y = self.player_rect.centery
+        self.aoeVeneno = self.criarAOE((centro_x, centro_y), tamanho_aoe)
+        self.ultimo_clarao = current_time
+
+        self.st -= 75
+        self.last_dash_time = current_time
 

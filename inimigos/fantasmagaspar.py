@@ -113,6 +113,11 @@ class FantasmaGasp(Inimigo):
             draw.rect(tela, (255, 255, 255), (draw_x - 20, draw_y + 70, largura_barra, 5), 1)
 
     def atualizar(self, player_pos, tela, inimigos=None, colliders=None, dt=None):
+        if self.esta_atordoado():
+            return
+
+        if hasattr(self, 'stun_ativo') and self.stun_ativo:
+            self.stun_ativo = False
         now = time.get_ticks()
 
         # Knockback

@@ -163,6 +163,11 @@ class Orb(Inimigo):
         return rot_rect, rot_surf
 
     def atualizar(self, player_pos, tela):
+        if self.esta_atordoado():
+            return
+
+        if hasattr(self, 'stun_ativo') and self.stun_ativo:
+            self.stun_ativo = False
         now = time.get_ticks()
 
         if now - self.knockback_time < self.knockback_duration:

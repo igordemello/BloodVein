@@ -131,6 +131,19 @@ class Inimigo:
         self.veneno_proximo_tick = time.get_ticks() + self.veneno_intervalo
         self.veneno_ativo = True
 
+    def stunar(self, duracao_em_segundos):
+        self.stun_inicio = time.get_ticks()
+        self.stun_duracao = duracao_em_segundos * 1000
+        self.stun_ativo = True
+
+        self.vx = 0
+        self.vy = 0
+
+    def esta_atordoado(self):
+        if not hasattr(self, 'stun_ativo') or not self.stun_ativo:
+            return False
+        return time.get_ticks() - self.stun_inicio < self.stun_duracao
+
     def get_hitbox(self):
         return Rect(self.x, self.y, self.largura, self.altura)
 

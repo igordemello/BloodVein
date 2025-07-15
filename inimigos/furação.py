@@ -105,6 +105,11 @@ class Furacao(Inimigo):
                     self.frame_index += 1
 
     def atualizar(self, player_pos, tela):
+        if self.esta_atordoado():
+            return
+
+        if hasattr(self, 'stun_ativo') and self.stun_ativo:
+            self.stun_ativo = False
         now = time.get_ticks()
         
         # Verifica se precisa mudar de estado

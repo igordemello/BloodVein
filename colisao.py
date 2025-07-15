@@ -194,6 +194,14 @@ class Colisao:
                         self.player.hp += self.player.arma.lifeSteal
                         if self.player.hp > 100:
                             self.player.hp = 100
+
+                    if self.player.nevascaAtivada:
+                        inimigo.velocidade *= 0.5
+                        inimigo.congelado = True
+                        self.player.nevascaAtivada = False
+                    elif self.player.trovaoAtivado:
+                        inimigo.stunar(2)
+                        self.player.trovaoAtivado = False
                     break
 
     def _colisao_entidade_AOE(self):
@@ -212,6 +220,18 @@ class Colisao:
                     inimigo.hp -= self.player.arma.danoAOE
                     inimigo.ultimo_dano_critico = False
                     inimigo.ultimo_dano = self.player.arma.danoAOE
+                    inimigo.ultimo_dano_tempo = tempo_atual
+
+                    self.ultimo_tempo_colisao_aoe = tempo_atual
+                    break
+        if self.player.aoeVeneno is not None and tempo_atual - self.ultimo_tempo_colisao_aoe >= 1000 and not self.player.claraoAtivado:
+            for inimigo in self.entidades:
+                if isinstance(inimigo, Player):
+                    continue
+                if inimigo.vivo and self.player.aoeVeneno[1].colliderect(inimigo.get_hitbox()):
+                    inimigo.hp -= self.player.venenoDano
+                    inimigo.ultimo_dano_critico = False
+                    inimigo.ultimo_dano = self.player.venenoDano
                     inimigo.ultimo_dano_tempo = tempo_atual
 
                     self.ultimo_tempo_colisao_aoe = tempo_atual

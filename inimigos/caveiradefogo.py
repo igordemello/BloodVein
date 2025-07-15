@@ -54,7 +54,12 @@ class CaveiraDeFogo(Inimigo):
     
     def atualizar(self, player_pos, tela):
         now = time.get_ticks()
-        
+        if self.esta_atordoado():
+            return
+
+        if hasattr(self, 'stun_ativo') and self.stun_ativo:
+            self.stun_ativo = False
+
         if now - self.knockback_time < self.knockback_duration:
             # O knockback ainda está ativo → não atualiza perseguição
             return

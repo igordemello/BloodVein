@@ -56,6 +56,11 @@ class MorcegoSuicida(Inimigo):
             self.frame_index = (self.frame_index + 1) % len(self.frames)
 
     def atualizar(self, player_pos, tela):
+        if self.esta_atordoado():
+            return
+
+        if hasattr(self, 'stun_ativo') and self.stun_ativo:
+            self.stun_ativo = False
         now = time.get_ticks()
         
         if now - self.knockback_time < self.knockback_duration:
