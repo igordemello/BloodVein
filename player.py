@@ -189,6 +189,8 @@ class Player():
 
         self.projeteis = []
         self.aoe = None
+        self.claraoDano = None
+        self.claraoAtivado = False
         self.hits_projetil = 0
         self.tempo_ultimo_hit_projetil = 0
 
@@ -650,14 +652,25 @@ class Player():
         tela.blit(frame, img_rect.topleft)
 
         if self.aoe is not None:
-            s, rectAoe,tamanho,tempoCriacao = self.aoe
+            s, rectAoe, tamanho, tempoCriacao = self.aoe
             tempo_atual = time.get_ticks()
-            if tempo_atual - tempoCriacao < 2000:
+
+            rectAoe.center = self.player_rect.center
+
+            if tempo_atual - tempoCriacao < 500:
                 s.fill((0, 0, 0, 0))
-                draw.rect(s, (255, 228, 76, 20), s.get_rect(), border_radius=int(tamanho / 2))
+                draw.rect(s, (255, 228, 76, 50), s.get_rect(), border_radius=int(tamanho / 2))
                 tela.blit(s, rectAoe.topleft)
             else:
                 self.aoe = None
+                self.travado = False
+
+
+                if hasattr(self, 'claraoAtivado') and self.claraoAtivado:
+                    self.claraoAtivado = False
+                    self.claraoDano = None
+                    if hasattr(self, 'inimigos_atingidos_este_clarao'):
+                        del self.inimigos_atingidos_este_clarao
 
 
         #projeteis
@@ -1036,4 +1049,51 @@ class Player():
         self.travado = False
         self.direcao = "baixo"  # ou o que quiser como default
         self.rect = self.player_rect
+
+
+
+    #---------HABILIDADES---------
+
+    def bola_de_fogo(self):
+        mouse_pos = mouse.get_pos()
+        sprite_projetil = image.load("assets/player/flecha.png").convert_alpha()
+        current_time = time.get_ticks()
+        if self.st <= 0:
+            return
+        else:
+            self.criar_projetil(mouse_pos, dano=50, cor=None, sprite=sprite_projetil)
+            self.st -= 30
+            self.last_dash_time = current_time
+
+    def clarao(self):
+        current_time = time.get_ticks()
+        if self.st-75 <= 0:
+            return
+        else:
+            if hasattr(self, 'claraoAtivado') and self.claraoAtivado:  # Evita ativações múltiplas
+                return
+
+            self.claraoDano = 100
+            self.claraoAtivado = True
+            self.travado = True
+
+            tamanho_aoe = 300
+            centro_x = self.player_rect.centerx
+            centro_y = self.player_rect.centery
+            self.aoe = self.criarAOE((centro_x, centro_y), tamanho_aoe)
+
+            self.tempo_clarao = time.get_ticks()
+
+            self.inimigos_atingidos_este_clarao = []
+
+            self.tempo_clarao = time.get_ticks()
+            self.st -= 75
+            self.last_dash_time = current_time
+
+    def nevasca(self):
+        pass
+    def trovao(self):
+        pass
+    def nuvem_de_veneno(self):
+        pass
 

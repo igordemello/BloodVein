@@ -40,6 +40,7 @@ class Colisao:
         #self._colisao_entidade_mapa_contando_obstaculo(self.player)
         self._colisao_entidade_projetil()
         self._colisao_entidade_AOE()
+        self._colisao_entidade_AOE_uma_vez()
         self._colisao_projetil_mapa()
         self._colisao_projetil_inimigo_player()
 
@@ -203,7 +204,7 @@ class Colisao:
         if not hasattr(self, "ultimo_tempo_colisao_aoe"):
             self.ultimo_tempo_colisao_aoe = 0
 
-        if self.player.aoe is not None and tempo_atual - self.ultimo_tempo_colisao_aoe >= 1000:
+        if self.player.aoe is not None and tempo_atual - self.ultimo_tempo_colisao_aoe >= 1000 and not self.player.claraoAtivado:
             for inimigo in self.entidades:
                 if isinstance(inimigo, Player):
                     continue
@@ -215,6 +216,28 @@ class Colisao:
 
                     self.ultimo_tempo_colisao_aoe = tempo_atual
                     break
+
+    def _colisao_entidade_AOE_uma_vez(self):
+        from player import Player
+
+        if not hasattr(self.player, 'claraoAtivado') or not self.player.claraoAtivado:
+            return
+
+        if self.player.aoe is None:
+            return
+
+        for inimigo in self.entidades:
+            if isinstance(inimigo, Player):
+                continue
+            if (inimigo.vivo
+                    and self.player.aoe[1].colliderect(inimigo.get_hitbox())
+                    and inimigo not in self.player.inimigos_atingidos_este_clarao):
+                inimigo.hp -= self.player.claraoDano
+                inimigo.ultimo_dano_critico = False
+                inimigo.ultimo_dano = self.player.claraoDano
+                inimigo.ultimo_dano_tempo = time.get_ticks()
+
+                self.player.inimigos_atingidos_este_clarao.append(inimigo)
 
     def _colisao_projetil_mapa(self):
         for projetil in self.player.projeteis[:]:
