@@ -2,18 +2,18 @@
     "player": {
         "position": [
             950,
-            799
+            600
         ],
         "stats": {
             "hp": 100,
             "hpMax": 100,
-            "st": 75.25,
+            "st": 100,
             "almas": 999,
             "velocidadeMov": 0.5,
             "atributos": {
                 "forca": 5,
                 "destreza": 5,
-                "agilidade": 5,
+                "agilidade": 5.3,
                 "vigor": 5,
                 "resistencia": 5,
                 "estamina": 5,
@@ -29,44 +29,37 @@
         ],
         "itemAtivo": 19,
         "arma": {
-            "tipo": "LaminaDaNoite",
+            "tipo": "EspadaEstelar",
             "raridade": "comum",
-            "dano": 19.0,
-            "velocidade": 1.0,
-            "lifeSteal": 9.5,
-            "chanceCritico": 8.0,
-            "danoCriticoMod": 4.0,
-            "modificador": "Impactante",
+            "dano": 85.5,
+            "velocidade": 0.8,
+            "lifeSteal": 18.5,
+            "chanceCritico": 10,
+            "danoCriticoMod": 2,
+            "modificador": "Precisa",
             "modificador_detalhes": {
-                "nome": "Impactante",
-                "valor": 1
+                "nome": "Precisa",
+                "valor": 5
             }
         },
         "trait": null
     },
     "map": {
-        "sala_atual": "sala4",
-        "salas_conquistadas": [
-            "sala6"
-        ],
+        "sala_atual": "sala5",
+        "salas_conquistadas": [],
         "salas_visitadas": [
-            "sala4",
-            "sala6"
+            "sala5"
         ],
         "bau_aberto": {
-            "sala4": false
+            "sala1": false
         }
     },
     "sala": {
         "porta_liberada": false,
         "visitada": false,
-        "bau": {
-            "aberto": false,
-            "interagido": false,
-            "menu_ativo": false
-        },
+        "bau": null,
         "em_transicao": false
     },
-    "timestamp": "2025-07-15T02:28:15.516982",
+    "timestamp": "2025-07-15T02:57:39.469588",
     "version": "1.0"
 }

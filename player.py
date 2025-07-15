@@ -1056,7 +1056,7 @@ class Player():
 
     def bola_de_fogo(self):
         mouse_pos = mouse.get_pos()
-        sprite_projetil = image.load("assets/player/flecha.png").convert_alpha()
+        sprite_projetil = image.load("assets/player/bola_de_fogo.png").convert_alpha()
         current_time = time.get_ticks()
         if self.st <= 0:
             return
@@ -1067,28 +1067,31 @@ class Player():
 
     def clarao(self):
         current_time = time.get_ticks()
-        if self.st-75 <= 0:
+
+        if self.st < 75:
             return
-        else:
-            if hasattr(self, 'claraoAtivado') and self.claraoAtivado:  # Evita ativações múltiplas
-                return
 
-            self.claraoDano = 100
-            self.claraoAtivado = True
-            self.travado = True
+        if hasattr(self, 'ultimo_clarao') and current_time - self.ultimo_clarao < 4000:
+            return
 
-            tamanho_aoe = 300
-            centro_x = self.player_rect.centerx
-            centro_y = self.player_rect.centery
-            self.aoe = self.criarAOE((centro_x, centro_y), tamanho_aoe)
+        if hasattr(self, 'claraoAtivado') and self.claraoAtivado:
+            return
 
-            self.tempo_clarao = time.get_ticks()
+        self.claraoDano = 100
+        self.claraoAtivado = True
+        self.travado = True
 
-            self.inimigos_atingidos_este_clarao = []
+        tamanho_aoe = 300
+        centro_x = self.player_rect.centerx
+        centro_y = self.player_rect.centery
+        self.aoe = self.criarAOE((centro_x, centro_y), tamanho_aoe)
 
-            self.tempo_clarao = time.get_ticks()
-            self.st -= 75
-            self.last_dash_time = current_time
+        self.inimigos_atingidos_este_clarao = []
+        self.ultimo_clarao = current_time
+
+        # Consome recursos
+        self.st -= 75
+        self.last_dash_time = current_time
 
     def nevasca(self):
         pass

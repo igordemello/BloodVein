@@ -150,7 +150,8 @@ class Game:
             for ev in eventos:
                 if ev.type == KEYDOWN:
                     if ev.key == K_1: #temporário
-                        self.player.clarao()
+                        #self.player.clarao()
+                        self.player.bola_de_fogo()
                     if ev.key == K_PERIOD:
                         item_id = int(input("Digite o ID do item para debug: "))
                         encontrado = False
