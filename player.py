@@ -71,6 +71,8 @@ class Player():
         self.hp = hp
         self.hpMax = 100
 
+        self.mpModificador = 0
+
         self.efeitos = []
         self.tipo_colisao = 'obstaculo'
 
@@ -1048,19 +1050,20 @@ class Player():
         mouse_pos = mouse.get_pos()
         sprite_projetil = image.load("assets/player/bola_de_fogo.png").convert_alpha()
         current_time = time.get_ticks()
-        if self.st - 30 <= 0:
+        custoHabilidade = 30 * self.mpModificador
+        if self.st - custoHabilidade <= 0:
             return
         else:
             self.criar_projetil(mouse_pos, dano=50, cor=None, sprite=sprite_projetil)
-            self.st -= 30
+            self.st -= custoHabilidade
             self.last_dash_time = current_time
 
     def clarao(self):
         if "Clarão" not in self.habilidades:
             return
         current_time = time.get_ticks()
-
-        if self.st < 75:
+        custoHabilidade = 75*self.mpModificador
+        if self.st < custoHabilidade:
             return
 
         if hasattr(self, 'ultimo_clarao') and current_time - self.ultimo_clarao < 4000:
@@ -1083,8 +1086,7 @@ class Player():
         self.inimigos_atingidos_este_clarao = []
         self.ultimo_clarao = current_time
 
-        # Consome recursos
-        self.st -= 75
+        self.st -= custoHabilidade
         self.last_dash_time = current_time
 
     def nevasca(self):
@@ -1094,11 +1096,12 @@ class Player():
         mouse_pos = mouse.get_pos()
         sprite_projetil = image.load("assets/player/bola_de_gelo.png").convert_alpha()
         current_time = time.get_ticks()
-        if self.st - 30 <= 0:
+        custoHabilidade = 30*self.mpModificador
+        if self.st - custoHabilidade <= 0:
             return
         else:
             self.criar_projetil(mouse_pos, dano=30, cor=None, sprite=sprite_projetil)
-            self.st -= 30
+            self.st -= custoHabilidade
             self.last_dash_time = current_time
 
     def trovao(self):
@@ -1108,19 +1111,20 @@ class Player():
         mouse_pos = mouse.get_pos()
         sprite_projetil = image.load("assets/player/Raio.png").convert_alpha()
         current_time = time.get_ticks()
-        if self.st - 40 <= 0:
+        custoHabilidade = 40*self.mpModificador
+        if self.st - custoHabilidade <= 0:
             return
         else:
             self.criar_projetil(mouse_pos, dano=80, cor=None, sprite=sprite_projetil)
-            self.st -= 40
+            self.st -= custoHabilidade
             self.last_dash_time = current_time
 
     def nuvem_de_veneno(self):
         if "Núvem de Veneno" not in self.habilidades:
             return
         current_time = time.get_ticks()
-
-        if self.st < 75:
+        custoHabilidade = 75*self.mpModificador
+        if self.st < custoHabilidade:
             return
 
         if hasattr(self, 'ultimo_clarao') and current_time - self.ultimo_clarao < 4000:
@@ -1139,7 +1143,7 @@ class Player():
             return
         self.ultimo_clarao = current_time
 
-        self.st -= 75
+        self.st -= custoHabilidade
         self.last_dash_time = current_time
 
     def fonte_arcana(self):
@@ -1156,13 +1160,18 @@ class Player():
         # Adiciona um atributo para controlar o estado do escudo
         self.escudo_ativado = True
 
+    def eficiencia_arcana(self):
+        if "Eficiência Arcana" not in self.habilidades:
+            return
+        self.mpModificador = 0.5
+
     def desenhar_escudo(self, tela):
         if hasattr(self, 'escudo_ativado') and self.escudo_ativado:
             # Cria uma superfície transparente para o escudo
             escudo_surface = Surface((120, 120), SRCALPHA)
 
             # Desenha um círculo azul translúcido
-            draw.circle(escudo_surface, (100, 100, 255, 100),  # Cor azul com transparência
+            draw.circle(escudo_surface, (200, 200, 255, 20),  # Cor azul com transparência
                         (60, 60),  # Centro da superfície
                         60)  # Raio do círculo
 
