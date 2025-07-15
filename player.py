@@ -1074,6 +1074,8 @@ class Player():
     #---------HABILIDADES---------
 
     def bola_de_fogo(self):
+        if "Bola de Fogo" not in self.habilidades:
+            return
         mouse_pos = mouse.get_pos()
         sprite_projetil = image.load("assets/player/bola_de_fogo.png").convert_alpha()
         current_time = time.get_ticks()
@@ -1085,6 +1087,8 @@ class Player():
             self.last_dash_time = current_time
 
     def clarao(self):
+        if "Clarão" not in self.habilidades:
+            return
         current_time = time.get_ticks()
 
         if self.st < 75:
@@ -1113,6 +1117,8 @@ class Player():
         self.last_dash_time = current_time
 
     def nevasca(self):
+        if "Nevasca" not in self.habilidades:
+            return
         self.nevascaAtivada = True
         mouse_pos = mouse.get_pos()
         sprite_projetil = image.load("assets/player/bola_de_gelo.png").convert_alpha()
@@ -1124,6 +1130,8 @@ class Player():
             self.st -= 30
             self.last_dash_time = current_time
     def trovao(self):
+        if "Trovão" not in self.habilidades:
+            return
         self.trovaoAtivado = True
         mouse_pos = mouse.get_pos()
         sprite_projetil = image.load("assets/player/Raio.png").convert_alpha()
@@ -1136,6 +1144,8 @@ class Player():
             self.last_dash_time = current_time
 
     def nuvem_de_veneno(self):
+        if "Núvem de Veneno" not in self.habilidades:
+            return
         current_time = time.get_ticks()
 
         if self.st < 75:
