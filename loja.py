@@ -12,13 +12,17 @@ from som import GerenciadorDeMusica
 from som import musica
 
 class Loja():
-    def __init__(self, conjunto: ConjuntoItens, player):
+    def __init__(self, conjunto: ConjuntoItens, player,ids_sorteados=None, comprado=None, no_grafo=None):
         self.personagem_img = transform.scale(transform.flip(image.load('assets/iko.png').convert_alpha(), True, False),(910, 840))
         self.fundo = image.load("assets/loja.png").convert_alpha()
         
         self.itensDisp = conjunto
+
         self.ids_disponiveis = list(conjunto.itens_por_id)
-        self.ids_sorteados = sample(self.ids_disponiveis, 3)
+        if ids_sorteados is None:
+            self.ids_sorteados = sample(self.ids_disponiveis, 3)
+        else:
+            self.ids_sorteados = ids_sorteados
         self.itens_sorteados = [self.itensDisp.itens_por_id[id_] for id_ in self.ids_sorteados]
         
         self.precos = {
@@ -72,7 +76,8 @@ class Loja():
         self.botaosair = Botao(image=None, pos=(100,1030),text_input="Sair",font=self.alagard(48), base_color=(117,6,30), hovering_color=(155,26,54))
         
 
-        self.comprado = [False]*3
+        self.comprado = comprado
+        self.no_grafo = no_grafo
         
 
     def img_alma(self,tam):
@@ -221,6 +226,7 @@ class Loja():
                     comprado = self.font_preco.render("COMPRADO", True, ('Green'))
                     tela.blit(comprado, (0, 0))
                     self.comprado[i] = True
+                    self.no_grafo["itens_comprados"] = self.comprado
                     
                     return True
                 else:

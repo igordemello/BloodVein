@@ -322,7 +322,7 @@ class Game:
             self.menu.desenho(self.screen)
 
         elif self.estado == EstadoDoJogo.ESCOLHA_ARMA:
-            self.hud.desenhaFundo2()
+
             self.menu_armas.menu_ativo = True
             self.menu_armas.menuEscolherItens(self.screen)
 

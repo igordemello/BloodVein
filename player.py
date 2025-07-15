@@ -14,7 +14,6 @@ from som import GerenciadorDeMusica
 from som import musica
 
 
-
 class Player():
     def __init__(self, x, y, largura, altura, hp=100, st=100, velocidadeMov=0.5, sprite='hero.png', arma=None):
         # animações
@@ -34,17 +33,17 @@ class Player():
             "idle_costas": self.carregar_animacao("assets/Player/IDLE_COSTAS.png"),
             "idle_lado1": self.carregar_animacao("assets/Player/IDLE_LADO.png"),
             "idle_lado2": [transform.flip(img, True, False) for img in
-                         self.carregar_animacao("assets/Player/IDLE_LADO.png")],
+                           self.carregar_animacao("assets/Player/IDLE_LADO.png")],
         }
 
         self.atributos = {
-            "forca" : 5, #influencia DANO DA ARMA, DANO DO CRÍTICO
-            "destreza": 5, #influencia VELOCIDADE DE ATAQUE DA ARMA
-            "agilidade": 5, # influencia VELOCIDADE DE MOVIMENTO DO PERSONAGEM
-            "vigor": 5, #influencia VELOCIDADE DO DECAIMENTO
-            "resistencia": 5, #influencia DANO RECEBIDO
-            "estamina": 5, #influencia COOLDOWN DE DASH, GASTO E COOLDOWN STAMINA
-            "sorte": 5, #influencia CHANCE DE CRÍTICO E UM POUCO DE TUDO
+            "forca": 5,  # influencia DANO DA ARMA, DANO DO CRÍTICO
+            "destreza": 5,  # influencia VELOCIDADE DE ATAQUE DA ARMA
+            "agilidade": 5,  # influencia VELOCIDADE DE MOVIMENTO DO PERSONAGEM
+            "vigor": 5,  # influencia VELOCIDADE DO DECAIMENTO
+            "resistencia": 5,  # influencia DANO RECEBIDO
+            "estamina": 5,  # influencia COOLDOWN DE DASH, GASTO E COOLDOWN STAMINA
+            "sorte": 5,  # influencia CHANCE DE CRÍTICO E UM POUCO DE TUDO
         }
 
         self.pontosHabilidade = 99
@@ -67,15 +66,18 @@ class Player():
         ]
         for i in self.inventario: i.aplicaModificador()
 
-        #self.inventario = []
+        # self.inventario = []
         self.nivel = 1
         self.hp = hp
-        self.hpMax = 100
+        self.hpMax = hp
+
+
+        self.mpModificador = 1
 
         self.efeitos = []
         self.tipo_colisao = 'obstaculo'
 
-        #ARMA
+        # ARMA
         self.sistemaparticulas = ParticleSystem()
         self.lista_mods = ListaMods()
         self.arma = arma if arma else EspadaEstelar("comum", self.lista_mods)
@@ -106,9 +108,6 @@ class Player():
 
         self.macarronada = 0
 
-
-
-
         self.telaSangue = image.load('assets/UI/sangueTelaDano.png').convert_alpha()
         self.telaSangue_alpha = 0
         self.telaSangue_surface = None
@@ -123,21 +122,23 @@ class Player():
         self.foi_atingido = False
         self.tempo_atingido = 0
 
-
         self.itens = {}
-        #só comentar isso daqui em baixo e volta ao normal:
+        # só comentar isso daqui em baixo e volta ao normal:
         conjunto = ConjuntoItens()
         itens_iniciais_ids = [1, 2, 4, 5, 13]
         for item_id in itens_iniciais_ids:
             item = conjunto.itens_por_id[item_id]
             self.adicionarItem(item)
 
-
-        #self.itemAtivo = None
+        # self.itemAtivo = None
         self.itemAtivo = conjunto.itens_por_id[19]
         self.salaAtivoUsado = None
         self.itemAtivoEsgotado = None
-        self.st = st
+        self.mpMaximo = 100
+        self.mp = self.mpMaximo
+        self.staminaMaximo = 100
+        self.stamina = self.staminaMaximo
+
 
         self.almas = 999
 
@@ -220,16 +221,15 @@ class Player():
 
         self.velocidade_base = self.base_velocidadeMov
         self.em_espinhos = False
-        self.tempo_ultimo_dano_espinhos = 0  
-        self.cooldown_dano_espinhos = 1000  
+        self.tempo_ultimo_dano_espinhos = 0
+        self.cooldown_dano_espinhos = 1000
 
         self.velocidadeMov = self.base_velocidadeMov
-
 
     def carregar_animacao(self, caminho):
         frame_largura = 32
         frame_altura = 48
-        escala = 2.7
+        escala = 3
         folha = transform.scale(image.load(caminho).convert_alpha(), (
             image.load(caminho).convert_alpha().get_width() * escala,
             image.load(caminho).convert_alpha().get_height() * escala))
@@ -246,14 +246,15 @@ class Player():
             return
 
         if (current_time - self.last_dash_time > self.dash_cooldown_max and
-                not self.is_dashing and teclas[K_SPACE] and self.st >= self.custoDash):
+                not self.is_dashing and teclas[K_SPACE] and self.stamina >= self.custoDash):
             self.last_dash_time = current_time
             self.is_dashing = True
             self.dash_direcao = direcao
             self.dash_duration = 0
 
         if self.is_dashing:
-            self.st -= self.custoDash
+            self.stamina -= self.custoDash 
+
         self.ultimo_uso = current_time
 
     def usarItemAtivo(self, sala_atual: Sala):
@@ -272,12 +273,15 @@ class Player():
             print("Não tem item ativo")
 
     def atualizar(self, dt, teclas):
+        self.fonte_arcana()
+        self.escudo()
+        print(f'HP: {self.hp}, Stamina: {self.stamina}, Mana: {self.mp}')
 
         if self.travado:
             self.vx = 0
             self.vy = 0
             return
-        
+
         if not hasattr(self, 'dash_timer'):
             self.dash_timer = 0
 
@@ -373,12 +377,12 @@ class Player():
             if self.tempo_animacao > self.tempo_por_frame:
                 self.tempo_animacao = 0
                 self.anim_frame += 1
-                if self.anim_frame >= len(self.animacoes[self.anim_direcao]) and self.anim_direcao in self.animacoes_principais:
+                if self.anim_frame >= len(
+                        self.animacoes[self.anim_direcao]) and self.anim_direcao in self.animacoes_principais:
                     self.anim_frame = 4
         else:
             angulo = self.calcular_angulo(mouse.get_pos())
             angulo_deg = math.degrees(angulo) % 360
-
 
             if 45 < angulo_deg <= 135:
                 self.anim_direcao = "idle"
@@ -394,33 +398,33 @@ class Player():
             if self.tempo_animacao > self.tempo_por_frame:
                 self.tempo_animacao = 0
                 self.anim_frame += 1
-                if self.anim_frame >= len(self.animacoes[self.anim_direcao]) and self.anim_direcao in self.animacoes_principais:
+                if self.anim_frame >= len(
+                        self.animacoes[self.anim_direcao]) and self.anim_direcao in self.animacoes_principais:
                     self.anim_frame = 0
 
-        # self.hp -= 0.05 * self.rate
+        self.hp -= 0.05 * self.rate
 
         if current_time - self.last_dash_time >= self.cooldown_st:
-            self.st += 0.7 * self.rateSt
+            self.stamina += 0.7 * self.rateSt
+        if self.stamina > self.staminaMaximo:
+            self.stamina = self.staminaMaximo
 
         if self.hp < 0:
             self.hp = 0
-        if self.hp > 100:
-            self.hp = 100
-        if self.st < 0:
-            self.st = 0
-        if self.st > 100:
-            self.st = 100
-
+        if self.hp > self.hpMax:
+            self.hp = self.hpMax
+        if self.mp < 0:
+            self.mp = 0
+        if self.mp > self.mpMaximo:
+            self.mp = self.mpMaximo
 
         if self.hp == 0:
             if self.revives <= 0:
                 self.gameOver = True
                 musica.tocar("BloodVein SCORE/OST/Game Over.mp3")
             else:
-                self.hp += self.hpMax/2
+                self.hp += self.hpMax / 2
                 self.revives -= 1
-
-
 
         if self.attacking:
             self.atualizar_ataque(dt)
@@ -477,7 +481,6 @@ class Player():
                     size=3  # tamanho da partícula
                 )
 
-
     def atualizar_ataque(self, dt):
         current_time = time.get_ticks()
         attack_duration = 300 / self.arma.velocidade
@@ -495,7 +498,7 @@ class Player():
 
         # Adiciona nova partícula ao rastro
         if (len(self.sword_trail_particles) < self.trail_max_particles and
-            random() < self.trail_spawn_rate):
+                random() < self.trail_spawn_rate):
             size_variation = 1 + (random() - 0.5) * self.trail_size_variation
             self.sword_trail_particles.append({
                 'x': base_x,
@@ -568,7 +571,7 @@ class Player():
         self.projeteis.append(projetil)
 
     def criarAOE(self, mouse_pos, tamanho):
-        sala = Rect(325,325,1275, 600)
+        sala = Rect(325, 325, 1275, 600)
         if not sala.collidepoint(mouse_pos):
             return None
         mouse_x, mouse_y = mouse_pos
@@ -576,7 +579,7 @@ class Player():
         rect.center = (mouse_x, mouse_y)
         s = Surface((tamanho, tamanho), SRCALPHA)
         tempoCriacao = time.get_ticks()
-        return s, rect,tamanho,tempoCriacao
+        return s, rect, tamanho, tempoCriacao
 
     def calcular_angulo(self, mouse_pos):
         mouse_x, mouse_y = mouse_pos
@@ -613,7 +616,6 @@ class Player():
             s, rectAoe, tamanho, tempoCriacao = self.aoe
             tempo_atual = time.get_ticks()
 
-
             if tempo_atual - tempoCriacao < 500:
                 s.fill((0, 0, 0, 0))
                 draw.rect(s, (255, 228, 76, 50), s.get_rect(), border_radius=int(tamanho / 2))
@@ -621,7 +623,6 @@ class Player():
             else:
                 self.aoe = None
                 self.travado = False
-
 
                 if hasattr(self, 'claraoAtivado') and self.claraoAtivado:
                     self.claraoAtivado = False
@@ -641,6 +642,8 @@ class Player():
             else:
                 self.aoeVeneno = None
                 self.nuvemAtivado = False
+
+        self.desenhar_escudo(tela)
 
         if not self.attacking:
             self.base_sword_angle = math.degrees(angle) - 90
@@ -694,9 +697,7 @@ class Player():
         img_rect = frame.get_rect(center=self.player_rect.center)
         tela.blit(frame, img_rect.topleft)
 
-
-        #projeteis
-
+        # projeteis
         for projetil in self.projeteis:
             for part in projetil["trail"]:
                 if "sprite" in projetil:
@@ -722,13 +723,9 @@ class Player():
                 tela.blit(s, (projetil["x"] - projetil["tamanho"] // 2,
                               projetil["y"] - projetil["tamanho"] // 2))
 
-
-
-
         # Hitbox de ataque (debug)
         rotated_hitbox, rotated_rect = self.get_rotated_rect_ataque(mouse_pos)
-        #tela.blit(rotated_hitbox, rotated_rect)
-
+        # tela.blit(rotated_hitbox, rotated_rect)
 
         if hasattr(self, 'dano_recebido') and time.get_ticks() - self.dano_recebido_tempo < 500:
             if self.telaSangue_alpha > 0:
@@ -755,7 +752,6 @@ class Player():
 
             dano_text = fonte_atual.render(texto_str, True, cor)
             tela.blit(dano_text, (pos_x - dano_text.get_width() / 2, pos_y))
-
 
     def get_hitbox(self):
         return self.player_rect
@@ -794,7 +790,6 @@ class Player():
                 randint(8, 10)
             )
 
-
     def ataque_espadaPrincipal(self, inimigos, mouse_pos, dt):
         current_time = time.get_ticks()
         cooldown = self.cooldown_ataque_base / self.arma.velocidade
@@ -816,16 +811,14 @@ class Player():
 
             _, hitbox_espada = self.get_rotated_rect_ataque(mouse_pos)
 
-
             if self.arma.tipoDeArma == 'Adaga':
-                som.tocar(choice(['faca1','faca2']))
+                som.tocar(choice(['faca1', 'faca2']))
 
             elif self.arma.tipoDeArma == 'Martelo Solar':
                 som.tocar('Martelo')
 
             else:
-                som.tocar(choice(['espada1','espada2','espada3']))
-
+                som.tocar(choice(['espada1', 'espada2', 'espada3']))
 
             if current_time - self.tempo_ultimo_hit > self.tempo_max_combo:
                 self.hits = 0
@@ -852,7 +845,7 @@ class Player():
 
                     self.criar_efeito_sangue(hitbox_espada.centerx, hitbox_espada.centery)
 
-                    #efeitos
+                    # efeitos
                     for i in self.efeitos:
                         if i == ("lentidao"):
                             inimigo.velocidade *= 0.5
@@ -868,7 +861,6 @@ class Player():
             som.tocar('arco')
             self.arma.ataquePrincipal(self, mouse_pos)
             self.ultimo_ataque = current_time
-
 
     def ataque_espadaSecundario(self, inimigos, mouse_pos, dt):
         current_time = time.get_ticks()
@@ -887,13 +879,12 @@ class Player():
                 self.base_sword_angle = math.degrees(angle) - 90
                 self.attack_direction = 1 if random() > 0.5 else -1
 
-
                 _, hitbox_espada = self.get_rotated_rect_ataque(mouse_pos)
                 for inimigo in inimigos:
                     if inimigo.vivo:
                         if inimigo.get_hitbox().colliderect(hitbox_espada):
                             inimigo.anima_hit = True
-                            self.arma.ataqueSecundario(inimigo,self)
+                            self.arma.ataqueSecundario(inimigo, self)
                             dx = inimigo.x - self.x
                             dy = inimigo.y - self.y
                             inimigo.aplicar_knockback(dx, dy, intensidade=0.5)
@@ -921,13 +912,12 @@ class Player():
         else:
             self.arma.ataqueSecundario(self)
 
-
     def tomar_dano(self, valor):
         now = time.get_ticks()
         if now - self.ultimo_dano < self.invencibilidade:
             return
         self.ultimo_dano = now
-        som.tocar(choice(['Dano1','Dano2','Dano3']))
+        som.tocar(choice(['Dano1', 'Dano2', 'Dano3']))
         self.hp -= valor * self.modificadorDanoRecebido
         self.foi_atingido = True
         self.tempo_atingido = now
@@ -938,7 +928,6 @@ class Player():
         if self.telaSangue_surface is None:
             self.telaSangue_surface = self.telaSangue.copy()
 
-
     def atualizar_arma(self):
         self.sword = transform.scale(transform.flip(image.load(self.arma.sprite).convert_alpha(), True, True),
                                      (self.arma.size))
@@ -947,7 +936,7 @@ class Player():
         self.radius = self.arma.radius - 50
         self.hitbox_arma = self.arma.range
 
-    def atualizar_traits(self,trait):
+    def atualizar_traits(self, trait):
         '''
         Ancião - Todo ataque aplica lentidão (lista de efeitos no jogador, aplica cada um se nao for vazio)
         Nojento - Todo ataque aplica veneno (lista de efeitos no jogador, aplica cada um se nao for vazio)
@@ -961,7 +950,7 @@ class Player():
         elif trait == "Humano":
             self.rate = 0
             self.arma.dano -= 10
-            self.arma.lifeSteal /=2
+            self.arma.lifeSteal /= 2
         elif trait == "Ancião":
             self.efeitos.append("lentidao")
         elif trait == "Nojento":
@@ -971,8 +960,6 @@ class Player():
             self.efeitos.append('fantasma')
             self.arma.dano -= 13
 
-
-
     def atualizar_atributos(self):
         if self.macarronada == 0:
             self.base_dano = self.arma.dano
@@ -980,7 +967,7 @@ class Player():
             self.base_velocidade = self.arma.velocidade
             self.base_chanceCritico = self.arma.chanceCritico
             self.macarronada += 1
-            #O PROBLEMA ESTÁ AQUI
+            # O PROBLEMA ESTÁ AQUI
 
         self.base_rate = 1
         self.base_rateSt = 1
@@ -992,7 +979,6 @@ class Player():
         self.base_dash_cooldown_max = 1000
         self.base_dash_duration_max = 150
 
-
         self.arma.dano = self.base_dano * (1 + (self.atributos["forca"] - 5) / 5)
         self.arma.danoCriticoMod = self.base_danoCriticoMod * (1 + (self.atributos["forca"] - 5) / 5)
         self.arma.velocidade = self.base_velocidade * (1 + ((self.atributos["destreza"] - 5) / 5) * 0.5)
@@ -1002,7 +988,7 @@ class Player():
         self.velocidadeMov = self.base_velocidadeMov + ((self.atributos["agilidade"] - 5) / 5) * 0.5
         self.custoDash = self.base_custoDash - ((self.atributos["estamina"] - 5) / 5) * 0.75
         self.modificadorDanoRecebido = self.base_modificadorDanoRecebido - (
-                    (self.atributos["resistencia"] - 5) / 5) * 0.5
+                (self.atributos["resistencia"] - 5) / 5) * 0.5
         self.invencibilidade = int(self.base_invencibilidade + ((self.atributos["resistencia"] - 5) / 5) * 500)
         self.cooldown_st = round(self.base_cooldown_st - (self.atributos["estamina"] - 5) * 444.44)
         self.dash_cooldown_max = int(self.base_dash_cooldown_max - ((self.atributos["estamina"] - 5) / 5) * 750)
@@ -1010,22 +996,21 @@ class Player():
 
     def get_save_data(self):
         return {
-        'position': [self.x, self.y],
-        'stats': {
-            'hp': self.hp,
-            'hpMax': self.hpMax,
-            'st': self.st,
-            'almas': self.almas,
-            'velocidadeMov': self.velocidadeMov,
-            'atributos' : self.atributos
-        },
-        'itens': [item.id for item in self.itens],
-        'itemAtivo': self.itemAtivo.id if self.itemAtivo else None,
-        'arma': self.arma.get_save_data() if hasattr(self.arma, 'get_save_data') else None,
-        'trait': self.trait,
-        #'inventario': [x.get_save_data() for x in self.inventario] resolver isso depois
-    }
-
+            'position': [self.x, self.y],
+            'stats': {
+                'hp': self.hp,
+                'hpMax': self.hpMax,
+                'mp': self.mp,
+                'almas': self.almas,
+                'velocidadeMov': self.velocidadeMov,
+                'atributos': self.atributos
+            },
+            'itens': [item.id for item in self.itens],
+            'itemAtivo': self.itemAtivo.id if self.itemAtivo else None,
+            'arma': self.arma.get_save_data() if hasattr(self.arma, 'get_save_data') else None,
+            'trait': self.trait,
+            # 'inventario': [x.get_save_data() for x in self.inventario] resolver isso depois
+        }
 
     def load_save_data(self, data, conjunto_itens, lista_mods):
         self.x, self.y = data['position']
@@ -1034,13 +1019,13 @@ class Player():
         stats = data['stats']
         self.hp = stats['hp']
         self.hpMax = stats['hpMax']
-        self.st = stats['st']
+        self.mp = stats['mp']
         self.almas = stats['almas']
         self.velocidadeMov = stats['velocidadeMov']
         self.atributos = stats['atributos']
 
         self.itens = {}
-        #self.inventario = data["inventario"] resolver isso depois
+        # self.inventario = data["inventario"] resolver isso depois
         for item_id in data['itens']:
             item = conjunto_itens.itens_por_id[item_id]
             self.adicionarItem(item)
@@ -1060,7 +1045,6 @@ class Player():
             self.trait = data['trait']
             self.atualizar_traits(self.trait)
 
-        
         self.atualizar_atributos()
 
     def resetar_estado_temporario(self):
@@ -1072,9 +1056,7 @@ class Player():
         self.direcao = "baixo"  # ou o que quiser como default
         self.rect = self.player_rect
 
-
-
-    #---------HABILIDADES---------
+    # ---------HABILIDADES---------
 
     def bola_de_fogo(self):
         if "Bola de Fogo" not in self.habilidades:
@@ -1082,19 +1064,20 @@ class Player():
         mouse_pos = mouse.get_pos()
         sprite_projetil = image.load("assets/player/bola_de_fogo.png").convert_alpha()
         current_time = time.get_ticks()
-        if self.st-30 <= 0:
+        custoHabilidade = 30 * self.mpModificador
+        if self.mp - custoHabilidade <= 0:
             return
         else:
             self.criar_projetil(mouse_pos, dano=50, cor=None, sprite=sprite_projetil)
-            self.st -= 30
+            self.mp -= custoHabilidade
             self.last_dash_time = current_time
 
     def clarao(self):
         if "Clarão" not in self.habilidades:
             return
         current_time = time.get_ticks()
-
-        if self.st < 75:
+        custoHabilidade = 75*self.mpModificador
+        if self.mp < custoHabilidade:
             return
 
         if hasattr(self, 'ultimo_clarao') and current_time - self.ultimo_clarao < 4000:
@@ -1117,8 +1100,7 @@ class Player():
         self.inimigos_atingidos_este_clarao = []
         self.ultimo_clarao = current_time
 
-        # Consome recursos
-        self.st -= 75
+        self.mp -= custoHabilidade
         self.last_dash_time = current_time
 
     def nevasca(self):
@@ -1128,12 +1110,14 @@ class Player():
         mouse_pos = mouse.get_pos()
         sprite_projetil = image.load("assets/player/bola_de_gelo.png").convert_alpha()
         current_time = time.get_ticks()
-        if self.st-30 <= 0:
+        custoHabilidade = 30*self.mpModificador
+        if self.mp - custoHabilidade <= 0:
             return
         else:
             self.criar_projetil(mouse_pos, dano=30, cor=None, sprite=sprite_projetil)
-            self.st -= 30
+            self.mp -= custoHabilidade
             self.last_dash_time = current_time
+
     def trovao(self):
         if "Trovão" not in self.habilidades:
             return
@@ -1141,19 +1125,20 @@ class Player():
         mouse_pos = mouse.get_pos()
         sprite_projetil = image.load("assets/player/Raio.png").convert_alpha()
         current_time = time.get_ticks()
-        if self.st-40 <= 0:
+        custoHabilidade = 40*self.mpModificador
+        if self.mp - custoHabilidade <= 0:
             return
         else:
             self.criar_projetil(mouse_pos, dano=80, cor=None, sprite=sprite_projetil)
-            self.st -= 40
+            self.mp -= custoHabilidade
             self.last_dash_time = current_time
 
     def nuvem_de_veneno(self):
         if "Núvem de Veneno" not in self.habilidades:
             return
         current_time = time.get_ticks()
-
-        if self.st < 75:
+        custoHabilidade = 75*self.mpModificador
+        if self.mp < custoHabilidade:
             return
 
         if hasattr(self, 'ultimo_clarao') and current_time - self.ultimo_clarao < 4000:
@@ -1172,6 +1157,38 @@ class Player():
             return
         self.ultimo_clarao = current_time
 
-        self.st -= 75
+        self.mp -= custoHabilidade
         self.last_dash_time = current_time
 
+    def fonte_arcana(self):
+        if "Fonte Arcana" not in self.habilidades:
+            return
+        if not self.mp >= self.mpMaximo: self.mp += 0.15
+
+    def escudo(self):
+        if "Escudo" not in self.habilidades:
+            return
+        self.mpMaximo = 75
+        self.base_modificadorDanoRecebido = 0.75
+
+        # Adiciona um atributo para controlar o estado do escudo
+        self.escudo_ativado = True
+
+    def eficiencia_arcana(self):
+        if "Eficiência Arcana" not in self.habilidades:
+            return
+        self.mpModificador = 0.5
+
+    def desenhar_escudo(self, tela):
+        if hasattr(self, 'escudo_ativado') and self.escudo_ativado:
+            # Cria uma superfície transparente para o escudo
+            escudo_surface = Surface((120, 120), SRCALPHA)
+
+            # Desenha um círculo azul translúcido
+            draw.circle(escudo_surface, (200, 200, 255, 20),  # Cor azul com transparência
+                        (60, 60),  # Centro da superfície
+                        60)  # Raio do círculo
+
+            # Posiciona o escudo centrado no jogador
+            escudo_rect = escudo_surface.get_rect(center=self.player_rect.center)
+            tela.blit(escudo_surface, escudo_rect.topleft)
