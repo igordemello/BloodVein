@@ -568,6 +568,9 @@ class Player():
         self.projeteis.append(projetil)
 
     def criarAOE(self, mouse_pos, tamanho):
+        sala = Rect(325,325,1275, 600)
+        if not sala.collidepoint(mouse_pos):
+            return None
         mouse_x, mouse_y = mouse_pos
         rect = Rect(0, 0, tamanho, tamanho)
         rect.center = (mouse_x, mouse_y)
@@ -1108,6 +1111,8 @@ class Player():
         centro_x = self.player_rect.centerx
         centro_y = self.player_rect.centery
         self.aoe = self.criarAOE((centro_x, centro_y), tamanho_aoe)
+        if self.aoe is None:
+            return
 
         self.inimigos_atingidos_este_clarao = []
         self.ultimo_clarao = current_time
@@ -1163,6 +1168,8 @@ class Player():
         centro_x = self.player_rect.centerx
         centro_y = self.player_rect.centery
         self.aoeVeneno = self.criarAOE((centro_x, centro_y), tamanho_aoe)
+        if self.aoeVeneno is None:
+            return
         self.ultimo_clarao = current_time
 
         self.st -= 75

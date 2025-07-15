@@ -575,9 +575,12 @@ class MarteloSolar(Arma):
             return #revisar isso
         else:
             som.tocar('martelo2')
+            aoeMartelo = player.criarAOE(mouse_pos, 300)
+            if aoeMartelo is None:
+                return
             player.st -= 50
             player.last_dash_time = current_time
-            return player.criarAOE(mouse_pos, 300)
+            return aoeMartelo
 
 
 class Arco(Arma):
