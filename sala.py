@@ -449,7 +449,7 @@ class Sala:
                     if inimigo.vai_dropar_alma:
                         pos = (inimigo.x + 16, inimigo.y + 16)
                         self.desenha_alma(pos)
-                        alma_hitbox = Rect(0, 0, 50, 50)
+                        alma_hitbox = Rect(0, 0, 100, 100)
                         alma_hitbox.center = pos
                         if self.player.get_hitbox().colliderect(alma_hitbox):
                             self.player.almas += 1
