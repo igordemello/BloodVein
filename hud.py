@@ -116,7 +116,7 @@ class Hud:
 
         #braços e coracao dinamico
         alturaHp_total = self.full_hp.get_height() 
-        proporcaoHp = max(0, min(1, self.player.hp / 100))
+        proporcaoHp = max(0, min(1, self.player.hp / self.player.hpMax))
         altura_visivelHp = int(alturaHp_total * proporcaoHp)
 
         if altura_visivelHp > 0:
@@ -125,8 +125,37 @@ class Hud:
             self.tela.blit(barra_cheia_cortada, (x_hud, 885 + y_corte))
             # draw.rect(self.tela, (255, 0, 0), (x_hud, 885 + y_corte, self.full_hp.get_width(), altura_visivelHp), 2)
 
-        self.tela.blit(self.full_stamina_mana, (x_hud, 885))
+
+        largura_barra = 354
+        margem = 60
+        y_barra = 885
+
+        proporcao_mana = max(0, min(1, self.player.mp / self.player.mpMaximo))
+        proporcao_stamina = max(0, min(1, self.player.stamina / self.player.staminaMaximo))
+
+        if proporcao_mana > 0:
+            largura_visivel_mana = int(largura_barra * proporcao_mana)
+            x_inicial_mana = margem + (largura_barra - largura_visivel_mana)
+            barra_mana = self.full_stamina_mana.subsurface(
+                (x_inicial_mana, 0, largura_visivel_mana, self.full_stamina_mana.get_height())
+            ).copy()
+            self.tela.blit(barra_mana, (x_hud + x_inicial_mana, y_barra))
+
+        if proporcao_stamina > 0:
+            largura_visivel_stamina = int(largura_barra * proporcao_stamina)
+            x_inicio_stamina = self.full_stamina_mana.get_width() - margem - largura_barra
+            barra_stamina = self.full_stamina_mana.subsurface(
+                (x_inicio_stamina, 0, largura_visivel_stamina, self.full_stamina_mana.get_height())
+            ).copy()
+            self.tela.blit(barra_stamina, (x_hud + x_inicio_stamina, y_barra))
         
+
+        #item ativo
+        # if self.player.itemAtivo is not None:
+        #     for x in range(0, self.player.itemAtivo.usos):
+        #         draw.rect(self.tela, (0, 255, 0), (50 + (x * 25), 144, 20, 8))
+        #     sprite = transform.scale(self.player.itemAtivo.sprite, (96, 96))
+        #     self.tela.blit(sprite, (60, 40))
 
         
 

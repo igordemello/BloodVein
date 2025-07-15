@@ -69,7 +69,7 @@ class Player():
         # self.inventario = []
         self.nivel = 1
         self.hp = hp
-        self.hpMax = 100
+        self.hpMax = hp
 
 
         self.mpModificador = 1
@@ -411,8 +411,8 @@ class Player():
 
         if self.hp < 0:
             self.hp = 0
-        if self.hp > 100:
-            self.hp = 100
+        if self.hp > self.hpMax:
+            self.hp = self.hpMax
         if self.mp < 0:
             self.mp = 0
         if self.mp > self.mpMaximo:
