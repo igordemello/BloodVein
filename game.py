@@ -55,6 +55,8 @@ class Game:
         display.set_icon(logo)
 
         self.imagem_cursor = transform.scale(image.load("assets/UI/cursor.png").convert_alpha(), (32, 32))
+        self.imagem_cursor_click = transform.scale(image.load("assets/UI/cursor_click.png").convert_alpha(), (32, 32))
+        self.cursor_clicando = False
 
         self.estado = EstadoDoJogo.MENU
         self.fonte = font.Font("assets/fontes/alagard.ttf", 48)
@@ -112,7 +114,10 @@ class Game:
             self.atualizar(dt, keys, eventos)
             self.desenhar(mouse_pos)
 
-            self.screen.blit(self.imagem_cursor, mouse_pos)
+            if self.cursor_clicando:
+                self.screen.blit(self.imagem_cursor_click, mouse_pos)
+            else:
+                self.screen.blit(self.imagem_cursor, mouse_pos)
             display.update()
 
     def tratar_eventos(self, eventos, mouse_pos, keys, dt):
@@ -261,6 +266,12 @@ class Game:
                         som.tocar("clique3")
                         self.estado = EstadoDoJogo.JOGANDO
 
+        for ev in eventos:
+            if ev.type == MOUSEBUTTONDOWN:
+                self.cursor_clicando = True
+            elif ev.type == MOUSEBUTTONUP:
+                self.cursor_clicando = False
+
     def atualizar(self, dt, keys, eventos):
         if self.sala_atual:
             if self.sala_atual.cutscene and self.sala_atual.cutscene.ativa:
@@ -294,7 +305,6 @@ class Game:
     def desenhar(self, mouse_pos):
         self.screen.fill((0, 0, 0))
         offset_x, offset_y = screen_shaker.offset
-        eventos = event.get()
 
         if self.estado == EstadoDoJogo.MENU:
             self.menu.run()
