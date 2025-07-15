@@ -46,6 +46,10 @@ class Player():
             "estamina": 5, #influencia COOLDOWN DE DASH, GASTO E COOLDOWN STAMINA
             "sorte": 5, #influencia CHANCE DE CRÍTICO E UM POUCO DE TUDO
         }
+
+        self.pontosHabilidade = 99
+        self.habilidades = []
+
         self.lista_mods = ListaMods()
 
         self.inventario = [
@@ -133,7 +137,7 @@ class Player():
         self.st = st
 
         self.almas = 999
-        self.pontosHabilidade = 0
+
         self.old_x = x
         self.old_y = y
         self.vx = 0
@@ -461,6 +465,7 @@ class Player():
                     lifetime=200,  # vida curta (ms)
                     size=3  # tamanho da partícula
                 )
+
 
     def atualizar_ataque(self, dt):
         current_time = time.get_ticks()
@@ -1029,3 +1034,4 @@ class Player():
         self.travado = False
         self.direcao = "baixo"  # ou o que quiser como default
         self.rect = self.player_rect
+

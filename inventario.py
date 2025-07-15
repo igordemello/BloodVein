@@ -26,11 +26,12 @@ from som import som
 from pause import Pause
 import os
 import shutil
-
+from habilidades import GerenciadorHabilidades
 
 class Inventario():
     def __init__(self, screen, player, hud):
         self.botoes_atributos = []
+        self.botoes_habilidades = []
         self.screen = screen
         self.visible = False
         self.player = player
@@ -42,6 +43,8 @@ class Inventario():
         self.aba_atual = 0
         self.botoes_navegacao = []
         self.fonte_botoes = font.Font("assets/fontes/alagard.ttf", 24)
+
+        self.gerenciador_habilidades = GerenciadorHabilidades()
 
         self.item_width, self.item_height = 230, 240
 
@@ -69,6 +72,8 @@ class Inventario():
         altura_botao = 45
         pos_y = 70
         mouse_pos = mouse.get_pos()
+
+
 
         if self.aba_atual == 0:
             botao_esquerda = Botao(None, (690 + largura_botao // 2, pos_y + altura_botao // 2),
@@ -209,13 +214,13 @@ class Inventario():
                 f'Destreza: {round(player.atributos["destreza"], 1)}',
                 f'Agilidade: {round(player.atributos["agilidade"], 1)}',
                 f'Vigor: {round(player.atributos["vigor"], 1)}',
-                f'Resistência: {round(player.atributos["resistencia"], 1)}',  # dano total crítico
+                f'Resistência: {round(player.atributos["resistencia"], 1)}',
                 f'Estamina: {round(player.atributos["estamina"], 1)}',
                 f'Sorte: {round(player.atributos["sorte"], 1)}'
             ]
 
-            base_x = 460  # posição x na tela
-            base_y = 300  # posição y inicial
+            base_x = 460
+            base_y = 300
 
             nivelCusto = fonte_custo.render(f'{str((10 + (player.nivel * 2)))} almas', True, cor_attr)
             self.screen.blit(nivelCusto, (700, 810))
@@ -233,38 +238,52 @@ class Inventario():
                 texto = fonte_attr.render(linha, True, cor_attr)
                 self.screen.blit(texto, (base_x, base_y + i * 60))
 
-            # --- LEVEL UP ---
-            if player.almas >= (10 + (player.nivel * 2)):
-                y_pos = 300
+            habilidades = list(self.gerenciador_habilidades.habilidades.keys())
+            posicoes_botoes = [
+                (1094, 820), (1373, 820),  # Linha inferior
+                (998, 660), (1190, 660),  # Linha do meio inferior
+                (998, 500), (1190, 500), (1373, 500),  # Linha do meio
+                (1094, 340), (1277, 340), (1469, 340)  # Linha superior
+            ]
+
+            fonte_habilidade = font.Font("assets/fontes/alagard.ttf", 16)
+            self.botoes_habilidades = []
+
+            for i, (pos_x, pos_y) in enumerate(posicoes_botoes):
+                if i >= len(habilidades):
+                    break
+
+                hab_nome = habilidades[i]
+                hab = self.gerenciador_habilidades.habilidades[hab_nome]
+
+                # Obter a cor apropriada para o botão
+                cor = self.gerenciador_habilidades.get_cor_botao(player, hab_nome)
+
+                # Criar superfície do botão
+                botao_surface = Surface((104, 104), SRCALPHA)
+                botao_surface.fill(cor)
+
+                # Adicionar ícone se existir
+                if hab.sprite:
+                    icon = transform.scale(hab.sprite, (80, 80))
+                    botao_surface.blit(icon, (12, 12))
+
+                # Criar botão
+                botao = Botao(
+                    image=botao_surface,
+                    pos=(pos_x + 52, pos_y + 52),
+                    text_input=str(i + 1),
+                    font=fonte_habilidade,
+                    base_color=(255, 255, 255),
+                    hovering_color=(255, 255, 255),
+                    value=hab_nome
+                )
+
+                # Atualizar e desenhar botão
                 mouse_pos = mouse.get_pos()
-                self.botoes_atributos = []  # Limpa a lista de botões antes de recriá-los
-
-                atributos_ordenados = [
-                    "forca",
-                    "destreza",
-                    "agilidade",
-                    "vigor",
-                    "resistencia",
-                    "estamina",
-                    "sorte"
-                ]
-
-                for i, atributo in enumerate(atributos_ordenados):
-                    # Só mostra o botão se o atributo for menor que 10
-                    if player.atributos[atributo] < 10:
-                        # Botão para aumentar (+)
-                        botao_mais_rect = Rect(800, y_pos, 32, 32)
-                        draw.rect(self.screen,
-                                  (0, 200, 0) if botao_mais_rect.collidepoint(mouse_pos) else (0, 150, 0),
-                                  botao_mais_rect)
-                        mais_texto = fonte_attr.render("+", True, (255, 255, 255))
-                        self.screen.blit(mais_texto, (801, y_pos-5))
-                        self.botoes_atributos.append(
-                            (atributo, botao_mais_rect))  # Armazena o atributo junto com o retângulo
-
-                    y_pos += 60  # Incrementa a posição Y em qualquer caso
-
-
+                botao.changeColor(mouse_pos)
+                botao.update(self.screen)
+                self.botoes_habilidades.append(botao)
 
     def desenharArma(self):
         if not self.visible:
@@ -384,19 +403,28 @@ class Inventario():
 
         for evento in eventos:
             if evento.type == MOUSEBUTTONDOWN and evento.button == 1:
+                # Verificar clique nos botões de atributos
                 for atributo, rect in self.botoes_atributos:
                     if rect.collidepoint(mouse_pos):
                         custo = 10 + (self.player.nivel * 2)
-
                         if (self.player.almas >= custo and
                                 self.player.atributos[atributo] < 10):
                             self.player.atributos[atributo] += 1
                             self.player.almas -= custo
                             self.player.atualizar_atributos()
                             self.player.nivel += 1
-                            if self.player.nivel % 2 == 0: self.player.pontosHabilidade += 1 #fiz pra ganhar ponto de habilidade só em nivel par, mas qualquer coisa só mudar aqui depois
+                            if self.player.nivel % 2 == 0:
+                                self.player.pontosHabilidade += 1
                             som.tocar('upgrade_atributo')
                             return True
+
+                # Verificar clique nos botões de habilidades
+                for botao in self.botoes_habilidades:
+                    if botao.checkForInput(mouse_pos):
+                        hab_nome = botao.value
+                        print(f"Habilidade selecionada: {hab_nome}")
+                        return self.gerenciador_habilidades.desbloquear(self.player, hab_nome)
+
         return False
 
     def checar_clique_armas(self, eventos):
