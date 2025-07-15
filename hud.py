@@ -135,7 +135,7 @@ class Hud:
         braco_stamina = self.bracoSt_fundo
         larguraSt_total = self.bracoSt_cima.get_width()
         alturaSt_total = self.bracoSt_cima.get_height() - 70
-        proporcaoSt = max(0, min(1, self.player.st / 100))
+        proporcaoSt = max(0, min(1, self.player.mp / 100))
         altura_visivelSt = int(alturaSt_total * proporcaoSt)
 
         self.tela.blit(braco_stamina, (1715+ offset_x, 510+offset_y))
