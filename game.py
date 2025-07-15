@@ -149,18 +149,10 @@ class Game:
         elif self.estado == EstadoDoJogo.JOGANDO:
             for ev in eventos:
                 if ev.type == KEYDOWN:
-                    #temporario pq tenho q criar a hotbar e fazer os requisitos de habilidade
-                    if ev.key == K_1:
-                        self.player.clarao()
-                        #self.player.bola_de_fogo()
-                        #self.player.nevasca()
-                        #self.player.trovao()
-                        #self.player.nuvem_de_veneno()
-                    if ev.key == K_2:
-                        self.player.clarao()
-                        #self.player.bola_de_fogo()
-
-
+                    teclas_para_verificar = [K_1, K_2, K_3, K_4]
+                    for i in range(4):
+                        if ev.key == teclas_para_verificar[i] and self.player.hotkeys[i] != 0:
+                            self.player.ativar_habilidade(self.player.hotkeys[i])
                     if ev.key == K_PERIOD:
                         item_id = int(input("Digite o ID do item para debug: "))
                         encontrado = False

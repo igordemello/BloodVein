@@ -48,6 +48,7 @@ class Player():
 
         self.pontosHabilidade = 99
         self.habilidades = []
+        self.hotkeys = [0,0,0,0]
         self.nevascaAtivada = False
         self.trovaoAtivado = False
         self.venenoDano = 40
@@ -467,6 +468,8 @@ class Player():
                     lifetime=200,  # vida curta (ms)
                     size=3  # tamanho da partícula
                 )
+
+
 
     def atualizar_ataque(self, dt):
         current_time = time.get_ticks()
@@ -1165,6 +1168,24 @@ class Player():
         if "Eficiência Arcana" not in self.habilidades:
             return
         self.mpModificador = 0.5
+
+    def ativar_habilidade(self, nome_habilidade):
+        if nome_habilidade == "Bola de Fogo":
+            self.bola_de_fogo()
+        elif nome_habilidade == "Clarão":
+            self.clarao()
+        elif nome_habilidade == "Nevasca":
+            self.nevasca()
+        elif nome_habilidade == "Trovão":
+            self.trovao()
+        elif nome_habilidade == "Núvem de Veneno":
+            self.nuvem_de_veneno()
+        elif nome_habilidade == "Fonte Arcana":
+            self.fonte_arcana()
+        elif nome_habilidade == "Escudo":
+            self.escudo()
+        elif nome_habilidade == "Eficiência Arcana":
+            self.eficiencia_arcana()
 
     def desenhar_escudo(self, tela):
         if hasattr(self, 'escudo_ativado') and self.escudo_ativado:

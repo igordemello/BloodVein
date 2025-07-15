@@ -15,17 +15,29 @@ class Habilidade:
 class GerenciadorHabilidades:
     def __init__(self):
         self.habilidades = {
-            "Bola de Fogo": Habilidade("Bola de Fogo", 1),
-            "Fonte Arcana": Habilidade("Fonte Arcana", 1),
-            "Clarão": Habilidade("Clarão", 1, ["Bola de Fogo"]),
-            "Nevasca": Habilidade("Nevasca", 1, ["Bola de Fogo"]),
-            "Trovão": Habilidade("Trovão", 2, ["Clarão"]),
-            "Núvem de Veneno": Habilidade("Núvem de Veneno", 2, ["Nevasca"]),
-            "Escudo": Habilidade("Escudo", 2, ["Fonte Arcana"]),
-            "Corrente Elétrica": Habilidade("Corrente Elétrica", 3, ["Trovão", "Núvem de Veneno"], True),
-            "Eficiência Arcana": Habilidade("Eficiência Arcana", 3, ["Escudo"]),
-            "Estomago de Mana": Habilidade("Estomago de Mana", 3, ["Escudo"]),
+            "Bola de Fogo": Habilidade("Bola de Fogo", 1,
+                                       descricao="Dispara uma bola de fogo que causa dano ao atingir inimigos"),
+            "Fonte Arcana": Habilidade("Fonte Arcana", 1, descricao="Recupera mana gradualmente"),
+            "Clarão": Habilidade("Clarão", 1, ["Bola de Fogo"],
+                                 descricao="Explosão de luz que causa dano em área"),
+            "Nevasca": Habilidade("Nevasca", 1, ["Bola de Fogo"],
+                                  descricao="Dispara projéteis de gelo que reduzem velocidade"),
+            "Trovão": Habilidade("Trovão", 2, ["Clarão"],
+                                 descricao="Ataque elétrico poderoso que deixa inimigos imoveis"),
+            "Núvem de Veneno": Habilidade("Núvem de Veneno", 2, ["Nevasca"],
+                                          descricao="Cria uma nuvem venenosa que causa dano contínuo"),
+            "Escudo": Habilidade("Escudo", 2, ["Fonte Arcana"],
+                                 descricao="Reduz mana máxima e lhe concede um escudo que diminui dano recebido"),
+            "Corrente Elétrica": Habilidade("Corrente Elétrica", 3, ["Trovão", "Núvem de Veneno"], True,
+                                            descricao="Seu dash agora é uma corrente elétrica que da dano nos inimigos em seu caminho"),
+            "Eficiência Arcana": Habilidade("Eficiência Arcana", 3, ["Escudo"],
+                                            descricao="Reduz custo de stamina de todas as habilidades"),
+            "Estomago de Mana": Habilidade("Estomago de Mana", 3, ["Escudo"],
+                                           descricao="Poções de mana recuperam completamente sua mana"),
         }
+
+        self.passivas = ["Fonte Arcana", "Escudo", "Corrente Elétrica", "Eficiência Arcana", "Estomago de Mana"]
+
         self.cor_disponivel = (100, 255, 100, 160)  # Verde
         self.cor_indisponivel = (150, 150, 150, 160)  # Cinza
         self.cor_desbloqueada = (200, 200, 200, 160)  # Cinza claro para habilidades já desbloqueadas
@@ -59,5 +71,6 @@ class GerenciadorHabilidades:
         if self.pode_desbloquear(player, nome_habilidade):
             player.habilidades.append(nome_habilidade)
             player.pontosHabilidade -= self.habilidades[nome_habilidade].custo
+
             return True
         return False

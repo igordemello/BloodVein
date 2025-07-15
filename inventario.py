@@ -207,7 +207,14 @@ class Inventario():
             player = self.player
             fonte_attr = font.Font("assets/fontes/alagard.ttf", 48)
             fonte_custo = font.Font("assets/fontes/alagard.ttf", 32)
+            fonte_desc = font.Font("assets/fontes/alagard.ttf", 20)  # Nova fonte para descrição
             cor_attr = (253, 246, 225)
+            cor_desc = (200, 200, 200)  # Cor para a descrição
+
+            # Configurações do retângulo de descrição
+            desc_largura = 300  # Largura variável
+            desc_altura = 80  # Altura variável
+            desc_margem = 20  # Margem entre o botão e a descrição
 
             atributos = [
                 f'Força: {round(player.atributos["forca"], 1)}',
@@ -248,6 +255,7 @@ class Inventario():
 
             fonte_habilidade = font.Font("assets/fontes/alagard.ttf", 16)
             self.botoes_habilidades = []
+            hovered_habilidade = None
 
             for i, (pos_x, pos_y) in enumerate(posicoes_botoes):
                 if i >= len(habilidades):
@@ -279,11 +287,47 @@ class Inventario():
                     value=hab_nome
                 )
 
-                # Atualizar e desenhar botão
+                # Verificar hover
                 mouse_pos = mouse.get_pos()
+                if botao.checkForInput(mouse_pos):
+                    hovered_habilidade = hab
+
+                # Atualizar e desenhar botão
                 botao.changeColor(mouse_pos)
                 botao.update(self.screen)
                 self.botoes_habilidades.append(botao)
+            print(self.player.hotkeys)
+            if hovered_habilidade and hasattr(hovered_habilidade, 'descricao'):
+                for botao in self.botoes_habilidades:
+                    if botao.value == hovered_habilidade.nome:
+                        desc_x = botao.rect.centerx - desc_largura // 2
+                        desc_y = botao.rect.bottom + desc_margem
+
+                        desc_fundo = Surface((desc_largura, desc_altura), SRCALPHA)
+                        desc_fundo.fill((0, 0, 0, 180))
+
+                        self.screen.blit(desc_fundo, (desc_x, desc_y))
+
+                        palavras = hovered_habilidade.descricao.split(' ')
+                        linhas = []
+                        linha_atual = ""
+
+                        for palavra in palavras:
+                            teste_linha = f"{linha_atual} {palavra}" if linha_atual else palavra
+                            if fonte_desc.size(teste_linha)[0] < desc_largura - 20:  # Margem interna
+                                linha_atual = teste_linha
+                            else:
+                                linhas.append(linha_atual)
+                                linha_atual = palavra
+                        if linha_atual:
+                            linhas.append(linha_atual)
+
+                        for i, linha in enumerate(linhas):
+                            texto_desc = fonte_desc.render(linha, True, cor_desc)
+                            texto_x = desc_x + (desc_largura - texto_desc.get_width()) // 2
+                            texto_y = desc_y + 10 + i * (fonte_desc.get_height() + 2)
+                            self.screen.blit(texto_desc, (texto_x, texto_y))
+                        break
 
     def desenharArma(self):
         if not self.visible:
@@ -403,7 +447,6 @@ class Inventario():
 
         for evento in eventos:
             if evento.type == MOUSEBUTTONDOWN and evento.button == 1:
-                # Verificar clique nos botões de atributos
                 for atributo, rect in self.botoes_atributos:
                     if rect.collidepoint(mouse_pos):
                         custo = 10 + (self.player.nivel * 2)
@@ -418,12 +461,22 @@ class Inventario():
                             som.tocar('upgrade_atributo')
                             return True
 
-                # Verificar clique nos botões de habilidades
                 for botao in self.botoes_habilidades:
                     if botao.checkForInput(mouse_pos):
                         hab_nome = botao.value
                         print(f"Habilidade selecionada: {hab_nome}")
                         return self.gerenciador_habilidades.desbloquear(self.player, hab_nome)
+
+            teclas_para_verificar = [K_1, K_2, K_3, K_4]
+            for i in range(4):
+                if evento.type == KEYDOWN and evento.key == teclas_para_verificar[i]:
+                    for botao in self.botoes_habilidades:
+                        if botao.checkForInput(mouse_pos):
+                            hab_nome = botao.value
+                            if hab_nome in self.player.habilidades and hab_nome not in self.gerenciador_habilidades.passivas:
+                                self.player.hotkeys[i] = hab_nome
+
+
 
         return False
 
