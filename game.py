@@ -282,6 +282,7 @@ class Game:
 
 
             if self.player.gameOver:
+                self.apagar_saves()
                 self.estado = EstadoDoJogo.GAME_OVER
 
     def desenhar(self, mouse_pos):
