@@ -270,6 +270,7 @@ class Player():
     def atualizar(self, dt, teclas):
         self.fonte_arcana()
         self.escudo()
+        print(self.mp)
 
         if self.travado:
             self.vx = 0
