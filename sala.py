@@ -62,7 +62,23 @@ class Sala:
         self.itensDisp = ConjuntoItens()
         self.colliders = self.mapa.get_colliders()
 
-        self.loja = Loja(self.itensDisp,self.player)
+        no_atual = self.gerenciador_andar.grafo.nodes[self.gerenciador_andar.sala_atual]
+        tipo = no_atual["tipo"]
+
+        if tipo == "loja":
+            if "itens_loja" in no_atual:
+                ids_sorteados = no_atual["itens_loja"]
+                comprados = no_atual.get("itens_comprados", [False, False, False])
+            else:
+                ids_disponiveis = list(self.itensDisp.itens_por_id)
+                ids_sorteados = sample(ids_disponiveis, 3)
+                comprados = [False, False, False]
+                no_atual["itens_loja"] = ids_sorteados
+                no_atual["itens_comprados"] = comprados
+
+            self.loja = Loja(self.itensDisp, self.player, ids_sorteados, comprados, no_atual)
+        else:
+            self.loja = None
         self.player.sala_atual = self
 
 
@@ -165,8 +181,8 @@ class Sala:
             self.leve_atual = self.max_leves + 2
             return []
 
-        #self.leve_atual = self.max_leves + 2
-        #return []
+        self.leve_atual = self.max_leves + 2
+        return []
         
         tempo_atual = time.get_ticks()
         if tempo_atual - self.tempo_entrada < self.cooldown_inicial and not self.inimigos_spawnados:
@@ -419,9 +435,10 @@ class Sala:
         if (any((inimigo.vivo for inimigo in self.inimigos)) or self.leve_atual < self.max_leves) and not self.gerenciador_andar.sala_foi_conquistada(self.gerenciador_andar.sala_atual):
             if self.boss_musica == 0:
                 musica.tocar(self.musica_escolhida)
-        elif self.boss_musica == 0 and self.loja.musica == 0:
-            musica.tocar("BloodVein SCORE/OST/MapaForadoCombate.mp3")
-            self.musica_escolhida = choice(self.musicas_de_combate)
+        elif self.loja:
+            if self.boss_musica == 0 and self.loja.musica == 0:
+                musica.tocar("BloodVein SCORE/OST/MapaForadoCombate.mp3")
+                self.musica_escolhida = choice(self.musicas_de_combate)
 
         for evento in eventos:
             if evento.type == MOUSEBUTTONDOWN and evento.button == 1:
