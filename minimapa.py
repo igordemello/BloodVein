@@ -69,8 +69,9 @@ class Minimapa:
         min_y = min(pos[1] for pos in all_positions)
         max_y = max(pos[1] for pos in all_positions)
         
-        content_width = max_x - min_x
-        content_height = max_y - min_y
+        padding_logico = 2  # você pode ajustar esse valor se quiser mais espaço
+        content_width = (max_x - min_x) + 2 * padding_logico
+        content_height = (max_y - min_y) + 2 * padding_logico
         
         self.width = 700
         self.height = 800
@@ -89,8 +90,8 @@ class Minimapa:
             (self.height - 100) / max(content_height, 1)
         )
         
-        offset_x = (self.width - content_width * scale) / 2 - min_x * scale
-        offset_y = (self.height - content_height * scale) / 2 - min_y * scale
+        offset_x = (self.width - content_width * scale) / 2 - (min_x - padding_logico) * scale
+        offset_y = (self.height - content_height * scale) / 2 - (min_y - padding_logico) * scale
         
 
         def to_minimap_pos(abs_x, abs_y):
