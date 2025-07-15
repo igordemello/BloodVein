@@ -57,10 +57,9 @@ class Pause:
 
         self.botaocontinuar = BotaoAnimado((1920//2, 400), "CONTINUAR", botao_font, cor_base, cor_hover)
         self.botaoopcoes = BotaoAnimado((1920//2, 500), "OPÇÕES", botao_font, cor_base, cor_hover)
-        self.botaosalvar = BotaoAnimado((1920//2, 600), "SALVAR", botao_font, cor_base, cor_hover)
-        self.botaosair = BotaoAnimado((1920//2, 700), "SAIR", botao_font, cor_base, cor_hover)
+        self.botaosair = BotaoAnimado((1920//2, 600), "SAIR", botao_font, cor_base, cor_hover)
 
-        self.botoes = [self.botaocontinuar, self.botaoopcoes, self.botaosalvar, self.botaosair]
+        self.botoes = [self.botaocontinuar, self.botaoopcoes, self.botaosair]
 
         self.loop_video = cv2.VideoCapture("assets/UI/pausefundo.mp4")
         self.menu_ativo = False
@@ -104,8 +103,6 @@ class Pause:
             return "continuar"
         if self.botaoopcoes.checkForInput(mouse_pos):
             return "opcoes"
-        if self.botaosalvar.checkForInput(mouse_pos):
-            return "salvar"
         if self.botaosair.checkForInput(mouse_pos):
             return "sair"
         return None

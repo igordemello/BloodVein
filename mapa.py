@@ -26,6 +26,8 @@ class Mapa:
         self.mapa_cache = None
         self._last_porta_state = None
 
+        self.matriz = self.exportar_matriz_colisao()
+
     def desenhar(self, porta_liberada):
         if self.mapa_cache is None or self._last_porta_state != porta_liberada:
             self._last_porta_state = porta_liberada
@@ -73,6 +75,32 @@ class Mapa:
                         self.mapa_cache.blit(tile_img, 
                                            (x * tile_w * self.escala, 
                                             y * tile_h * self.escala))
+                        
+    def exportar_matriz_colisao(self):
+        largura = self.tmx_data.width
+        altura = self.tmx_data.height
+
+        matriz = [[0 for _ in range(largura)] for _ in range(altura)]
+
+        for layer in self.tmx_data.visible_layers:
+            if isinstance(layer, pytmx.TiledTileLayer):
+                for x, y, gid in layer:
+                    if not gid:
+                        continue
+
+                    tile_props = self.tmx_data.get_tile_properties_by_gid(gid)
+
+                    if tile_props and "colliders" in tile_props:
+                        tipo = tile_props.get("tipo_colisao", "obstaculo")
+                        if tipo == "parede":
+                            matriz[y][x] = 2
+                        else:
+                            matriz[y][x] = 1
+        
+        # for linha in matriz:
+        #     print("".join(str(v) for v in linha))
+        
+        return matriz
 
     def get_tile_colliders(self):
         colliders = []
