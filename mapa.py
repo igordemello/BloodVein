@@ -9,7 +9,7 @@ from screen_shake import screen_shaker
 
 
 class Mapa:
-    def __init__(self, caminho_tmx, tela, tela_width, tela_heigth, gerenciador_andar, escala=3):
+    def __init__(self, caminho_tmx, tela, tela_width, tela_heigth, gerenciador_andar, escala=3.25):
         self.tmx_data = load_pygame(f'mapas/{caminho_tmx}')
         self.escala = escala
         self.tela = tela
@@ -36,7 +36,7 @@ class Mapa:
         offset_x, offset_y = screen_shaker.offset
         rect_mapa = self.mapa_cache.get_rect(center=(
             self.tela_width // 2 + offset_x,
-            (self.tela_heigth + 184) // 2 + offset_y
+            (self.tela_heigth -100) // 2 + offset_y
         ))
         self.tela.blit(self.mapa_cache, rect_mapa)
 
@@ -110,7 +110,7 @@ class Mapa:
         largura_total = self.tmx_data.width * tile_w * self.escala
         altura_total = self.tmx_data.height * tile_h * self.escala
         mapa_rect = Rect(0, 0, largura_total, altura_total)
-        mapa_rect.center = (self.tela_width // 2, (self.tela_heigth + 184) // 2)
+        mapa_rect.center = (self.tela_width // 2, (self.tela_heigth -100) // 2)
         offset_x, offset_y = mapa_rect.topleft
 
         for layer in self.tmx_data.visible_layers:
@@ -166,7 +166,7 @@ class Mapa:
         largura_total = self.tmx_data.width * tile_w * self.escala
         altura_total = self.tmx_data.height * tile_h * self.escala
         mapa_rect = Rect(0, 0, largura_total, altura_total)
-        mapa_rect.center = (self.tela_width // 2, (self.tela_heigth + 184) // 2)
+        mapa_rect.center = (self.tela_width // 2, (self.tela_heigth -100) // 2)
         offset_x, offset_y = mapa_rect.topleft
 
         for layer in self.tmx_data.visible_layers:
@@ -206,7 +206,7 @@ class Mapa:
         largura_total = self.tmx_data.width * tile_w * self.escala
         altura_total = self.tmx_data.height * tile_h * self.escala
         mapa_rect = Rect(0, 0, largura_total, altura_total)
-        mapa_rect.center = (self.tela_width // 2, (self.tela_heigth + 184) // 2)
+        mapa_rect.center = (self.tela_width // 2, (self.tela_heigth -100) // 2)
         offset_x, offset_y = mapa_rect.topleft
 
         for layer in self.tmx_data.visible_layers:
@@ -231,7 +231,7 @@ class Mapa:
         largura_total = self.tmx_data.width * tile_w * self.escala
         altura_total = self.tmx_data.height * tile_h * self.escala
         mapa_rect = Rect(0, 0, largura_total, altura_total)
-        mapa_rect.center = (self.tela_width // 2, (self.tela_heigth + 184) // 2)
+        mapa_rect.center = (self.tela_width // 2, (self.tela_heigth -100) // 2)
         offset_x, offset_y = mapa_rect.topleft
 
         for layer in self.tmx_data.visible_layers:
@@ -255,7 +255,7 @@ class Mapa:
         largura_total = self.tmx_data.width * tile_w * self.escala
         altura_total = self.tmx_data.height * tile_h * self.escala
         mapa_rect = Rect(0, 0, largura_total, altura_total)
-        mapa_rect.center = (self.tela_width // 2, (self.tela_heigth + 184) // 2)
+        mapa_rect.center = (self.tela_width // 2, (self.tela_heigth -100) // 2)
         offset_x, offset_y = mapa_rect.topleft
 
         for layer in self.tmx_data.visible_layers:
@@ -279,7 +279,7 @@ class Mapa:
         largura_total = self.tmx_data.width * tile_w * self.escala
         altura_total = self.tmx_data.height * tile_h * self.escala
         mapa_rect = Rect(0, 0, largura_total, altura_total)
-        mapa_rect.center = (self.tela_width // 2, (self.tela_heigth + 184) // 2)
+        mapa_rect.center = (self.tela_width // 2, (self.tela_heigth -100) // 2)
         offset_x, offset_y = mapa_rect.topleft
 
         for layer in self.tmx_data.visible_layers:
@@ -303,7 +303,7 @@ class Mapa:
         largura_total = self.tmx_data.width * tile_w * self.escala
         altura_total = self.tmx_data.height * tile_h * self.escala
         mapa_rect = Rect(0, 0, largura_total, altura_total)
-        mapa_rect.center = (self.tela_width // 2, (self.tela_heigth + 184) // 2)
+        mapa_rect.center = (self.tela_width // 2, (self.tela_heigth -100) // 2)
         offset_x, offset_y = mapa_rect.topleft
 
         for layer in self.tmx_data.visible_layers:
@@ -327,7 +327,7 @@ class Mapa:
         largura_total = self.tmx_data.width * tile_w * self.escala
         altura_total = self.tmx_data.height * tile_h * self.escala
         mapa_rect = Rect(0, 0, largura_total, altura_total)
-        mapa_rect.center = (self.tela_width // 2, (self.tela_heigth + 184) // 2)
+        mapa_rect.center = (self.tela_width // 2, (self.tela_heigth -100) // 2)
         offset_x, offset_y = mapa_rect.topleft
 
         for layer in self.tmx_data.visible_layers:

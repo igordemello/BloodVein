@@ -70,7 +70,7 @@ class Player():
         # self.inventario = []
         self.nivel = 1
         self.hp = hp
-        self.hpMax = 100
+        self.hpMax = hp
 
 
         self.mpModificador = 1
@@ -90,7 +90,7 @@ class Player():
         self.base_rate = 1
         self.base_rateSt = 1
         self.base_velocidadeMov = 0.5
-        self.base_custoDash = 0  # Alterado para 0
+        self.base_custoDash = 2.75
         self.base_modificadorDanoRecebido = 1
         self.base_invencibilidade = 1000
         self.base_cooldown_st = 3222.22
@@ -137,6 +137,8 @@ class Player():
         self.itemAtivoEsgotado = None
         self.mpMaximo = 100
         self.mp = self.mpMaximo
+        self.staminaMaximo = 100
+        self.stamina = self.staminaMaximo
 
 
         self.almas = 999
@@ -228,7 +230,7 @@ class Player():
     def carregar_animacao(self, caminho):
         frame_largura = 32
         frame_altura = 48
-        escala = 2.7
+        escala = 3
         folha = transform.scale(image.load(caminho).convert_alpha(), (
             image.load(caminho).convert_alpha().get_width() * escala,
             image.load(caminho).convert_alpha().get_height() * escala))
@@ -245,11 +247,14 @@ class Player():
             return
 
         if (current_time - self.last_dash_time > self.dash_cooldown_max and
-                not self.is_dashing and teclas[K_SPACE]):
+                not self.is_dashing and teclas[K_SPACE] and self.stamina >= self.custoDash):
             self.last_dash_time = current_time
             self.is_dashing = True
             self.dash_direcao = direcao
             self.dash_duration = 0
+
+        if self.is_dashing:
+            self.stamina -= self.custoDash 
 
         self.ultimo_uso = current_time
 
@@ -271,6 +276,7 @@ class Player():
     def atualizar(self, dt, teclas):
         self.fonte_arcana()
         self.escudo()
+        print(f'HP: {self.hp}, Stamina: {self.stamina}, Mana: {self.mp}')
 
         if self.travado:
             self.vx = 0
@@ -397,10 +403,17 @@ class Player():
                         self.animacoes[self.anim_direcao]) and self.anim_direcao in self.animacoes_principais:
                     self.anim_frame = 0
 
+        self.hp -= 0.05 * self.rate
+
+        if current_time - self.last_dash_time >= self.cooldown_st:
+            self.stamina += 0.7 * self.rateSt
+        if self.stamina > self.staminaMaximo:
+            self.stamina = self.staminaMaximo
+
         if self.hp < 0:
             self.hp = 0
-        if self.hp > 100:
-            self.hp = 100
+        if self.hp > self.hpMax:
+            self.hp = self.hpMax
         if self.mp < 0:
             self.mp = 0
         if self.mp > self.mpMaximo:
@@ -962,7 +975,7 @@ class Player():
         self.base_rate = 1
         self.base_rateSt = 1
         self.base_velocidadeMov = 0.5
-        self.base_custoDash = 0  # Alterado para 0
+        self.base_custoDash = 2.75
         self.base_modificadorDanoRecebido = 1
         self.base_invencibilidade = 1000
         self.base_cooldown_st = 3222.22

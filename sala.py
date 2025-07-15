@@ -617,13 +617,13 @@ class Sala:
                         nova_instancia.gerenciador_andar = self.gerenciador_andar
                         
                         if direcao_porta == 'cima':
-                            nova_instancia.player.player_rect.topleft = (914, 765)
+                            nova_instancia.player.player_rect.topleft = (914, 644)
                         elif direcao_porta == 'baixo':
-                            nova_instancia.player.player_rect.topleft = (914, 360)
+                            nova_instancia.player.player_rect.topleft = (914, 176)
                         elif direcao_porta == 'esquerda':
-                            nova_instancia.player.player_rect.topleft = (1475, 506)
+                            nova_instancia.player.player_rect.topleft = (1550, 350)
                         elif direcao_porta == 'direita':
-                            nova_instancia.player.player_rect.topleft = (350, 506)
+                            nova_instancia.player.player_rect.topleft = (300, 350)
                         else:
                             nova_instancia.player.player_rect.topleft = (self.tela.get_width() // 2, self.tela.get_height() // 2)
 
@@ -659,7 +659,8 @@ class Sala:
             fade_in (bool): Se True, fade de preto para tela (entrada). Se False, fade para preto (saída).
             duration (int): Duração total do efeito em milissegundos.
         """
-        fade_surface = Surface((1323, 720), SRCALPHA)
+        return
+        fade_surface = Surface((1560-42,832-18), SRCALPHA)
         steps = 30
         #delay = max(1, duration // steps)  # Garante pelo menos 1ms de delay
 
@@ -668,7 +669,7 @@ class Sala:
             for alpha in range(255, -1, -255 // steps):
                 self.desenhar(self.tela)
                 fade_surface.fill((0, 0, 0, alpha))
-                self.tela.blit(fade_surface, (300, 275))
+                self.tela.blit(fade_surface, (201+21, 33+9))
                 display.flip()
                 #time.delay(delay)
         else:
@@ -676,7 +677,7 @@ class Sala:
             for alpha in range(0, 256, 255 // steps):
                 self.desenhar(self.tela)
                 fade_surface.fill((0, 0, 0, alpha))
-                self.tela.blit(fade_surface, (300, 275))
+                self.tela.blit(fade_surface, (201+21, 33+9))
                 display.flip()
                 #time.delay(delay)
 
