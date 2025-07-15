@@ -464,7 +464,7 @@ class MachadoDoInverno(Arma):
         else:
             inimigo.velocidade *= 0.25
             inimigo.congelado = True
-            player.st -= 50
+            player.st -= 35
             player.last_dash_time = current_time
 
 class EspadaEstelar(Arma):
@@ -571,14 +571,14 @@ class MarteloSolar(Arma):
 
     def ataqueSecundario(self,player,mouse_pos):
         current_time = time.get_ticks()
-        if player.st-50 <= 0:
+        if player.st-30 < 0:
             return #revisar isso
         else:
             som.tocar('martelo2')
             aoeMartelo = player.criarAOE(mouse_pos, 300)
             if aoeMartelo is None:
                 return
-            player.st -= 50
+            player.st -= 30
             player.last_dash_time = current_time
             return aoeMartelo
 
