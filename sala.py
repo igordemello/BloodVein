@@ -52,7 +52,7 @@ class Sala:
 
         self.almaspritesheet = image.load('./assets/Itens/almaSpriteSheet.png').convert_alpha()
         
-        self.lojista_img = transform.scale(image.load('./assets/Player/Ikoojista.png').convert_alpha(),(62.5,120))
+        self.lojista_img = transform.scale(image.load('./assets/Player/Ikoojista.png').convert_alpha(),(67.5,132.3))
 
         self.frames_alma = [self.almaspritesheet.subsurface(Rect(i * 32, 0, 32, 32)) for i in range(4)]
 
@@ -555,7 +555,7 @@ class Sala:
     
 
         if self.gerenciador_andar.grafo.nodes[self.gerenciador_andar.sala_atual]['tipo'] == 'loja':
-            self.tela.blit(self.lojista_img, (950 + offset_x, 650 + offset_y))
+            self.tela.blit(self.lojista_img, (950 + offset_x, 490 + offset_y))
         
 
         #debug visual das colisões do player e do mapa:
@@ -659,8 +659,8 @@ class Sala:
             fade_in (bool): Se True, fade de preto para tela (entrada). Se False, fade para preto (saída).
             duration (int): Duração total do efeito em milissegundos.
         """
-        return
-        fade_surface = Surface((1560-42,832-18), SRCALPHA)
+        
+        fade_surface = Surface((1425,775), SRCALPHA)
         steps = 30
         #delay = max(1, duration // steps)  # Garante pelo menos 1ms de delay
 
@@ -669,7 +669,7 @@ class Sala:
             for alpha in range(255, -1, -255 // steps):
                 self.desenhar(self.tela)
                 fade_surface.fill((0, 0, 0, alpha))
-                self.tela.blit(fade_surface, (201+21, 33+9))
+                self.tela.blit(fade_surface, (248,100))
                 display.flip()
                 #time.delay(delay)
         else:
@@ -677,7 +677,7 @@ class Sala:
             for alpha in range(0, 256, 255 // steps):
                 self.desenhar(self.tela)
                 fade_surface.fill((0, 0, 0, alpha))
-                self.tela.blit(fade_surface, (201+21, 33+9))
+                self.tela.blit(fade_surface, (248,100))
                 display.flip()
                 #time.delay(delay)
 
