@@ -61,6 +61,11 @@ class Inventario():
 
         self.fator_escala_arma = (self.item_width + 40) / 53
 
+        #nao me responsabilizo por isso
+        self.item_hover_atual = None
+        self.tempo_hover = 0
+        self.alpha_hover = 0
+
     def toggle(self):
         self.visible = not self.visible
         if self.visible:
@@ -143,62 +148,77 @@ class Inventario():
                 item_hover_pos = (ativo_x, ativo_y)
 
         # carta de item
+         #nao me responsabilizo por isso
         if item_hover:
-            escala = 1.2  # Fator de escala
-            carta_x = 1240 - (self.carta_imgs["comum"].get_width() * (
-                        escala - 1)) // 2  # Ajusta posição X para manter o centro
-            carta_y = 390 - (self.carta_imgs["comum"].get_height() * (
-                        escala - 1)) // 2  # Ajusta posição Y para manter o centro
+            # Controle de tempo e fade
+            if item_hover == self.item_hover_atual:
+                self.tempo_hover += 1
+                if self.alpha_hover < 255:
+                    self.alpha_hover += 15  # velocidade do fade-in
+            else:
+                self.item_hover_atual = item_hover
+                self.tempo_hover = 0
+                self.alpha_hover = 0
 
-            # Escala a imagem da carta
-            carta_img = self.carta_imgs.get(item_hover.raridade, self.carta_imgs["comum"])
-            carta_img = transform.scale(carta_img,
-                                        (int(carta_img.get_width() * escala),
-                                         int(carta_img.get_height() * escala)))
+            # Impede que vá além
+            self.alpha_hover = min(self.alpha_hover, 255)
+
+            # Preparar imagem com alpha
+            carta_img = self.carta_imgs.get(item_hover.raridade, self.carta_imgs["comum"]).copy()
+            escala = 1.2
+            largura = int(carta_img.get_width() * escala)
+            altura = int(carta_img.get_height() * escala)
+            carta_img = transform.scale(carta_img, (largura, altura))
+            carta_img.set_alpha(self.alpha_hover)
+
+            carta_x = 1240 - (largura * (escala - 1)) // 2
+            carta_y = 390 - (altura * (escala - 1)) // 2
             self.screen.blit(carta_img, (carta_x, carta_y))
 
-            fonte_nome = font.Font("assets/fontes/alagard.ttf", int(20 * escala))  # Aumenta fonte proporcionalmente
-            fonte_desc = font.Font("assets/fontes/alagard.ttf", int(16 * escala))  # Aumenta fonte proporcionalmente
+            # Só desenha o conteúdo textual e o ícone se alpha for suficientemente alto
+            if self.alpha_hover > 10:
+                fonte_nome = font.Font("assets/fontes/alagard.ttf", int(20 * escala))
+                fonte_desc = font.Font("assets/fontes/alagard.ttf", int(16 * escala))
+                icon_size = int(80 * escala)
+                icon = transform.scale(item_hover.sprite, (icon_size, icon_size))
+                icon_x = carta_x + (largura - icon_size) // 2
+                icon_y = carta_y + int(50 * escala)
+                self.screen.blit(icon, (icon_x, icon_y))
 
-            icon_size = int(80 * escala)
-            icon = transform.scale(item_hover.sprite, (icon_size, icon_size))
-            icon_x = carta_x + (carta_img.get_width() - icon_size) // 2  # Usa largura da carta escalada
-            icon_y = carta_y + int(50 * escala)
-            self.screen.blit(icon, (icon_x, icon_y))
+                if isinstance(item_hover, ItemAtivo):
+                    for x in range(item_hover.usos):
+                        draw.rect(self.screen, (0, 255, 0),
+                                (icon_x + (x * int(25 * escala)) - 70,
+                                icon_y + icon_size + int(10 * escala) + 220,
+                                int(20 * escala), int(8 * escala)))
 
-            if isinstance(item_hover, ItemAtivo):
-                for x in range(item_hover.usos):
-                    draw.rect(self.screen, (0, 255, 0),
-                              (icon_x + (x * int(25 * escala))-70,  # Posição X ajustada
-                               icon_y + icon_size + int(10 * escala)+220,  # Posição Y ajustada
-                               int(20 * escala),
-                               int(8 * escala)))
+                texto_nome = fonte_nome.render(item_hover.nome, True, (0, 0, 0))
+                nome_x = carta_x + (largura - texto_nome.get_width()) // 2
+                nome_y = icon_y + icon_size + int(35 * escala)
+                self.screen.blit(texto_nome, (nome_x, nome_y))
 
-            texto_nome = fonte_nome.render(item_hover.nome, True, (0, 0, 0))
-            nome_x = carta_x + (carta_img.get_width() - texto_nome.get_width()) // 2
-            nome_y = icon_y + icon_size + int(35 * escala)
-            self.screen.blit(texto_nome, (nome_x, nome_y))
+                descricao = item_hover.descricao
+                palavras = descricao.split(" ")
+                linhas = []
+                linha_atual = ""
 
-            descricao = item_hover.descricao
-            linhas = []
-            palavras = descricao.split(" ")
-            linha_atual = ""
-
-            for palavra in palavras:
-                test_line = linha_atual + " " + palavra if linha_atual else palavra
-                if fonte_desc.size(test_line)[0] < 230 * escala:  # Ajusta largura máxima
-                    linha_atual = test_line
-                else:
+                for palavra in palavras:
+                    test_line = linha_atual + " " + palavra if linha_atual else palavra
+                    if fonte_desc.size(test_line)[0] < 230 * escala:
+                        linha_atual = test_line
+                    else:
+                        linhas.append(linha_atual)
+                        linha_atual = palavra
+                if linha_atual:
                     linhas.append(linha_atual)
-                    linha_atual = palavra
-            if linha_atual:
-                linhas.append(linha_atual)
 
-            for i, linha in enumerate(linhas):
-                texto_desc = fonte_desc.render(linha, True, (0, 0, 0))
-                desc_x = carta_x + (carta_img.get_width() - texto_desc.get_width()) // 2
-                desc_y = nome_y + int(55 * escala) + i * int(24 * escala)
-                self.screen.blit(texto_desc, (desc_x, desc_y))
+                for i, linha in enumerate(linhas):
+                    texto_desc = fonte_desc.render(linha, True, (0, 0, 0))
+                    desc_x = carta_x + (largura - texto_desc.get_width()) // 2
+                    desc_y = nome_y + int(55 * escala) + i * int(24 * escala)
+                    self.screen.blit(texto_desc, (desc_x, desc_y))
+
+        
 
     def desenharStats(self):
         self.screen.blit(self.atributosFundo, (0, 0))
