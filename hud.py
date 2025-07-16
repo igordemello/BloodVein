@@ -238,7 +238,11 @@ class Hud:
             self.tela.blit(sem_mana, (650, 925))
 
 
-
+        #level up disponivel
+        level_up_text = self.hotkey_font.render(f'Level Up Disponível!', True, (243, 236, 215))
+        
+        if self.player.almas >= (10 + (self.player.nivel * 2)):
+            self.tela.blit(level_up_text, (almas_rect.x , almas_rect.y + 55))
 
         if total_hits > 0:
             self.tela.blit(combo, combo_rect.topleft)
