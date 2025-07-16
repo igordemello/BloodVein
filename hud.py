@@ -224,7 +224,7 @@ class Hud:
             self.tela.blit(barra_stamina, (x_hud + x_inicio_stamina, y_barra))
 
         # item ativo
-        margem_item_x = 1625
+        margem_item_x = 1920-150
         margem_item_y = 925
         item_slot = {
             "rect": Rect(margem_item_x, margem_item_y, 100, 100),
