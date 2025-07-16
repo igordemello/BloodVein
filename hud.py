@@ -35,7 +35,7 @@ class Hud:
         self.hotkeys_bg = Surface((400, 60), SRCALPHA)
         self.hotkeys_bg.fill((0, 0, 0, 150))
         self.hotkey_slots = [
-            {"rect": Rect(50 + i * 100, 980, 80, 50), "color": (100, 100, 100, 200)}
+            {"rect": Rect(50, 320 + i * 125, 100, 100), "color": (100, 100, 100, 200)}
             for i in range(4)
         ]
         self.hotkey_font = font.Font('assets/Fontes/alagard.ttf', 20)
@@ -274,7 +274,7 @@ class Hud:
             self.tela.blit(slot_surface, (slot["rect"].x + offset_x, slot["rect"].y + offset_y))
 
             tecla_texto = self.hotkey_font.render(teclas[i], True, (243, 236, 215))
-            self.tela.blit(tecla_texto, (slot["rect"].x + 35 + offset_x, slot["rect"].y - 20 + offset_y))
+            self.tela.blit(tecla_texto, (slot["rect"].x + 45 + offset_x, slot["rect"].y - 20 + offset_y))
 
             if self.player.hotkeys[i] != 0:
                 hab_nome = self.player.hotkeys[i]
