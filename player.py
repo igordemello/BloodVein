@@ -95,7 +95,7 @@ class Player():
         self.base_velocidadeMov = 0.5
         self.base_custoDash = 2.75
         self.base_modificadorDanoRecebido = 1
-        self.base_invencibilidade = 1000
+        self.base_invencibilidade = 500
         self.base_cooldown_st = 3222.22
         self.base_dash_cooldown_max = 1000
         self.base_dash_duration_max = 150
@@ -701,7 +701,7 @@ class Player():
         tela.blit(rotated_surface, final_rect.topleft)
 
         frame = self.frame_atual.copy()
-        if self.foi_atingido and time.get_ticks() - self.tempo_atingido < 250:
+        if self.foi_atingido and time.get_ticks() - self.tempo_atingido < self.invencibilidade:
             frame.fill((255, 255, 255), special_flags=BLEND_RGB_ADD)
 
         # Aplicar transparência ao jogador se o efeito fantasma estiver ativo
@@ -992,7 +992,7 @@ class Player():
         self.base_velocidadeMov = 0.5
         self.base_custoDash = 2.75
         self.base_modificadorDanoRecebido = 1
-        self.base_invencibilidade = 1000
+        self.base_invencibilidade = 500
         self.base_cooldown_st = 3222.22
         self.base_dash_cooldown_max = 1000
         self.base_dash_duration_max = 150
