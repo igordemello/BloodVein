@@ -31,6 +31,15 @@ class Hud:
         self.stats_alpha = None
 
 
+        #hotbar - temporária
+        self.hotkeys_bg = Surface((400, 60), SRCALPHA)
+        self.hotkeys_bg.fill((0, 0, 0, 150))
+        self.hotkey_slots = [
+            {"rect": Rect(50 + i * 100, 980, 80, 50), "color": (100, 100, 100, 200)}
+            for i in range(4)
+        ]
+        self.hotkey_font = font.Font('assets/Fontes/alagard.ttf', 20)
+
         self.combo_shake_intensity = 0
         self.combo_shake_duration = 0
         self.last_combo_count = 0
@@ -169,6 +178,7 @@ class Hud:
             self.tela.blit(combo, combo_rect.topleft)
             self.tela.blit(comboMult, comboMult_rect.topleft)
 
+        self.desenhar_hotkeys()
 
         
 
@@ -212,3 +222,25 @@ class Hud:
 
     def reset_stats_fade(self):
         self.stats_alpha = 0
+
+    def desenhar_hotkeys(self):
+        offset_x, offset_y = screen_shaker.offset
+        teclas = ["1", "2", "3", "4"]
+
+
+        for i, slot in enumerate(self.hotkey_slots):
+            color = (0, 200, 0, 200) if self.player.hotkeys[i] != 0 else slot["color"]
+
+            slot_surface = Surface((slot["rect"].width, slot["rect"].height), SRCALPHA)
+            slot_surface.fill(color)
+            draw.rect(slot_surface, (255, 255, 255, 150), slot_surface.get_rect(), 2)
+            self.tela.blit(slot_surface, (slot["rect"].x + offset_x, slot["rect"].y + offset_y))
+
+            tecla_texto = self.hotkey_font.render(teclas[i], True, (255, 255, 255))
+            self.tela.blit(tecla_texto, (slot["rect"].x + 35 + offset_x, slot["rect"].y - 20 + offset_y))
+
+            if self.player.hotkeys[i] != 0:
+                hab_nome = self.player.hotkeys[i]
+                texto = self.hotkey_font.render(hab_nome[:4], True, (255, 255, 255))
+                texto_rect = texto.get_rect(center=slot["rect"].center)
+                self.tela.blit(texto, (texto_rect.x + offset_x, texto_rect.y + offset_y))
