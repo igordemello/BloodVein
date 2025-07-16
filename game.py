@@ -85,8 +85,9 @@ class Game:
         self.menu_armas_ativo = None
 
     def resetar_jogo(self, com_nova_run=False):
-        self.player = Player(950, 600, 32 * 2, 48 * 2)
+        self.player = Player(950, 400, 32 * 2, 48 * 2)
         self.hud = Hud(self.player, self.screen)
+        self.player.set_hud(self.hud)
         self.andar = GerenciadorAndar()
         self.minimapa = Minimapa(self.andar, self.screen)
         self.sala_atual = Sala("andar1/spawn.tmx", self.screen, self.player, self.andar, self.set_minimapa)

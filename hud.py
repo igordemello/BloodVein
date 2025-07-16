@@ -52,6 +52,13 @@ class Hud:
 
         self.tela = tela
 
+        # Mensagens temporárias
+        self.mensagem_sem_stamina = False
+        self.mensagem_sem_mana = False
+        self.tempo_mensagem_stamina = 0
+        self.tempo_mensagem_mana = 0
+        self.duracao_mensagem = 1000
+
     def desenhaFundo(self):
         self.tela.blit(self.fundo, (0, 0))
 
@@ -75,6 +82,13 @@ class Hud:
         if hasattr(self, 'arma_anterior') and self.arma_anterior != self.player.arma:
             self.atualizar_arma_icon()
         self.arma_anterior = self.player.arma
+
+        # Atualiza mensagens temporárias
+        current_time = time.get_ticks()
+        if self.mensagem_sem_stamina and current_time - self.tempo_mensagem_stamina > self.duracao_mensagem:
+            self.mensagem_sem_stamina = False
+        if self.mensagem_sem_mana and current_time - self.tempo_mensagem_mana > self.duracao_mensagem:
+            self.mensagem_sem_mana = False
 
     def trigger_combo_shake(self):
         self.combo_shake_intensity = min(10 + self.player.hits * 0.5, 30)
@@ -181,6 +195,14 @@ class Hud:
         self.tela.blit(hp_text, (1025,legendas_y))
         self.tela.blit(mp_text, (550, legendas_y))
         self.tela.blit(stamina_text, (1300, legendas_y))
+
+        if self.mensagem_sem_stamina:
+            sem_stamina = self.hotkey_font.render('SEM STAMINA!', True, (243, 236, 215))
+            self.tela.blit(sem_stamina, (1175, 925))
+    
+        if self.mensagem_sem_mana:
+            sem_mana = self.hotkey_font.render('SEM MANA!', True, (243, 236, 215))
+            self.tela.blit(sem_mana, (650, 925))
         
 
 
