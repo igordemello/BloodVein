@@ -15,7 +15,7 @@ from som import musica
 
 
 class Player():
-    def __init__(self, x, y, largura, altura, hp=100, st=100, velocidadeMov=0.5, sprite='hero.png', arma=None):
+    def __init__(self, x, y, largura, altura,hud=None, hp=100, st=100, velocidadeMov=0.5, sprite='hero.png', arma=None):
         # animações
         self.hit_landed = None
         self.animacoes = {
@@ -227,6 +227,11 @@ class Player():
 
         self.velocidadeMov = self.base_velocidadeMov
 
+        self.hud = hud
+
+    def set_hud(self, hud):
+        self.hud = hud
+
     def carregar_animacao(self, caminho):
         frame_largura = 32
         frame_altura = 48
@@ -246,8 +251,11 @@ class Player():
         if current_time < self.proibir_dash_ate:
             return
 
-        if (current_time - self.last_dash_time > self.dash_cooldown_max and
-                not self.is_dashing and teclas[K_SPACE] and self.stamina >= self.custoDash):
+        if (current_time - self.last_dash_time > self.dash_cooldown_max and not self.is_dashing and teclas[K_SPACE]):
+            if self.stamina < self.custoDash:
+                self.hud.mensagem_sem_stamina = True
+                self.hud.tempo_mensagem_stamina = current_time
+                return
             self.last_dash_time = current_time
             self.is_dashing = True
             self.dash_direcao = direcao
@@ -276,7 +284,7 @@ class Player():
     def atualizar(self, dt, teclas):
         self.fonte_arcana()
         self.escudo()
-        print(f'HP: {self.hp}, Stamina: {self.stamina}, Mana: {self.mp}')
+        # print(f'HP: {self.hp}, Stamina: {self.stamina}, Mana: {self.mp}')
 
         if self.travado:
             self.vx = 0
@@ -418,7 +426,7 @@ class Player():
             self.mp = 0
         if self.mp > self.mpMaximo:
             self.mp = self.mpMaximo
-        print(self.mp, self.mpMaximo)
+
         if self.hp == 0:
             if self.revives <= 0:
                 self.gameOver = True
@@ -986,7 +994,7 @@ class Player():
         self.arma.danoCriticoMod = self.base_danoCriticoMod * (1 + (self.atributos["forca"] - 5) / 5)
         self.arma.velocidade = self.base_velocidade * (1 + ((self.atributos["destreza"] - 5) / 5) * 0.5)
         self.arma.chanceCritico = self.base_chanceCritico * (1 + ((self.atributos["sorte"] - 5) / 5) * 3)
-        self.rate = 0#self.base_rate - (self.atributos["vigor"] - 5) / 20
+        self.rate = self.base_rate - (self.atributos["vigor"] - 5) / 20
         self.rateSt = self.base_rateSt + ((self.atributos["estamina"] - 5) / 5) * 0.6
         self.velocidadeMov = self.base_velocidadeMov + ((self.atributos["agilidade"] - 5) / 5) * 0.5
         self.custoDash = self.base_custoDash - ((self.atributos["estamina"] - 5) / 5) * 0.75
@@ -1068,6 +1076,11 @@ class Player():
         sprite_projetil = image.load("assets/player/bola_de_fogo.png").convert_alpha()
         current_time = time.get_ticks()
         custoHabilidade = 30 * self.mpModificador
+        if self.mp < custoHabilidade:
+            # Ativa mensagem de sem mana no HUD
+            self.hud.mensagem_sem_mana = True
+            self.hud.tempo_mensagem_mana = current_time
+            return
         if self.mp - custoHabilidade <= 0:
             return
         else:
@@ -1080,6 +1093,11 @@ class Player():
             return
         current_time = time.get_ticks()
         custoHabilidade = 75*self.mpModificador
+        if self.mp < custoHabilidade:
+            # Ativa mensagem de sem mana no HUD
+            self.hud.mensagem_sem_mana = True
+            self.hud.tempo_mensagem_mana = current_time
+            return
         if self.mp < custoHabilidade:
             return
 
@@ -1114,6 +1132,11 @@ class Player():
         sprite_projetil = image.load("assets/player/bola_de_gelo.png").convert_alpha()
         current_time = time.get_ticks()
         custoHabilidade = 30*self.mpModificador
+        if self.mp < custoHabilidade:
+            # Ativa mensagem de sem mana no HUD
+            self.hud.mensagem_sem_mana = True
+            self.hud.tempo_mensagem_mana = current_time
+            return
         if self.mp - custoHabilidade <= 0:
             return
         else:
@@ -1129,6 +1152,11 @@ class Player():
         sprite_projetil = image.load("assets/player/Raio.png").convert_alpha()
         current_time = time.get_ticks()
         custoHabilidade = 40*self.mpModificador
+        if self.mp < custoHabilidade:
+            # Ativa mensagem de sem mana no HUD
+            self.hud.mensagem_sem_mana = True
+            self.hud.tempo_mensagem_mana = current_time
+            return
         if self.mp - custoHabilidade <= 0:
             return
         else:
@@ -1141,6 +1169,11 @@ class Player():
             return
         current_time = time.get_ticks()
         custoHabilidade = 75*self.mpModificador
+        if self.mp < custoHabilidade:
+            # Ativa mensagem de sem mana no HUD
+            self.hud.mensagem_sem_mana = True
+            self.hud.tempo_mensagem_mana = current_time
+            return
         if self.mp < custoHabilidade:
             return
 

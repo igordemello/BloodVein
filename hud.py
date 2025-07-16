@@ -52,6 +52,13 @@ class Hud:
 
         self.tela = tela
 
+        # Mensagens temporárias
+        self.mensagem_sem_stamina = False
+        self.mensagem_sem_mana = False
+        self.tempo_mensagem_stamina = 0
+        self.tempo_mensagem_mana = 0
+        self.duracao_mensagem = 1000
+
     def desenhaFundo(self):
         self.tela.blit(self.fundo, (0, 0))
 
@@ -75,6 +82,13 @@ class Hud:
         if hasattr(self, 'arma_anterior') and self.arma_anterior != self.player.arma:
             self.atualizar_arma_icon()
         self.arma_anterior = self.player.arma
+
+        # Atualiza mensagens temporárias
+        current_time = time.get_ticks()
+        if self.mensagem_sem_stamina and current_time - self.tempo_mensagem_stamina > self.duracao_mensagem:
+            self.mensagem_sem_stamina = False
+        if self.mensagem_sem_mana and current_time - self.tempo_mensagem_mana > self.duracao_mensagem:
+            self.mensagem_sem_mana = False
 
     def trigger_combo_shake(self):
         self.combo_shake_intensity = min(10 + self.player.hits * 0.5, 30)
@@ -172,6 +186,25 @@ class Hud:
         self.tela.blit(self.almaIcon, (almas_rect.right, 43))
         self.tela.blit(almas, almas_rect)
 
+        #legenda hud
+        hp_text = self.hotkey_font.render(f'{self.player.hp if self.player.hp > 0 else 0 :.0f}/{self.player.hpMax:.0f}', True, (243, 236, 215))
+        mp_text = self.hotkey_font.render(f'{self.player.mp if self.player.mp > 0 else 0 :.0f}/{self.player.mpMaximo:.0f}', True, (243, 236, 215))
+        stamina_text = self.hotkey_font.render(f'{self.player.stamina if self.player.stamina > 0 else 0 :.0f}/{self.player.staminaMaximo:.0f}', True, (243, 236, 215))
+
+        legendas_y = 1020
+        self.tela.blit(hp_text, (1025,legendas_y))
+        self.tela.blit(mp_text, (550, legendas_y))
+        self.tela.blit(stamina_text, (1300, legendas_y))
+
+        if self.mensagem_sem_stamina:
+            sem_stamina = self.hotkey_font.render('SEM STAMINA!', True, (243, 236, 215))
+            self.tela.blit(sem_stamina, (1175, 925))
+    
+        if self.mensagem_sem_mana:
+            sem_mana = self.hotkey_font.render('SEM MANA!', True, (243, 236, 215))
+            self.tela.blit(sem_mana, (650, 925))
+        
+
 
 
         if total_hits > 0:
@@ -236,11 +269,11 @@ class Hud:
             draw.rect(slot_surface, (255, 255, 255, 150), slot_surface.get_rect(), 2)
             self.tela.blit(slot_surface, (slot["rect"].x + offset_x, slot["rect"].y + offset_y))
 
-            tecla_texto = self.hotkey_font.render(teclas[i], True, (255, 255, 255))
+            tecla_texto = self.hotkey_font.render(teclas[i], True, (243, 236, 215))
             self.tela.blit(tecla_texto, (slot["rect"].x + 35 + offset_x, slot["rect"].y - 20 + offset_y))
 
             if self.player.hotkeys[i] != 0:
                 hab_nome = self.player.hotkeys[i]
-                texto = self.hotkey_font.render(hab_nome[:4], True, (255, 255, 255))
+                texto = self.hotkey_font.render(hab_nome[:4], True, (243, 236, 215))
                 texto_rect = texto.get_rect(center=slot["rect"].center)
                 self.tela.blit(texto, (texto_rect.x + offset_x, texto_rect.y + offset_y))
