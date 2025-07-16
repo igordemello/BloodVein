@@ -72,8 +72,8 @@ class Player():
         self.hp = hp
         self.hpMax = hp
 
-        self.pocoesHp = 4
-        self.pocoesMp = 4
+        self.pocoesHp = 0
+        self.pocoesMp = 0
 
 
         self.mpModificador = 1
