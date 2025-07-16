@@ -276,7 +276,7 @@ class Player():
     def atualizar(self, dt, teclas):
         self.fonte_arcana()
         self.escudo()
-        print(f'HP: {self.hp}, Stamina: {self.stamina}, Mana: {self.mp}')
+        # print(f'HP: {self.hp}, Stamina: {self.stamina}, Mana: {self.mp}')
 
         if self.travado:
             self.vx = 0
@@ -418,7 +418,7 @@ class Player():
             self.mp = 0
         if self.mp > self.mpMaximo:
             self.mp = self.mpMaximo
-        print(self.mp, self.mpMaximo)
+
         if self.hp == 0:
             if self.revives <= 0:
                 self.gameOver = True
@@ -986,7 +986,7 @@ class Player():
         self.arma.danoCriticoMod = self.base_danoCriticoMod * (1 + (self.atributos["forca"] - 5) / 5)
         self.arma.velocidade = self.base_velocidade * (1 + ((self.atributos["destreza"] - 5) / 5) * 0.5)
         self.arma.chanceCritico = self.base_chanceCritico * (1 + ((self.atributos["sorte"] - 5) / 5) * 3)
-        self.rate = 0#self.base_rate - (self.atributos["vigor"] - 5) / 20
+        self.rate = self.base_rate - (self.atributos["vigor"] - 5) / 20
         self.rateSt = self.base_rateSt + ((self.atributos["estamina"] - 5) / 5) * 0.6
         self.velocidadeMov = self.base_velocidadeMov + ((self.atributos["agilidade"] - 5) / 5) * 0.5
         self.custoDash = self.base_custoDash - ((self.atributos["estamina"] - 5) / 5) * 0.75
