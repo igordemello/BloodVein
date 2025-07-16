@@ -12,6 +12,7 @@ from screen_shake import screen_shaker
 from som import som
 from som import GerenciadorDeMusica
 from som import musica
+from dificuldade import dificuldade_global
 
 
 class Player():
@@ -850,7 +851,7 @@ class Player():
                     inimigo.time_last_hit_frame = time.get_ticks()
                     self.hits += 1
                     self.tempo_ultimo_hit = current_time
-                    self.arma.comboMult = 1.0 + (0.1 * self.hits)
+                    self.arma.comboMult = 1.1**self.hits
                     self.arma.ataquePrincipal(inimigo)
                     inimigo.ultimo_dano_tempo = current_time
                     self.hp = min(self.hp + self.arma.lifeSteal, self.hpMax)
@@ -936,9 +937,12 @@ class Player():
             return
         self.ultimo_dano = now
         som.tocar(choice(['Dano1', 'Dano2', 'Dano3']))
-        self.hp -= valor * self.modificadorDanoRecebido
+
+        valor *= dificuldade_global.mult_dano_jogador
+        self.hp -= valor
         self.foi_atingido = True
         self.tempo_atingido = now
+
         self.dano_recebido_tempo = now
         self.dano_recebido = valor * self.modificadorDanoRecebido
         self.telaSangue_alpha = 255
