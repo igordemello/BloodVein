@@ -42,6 +42,7 @@ class Orb(Inimigo):
 
     def desenhar(self, tela, player_pos, offset=(0, 0)):
         offset_x, offset_y = offset
+        self.desenhar_outline_mouseover(tela)
 
         if self.anima_hit:
             now = time.get_ticks()

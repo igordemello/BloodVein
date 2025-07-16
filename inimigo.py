@@ -5,7 +5,7 @@ import math
 from random import randint
 from modificadores_inimigos import *
 from screen_shake import screen_shaker
-
+from pygame.mask import from_surface as mask_from_surface
 
 class Inimigo:
     def __init__(self, x, y, largura, altura, hp, velocidade=2, dano=0):
@@ -151,3 +151,27 @@ class Inimigo:
     def aplicar_modificadores(self, elite=False):
         gerenciador = GerenciadorModificadores()
         gerenciador.aplicar_modificadores(self, elite)
+
+    def desenhar_outline_mouseover(self, tela):
+        mouse_pos = mouse.get_pos()
+        if self.rect.collidepoint(mouse_pos):
+            if not self.frames:
+                return
+
+            sprite = self.frames[self.frame_index]
+            mask = mask_from_surface(sprite)
+
+            outline_size = 1
+            outline_surf = Surface((sprite.get_width() + 2 * outline_size, sprite.get_height() + 2 * outline_size), SRCALPHA)
+
+            outline_mask = mask.to_surface(setcolor=(255, 0, 0), unsetcolor=(0, 0, 0, 0))
+
+            for dx in range(-outline_size, outline_size + 1):
+                for dy in range(-outline_size, outline_size + 1):
+                    if dx == 0 and dy == 0:
+                        continue
+                    outline_surf.blit(outline_mask, (dx + outline_size, dy + outline_size))
+
+            outline_pos = (self.rect.x - outline_size, self.rect.y - outline_size)
+            tela.blit(outline_surf, outline_pos)
+

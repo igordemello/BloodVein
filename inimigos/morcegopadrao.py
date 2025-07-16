@@ -147,6 +147,7 @@ class MorcegoPadrao(Inimigo):
     def desenhar(self, tela, player_pos, offset=(0, 0)):
         if not self.vivo or len(self.frames) == 0:
             return
+        self.desenhar_outline_mouseover(tela)
 
         offset_x, offset_y = offset
         draw_x = round(self.x) + offset_x
@@ -165,3 +166,5 @@ class MorcegoPadrao(Inimigo):
         if time.get_ticks() - self.ultimo_dano_tempo < 2500:
             draw.rect(tela, (255, 0, 0), (draw_x - 20, draw_y + 60, largura_hp, 5))
             draw.rect(tela, (255, 255, 255), (draw_x - 20, draw_y + 60, largura_barra, 5), 1)
+
+

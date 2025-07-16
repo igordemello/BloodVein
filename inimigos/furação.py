@@ -198,6 +198,7 @@ class Furacao(Inimigo):
     def desenhar(self, tela, player_pos, offset=(0, 0)):
         if not self.vivo or not self.frames:
             return
+        self.desenhar_outline_mouseover(tela)
 
         offset_x, offset_y = offset
         draw_x = self.x + offset_x
