@@ -208,13 +208,13 @@ class Inventario():
             fonte_attr = font.Font("assets/fontes/alagard.ttf", 48)
             fonte_custo = font.Font("assets/fontes/alagard.ttf", 32)
             fonte_desc = font.Font("assets/fontes/alagard.ttf", 20)  # Nova fonte para descrição
+            fonte_hotkey = font.Font("assets/fontes/alagard.ttf", 24)  # Fonte para os números das hotkeys
             cor_attr = (253, 246, 225)
-            cor_desc = (200, 200, 200)  # Cor para a descrição
+            cor_desc = (200, 200, 200)
 
-            # Configurações do retângulo de descrição
-            desc_largura = 300  # Largura variável
-            desc_altura = 80  # Altura variável
-            desc_margem = 20  # Margem entre o botão e a descrição
+            desc_largura = 300
+            desc_altura = 80
+            desc_margem = 20
 
             atributos = [
                 f'Força: {round(player.atributos["forca"], 1)}',
@@ -248,7 +248,7 @@ class Inventario():
             if player.almas >= (10 + (player.nivel * 2)):
                 y_pos = 300
                 mouse_pos = mouse.get_pos()
-                self.botoes_atributos = []  # Limpa a lista de botões antes de recriá-los
+                self.botoes_atributos = []
 
                 atributos_ordenados = [
                     "forca",
@@ -273,18 +273,22 @@ class Inventario():
 
                     y_pos += 60
 
-            #habilidades
+            # habilidades
 
             habilidades = list(self.gerenciador_habilidades.habilidades.keys())
             posicoes_botoes = [
-                (1094, 820), (1373, 820),  # Linha inferior
-                (998, 660), (1190, 660),  # Linha do meio inferior
-                (998, 500), (1190, 500), (1373, 500),  # Linha do meio
-                (1094, 340), (1277, 340), (1469, 340)  # Linha superior
+                (1094, 820), (1373, 820),
+                (998, 660), (1190, 660),
+                (998, 500), (1190, 500), (1373, 500),
+                (1094, 340), (1277, 340), (1469, 340)
             ]
 
             fonte_habilidade = font.Font("assets/fontes/alagard.ttf", 16)
             self.botoes_habilidades = []
+            explicacao = fonte_habilidade.render(
+                'Aperte 1,2,3 ou 4 com o cursor em cima de uma \n      habilidade para vincula-la a essa tecla', True,
+                (243, 236, 215))
+            self.screen.blit(explicacao, (800, 1020))
             hovered_habilidade = None
 
             for i, (pos_x, pos_y) in enumerate(posicoes_botoes):
@@ -294,39 +298,44 @@ class Inventario():
                 hab_nome = habilidades[i]
                 hab = self.gerenciador_habilidades.habilidades[hab_nome]
 
-                # Obter a cor apropriada para o botão
                 cor = self.gerenciador_habilidades.get_cor_botao(player, hab_nome)
 
-                # Criar superfície do botão
                 botao_surface = Surface((104, 104), SRCALPHA)
                 botao_surface.fill(cor)
 
-                # Adicionar ícone se existir
                 if hab.sprite:
                     icon = transform.scale(hab.sprite, (80, 80))
                     botao_surface.blit(icon, (12, 12))
 
-                # Criar botão
+                hotkey_num = None
+                for num, habilidade in enumerate(player.hotkeys, 1):
+                    if habilidade == hab_nome:
+                        hotkey_num = num
+                        break
+
                 botao = Botao(
                     image=botao_surface,
                     pos=(pos_x + 52, pos_y + 52),
-                    text_input=str(i + 1),
+                    text_input="",
                     font=fonte_habilidade,
                     base_color=(255, 255, 255),
                     hovering_color=(255, 255, 255),
                     value=hab_nome
                 )
 
-                # Verificar hover
+                if hotkey_num:
+                    hotkey_text = fonte_hotkey.render(str(hotkey_num), True, (255, 255, 255))
+                    hotkey_rect = hotkey_text.get_rect(bottomright=(pos_x + 100, pos_y + 100))
+                    self.screen.blit(hotkey_text, hotkey_rect)
+
                 mouse_pos = mouse.get_pos()
                 if botao.checkForInput(mouse_pos):
                     hovered_habilidade = hab
 
-                # Atualizar e desenhar botão
                 botao.changeColor(mouse_pos)
                 botao.update(self.screen)
                 self.botoes_habilidades.append(botao)
-            print(self.player.hotkeys)
+
             if hovered_habilidade and hasattr(hovered_habilidade, 'descricao'):
                 for botao in self.botoes_habilidades:
                     if botao.value == hovered_habilidade.nome:
@@ -344,7 +353,7 @@ class Inventario():
 
                         for palavra in palavras:
                             teste_linha = f"{linha_atual} {palavra}" if linha_atual else palavra
-                            if fonte_desc.size(teste_linha)[0] < desc_largura - 20:  # Margem interna
+                            if fonte_desc.size(teste_linha)[0] < desc_largura - 20:
                                 linha_atual = teste_linha
                             else:
                                 linhas.append(linha_atual)

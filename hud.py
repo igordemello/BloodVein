@@ -24,6 +24,9 @@ class Hud:
         self.full_hp = image.load('assets/UI/full_hp.png').convert_alpha()
         self.full_hp = transform.scale(self.full_hp, (self.full_hp.get_width()*0.9, self.full_hp.get_height()*0.9))
 
+        self.pocoesHp = transform.scale(image.load('assets/itens/pocaodevida.png').convert_alpha(),(64,64))
+        self.pocoesMp = transform.scale(image.load('assets/itens/pocaodemana.png').convert_alpha(),(64,64))
+
         self.almaIcon = transform.scale(image.load('assets/Itens/alma.png').convert_alpha(), (76,76))
         
         self.statsArma = transform.scale(image.load('assets/UI/stats.png').convert_alpha(),(300*1.3,250*1.3))
@@ -99,6 +102,32 @@ class Hud:
         almas_font = font.Font('assets/Fontes/alagard.ttf', 55)
         almas = almas_font.render(f"{self.player.almas}x", True, (243, 236, 215))
 
+        pocoes_font = font.Font('assets/Fontes/alagard.ttf', 32)
+
+        pocao_slot_size = 100
+        pocao_slots = [
+            {"rect": Rect(50, 925, pocao_slot_size, pocao_slot_size), "tecla": "C", "pocao": self.pocoesHp,
+             "qtd": self.player.pocoesHp, "color": (100, 100, 100, 200)},
+            {"rect": Rect(170, 925, pocao_slot_size, pocao_slot_size), "tecla": "V", "pocao": self.pocoesMp,
+             "qtd": self.player.pocoesMp, "color": (100, 100, 100, 200)}
+        ]
+
+        for slot in pocao_slots:
+            slot_surface = Surface((slot["rect"].width, slot["rect"].height), SRCALPHA)
+            slot_surface.fill(slot["color"])
+            draw.rect(slot_surface, (255, 255, 255, 150), slot_surface.get_rect(), 2)
+            self.tela.blit(slot_surface, (slot["rect"].x + offset_x, slot["rect"].y + offset_y))
+
+            tecla_texto = self.hotkey_font.render(slot["tecla"], True, (243, 236, 215))
+            self.tela.blit(tecla_texto, (slot["rect"].x + 45 + offset_x, slot["rect"].y - 20 + offset_y))
+
+            pocao_img = slot["pocao"]
+            img_rect = pocao_img.get_rect(center=slot["rect"].center)
+            self.tela.blit(pocao_img, (img_rect.x + offset_x, img_rect.y + offset_y))
+
+            qtd_text = pocoes_font.render(f"{slot['qtd']}x", True, (243, 236, 215))
+            self.tela.blit(qtd_text, (slot["rect"].right - 65 + offset_x, slot["rect"].bottom + 5 + offset_y))
+
         total_hits = self.player.hits + self.player.hits_projetil
         combo_mult = self.player.arma.comboMult
 
@@ -109,7 +138,6 @@ class Hud:
 
         comboMult_font = font.Font('assets/Fontes/alagard.ttf', min(int(24 * combo_mult), 48))
         comboMult = comboMult_font.render(f"{combo_mult:.2f}x", True, (253, 246, 225))
-
 
         almas_rect = almas.get_rect()
         almas_rect.right = 1830
@@ -129,16 +157,16 @@ class Hud:
 
         if minimal:
             return
-        
+
         #braços e coração fundo
         meio = self.tela.get_width() // 2
         x_hud = meio - self.hud.get_width() // 2
-        
+
         self.tela.blit(self.hud, (x_hud, 885))
 
 
         #braços e coracao dinamico
-        alturaHp_total = self.full_hp.get_height() 
+        alturaHp_total = self.full_hp.get_height()
         proporcaoHp = max(0, min(1, self.player.hp / self.player.hpMax))
         altura_visivelHp = int(alturaHp_total * proporcaoHp)
 
@@ -171,7 +199,7 @@ class Hud:
                 (x_inicio_stamina, 0, largura_visivel_stamina, self.full_stamina_mana.get_height())
             ).copy()
             self.tela.blit(barra_stamina, (x_hud + x_inicio_stamina, y_barra))
-        
+
 
         #item ativo
         margem_item_x = 1625
@@ -184,7 +212,7 @@ class Hud:
             sprite = transform.scale(self.player.itemAtivo.sprite, (96, 96))
             self.tela.blit(sprite, (margem_item_x + 10, margem_item_y))
 
-        
+
 
         # Almas
         self.tela.blit(self.almaIcon, (almas_rect.right, 43))
@@ -203,11 +231,11 @@ class Hud:
         if self.mensagem_sem_stamina:
             sem_stamina = self.hotkey_font.render('SEM STAMINA!', True, (243, 236, 215))
             self.tela.blit(sem_stamina, (1175, 925))
-    
+
         if self.mensagem_sem_mana:
             sem_mana = self.hotkey_font.render('SEM MANA!', True, (243, 236, 215))
             self.tela.blit(sem_mana, (650, 925))
-        
+
 
 
 
