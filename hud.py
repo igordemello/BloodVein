@@ -112,22 +112,6 @@ class Hud:
              "qtd": self.player.pocoesMp, "color": (100, 100, 100, 200)}
         ]
 
-        for slot in pocao_slots:
-            slot_surface = Surface((slot["rect"].width, slot["rect"].height), SRCALPHA)
-            slot_surface.fill(slot["color"])
-            draw.rect(slot_surface, (255, 255, 255, 150), slot_surface.get_rect(), 2)
-            self.tela.blit(slot_surface, (slot["rect"].x + offset_x, slot["rect"].y + offset_y))
-
-            tecla_texto = self.hotkey_font.render(slot["tecla"], True, (243, 236, 215))
-            self.tela.blit(tecla_texto, (slot["rect"].x + 45 + offset_x, slot["rect"].y - 20 + offset_y))
-
-            pocao_img = slot["pocao"]
-            img_rect = pocao_img.get_rect(center=slot["rect"].center)
-            self.tela.blit(pocao_img, (img_rect.x + offset_x, img_rect.y + offset_y))
-
-            qtd_text = pocoes_font.render(f"{slot['qtd']}x", True, (243, 236, 215))
-            self.tela.blit(qtd_text, (slot["rect"].right - 65 + offset_x, slot["rect"].bottom + 5 + offset_y))
-
         total_hits = self.player.hits + self.player.hits_projetil
         combo_mult = self.player.arma.comboMult
 
@@ -157,6 +141,23 @@ class Hud:
 
         if minimal:
             return
+
+        #pocoes
+        for slot in pocao_slots:
+            slot_surface = Surface((slot["rect"].width, slot["rect"].height), SRCALPHA)
+            slot_surface.fill(slot["color"])
+            draw.rect(slot_surface, (255, 255, 255, 150), slot_surface.get_rect(), 2)
+            self.tela.blit(slot_surface, (slot["rect"].x + offset_x, slot["rect"].y + offset_y))
+
+            tecla_texto = self.hotkey_font.render(slot["tecla"], True, (243, 236, 215))
+            self.tela.blit(tecla_texto, (slot["rect"].x + 45 + offset_x, slot["rect"].y - 20 + offset_y))
+
+            pocao_img = slot["pocao"]
+            img_rect = pocao_img.get_rect(center=slot["rect"].center)
+            self.tela.blit(pocao_img, (img_rect.x + offset_x, img_rect.y + offset_y))
+
+            qtd_text = pocoes_font.render(f"{slot['qtd']}x", True, (243, 236, 215))
+            self.tela.blit(qtd_text, (slot["rect"].right - 65 + offset_x, slot["rect"].bottom + 5 + offset_y))
 
         #braços e coração fundo
         meio = self.tela.get_width() // 2
