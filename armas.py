@@ -294,7 +294,18 @@ class Chigatana(Arma):
             inimigo.ultimo_dano = self.dano * self.comboMult
 
     def ataqueSecundario(self,inimigo,player):
-        inimigo.modificadorDanoRecebido = self.valorSangramento
+        current_time = time.get_ticks()
+        custo = 40 * player.mpModificador
+        if player.mp < custo:
+            # Ativa mensagem de sem mana no HUD
+            player.hud.mensagem_sem_mana = True
+            player.hud.tempo_mensagem_mana = current_time
+            return
+        if player.mp <= 0:
+            return
+        else:
+            player.mp -= custo
+            inimigo.modificadorDanoRecebido = self.valorSangramento
 
 
 class Karambit(Arma):
@@ -343,7 +354,18 @@ class Karambit(Arma):
             inimigo.ultimo_dano = self.dano * self.comboMult
 
     def ataqueSecundario(self,inimigo,player):
-        inimigo.envenenar(5, self.dano+10)
+        current_time = time.get_ticks()
+        custo = 40 * player.mpModificador
+        if player.mp < custo:
+            # Ativa mensagem de sem mana no HUD
+            player.hud.mensagem_sem_mana = True
+            player.hud.tempo_mensagem_mana = current_time
+            return
+        if player.mp <= 0:
+            return
+        else:
+            player.mp -= custo
+            inimigo.envenenar(5, self.dano+10)
 
 
 class EspadaDoTita(Arma):
@@ -655,6 +677,7 @@ class Arco(Arma):
 
 
     def ataqueSecundario(self,player,mouse_pos):
+        print('ataque secundario arco')
         sprite_projetil = image.load("assets/player/flecha.png").convert_alpha()
         angulo_central = player.calcular_angulo(mouse_pos)
         angulo_abertura = math.radians(5)  # 15 graus em radianos

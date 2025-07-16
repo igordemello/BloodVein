@@ -174,11 +174,15 @@ class Hud:
         
 
         #item ativo
-        # if self.player.itemAtivo is not None:
-        #     for x in range(0, self.player.itemAtivo.usos):
-        #         draw.rect(self.tela, (0, 255, 0), (50 + (x * 25), 144, 20, 8))
-        #     sprite = transform.scale(self.player.itemAtivo.sprite, (96, 96))
-        #     self.tela.blit(sprite, (60, 40))
+        margem_item_x = 1625
+        margem_item_y = 925
+
+        if self.player.itemAtivo is not None:
+            for x in range(self.player.itemAtivo.usos):
+                draw.rect(self.tela, (0, 255, 0), (margem_item_x + (x * 25), margem_item_y + 104, 20, 8))
+
+            sprite = transform.scale(self.player.itemAtivo.sprite, (96, 96))
+            self.tela.blit(sprite, (margem_item_x + 10, margem_item_y))
 
         
 

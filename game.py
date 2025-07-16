@@ -150,6 +150,10 @@ class Game:
         elif self.estado == EstadoDoJogo.JOGANDO:
             for ev in eventos:
                 if ev.type == KEYDOWN:
+                    current_time = time.get_ticks()
+                    if ev.key == K_q and current_time - self.player.ativo_ultimo_uso > 2500:
+                        self.player.ativo_ultimo_uso = current_time
+                        self.player.usarItemAtivo(self.sala_atual)
                     teclas_para_verificar = [K_1, K_2, K_3, K_4]
                     for i in range(4):
                         if ev.key == teclas_para_verificar[i] and self.player.hotkeys[i] != 0:
