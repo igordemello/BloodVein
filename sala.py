@@ -48,6 +48,9 @@ class Sala:
 
         self.porta_liberada = False
 
+        self.pocoesHp = transform.scale(image.load('assets/itens/pocaodevida.png'), (64,64))
+        self.pocoesMp = transform.scale(image.load('assets/itens/pocaodemana.png'), (64,64))
+
         self.ranges_doors = self.mapa.get_rangesdoors()
 
         self.almaspritesheet = image.load('./assets/Itens/almaSpriteSheet.png').convert_alpha()
@@ -181,8 +184,8 @@ class Sala:
             self.leve_atual = self.max_leves + 2
             return []
 
-        self.leve_atual = self.max_leves + 2
-        return []
+        #self.leve_atual = self.max_leves + 2
+        #return []
         
         tempo_atual = time.get_ticks()
         if tempo_atual - self.tempo_entrada < self.cooldown_inicial and not self.inimigos_spawnados:
@@ -471,9 +474,39 @@ class Sala:
                         if self.player.get_hitbox().colliderect(alma_hitbox):
                             self.player.almas += 1
                             inimigo.alma_coletada = True
+                if not getattr(inimigo, "pocao_coletada", True):
+                    if not hasattr(inimigo, "vai_dropar_pocao"):
+                        pode_dropar_hp = self.player.pocoesHp < 4
+                        pode_dropar_mp = self.player.pocoesMp < 4
+
+                        if pode_dropar_hp or pode_dropar_mp:
+                            inimigo.vai_dropar_pocao = randint(1, 3) == 1
+                            if inimigo.vai_dropar_pocao:
+                                tipos_disponiveis = []
+                                if pode_dropar_hp:
+                                    tipos_disponiveis.append("hp")
+                                if pode_dropar_mp:
+                                    tipos_disponiveis.append("mp")
+
+                                inimigo.tipo_pocao = choice(tipos_disponiveis)
+                        else:
+                            inimigo.vai_dropar_pocao = False
+                            inimigo.pocao_coletada = True
+
+                    if inimigo.vai_dropar_pocao:
+                        pos = (inimigo.x + 64, inimigo.y + 16)
+                        self.desenha_pocao(pos, inimigo.tipo_pocao)
+                        pocao_hitbox = Rect(0, 0, 50, 50)
+                        pocao_hitbox.center = pos
+                        if self.player.get_hitbox().colliderect(pocao_hitbox):
+                            if inimigo.tipo_pocao == "hp":
+                                self.player.pocoesHp += 1
+                            else:
+                                self.player.pocoesMp += 1
+                            inimigo.pocao_coletada = True
                 if not getattr(inimigo, "loot_coletado", True):
                     if not hasattr(inimigo, "vai_dropar_loot"):
-                        inimigo.vai_dropar_loot = randint(1, 100) <= 100  # 30% de chance de cair loot
+                        inimigo.vai_dropar_loot = randint(1, 100) <= 30  # 30% de chance de cair loot
 
                     if getattr(inimigo, "vai_dropar_loot", False) and not hasattr(inimigo, "loot_botao_criado"):
                         pos = (inimigo.x + 16, inimigo.y + 32)
@@ -652,6 +685,16 @@ class Sala:
         frame = transform.scale(frame, (64, 64))
         rect = frame.get_rect(center=pos)
         self.tela.blit(frame, rect)
+
+    def desenha_pocao(self, pos, tipo):
+        if tipo == "hp":
+            pocao_img = self.pocoesHp
+        else:
+            pocao_img = self.pocoesMp
+
+        pocao_img = transform.scale(pocao_img, (32, 32))
+        rect = pocao_img.get_rect(center=pos)
+        self.tela.blit(pocao_img, rect)
 
     def fade(self, fade_in=True, duration=500):
         """Efeito de transição de fade (para entrada ou saída de sala)

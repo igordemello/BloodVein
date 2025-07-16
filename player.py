@@ -72,8 +72,8 @@ class Player():
         self.hp = hp
         self.hpMax = hp
 
-        self.pocoesHp = 0
-        self.pocoesMp = 0
+        self.pocoesHp = 4
+        self.pocoesMp = 4
 
 
         self.mpModificador = 1
@@ -1073,6 +1073,24 @@ class Player():
         self.travado = False
         self.direcao = "baixo"  # ou o que quiser como default
         self.rect = self.player_rect
+
+    #------pocoes-------
+    def usar_pocao_mana(self):
+        if self.pocoesMp <= 0:
+            return
+        self.pocoesMp -= 1
+        if "Estomago de Mana" not in self.habilidades:
+            self.mp += 30
+            return
+        else:
+            self.mp = self.mpMaximo
+
+    def usar_pocao_vida(self):
+        if self.pocoesHp <= 0:
+            return
+        self.pocoesHp -= 1
+        self.hp += 15
+
 
     # ---------HABILIDADES---------
 
