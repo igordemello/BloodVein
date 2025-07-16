@@ -1076,6 +1076,7 @@ class Player():
 
     #------pocoes-------
     def usar_pocao_mana(self):
+        self.hud.mark_potion_pressed(1)
         if self.pocoesMp <= 0:
             return
         self.pocoesMp -= 1
@@ -1086,6 +1087,7 @@ class Player():
             self.mp = self.mpMaximo
 
     def usar_pocao_vida(self):
+        self.hud.mark_potion_pressed(0)
         if self.pocoesHp <= 0:
             return
         self.pocoesHp -= 1
@@ -1241,6 +1243,10 @@ class Player():
         self.mpModificador = 0.5
 
     def ativar_habilidade(self, nome_habilidade):
+        for i, hab in enumerate(self.hotkeys):
+            if hab == nome_habilidade:
+                self.hud.mark_hotkey_pressed(i)
+                break
         if nome_habilidade == "Bola de Fogo":
             self.bola_de_fogo()
         elif nome_habilidade == "Clarão":

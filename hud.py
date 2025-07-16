@@ -43,6 +43,12 @@ class Hud:
         ]
         self.hotkey_font = font.Font('assets/Fontes/alagard.ttf', 20)
 
+        self.hotkey_pressed = [False] * 4
+        self.hotkey_press_time = [0] * 4
+        self.potion_pressed = [False] * 2
+        self.potion_press_time = [0] * 2
+        self.press_duration = 200
+
         self.combo_shake_intensity = 0
         self.combo_shake_duration = 0
         self.last_combo_count = 0
@@ -92,6 +98,15 @@ class Hud:
             self.mensagem_sem_stamina = False
         if self.mensagem_sem_mana and current_time - self.tempo_mensagem_mana > self.duracao_mensagem:
             self.mensagem_sem_mana = False
+
+        current_time = time.get_ticks()
+        for i in range(4):
+            if self.hotkey_pressed[i] and current_time - self.hotkey_press_time[i] > self.press_duration:
+                self.hotkey_pressed[i] = False
+
+        for i in range(2):
+            if self.potion_pressed[i] and current_time - self.potion_press_time[i] > self.press_duration:
+                self.potion_pressed[i] = False
 
     def trigger_combo_shake(self):
         self.combo_shake_intensity = min(10 + self.player.hits * 0.5, 30)
@@ -143,9 +158,16 @@ class Hud:
             return
 
         #pocoes
-        for slot in pocao_slots:
+        for i, slot in enumerate(pocao_slots):
+            if i == 0 and self.potion_pressed[0]:
+                color = (100, 0, 0, 200)
+            elif i == 1 and self.potion_pressed[1]:
+                color = (0, 0, 100, 200)
+            else:
+                color = slot["color"]
+
             slot_surface = Surface((slot["rect"].width, slot["rect"].height), SRCALPHA)
-            slot_surface.fill(slot["color"])
+            slot_surface.fill(color)
             draw.rect(slot_surface, (255, 255, 255, 150), slot_surface.get_rect(), 2)
             self.tela.blit(slot_surface, (slot["rect"].x + offset_x, slot["rect"].y + offset_y))
 
@@ -293,13 +315,25 @@ class Hud:
     def reset_stats_fade(self):
         self.stats_alpha = 0
 
+    def mark_hotkey_pressed(self, index):
+        self.hotkey_pressed[index] = True
+        self.hotkey_press_time[index] = time.get_ticks()
+
+    def mark_potion_pressed(self, index):
+        self.potion_pressed[index] = True
+        self.potion_press_time[index] = time.get_ticks()
+
     def desenhar_hotkeys(self):
         offset_x, offset_y = screen_shaker.offset
         teclas = ["1", "2", "3", "4"]
 
-
         for i, slot in enumerate(self.hotkey_slots):
-            color = (0, 200, 0, 200) if self.player.hotkeys[i] != 0 else slot["color"]
+            if self.hotkey_pressed[i]:
+                color = (0, 100, 0, 200)
+            elif self.player.hotkeys[i] != 0:
+                color = (0, 200, 0, 200)
+            else:
+                color = (100, 100, 100, 200)
 
             slot_surface = Surface((slot["rect"].width, slot["rect"].height), SRCALPHA)
             slot_surface.fill(color)
