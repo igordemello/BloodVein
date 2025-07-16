@@ -223,18 +223,30 @@ class Hud:
             ).copy()
             self.tela.blit(barra_stamina, (x_hud + x_inicio_stamina, y_barra))
 
-
-        #item ativo
+        # item ativo
         margem_item_x = 1625
         margem_item_y = 925
+        item_slot = {
+            "rect": Rect(margem_item_x, margem_item_y, 100, 100),
+            "tecla": "Q",
+            "color": (100, 100, 100, 200)
+        }
 
         if self.player.itemAtivo is not None:
-            for x in range(self.player.itemAtivo.usos):
-                draw.rect(self.tela, (0, 255, 0), (margem_item_x + (x * 25), margem_item_y + 104, 20, 8))
+            slot_surface = Surface((item_slot["rect"].width, item_slot["rect"].height), SRCALPHA)
+            slot_surface.fill(item_slot["color"])
+            draw.rect(slot_surface, (255, 255, 255, 150), slot_surface.get_rect(), 2)
+            self.tela.blit(slot_surface, (item_slot["rect"].x + offset_x, item_slot["rect"].y + offset_y))
+
+            tecla_texto = self.hotkey_font.render(item_slot["tecla"], True, (243, 236, 215))
+            self.tela.blit(tecla_texto, (item_slot["rect"].x + 45 + offset_x, item_slot["rect"].y - 20 + offset_y))
 
             sprite = transform.scale(self.player.itemAtivo.sprite, (96, 96))
-            self.tela.blit(sprite, (margem_item_x + 10, margem_item_y))
-
+            img_rect = sprite.get_rect(center=item_slot["rect"].center)
+            self.tela.blit(sprite, (img_rect.x + offset_x, img_rect.y + offset_y))
+            for x in range(self.player.itemAtivo.usos):
+                draw.rect(self.tela, (0, 255, 0),
+                          (margem_item_x + (x * 25) + offset_x, margem_item_y + 104 + offset_y, 20, 8))
 
 
         # Almas
