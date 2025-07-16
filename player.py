@@ -803,6 +803,8 @@ class Player():
 
     def ataque_espadaPrincipal(self, inimigos, mouse_pos, dt):
         current_time = time.get_ticks()
+        if self.arma.velocidade <= 0:
+            self.arma.velocidade = 1
         cooldown = self.cooldown_ataque_base / self.arma.velocidade
         self.hit_landed = False
 
@@ -876,6 +878,8 @@ class Player():
     def ataque_espadaSecundario(self, inimigos, mouse_pos, dt):
         current_time = time.get_ticks()
 
+        if self.arma.velocidade <= 0:
+            self.arma.velocidade = 1
         cooldown = self.cooldown_ataque_base / self.arma.velocidade
 
         if current_time - self.ultimo_ataque < cooldown:
