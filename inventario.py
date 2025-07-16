@@ -245,6 +245,36 @@ class Inventario():
                 texto = fonte_attr.render(linha, True, cor_attr)
                 self.screen.blit(texto, (base_x, base_y + i * 60))
 
+            if player.almas >= (10 + (player.nivel * 2)):
+                y_pos = 300
+                mouse_pos = mouse.get_pos()
+                self.botoes_atributos = []  # Limpa a lista de botões antes de recriá-los
+
+                atributos_ordenados = [
+                    "forca",
+                    "destreza",
+                    "agilidade",
+                    "vigor",
+                    "resistencia",
+                    "estamina",
+                    "sorte"
+                ]
+
+                for i, atributo in enumerate(atributos_ordenados):
+                    if player.atributos[atributo] < 10:
+                        botao_mais_rect = Rect(800, y_pos, 32, 32)
+                        draw.rect(self.screen,
+                                  (0, 200, 0) if botao_mais_rect.collidepoint(mouse_pos) else (0, 150, 0),
+                                  botao_mais_rect)
+                        mais_texto = fonte_attr.render("+", True, (255, 255, 255))
+                        self.screen.blit(mais_texto, (801, y_pos - 5))
+                        self.botoes_atributos.append(
+                            (atributo, botao_mais_rect))
+
+                    y_pos += 60
+
+            #habilidades
+
             habilidades = list(self.gerenciador_habilidades.habilidades.keys())
             posicoes_botoes = [
                 (1094, 820), (1373, 820),  # Linha inferior
