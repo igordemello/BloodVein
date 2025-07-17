@@ -44,6 +44,21 @@ class Mapa:
         # for col in self.get_colliders():
         #     draw.rect(self.tela, (255, 0, 0), col["rect"], 2)
 
+        
+
+        # # DEBUG: desenha retângulos vermelhos nos tiles com valor 1
+        # offset_x, offset_y = self.get_offset()
+        # tile_w = self.tmx_data.tilewidth * self.escala
+        # tile_h = self.tmx_data.tileheight * self.escala
+
+        # for y, linha in enumerate(self.matriz):
+        #     for x, valor in enumerate(linha):
+        #         if valor == 1:
+        #             rect_x = x * tile_w + offset_x
+        #             rect_y = y * tile_h + offset_y
+        #             debug_rect = Rect(rect_x, rect_y, tile_w, tile_h)
+        #             draw.rect(self.tela, (255, 0, 0), debug_rect, 2)
+
     def _recriar_cache(self, porta_liberada):
         largura = self.tmx_data.width * self.tmx_data.tilewidth * self.escala
         altura = self.tmx_data.height * self.tmx_data.tileheight * self.escala
@@ -91,14 +106,10 @@ class Mapa:
                     tile_props = self.tmx_data.get_tile_properties_by_gid(gid)
 
                     if tile_props and "colliders" in tile_props:
-                        tipo = tile_props.get("tipo_colisao", "obstaculo")
-                        if tipo == "parede":
-                            matriz[y][x] = 2
-                        else:
-                            matriz[y][x] = 1
+                        matriz[y][x] = 1
         
-        # for linha in matriz:
-        #     print("".join(str(v) for v in linha))
+        for linha in matriz:
+            print("".join(str(v) for v in linha))
         
         return matriz
 
@@ -344,3 +355,14 @@ class Mapa:
 
         print(rangebau)
         return rangebau
+    
+
+    def get_offset(self):
+        tile_w = self.tmx_data.tilewidth
+        tile_h = self.tmx_data.tileheight
+        largura_total = self.tmx_data.width * tile_w * self.escala
+        altura_total = self.tmx_data.height * tile_h * self.escala
+
+        mapa_rect = Rect(0, 0, largura_total, altura_total)
+        mapa_rect.center = (self.tela_width // 2, (self.tela_heigth -100) // 2)
+        return mapa_rect.topleft  # (offset_x, offset_y)
