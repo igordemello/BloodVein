@@ -20,7 +20,7 @@ from som import som
 from loja import Loja
 from inimigos.caveiradefogo import CaveiraDeFogo
 from inimigos.morcegopadrao import MorcegoPadrao
-from inimigos.furação import Furacao
+from inimigos.furacao import Furacao
 from inimigos.nuvemBoss import NuvemBoss
 from armas import LaminaDaNoite, Chigatana, Karambit, EspadaDoTita, MachadoDoInverno, EspadaEstelar, MarteloSolar, Arco, ListaMods
 from botao import Botao

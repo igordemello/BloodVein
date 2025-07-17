@@ -37,10 +37,11 @@ class CaveiraDeFogo(Inimigo):
         self.ultimo_tempo_mudanca = time.get_ticks()
 
         # Limites do mapa
-        self.limite_x_min = 400
-        self.limite_x_max = 1500
-        self.limite_y_min = 400
-        self.limite_y_max = 800
+        mapa = Rect(310.5,162.5,1250,550)
+        self.limite_x_min = mapa.x
+        self.limite_x_max = mapa.x + mapa.width
+        self.limite_y_min = mapa.y
+        self.limite_y_max = mapa.y + mapa.height
 
     def gerar_direcao(self):
         angulo = random.uniform(0, 2 * math.pi)
