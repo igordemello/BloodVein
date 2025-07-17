@@ -134,7 +134,11 @@ class CaveiraDeFogo(Inimigo):
         draw_x = self.x + offset_x
         draw_y = self.y + offset_y
 
-        frame = self.frames[self.frame_index]
+        #HIT VERMELHO COLOCAR ISSO EM TODOS OS INIMIGOS NO METODO DESENHAR DE CADA UM
+        if self.anima_hit:
+            frame = self.aplicar_efeito_hit(self.frames[self.frame_index])
+        else:
+            frame = self.frames[self.frame_index]
         tela.blit(frame, (draw_x, draw_y))
 
         vida_maxima = getattr(self, "hp_max", 100)

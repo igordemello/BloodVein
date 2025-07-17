@@ -62,12 +62,21 @@ class Inimigo:
 
         self.rect = self.get_hitbox()
 
+        self.ultimo_dano = 0
+        self.ultimo_dano_tempo = 0
+        self.ultimo_dano_critico = False
+
         # Adicionando atributos para animação de hit
         self.anima_hit = False
-        self.hit_frame_duration = 2000  # ms
+        self.hit_frame_duration = 500  # ms
         self.time_last_hit_frame = 0
         self.hit_alpha = 200  # Transparência do efeito de hit (0-255)
         self.hit_color = (255, 0, 0)  # Cor vermelha para o efeito de hit
+
+    def tomar_dano(self, valor):
+        self.hp -= valor
+        self.anima_hit = True
+        self.time_last_hit_frame = time.get_ticks()
 
     def aplicar_efeito_hit(self, frame):
         """Aplica um efeito vermelho temporário ao frame quando o inimigo leva dano"""
@@ -77,9 +86,11 @@ class Inimigo:
                 self.anima_hit = False
                 return frame
 
+            # Cria uma cópia do frame e aplica um overlay vermelho opaco
             hit_frame = frame.copy()
-            hit_frame.fill(self.hit_color, special_flags=BLEND_MULT)
-            hit_frame.set_alpha(self.hit_alpha)
+            overlay = Surface((frame.get_width(), frame.get_height()), SRCALPHA)
+            overlay.fill((255, 50, 50, 180))  # Vermelho com alta opacidade (180/255)
+            hit_frame.blit(overlay, (0, 0), special_flags=BLEND_MULT)
             return hit_frame
         return frame
 

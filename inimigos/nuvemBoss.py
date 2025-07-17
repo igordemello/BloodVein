@@ -181,11 +181,16 @@ class NuvemBoss(Inimigo):
         if self.frame_index >= len(self.current_frames):
             self.frame_index = 0
 
-        frame = self.current_frames[self.frame_index]
         offset_x_frame, offset_y_frame = self.offsets[self.estado][self.frame_index]
 
         draw_x = round(self.x) + offset[0] - offset_x_frame
         draw_y = round(self.y) + offset[1] - offset_y_frame
+
+        #HIT VERMELHO COLOCAR ISSO EM TODOS OS INIMIGOS NO METODO DESENHAR DE CADA UM
+        if self.anima_hit:
+            frame = self.aplicar_efeito_hit(self.current_frames[self.frame_index])
+        else:
+            frame = self.current_frames[self.frame_index]
 
         # Desenha o sprite
         tela.blit(frame, (draw_x, draw_y))

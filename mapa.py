@@ -108,8 +108,8 @@ class Mapa:
                     if tile_props and "colliders" in tile_props:
                         matriz[y][x] = 1
         
-        for linha in matriz:
-            print("".join(str(v) for v in linha))
+        # for linha in matriz:
+        #     print("".join(str(v) for v in linha))
         
         return matriz
 
@@ -353,7 +353,7 @@ class Mapa:
                         )
                         rangebau.append(rect)
 
-        print(rangebau)
+        # print(rangebau)
         return rangebau
     
 

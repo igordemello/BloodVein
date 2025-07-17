@@ -177,7 +177,7 @@ class Colisao:
                     self.player.tempo_ultimo_hit_projetil = current_time
                     self.player.arma.comboMult = 1.0 + (0.1 * self.player.hits_projetil)
 
-                    inimigo.hp -= projetil["dano"] * self.player.arma.comboMult
+                    inimigo.tomar_dano(projetil["dano"] * self.player.arma.comboMult)
                     inimigo.ultimo_dano_critico = False
                     inimigo.ultimo_dano = projetil["dano"] * self.player.arma.comboMult
                     inimigo.ultimo_dano_tempo = time.get_ticks()
@@ -217,7 +217,7 @@ class Colisao:
                 if isinstance(inimigo, Player):
                     continue
                 if inimigo.vivo and self.player.aoe[1].colliderect(inimigo.get_hitbox()):
-                    inimigo.hp -= self.player.arma.danoAOE
+                    inimigo.tomar_dano(self.player.arma.danoAOE)
                     inimigo.ultimo_dano_critico = False
                     inimigo.ultimo_dano = self.player.arma.danoAOE
                     inimigo.ultimo_dano_tempo = tempo_atual
@@ -229,7 +229,7 @@ class Colisao:
                 if isinstance(inimigo, Player):
                     continue
                 if inimigo.vivo and self.player.aoeVeneno[1].colliderect(inimigo.get_hitbox()):
-                    inimigo.hp -= self.player.venenoDano
+                    inimigo.tomar_dano(self.player.venenoDano)
                     inimigo.ultimo_dano_critico = False
                     inimigo.ultimo_dano = self.player.venenoDano
                     inimigo.ultimo_dano_tempo = tempo_atual
@@ -252,7 +252,7 @@ class Colisao:
             if (inimigo.vivo
                     and self.player.aoe[1].colliderect(inimigo.get_hitbox())
                     and inimigo not in self.player.inimigos_atingidos_este_clarao):
-                inimigo.hp -= self.player.claraoDano
+                inimigo.tomar_dano(self.player.claraoDano)
                 inimigo.ultimo_dano_critico = False
                 inimigo.ultimo_dano = self.player.claraoDano
                 inimigo.ultimo_dano_tempo = time.get_ticks()

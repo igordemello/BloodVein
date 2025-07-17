@@ -137,9 +137,14 @@ class MouthOrb(Inimigo):
         if not self.vivo:
             return
 
-        frame = self.animacoes[self.estado][self.frame_index]
+
         draw_x = round(self.x + offset[0])
         draw_y = round(self.y + offset[1])
+        #HIT VERMELHO COLOCAR ISSO EM TODOS OS INIMIGOS NO METODO DESENHAR DE CADA UM
+        if self.anima_hit:
+            frame = self.aplicar_efeito_hit(self.animacoes[self.estado][self.frame_index])
+        else:
+            frame = self.animacoes[self.estado][self.frame_index]
         tela.blit(frame, (draw_x, draw_y))
 
         self.desenhar_barra_boss(tela, tela.get_width())

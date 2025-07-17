@@ -205,7 +205,11 @@ class Furacao(Inimigo):
         draw_y = self.y + offset_y
 
         # Desenha o frame atual
-        frame = self.frames[min(self.frame_index, len(self.frames) - 1)]  # Garante que não ultrapasse
+        #HIT VERMELHO COLOCAR ISSO EM TODOS OS INIMIGOS NO METODO DESENHAR DE CADA UM
+        if self.anima_hit:
+            frame = self.aplicar_efeito_hit(self.frames[min(self.frame_index, len(self.frames) - 1)])
+        else:
+            frame = self.frames[min(self.frame_index, len(self.frames) - 1)]
         tela.blit(frame, (draw_x, draw_y))
 
         # Desenha a barra de vida se tomou dano recentemente
