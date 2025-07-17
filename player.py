@@ -766,7 +766,7 @@ class Player():
             texto_str = f"-{self.dano_recebido:.1f}"
 
             pos_x = 108
-            pos_y = 440 - ((time.get_ticks() - self.dano_recebido_tempo) / 4)
+            pos_y = 200 - ((time.get_ticks() - self.dano_recebido_tempo) / 4)
 
             outline_color = (0, 0, 0)
             outline_size = 1
