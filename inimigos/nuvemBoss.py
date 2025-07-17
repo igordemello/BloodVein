@@ -195,6 +195,8 @@ class NuvemBoss(Inimigo):
         # Desenha o sprite
         tela.blit(frame, (draw_x, draw_y))
 
+        self.desenhar_dano(tela, offset)
+
 
         self.desenhar_barra_boss(tela, tela.get_width())
 

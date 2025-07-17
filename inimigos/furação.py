@@ -212,6 +212,8 @@ class Furacao(Inimigo):
             frame = self.frames[min(self.frame_index, len(self.frames) - 1)]
         tela.blit(frame, (draw_x, draw_y))
 
+        self.desenhar_dano(tela, offset)
+
         # Desenha a barra de vida se tomou dano recentemente
         if time.get_ticks() - self.ultimo_dano_tempo < 2500:
             vida_maxima = self.hp_max

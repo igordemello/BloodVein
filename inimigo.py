@@ -73,10 +73,15 @@ class Inimigo:
         self.hit_alpha = 200  # Transparência do efeito de hit (0-255)
         self.hit_color = (255, 0, 0)  # Cor vermelha para o efeito de hit
 
-    def tomar_dano(self, valor):
+    def tomar_dano(self, valor, critico=False):
         self.hp -= valor
         self.anima_hit = True
         self.time_last_hit_frame = time.get_ticks()
+
+        # Atributos para o texto flutuante
+        self.ultimo_dano = valor
+        self.ultimo_dano_tempo = time.get_ticks()
+        self.ultimo_dano_critico = critico  # Se o dano foi crítico
 
     def aplicar_efeito_hit(self, frame):
         """Aplica um efeito vermelho temporário ao frame quando o inimigo leva dano"""
@@ -186,3 +191,38 @@ class Inimigo:
             outline_pos = (self.rect.x - outline_size, self.rect.y - outline_size)
             tela.blit(outline_surf, outline_pos)
 
+    def desenhar_dano(self, tela, offset=(0, 0)):
+        """Desenha o valor do último dano recebido acima do inimigo."""
+        if not hasattr(self, 'ultimo_dano') or time.get_ticks() - self.ultimo_dano_tempo >= 400:
+            return
+
+        offset_x, offset_y = offset
+        draw_x = self.x + offset_x + self.largura / 2
+        draw_y = self.y + offset_y - 5  
+
+        if getattr(self, 'ultimo_dano_critico', False):
+            cor = (255, 215, 0) 
+            tamanho_fonte = 28
+            texto_sufixo = "!"
+        else:
+            cor = (253, 246, 245)
+            tamanho_fonte = 24
+            texto_sufixo = ""
+
+        fonte = font.Font('assets/Fontes/KiwiSoda.ttf', tamanho_fonte)
+        texto_str = f"{self.ultimo_dano:.1f}{texto_sufixo}"
+
+        offset_y_text = (time.get_ticks() - self.ultimo_dano_tempo) / 4
+        pos_y = draw_y - offset_y_text
+
+        outline_color = (0, 0, 0)
+        outline_size = 1
+        for dx in [-outline_size, 0, outline_size]:
+            for dy in [-outline_size, 0, outline_size]:
+                if dx == 0 and dy == 0:
+                    continue
+                outline_text = fonte.render(texto_str, True, outline_color)
+                tela.blit(outline_text, (draw_x - outline_text.get_width() / 2 + dx, pos_y + dy))
+
+        texto = fonte.render(texto_str, True, cor)
+        tela.blit(texto, (draw_x - texto.get_width() / 2, pos_y))

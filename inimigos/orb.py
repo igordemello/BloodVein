@@ -108,38 +108,7 @@ class Orb(Inimigo):
         rot_rect, rot_surf = self.get_hitbox_ataque((player_pos[0] + offset_x, player_pos[1] + offset_y))
         tela.blit(rot_surf, rot_rect)
 
-        if hasattr(self, 'ultimo_dano') and time.get_ticks() - self.ultimo_dano_tempo < 500:
-            if getattr(self, 'ultimo_dano_critico', False):
-                cor = (255, 215, 0)  # Amarelo-ouro
-                tamanho_fonte = 28  # Texto maior
-                offset_extra = 5 * math.sin(time.get_ticks() / 50)
-                texto = "!"
-            else:
-                cor = (253, 246, 245)
-                tamanho_fonte = 24
-                offset_extra = 0
-                texto = ""
-
-            fonte_atual = font.Font('assets/Fontes/KiwiSoda.ttf', tamanho_fonte)
-            texto_str = f"{self.ultimo_dano:.1f}{texto}"
-
-            offset_y_text = (time.get_ticks() - self.ultimo_dano_tempo) / 4
-            pos_x = draw_x + self.largura / 2
-            pos_y = draw_y - 5 - offset_y_text + offset_extra
-
-            outline_color = (0, 0, 0)
-            outline_size = 1
-            for x_offset in [-outline_size, 0, outline_size]:
-                for y_offset in [-outline_size, 0, outline_size]:
-                    if x_offset == 0 and y_offset == 0:
-                        continue  # Pular o centro (preenchimento principal)
-                    outline_text = fonte_atual.render(texto_str, True, outline_color)
-                    tela.blit(outline_text, (pos_x - outline_text.get_width() / 2 + x_offset,
-                                             pos_y + y_offset))
-
-            # Renderizar texto principal
-            dano_text = fonte_atual.render(texto_str, True, cor)
-            tela.blit(dano_text, (pos_x - dano_text.get_width() / 2, pos_y))
+        self.desenhar_dano(tela, offset)
 
     def get_hitbox_ataque(self, player_pos):
         if not hasattr(self, '_last_angle') or self._last_pos != player_pos:

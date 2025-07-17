@@ -152,6 +152,8 @@ class MorcegoPadrao(Inimigo):
             frame = self.frames[self.frame_index]
         tela.blit(frame, (draw_x, draw_y))
 
+        self.desenhar_dano(tela, offset)
+
         vida_maxima = getattr(self, "hp_max", 100)
         largura_barra = 100
         porcentagem = max(0, min(self.hp / vida_maxima, 1))

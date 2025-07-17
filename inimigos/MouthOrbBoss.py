@@ -149,6 +149,8 @@ class MouthOrb(Inimigo):
 
         self.desenhar_barra_boss(tela, tela.get_width())
 
+        self.desenhar_dano(tela, offset)
+
     def colide_com_player(self, player_pos):
         player_rect = Rect(player_pos[0], player_pos[1], 64, 64)
         hitbox, _ = self.get_hitbox_ataque(player_pos)

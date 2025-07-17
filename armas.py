@@ -224,7 +224,7 @@ class LaminaDaNoite(Arma):
     def ataquePrincipal(self,inimigo):
         dano_final = self.dano * inimigo.modificadorDanoRecebido * dificuldade_global.mult_dano_inimigo * self.comboMult
         if randint(1, 100) <= self.chanceCritico:
-            inimigo.tomar_dano(dano_final*self.danoCriticoMod)
+            inimigo.tomar_dano(dano_final*self.danoCriticoMod, critico=True)
             inimigo.ultimo_dano_critico = True
             inimigo.ultimo_dano = dano_final * self.danoCriticoMod
         else:
@@ -287,7 +287,7 @@ class Chigatana(Arma):
     def ataquePrincipal(self,inimigo):
         dano_final = self.dano * inimigo.modificadorDanoRecebido * dificuldade_global.mult_dano_inimigo * self.comboMult
         if randint(1, 100) <= self.chanceCritico:
-            inimigo.tomar_dano(dano_final*self.danoCriticoMod)
+            inimigo.tomar_dano(dano_final*self.danoCriticoMod, critico=True)
             inimigo.ultimo_dano_critico = True
             inimigo.ultimo_dano = dano_final * self.danoCriticoMod
         else:
@@ -348,7 +348,7 @@ class Karambit(Arma):
     def ataquePrincipal(self,inimigo):
         dano_final = self.dano * inimigo.modificadorDanoRecebido * dificuldade_global.mult_dano_inimigo * self.comboMult
         if randint(1, 100) <= self.chanceCritico:
-            inimigo.tomar_dano(dano_final*self.danoCriticoMod)
+            inimigo.tomar_dano(dano_final*self.danoCriticoMod, critico=True)
             inimigo.ultimo_dano_critico = True
             inimigo.ultimo_dano = dano_final * self.danoCriticoMod
         else:
@@ -412,7 +412,7 @@ class EspadaDoTita(Arma):
     def ataquePrincipal(self,inimigo):
         dano_final = self.dano * inimigo.modificadorDanoRecebido * dificuldade_global.mult_dano_inimigo * self.comboMult
         if randint(1, 100) <= self.chanceCritico:
-            inimigo.tomar_dano(dano_final*self.danoCriticoMod)
+            inimigo.tomar_dano(dano_final*self.danoCriticoMod, critico=True)
             inimigo.ultimo_dano_critico = True
             inimigo.ultimo_dano = dano_final * self.danoCriticoMod
         else:
@@ -481,13 +481,13 @@ class MachadoDoInverno(Arma):
     def ataquePrincipal(self,inimigo):
         dano_final = self.dano * inimigo.modificadorDanoRecebido * dificuldade_global.mult_dano_inimigo * self.comboMult
         if inimigo.congelado: #da crit se o inimigo estiver congelado
-            inimigo.tomar_dano(dano_final*self.danoCriticoMod)
+            inimigo.tomar_dano(dano_final*self.danoCriticoMod, critico=True)
             inimigo.ultimo_dano_critico = True
             inimigo.ultimo_dano = dano_final * self.danoCriticoMod
             inimigo.congelado = False
             inimigo.velocidade /= 0.25
         if randint(1, 100) <= self.chanceCritico:
-            inimigo.tomar_dano(dano_final*self.danoCriticoMod)
+            inimigo.tomar_dano(dano_final*self.danoCriticoMod, critico=True)
             inimigo.ultimo_dano_critico = True
             inimigo.ultimo_dano = dano_final * self.danoCriticoMod
         else:
@@ -550,7 +550,7 @@ class EspadaEstelar(Arma):
     def ataquePrincipal(self,inimigo):
         dano_final = self.dano * inimigo.modificadorDanoRecebido * dificuldade_global.mult_dano_inimigo * self.comboMult
         if randint(1, 100) <= self.chanceCritico:
-            inimigo.tomar_dano(dano_final*self.danoCriticoMod)
+            inimigo.tomar_dano(dano_final*self.danoCriticoMod, critico=True)
             inimigo.ultimo_dano_critico = True
             inimigo.ultimo_dano = dano_final * self.danoCriticoMod
         else:
@@ -615,7 +615,7 @@ class MarteloSolar(Arma):
     def ataquePrincipal(self,inimigo):
         dano_final = self.dano * inimigo.modificadorDanoRecebido * dificuldade_global.mult_dano_inimigo * self.comboMult
         if randint(1, 100) <= self.chanceCritico:
-            inimigo.tomar_dano(dano_final*self.danoCriticoMod)
+            inimigo.tomar_dano(dano_final*self.danoCriticoMod, critico=True)
             inimigo.ultimo_dano_critico = True
             inimigo.ultimo_dano = dano_final * self.danoCriticoMod
         else:

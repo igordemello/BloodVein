@@ -140,6 +140,7 @@ class CaveiraDeFogo(Inimigo):
         else:
             frame = self.frames[self.frame_index]
         tela.blit(frame, (draw_x, draw_y))
+        self.desenhar_dano(tela, offset)
 
         vida_maxima = getattr(self, "hp_max", 100)
         largura_barra = 100
