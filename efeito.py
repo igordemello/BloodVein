@@ -4,6 +4,9 @@ import sys
 from pygame.locals import QUIT
 import math
 from abc import ABC, abstractmethod
+
+from inimigo import Inimigo
+
 '''
 dano do usuario ✓
 vida maxima ✓
@@ -53,7 +56,10 @@ class ModificadorDanoRecebido(Efeito):
     def __init__(self, valor):
         self.valor = valor
     def aplicar(self,jogador):
-        jogador.base_modificadorDanoRecebido *= self.valor
+        if isinstance(jogador, Inimigo):
+            jogador.modificadorDanoRecebido *= self.valor
+        else:
+            jogador.base_modificadorDanoRecebido *= self.valor
 
 class CooldownStamina(Efeito):
     def __init__(self, valor):

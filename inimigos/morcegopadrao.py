@@ -140,6 +140,7 @@ class MorcegoPadrao(Inimigo):
     def desenhar(self, tela, player_pos, offset=(0, 0)):
         if not self.vivo or len(self.frames) == 0:
             return
+        self.desenhar_outline_mouseover(tela)
 
         offset_x, offset_y = offset
         draw_x = round(self.x) + offset_x

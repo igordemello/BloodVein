@@ -7,6 +7,7 @@ from random import randint, choice
 from abc import ABC, abstractmethod
 from som import GerenciadorDeSom
 from som import som
+from dificuldade import dificuldade_global
 
 # raridade
 RARIDADES = {
@@ -221,15 +222,15 @@ class LaminaDaNoite(Arma):
     def aplicaModificador(self):
         self.modificador.aplicarMod(self)
     def ataquePrincipal(self,inimigo):
-        
+        dano_final = self.dano * inimigo.modificadorDanoRecebido * dificuldade_global.mult_dano_inimigo * self.comboMult
         if randint(1, 100) <= self.chanceCritico:
-            inimigo.hp -= self.dano * self.danoCriticoMod * inimigo.modificadorDanoRecebido * self.comboMult
+            inimigo.hp -= dano_final * self.danoCriticoMod
             inimigo.ultimo_dano_critico = True
-            inimigo.ultimo_dano = self.dano * self.danoCriticoMod * inimigo.modificadorDanoRecebido * self.comboMult
+            inimigo.ultimo_dano = dano_final * self.danoCriticoMod
         else:
-            inimigo.hp -= self.dano * inimigo.modificadorDanoRecebido * self.comboMult
+            inimigo.hp -= dano_final * self.comboMult
             inimigo.ultimo_dano_critico = False
-            inimigo.ultimo_dano = self.dano * self.comboMult
+            inimigo.ultimo_dano = dano_final * self.comboMult
 
     def ataqueSecundario(self,inimigo,player):
         current_time = time.get_ticks()
@@ -284,14 +285,15 @@ class Chigatana(Arma):
     def aplicaModificador(self):
         self.modificador.aplicarMod(self)
     def ataquePrincipal(self,inimigo):
+        dano_final = self.dano * inimigo.modificadorDanoRecebido * dificuldade_global.mult_dano_inimigo * self.comboMult
         if randint(1, 100) <= self.chanceCritico:
-            inimigo.hp -= self.dano * self.danoCriticoMod * inimigo.modificadorDanoRecebido * self.comboMult
+            inimigo.hp -= dano_final * self.danoCriticoMod
             inimigo.ultimo_dano_critico = True
-            inimigo.ultimo_dano = self.dano * self.danoCriticoMod * inimigo.modificadorDanoRecebido * self.comboMult
+            inimigo.ultimo_dano = dano_final * self.danoCriticoMod
         else:
-            inimigo.hp -= self.dano * inimigo.modificadorDanoRecebido * self.comboMult
+            inimigo.hp -= dano_final
             inimigo.ultimo_dano_critico = False
-            inimigo.ultimo_dano = self.dano * self.comboMult
+            inimigo.ultimo_dano = dano_final
 
     def ataqueSecundario(self,inimigo,player):
         current_time = time.get_ticks()
@@ -344,14 +346,15 @@ class Karambit(Arma):
     def aplicaModificador(self):
         self.modificador.aplicarMod(self)
     def ataquePrincipal(self,inimigo):
+        dano_final = self.dano * inimigo.modificadorDanoRecebido * dificuldade_global.mult_dano_inimigo * self.comboMult
         if randint(1, 100) <= self.chanceCritico:
-            inimigo.hp -= self.dano * self.danoCriticoMod * inimigo.modificadorDanoRecebido * self.comboMult
+            inimigo.hp -= dano_final * self.danoCriticoMod
             inimigo.ultimo_dano_critico = True
-            inimigo.ultimo_dano = self.dano * self.danoCriticoMod * inimigo.modificadorDanoRecebido * self.comboMult
+            inimigo.ultimo_dano = dano_final * self.danoCriticoMod
         else:
-            inimigo.hp -= self.dano * inimigo.modificadorDanoRecebido * self.comboMult
+            inimigo.hp -= dano_final
             inimigo.ultimo_dano_critico = False
-            inimigo.ultimo_dano = self.dano * self.comboMult
+            inimigo.ultimo_dano = dano_final
 
     def ataqueSecundario(self,inimigo,player):
         current_time = time.get_ticks()
@@ -407,14 +410,15 @@ class EspadaDoTita(Arma):
         self.criticoOg = self.chanceCritico
         self.danoCritOg = self.danoCriticoMod
     def ataquePrincipal(self,inimigo):
+        dano_final = self.dano * inimigo.modificadorDanoRecebido * dificuldade_global.mult_dano_inimigo * self.comboMult
         if randint(1, 100) <= self.chanceCritico:
-            inimigo.hp -= self.dano * self.danoCriticoMod * inimigo.modificadorDanoRecebido * self.comboMult
+            inimigo.hp -= dano_final * self.danoCriticoMod
             inimigo.ultimo_dano_critico = True
-            inimigo.ultimo_dano = self.dano * self.danoCriticoMod * inimigo.modificadorDanoRecebido * self.comboMult
+            inimigo.ultimo_dano = dano_final * self.danoCriticoMod
         else:
-            inimigo.hp -= self.dano * inimigo.modificadorDanoRecebido * self.comboMult
+            inimigo.hp -= dano_final
             inimigo.ultimo_dano_critico = False
-            inimigo.ultimo_dano = self.dano * self.comboMult
+            inimigo.ultimo_dano = dano_final
         self.chanceCritico = self.criticoOg
         self.danoCriticoMod = self.danoCritOg
 
@@ -475,20 +479,21 @@ class MachadoDoInverno(Arma):
         self.criticoOg = self.chanceCritico
         self.danoCritOg = self.danoCriticoMod
     def ataquePrincipal(self,inimigo):
+        dano_final = self.dano * inimigo.modificadorDanoRecebido * dificuldade_global.mult_dano_inimigo * self.comboMult
         if inimigo.congelado: #da crit se o inimigo estiver congelado
-            inimigo.hp -= self.dano * self.danoCriticoMod * inimigo.modificadorDanoRecebido * self.comboMult
+            inimigo.hp -= dano_final * self.danoCriticoMod
             inimigo.ultimo_dano_critico = True
-            inimigo.ultimo_dano = self.dano * self.danoCriticoMod * inimigo.modificadorDanoRecebido * self.comboMult
+            inimigo.ultimo_dano = dano_final * self.danoCriticoMod
             inimigo.congelado = False
             inimigo.velocidade /= 0.25
         if randint(1, 100) <= self.chanceCritico:
-            inimigo.hp -= self.dano * self.danoCriticoMod * inimigo.modificadorDanoRecebido * self.comboMult
+            inimigo.hp -= dano_final * self.danoCriticoMod
             inimigo.ultimo_dano_critico = True
-            inimigo.ultimo_dano = self.dano * self.danoCriticoMod * inimigo.modificadorDanoRecebido * self.comboMult
+            inimigo.ultimo_dano = dano_final * self.danoCriticoMod
         else:
-            inimigo.hp -= self.dano * inimigo.modificadorDanoRecebido * self.comboMult
+            inimigo.hp -= dano_final
             inimigo.ultimo_dano_critico = False
-            inimigo.ultimo_dano = self.dano * self.comboMult
+            inimigo.ultimo_dano = dano_final
         self.chanceCritico = self.criticoOg
         self.danoCriticoMod = self.danoCritOg
 
@@ -543,14 +548,15 @@ class EspadaEstelar(Arma):
     def aplicaModificador(self):
         self.modificador.aplicarMod(self)
     def ataquePrincipal(self,inimigo):
+        dano_final = self.dano * inimigo.modificadorDanoRecebido * dificuldade_global.mult_dano_inimigo * self.comboMult
         if randint(1, 100) <= self.chanceCritico:
-            inimigo.hp -= self.dano * self.danoCriticoMod * inimigo.modificadorDanoRecebido * self.comboMult
+            inimigo.hp -= dano_final * self.danoCriticoMod
             inimigo.ultimo_dano_critico = True
-            inimigo.ultimo_dano = self.dano * self.danoCriticoMod * inimigo.modificadorDanoRecebido * self.comboMult
+            inimigo.ultimo_dano = dano_final * self.danoCriticoMod
         else:
-            inimigo.hp -= self.dano * inimigo.modificadorDanoRecebido * self.comboMult
+            inimigo.hp -= dano_final
             inimigo.ultimo_dano_critico = False
-            inimigo.ultimo_dano = self.dano * self.comboMult
+            inimigo.ultimo_dano = dano_final
 
 
     def ataqueSecundario(self,player,mouse_pos):
@@ -607,14 +613,15 @@ class MarteloSolar(Arma):
         self.modificador.aplicarMod(self)
 
     def ataquePrincipal(self,inimigo):
+        dano_final = self.dano * inimigo.modificadorDanoRecebido * dificuldade_global.mult_dano_inimigo * self.comboMult
         if randint(1, 100) <= self.chanceCritico:
-            inimigo.hp -= self.dano * self.danoCriticoMod * inimigo.modificadorDanoRecebido * self.comboMult
+            inimigo.hp -= dano_final * self.danoCriticoMod
             inimigo.ultimo_dano_critico = True
-            inimigo.ultimo_dano = self.dano * self.danoCriticoMod * inimigo.modificadorDanoRecebido * self.comboMult
+            inimigo.ultimo_dano = dano_final * self.danoCriticoMod
         else:
-            inimigo.hp -= self.dano * inimigo.modificadorDanoRecebido * self.comboMult
+            inimigo.hp -= dano_final
             inimigo.ultimo_dano_critico = False
-            inimigo.ultimo_dano = self.dano * self.comboMult
+            inimigo.ultimo_dano = dano_final
 
     def ataqueSecundario(self,player,mouse_pos):
         current_time = time.get_ticks()
@@ -671,13 +678,14 @@ class Arco(Arma):
     def aplicaModificador(self):
         self.modificador.aplicarMod(self)
     def ataquePrincipal(self,player,mouse_pos):
+        dano_final = self.dano * dificuldade_global.mult_dano_inimigo * self.comboMult
         som.tocar('arco_acerto')
         sprite_projetil = image.load("assets/player/flecha.png").convert_alpha()
-        player.criar_projetil(mouse_pos, dano=self.dano, cor=None, sprite=sprite_projetil)
+        player.criar_projetil(mouse_pos, dano=dano_final, cor=None, sprite=sprite_projetil)
 
 
     def ataqueSecundario(self,player,mouse_pos):
-        print('ataque secundario arco')
+        dano_final = self.dano * dificuldade_global.mult_dano_inimigo * self.comboMult
         sprite_projetil = image.load("assets/player/flecha.png").convert_alpha()
         angulo_central = player.calcular_angulo(mouse_pos)
         angulo_abertura = math.radians(5)  # 15 graus em radianos
@@ -694,9 +702,9 @@ class Arco(Arma):
             som.tocar('tripleshota')
             player.mp -= custo
             player.last_dash_time = current_time
-            player.criar_projetil(mouse_pos, dano=self.dano, cor=None, sprite=sprite_projetil, angulo_personalizado=angulo_central)
-            player.criar_projetil(mouse_pos, dano=self.dano, cor=None, sprite=sprite_projetil, angulo_personalizado=angulo_central - angulo_abertura)
-            player.criar_projetil(mouse_pos, dano=self.dano, cor=None, sprite=sprite_projetil, angulo_personalizado=angulo_central + angulo_abertura)
+            player.criar_projetil(mouse_pos, dano=dano_final, cor=None, sprite=sprite_projetil, angulo_personalizado=angulo_central)
+            player.criar_projetil(mouse_pos, dano=dano_final, cor=None, sprite=sprite_projetil, angulo_personalizado=angulo_central - angulo_abertura)
+            player.criar_projetil(mouse_pos, dano=dano_final, cor=None, sprite=sprite_projetil, angulo_personalizado=angulo_central + angulo_abertura)
 
 
 
