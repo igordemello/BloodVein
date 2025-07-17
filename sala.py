@@ -242,8 +242,8 @@ class Sala:
     def _criar_inimigo_aleatorio(self, x, y, tipo_sala):
         elite = "bau" in tipo_sala
 
-        # tipos_disponiveis = ["furacao","caveiradefogo","morcegopadrao","orb"]
-        tipos_disponiveis = ["morcegopadrao"]
+        tipos_disponiveis = ["furacao","caveiradefogo","morcegopadrao","orb"]
+        # tipos_disponiveis = ["morcegopadrao"]
         tipo_escolhido = choice(tipos_disponiveis)
 
 
@@ -332,7 +332,10 @@ class Sala:
         for inimigo in self.inimigos:
             if inimigo.vivo and self.player.hp > 0:
                 p_rect = Rect(self.player.x, self.player.y, 60, 120)
-                inimigo.atualizar(p_rect.center, self.tela, self.mapa.matriz, self.mapa.get_offset())
+                try:
+                    inimigo.atualizar(p_rect.center, self.tela, self.mapa.matriz, self.mapa.get_offset())
+                except:
+                    inimigo.atualizar(p_rect.center, self.tela)
                 inimigo.dar_dano = lambda val=inimigo.dano: self.player.tomar_dano(val)
 
 
