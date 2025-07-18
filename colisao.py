@@ -268,7 +268,7 @@ class Colisao:
                 projetil["raio_hitbox"] * 2
             )
 
-            for collider in self.mapa.colliders:
+            for collider in self.mapa.colliders_sem_obstaculo:
                 if projetil_rect.colliderect(collider['rect']):
                     if projetil in self.player.projeteis:
                         self.player.projeteis.remove(projetil)
