@@ -42,7 +42,9 @@ class Orb(Inimigo):
 
     def desenhar(self, tela, player_pos, offset=(0, 0)):
         offset_x, offset_y = offset
-        self.desenhar_outline_mouseover(tela)
+        draw_x = self.x + offset_x
+        draw_y = self.y + offset_y
+        self.desenhar_outline_mouseover(tela, self.hp, self.hp_max)
 
         if self.anima_hit:
             now = time.get_ticks()
@@ -54,8 +56,7 @@ class Orb(Inimigo):
                     self.anima_hit = False
                     return
 
-        draw_x = self.x + offset_x
-        draw_y = self.y + offset_y
+
 
         if self.anima_hit:
             frame = self.frames[self.frame_index]  # Obtém o frame normal
@@ -96,14 +97,24 @@ class Orb(Inimigo):
                           projetil["y"] - projetil["tamanho"] // 2 + offset_y))
 
         vida_maxima = getattr(self, "hp_max", 100)
-        largura_barra = 100
+        largura_barra = 500
         porcentagem = max(0, min(self.hp / vida_maxima, 1))
         largura_hp = porcentagem * largura_barra
 
+        barra_x = 980 - (largura_barra / 2)
+        barra_y = 0
+
         if hasattr(self, 'ultimo_dano') and time.get_ticks() - self.ultimo_dano_tempo < 2500:
-            draw.rect(tela, (255, 200, 200), (draw_x - 20, draw_y + 70, largura_barra, 5))
-            draw.rect(tela, (255, 0, 0), (draw_x - 20, draw_y + 70, largura_hp, 5))
-            draw.rect(tela, (255, 255, 255), (draw_x - 20, draw_y + 70, largura_barra, 5), 1)
+            draw.rect(tela, (10, 10, 10), (barra_x - 20, barra_y + 30, largura_barra, 50))
+            draw.rect(tela, (150, 0, 0), (barra_x - 20, barra_y + 30, largura_hp, 50))
+            draw.rect(tela, (255, 255, 255), (barra_x - 20, barra_y + 30, largura_barra, 50), 1)
+
+            # Desenhar o nome centralizado
+            fonte = font.Font("assets/Fontes/alagard.ttf", 24)
+            texto = fonte.render(str(self.nome), True, (255, 255, 255))
+            texto_rect = texto.get_rect(
+                center=(barra_x - 20 + largura_barra / 2, barra_y + 30 + 25))  # 25 = altura/2 da barra
+            tela.blit(texto, texto_rect)
 
         rot_rect, rot_surf = self.get_hitbox_ataque((player_pos[0] + offset_x, player_pos[1] + offset_y))
         tela.blit(rot_surf, rot_rect)

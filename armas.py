@@ -189,7 +189,7 @@ class ListaMods:
 #ARMAS:
 class LaminaDaNoite(Arma):
     def __init__(self,raridadeStr : str,listaMods : ListaMods):
-        self.tipoDeArma = "Espada Lunar"
+        self.tipoDeArma = "Lamina da Noite"
         self.ataqueTipo = "melee"
         self.raridadeStr = raridadeStr
         self.raridade = RARIDADES.get(self.raridadeStr, 1)

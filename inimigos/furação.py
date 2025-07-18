@@ -6,7 +6,7 @@ from inimigo import Inimigo
 import random
 
 class Furacao(Inimigo):
-    def __init__(self, x, y, largura, altura, hp, velocidade=4, dano=20):
+    def __init__(self, x, y, largura, altura, hp, nome="Furacao",velocidade=4, dano=20):
         super().__init__(x, y, largura, altura, hp, velocidade, dano)
         
         # Estados do inimigo
@@ -14,6 +14,8 @@ class Furacao(Inimigo):
         self.ultima_mudanca_estado = time.get_ticks()
         self.cooldown_idle = 2000  # 3 segundos em idle
         self.duracao_ataque = 5000  # 5 segundos em ataque
+
+        self.nome = nome
         
         # Controle de velocidade progressiva
         self.velocidade_base = velocidade
@@ -198,7 +200,7 @@ class Furacao(Inimigo):
     def desenhar(self, tela, player_pos, offset=(0, 0)):
         if not self.vivo or not self.frames:
             return
-        self.desenhar_outline_mouseover(tela)
+        self.desenhar_outline_mouseover(tela, self.hp, self.hp_max)
 
         offset_x, offset_y = offset
         draw_x = self.x + offset_x
@@ -209,11 +211,22 @@ class Furacao(Inimigo):
         tela.blit(frame, (draw_x, draw_y))
 
         # Desenha a barra de vida se tomou dano recentemente
-        if time.get_ticks() - self.ultimo_dano_tempo < 2500:
-            vida_maxima = self.hp_max
-            largura_barra = 100
-            porcentagem = max(0, min(self.hp / vida_maxima, 1))
-            largura_hp = porcentagem * largura_barra
-            
-            draw.rect(tela, (255, 0, 0), (draw_x - 20, draw_y + 70, largura_hp, 5))
-            draw.rect(tela, (255, 255, 255), (draw_x - 20, draw_y + 70, largura_barra, 5), 1)
+        vida_maxima = getattr(self, "hp_max", 100)
+        largura_barra = 500
+        porcentagem = max(0, min(self.hp / vida_maxima, 1))
+        largura_hp = porcentagem * largura_barra
+
+        barra_x = 980 - (largura_barra / 2)
+        barra_y = 0
+
+        if hasattr(self, 'ultimo_dano') and time.get_ticks() - self.ultimo_dano_tempo < 2500:
+            draw.rect(tela, (10, 10, 10), (barra_x - 20, barra_y + 30, largura_barra, 50))
+            draw.rect(tela, (150, 0, 0), (barra_x - 20, barra_y + 30, largura_hp, 50))
+            draw.rect(tela, (255, 255, 255), (barra_x - 20, barra_y + 30, largura_barra, 50), 1)
+
+            # Desenhar o nome centralizado
+            fonte = font.Font("assets/Fontes/alagard.ttf", 24)
+            texto = fonte.render(str(self.nome), True, (255, 255, 255))
+            texto_rect = texto.get_rect(
+                center=(barra_x - 20 + largura_barra / 2, barra_y + 30 + 25))  # 25 = altura/2 da barra
+            tela.blit(texto, texto_rect)

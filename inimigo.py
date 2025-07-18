@@ -152,9 +152,15 @@ class Inimigo:
         gerenciador = GerenciadorModificadores()
         gerenciador.aplicar_modificadores(self, elite)
 
-    def desenhar_outline_mouseover(self, tela):
+    def desenhar_outline_mouseover(self, tela, hp, hpMax):
         mouse_pos = mouse.get_pos()
+
+        if not hasattr(self, 'tempo_mouseover'):
+            self.tempo_mouseover = 0
+
         if self.rect.collidepoint(mouse_pos):
+            self.tempo_mouseover = time.get_ticks()
+
             if not self.frames:
                 return
 
@@ -162,7 +168,8 @@ class Inimigo:
             mask = mask_from_surface(sprite)
 
             outline_size = 1
-            outline_surf = Surface((sprite.get_width() + 2 * outline_size, sprite.get_height() + 2 * outline_size), SRCALPHA)
+            outline_surf = Surface(
+                (sprite.get_width() + 2 * outline_size, sprite.get_height() + 2 * outline_size), SRCALPHA)
 
             outline_mask = mask.to_surface(setcolor=(255, 0, 0), unsetcolor=(0, 0, 0, 0))
 
@@ -174,4 +181,24 @@ class Inimigo:
 
             outline_pos = (self.rect.x - outline_size, self.rect.y - outline_size)
             tela.blit(outline_surf, outline_pos)
+
+        if time.get_ticks() - self.tempo_mouseover < 3000:
+            vida_maxima = getattr(self, "hp_max", 100)
+            largura_barra = 500
+            porcentagem = max(0, min(self.hp / vida_maxima, 1))
+            largura_hp = porcentagem * largura_barra
+
+            barra_x = 980 - (largura_barra / 2)
+            barra_y = 0
+
+            draw.rect(tela, (10, 10, 10), (barra_x - 20, barra_y + 30, largura_barra, 50))
+            draw.rect(tela, (150, 0, 0), (barra_x - 20, barra_y + 30, largura_hp, 50))
+            draw.rect(tela, (255, 255, 255), (barra_x - 20, barra_y + 30, largura_barra, 50), 1)
+
+            fonte = font.Font("assets/Fontes/alagard.ttf", 24)
+            texto = fonte.render(str(self.nome), True, (255, 255, 255))
+            texto_rect = texto.get_rect(center=(barra_x - 20 + largura_barra / 2, barra_y + 30 + 25))
+            tela.blit(texto, texto_rect)
+
+
 

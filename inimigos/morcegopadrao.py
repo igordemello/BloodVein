@@ -6,7 +6,7 @@ from pygame import time
 from inimigo import Inimigo
 
 class MorcegoPadrao(Inimigo):
-    def __init__(self, x, y, largura=64, altura=64, hp=80, velocidade=2, dano=15):
+    def __init__(self, x, y, largura=64, altura=64, nome="Morcego",hp=80, velocidade=2, dano=15):
         super().__init__(x, y, largura, altura, hp, velocidade, dano)
 
         self.sprites_idle = image.load('./assets/Enemies/morcego_idle.png').convert_alpha()
@@ -15,6 +15,8 @@ class MorcegoPadrao(Inimigo):
         self.frame_width = 27
         self.frame_height = 36
         self.animation_speed = 0.12
+
+        self.nome = nome
 
         self.frames_idle = [self.get_frame(self.sprites_idle, i) for i in range(4)]
         self.frames_voando = [self.get_frame(self.sprites_voando, i) for i in range(6)]
@@ -147,7 +149,7 @@ class MorcegoPadrao(Inimigo):
     def desenhar(self, tela, player_pos, offset=(0, 0)):
         if not self.vivo or len(self.frames) == 0:
             return
-        self.desenhar_outline_mouseover(tela)
+        self.desenhar_outline_mouseover(tela, self.hp, self.hp_max)
 
         offset_x, offset_y = offset
         draw_x = round(self.x) + offset_x
@@ -159,12 +161,22 @@ class MorcegoPadrao(Inimigo):
 
         # Barra de vida
         vida_maxima = getattr(self, "hp_max", 100)
-        largura_barra = 100
+        largura_barra = 500
         porcentagem = max(0, min(self.hp / vida_maxima, 1))
         largura_hp = porcentagem * largura_barra
 
-        if time.get_ticks() - self.ultimo_dano_tempo < 2500:
-            draw.rect(tela, (255, 0, 0), (draw_x - 20, draw_y + 60, largura_hp, 5))
-            draw.rect(tela, (255, 255, 255), (draw_x - 20, draw_y + 60, largura_barra, 5), 1)
+        barra_x = 980 - (largura_barra / 2)
+        barra_y = 0
 
+        if hasattr(self, 'ultimo_dano') and time.get_ticks() - self.ultimo_dano_tempo < 2500:
+            draw.rect(tela, (10, 10, 10), (barra_x - 20, barra_y + 30, largura_barra, 50))
+            draw.rect(tela, (150, 0, 0), (barra_x - 20, barra_y + 30, largura_hp, 50))
+            draw.rect(tela, (255, 255, 255), (barra_x - 20, barra_y + 30, largura_barra, 50), 1)
+
+            # Desenhar o nome centralizado
+            fonte = font.Font("assets/Fontes/alagard.ttf", 24)
+            texto = fonte.render(str(self.nome), True, (255, 255, 255))
+            texto_rect = texto.get_rect(
+                center=(barra_x - 20 + largura_barra / 2, barra_y + 30 + 25))  # 25 = altura/2 da barra
+            tela.blit(texto, texto_rect)
 

@@ -25,6 +25,7 @@ from inimigos.nuvemBoss import NuvemBoss
 from armas import LaminaDaNoite, Chigatana, Karambit, EspadaDoTita, MachadoDoInverno, EspadaEstelar, MarteloSolar, Arco, ListaMods
 from botao import Botao
 from save_manager import SaveManager
+from dificuldade import dificuldade_global
 
 init()
 fonte = font.SysFont("Arial", 24)
@@ -52,7 +53,7 @@ class Sala:
         self.ranges_doors = self.mapa.get_rangesdoors()
 
         self.almaspritesheet = image.load('./assets/Itens/almaSpriteSheet.png').convert_alpha()
-        
+
         self.lojista_img = transform.scale(image.load('./assets/Player/Ikoojista.png').convert_alpha(),(67.5,132.3))
 
         self.frames_alma = [self.almaspritesheet.subsurface(Rect(i * 32, 0, 32, 32)) for i in range(4)]
@@ -87,19 +88,19 @@ class Sala:
         self.visitada = False
         self.cutscene = None
 
-        self.spawn_points = self.mapa.get_inimigospawn()  
+        self.spawn_points = self.mapa.get_inimigospawn()
         self.leve_atual = 0
-        self.max_leves = randint(2,5)
+        self.max_leves = randint(2*dificuldade_global.levas,5*dificuldade_global.levas) #levas
         #self.max_leves = 0
-        self.inimigos_por_leva = 1 
-        self.tempo_entrada = time.get_ticks() 
-        self.cooldown_inicial = 1000  
+        self.inimigos_por_leva = 1
+        self.tempo_entrada = time.get_ticks()
+        self.cooldown_inicial = 1000
         self.inimigos_spawnados = False
-        self.cooldown_entre_levas = 1000  
-        self.tempo_ultima_leva = 0  
-        self.aguardando_nova_leva = False 
+        self.cooldown_entre_levas = 1000
+        self.tempo_ultima_leva = 0
+        self.aguardando_nova_leva = False
 
-        self.fumaça_particula = [] 
+        self.fumaça_particula = []
         self.ultima_fumaça = 0
         self.intervalo_fumaça = 100
 
@@ -114,7 +115,7 @@ class Sala:
         if tipo == 'bau':
             x, y = self.mapa.get_rangebau()[0].topleft
             self.bau = Bau(self.itensDisp, x, y)
-            
+
             if bau_aberto:
                 self.bau.aberto = True
                 self.bau.animando = False
@@ -141,14 +142,14 @@ class Sala:
                 cenas = [
                     {"imagem": transform.scale(image.load("assets/cutscene/nuvemBoss.png").convert_alpha(), (800,800)), "fala": "Matar aquele olho nojento é fácil, quero ver conseguir desviar de algo que está por todo canto!", "lado": "direita"},
                     {"imagem": transform.scale(image.load("assets/cutscene/player.png").convert_alpha(), (640,960)), "fala": "Vai ser ez, eu nunca perderia pra uma nuvem", "lado": "esquerda"}
-                    
+
                 ]
                 self.cutscene = Cutscene(cenas, fundo, self.tela.get_width(), self.tela.get_height())
 
 
 
 
-        if not gerenciador_andar.sala_foi_conquistada(gerenciador_andar.sala_atual):  
+        if not gerenciador_andar.sala_foi_conquistada(gerenciador_andar.sala_atual):
             self.inimigos = self._criar_inimigos()
         else:
             self.inimigos = []
@@ -171,7 +172,7 @@ class Sala:
         game_state = self.save_manager.generate_game_state(self.player, self.gerenciador_andar, self)
         self.save_manager.save_game(game_state, "save_file.json")
 
-  
+
     def _criar_inimigos(self):
         if self.gerenciador_andar.sala_foi_conquistada(self.gerenciador_andar.sala_atual):
             self.leve_atual = self.max_leves + 2
@@ -184,11 +185,11 @@ class Sala:
 
         #self.leve_atual = self.max_leves + 2
         #return []
-        
+
         tempo_atual = time.get_ticks()
         if tempo_atual - self.tempo_entrada < self.cooldown_inicial and not self.inimigos_spawnados:
-            return [] 
-        
+            return []
+
         if "boss" in tipo_sala:
             self.boss_musica = "suicidio"
             musica.tocar("BloodVein SCORE/OST/MusicaDoBoss.mp3")
@@ -205,8 +206,8 @@ class Sala:
                 self.leve_atual = self.max_leves + 2
                 return[boss]
 
-        
-        
+
+
         self.inimigos_spawnados = True
 
         if not self.visitada:
@@ -215,16 +216,16 @@ class Sala:
         if self.leve_atual < self.max_leves:
             self.leve_atual += 1
             inimigos = []
-            
+
             for x, y in self.spawn_points:
                 testrect = Rect(x,y,50,50)
                 if self.player.get_hitbox().colliderect(testrect):
                     continue
                 inimigo = self._criar_inimigo_aleatorio(x, y, tipo_sala)
                 inimigos.append(inimigo)
-            
+
             return inimigos
-        
+
         return []
 
     def _criar_inimigo_aleatorio(self, x, y, tipo_sala):
@@ -281,7 +282,7 @@ class Sala:
         if self.cutscene and self.cutscene.ativa:
             self.cutscene.update(eventos)  # ou eventos se estiver usando eventos
             return  # pausa o resto da sala
-        
+
         agora = time.get_ticks()
 
         temp_rect_player = Rect(self.player.get_hitbox().x, self.player.get_hitbox().y+90, self.player.get_hitbox().width, self.player.get_hitbox().height-90)
@@ -293,16 +294,16 @@ class Sala:
                 self.player.velocidadeMov = 0.2
                 self.player.tomar_dano(10)
                 self.player.tempo_ultimo_dano_espinhos = time.get_ticks()
-            
+
             elif time.get_ticks() - self.player.tempo_ultimo_dano_espinhos >= self.player.cooldown_dano_espinhos:
                 self.player.tomar_dano(10)
                 self.player.tempo_ultimo_dano_espinhos = time.get_ticks()
-                
+
 
         else:
             if self.player.em_espinhos:
                 self.player.em_espinhos = False
-                self.player.velocidadeMov = self.player.velocidade_base  
+                self.player.velocidadeMov = self.player.velocidade_base
 
         if not any(inimigo.vivo for inimigo in self.inimigos) and self.leve_atual < self.max_leves:
             if not self.aguardando_nova_leva:
@@ -312,7 +313,7 @@ class Sala:
                 self.aguardando_nova_leva = False
                 nova_leva = self._criar_inimigos()
                 self.inimigos.extend(nova_leva)
-            
+
                 for inimigo in nova_leva:
                     self.colisao.adicionar_entidade(inimigo)
 
@@ -357,10 +358,10 @@ class Sala:
                 self.player.itemAtivoEsgotado = None
             self.player.player_rect.topleft = (self.player.x, self.player.y)
 
-            
+
 
             self._trocar_de_sala()
-            
+
 
         if self.porta_liberada and self.gerenciador_andar.grafo.nodes[self.gerenciador_andar.sala_atual]['tipo'] == 'boss' and any(self.player.get_hitbox().colliderect(portal) for portal in self.mapa.get_trocar_andar()) and teclas[K_e]:
             original_pos = (self.player.x, self.player.y)
@@ -387,7 +388,7 @@ class Sala:
 
         if self.bau:
             self.bau.update(player_hitbox=self.player.get_hitbox())
-            
+
             if not self.gerenciador_andar.grafo.nodes[self.gerenciador_andar.sala_atual].get("bau_aberto", False):
                 if self.player.get_hitbox().colliderect(self.bau.rect) and teclas[K_e] and self.porta_liberada:
                     if not self.bau.aberto:
@@ -396,10 +397,10 @@ class Sala:
                         self.player.vy = 0
                         self.player.travado = True
 
-            
+
             if (self.bau.aberto and not self.bau.animando and not self.ativar_menu_bau and not self.bau_interagido and self.player.get_hitbox().colliderect(self.bau.rect)):
                 self.ativar_menu_bau = True
-                self.bau_interagido = True 
+                self.bau_interagido = True
 
             if not self.bau.menu_ativo and self.ativar_menu_bau:
                 self.ativar_menu_bau = False
@@ -496,20 +497,20 @@ class Sala:
                             inimigo.pocao_coletada = True
                 if not getattr(inimigo, "loot_coletado", True):
                     if not hasattr(inimigo, "vai_dropar_loot"):
-                        inimigo.vai_dropar_loot = randint(1, 100) <= 30  # 30% de chance de cair loot
+                        inimigo.vai_dropar_loot = randint(1, 100) <= 20  # 30% de chance de cair loot
 
                     if getattr(inimigo, "vai_dropar_loot", False) and not hasattr(inimigo, "loot_botao_criado"):
                         pos = (inimigo.x + 16, inimigo.y + 32)
                         chance = randint(1, 100)
-                        if chance <= 70:
+                        if chance <= dificuldade_global.chance("comum"):
                             raridade = "comum"
                             cor = (255, 255, 255)
                             hover = (100, 100, 100)
-                        elif chance <= 90:
+                        elif chance <= dificuldade_global.chance("incomum"):
                             raridade = "incomum"
                             cor = (0, 255, 0)
                             hover = (0, 100, 0)
-                        elif chance <= 97:
+                        elif chance <= dificuldade_global.chance("raro"):
                             raridade = "raro"
                             cor = (128, 0, 128)
                             hover = (28, 0, 28)
@@ -550,15 +551,15 @@ class Sala:
         if self.cutscene and self.cutscene.ativa:
             self.cutscene.draw(self.tela)
             return
-        
+
         offset_x, offset_y = screen_shaker.offset
         self.mapa.desenhar(self.porta_liberada)
 
-        
+
 
         if self.bau:
             tela.blit(self.bau.image, (self.bau.rect.x + offset_x, self.bau.rect.y + offset_y))
-            
+
 
         offset_x, offset_y = screen_shaker.offset
 
@@ -566,20 +567,20 @@ class Sala:
         for particula in self.fumaça_particula:
             s = Surface((particula['size'] * 2, particula['size'] * 2), SRCALPHA)
             draw.circle(
-                s, 
+                s,
                 (*particula['color'], particula['alpha']),
                 (particula['size'], particula['size']),
                 particula['size']
             )
             tela.blit(s, (
-                particula['x'] - particula['size'] + offset_x, 
+                particula['x'] - particula['size'] + offset_x,
                 particula['y'] - particula['size'] + offset_y
             ))
-    
+
 
         if self.gerenciador_andar.grafo.nodes[self.gerenciador_andar.sala_atual]['tipo'] == 'loja':
             self.tela.blit(self.lojista_img, (950 + offset_x, 490 + offset_y))
-        
+
 
         #debug visual das colisões do player e do mapa:
         # for collider in self.mapa.get_colliders():
@@ -601,7 +602,7 @@ class Sala:
             self.tela.blit(bg_surface, bg_rect)
 
             self.tela.blit(texto, texto_rect)
-        
+
 
 
 
@@ -617,8 +618,8 @@ class Sala:
         som.tocar('passar_porta')
         for porta in self.ranges_doors:
             if self.player.get_hitbox().colliderect(porta['colisor']) and self.porta_liberada:
-                
-                
+
+
                 self.em_transicao = True
 
 
@@ -638,7 +639,7 @@ class Sala:
 
                         nova_instancia.player = self.player
                         nova_instancia.gerenciador_andar = self.gerenciador_andar
-                        
+
                         if direcao_porta == 'cima':
                             nova_instancia.player.player_rect.topleft = (914, 644)
                         elif direcao_porta == 'baixo':
@@ -692,7 +693,7 @@ class Sala:
             fade_in (bool): Se True, fade de preto para tela (entrada). Se False, fade para preto (saída).
             duration (int): Duração total do efeito em milissegundos.
         """
-        
+
         fade_surface = Surface((1425,775), SRCALPHA)
         steps = 30
         #delay = max(1, duration // steps)  # Garante pelo menos 1ms de delay
@@ -717,21 +718,21 @@ class Sala:
     def avancar_andar(self):
         # Verifica se é sala do boss e se colidiu com o portal
         portal = self.mapa.get_trocar_andar()
-        if (self.gerenciador_andar.grafo.nodes[self.gerenciador_andar.sala_atual]['tipo'] == 'boss' and 
-            self.player.get_hitbox().colliderect(portal[0]) and 
+        if (self.gerenciador_andar.grafo.nodes[self.gerenciador_andar.sala_atual]['tipo'] == 'boss' and
+            self.player.get_hitbox().colliderect(portal[0]) and
             self.porta_liberada):
-            
+
             self.boss_musica = 0
 
             # Pré-salva o andar atual (opcional)
             andar_num = self.gerenciador_andar.numero_andar
             import shutil
             shutil.copy('data/andar_atual.json', f'data/backup_andar{andar_num}.json')
-            
+
             # Avança para o próximo andar
             self.gerenciador_andar.numero_andar += 1
             self.gerenciador_andar.gerar_andar(self.gerenciador_andar.numero_andar)
-            
+
             # Recria a sala com o novo andar
             spawn_id = self.gerenciador_andar.get_sala_spawn()
             self.gerenciador_andar.sala_atual = spawn_id
@@ -766,26 +767,26 @@ class Sala:
         self.porta_liberada = data['porta_liberada']
         self.visitada = data['visitada']
         self.em_transicao = data.get('em_transicao', False)
-        
-        
+
+
         if data['bau'] and self.bau:
             self.bau.aberto = data['bau']['aberto']
             self.bau_interagido = data['bau']['interagido']
             self.ativar_menu_bau = data['bau']['menu_ativo']
-            
+
             if self.bau.aberto:
                 self.bau.animando = False
                 self.bau.frame_index = len(self.bau.frames) - 1
                 self.bau.image = self.bau.frames[-1]
-        
+
         self.colisao.entidades = [self.player] + self.inimigos
 
-        
+
     def hitbox_loja(self):
         tipo_sala = self.gerenciador_andar.grafo.nodes[self.gerenciador_andar.sala_atual]["tipo"]
         if not 'loja' in tipo_sala:
             return []
-        
+
         range_loja = self.mapa.get_rangeloja()
 
         return range_loja if range_loja else []

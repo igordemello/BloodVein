@@ -975,7 +975,7 @@ class Player():
             self.arma.lifeSteal /= 2
         elif trait == "Ancião":
             self.efeitos.append("lentidao")
-        elif trait == "Nojento":
+        elif trait == "Peçonhento":
             self.efeitos.append("veneno")
         elif trait == "Translúcido":
             self.tipo_colisao = 'voador'

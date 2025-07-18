@@ -32,6 +32,7 @@ from som import musica
 from inventario import Inventario
 
 from enum import Enum, auto
+from dificuldade import dificuldade_global
 
 class EstadoDoJogo(Enum):
     MENU = auto()
@@ -68,7 +69,7 @@ class Game:
         self.game_over = GameOver()
         self.menu = Menu(self.screen)
 
-        
+
 
         self.mensagem_salvo = None
         self.tempo_mensagem_salvo = 0
@@ -263,23 +264,23 @@ class Game:
 
         elif self.estado == EstadoDoJogo.ESCOLHA_ARMA:
             for ev in eventos:
-                if ev.type == KEYDOWN:
-                    if ev.key == K_RIGHT:
-                        self.menu_armas.scrollMenu(">")
-                    elif ev.key == K_LEFT:
-                        self.menu_armas.scrollMenu("<")
-                elif ev.type == MOUSEBUTTONDOWN and ev.button == 1:
+                if ev.type == MOUSEBUTTONDOWN and ev.button == 1:
                     resultado = self.menu_armas.checar_clique_menu(mouse_pos)
                     if resultado:
-                        arma, atributos, trait = resultado
+                        arma, atributos, trait, dificuldade = resultado
                         self.player.arma = arma
                         self.player.atributos = atributos
                         self.player.atualizar_arma()
                         self.player.atualizar_atributos()
                         self.player.atualizar_traits(trait)
+
+                        dificuldade_global.set_dificuldade(dificuldade.lower())
+
                         self.hud.atualizar_arma_icon()
                         som.tocar("clique3")
                         self.estado = EstadoDoJogo.JOGANDO
+
+
 
         for ev in eventos:
             if ev.type == MOUSEBUTTONDOWN:
@@ -299,8 +300,8 @@ class Game:
         if self.estado == EstadoDoJogo.JOGANDO:
             self.sala_atual.atualizar(dt, keys, eventos)
             self.player.atualizar(dt, keys)
-            
-            
+
+
             if (
                 self.estado == EstadoDoJogo.JOGANDO and
                 self.sala_atual.bau and
@@ -328,7 +329,7 @@ class Game:
         elif self.estado == EstadoDoJogo.ESCOLHA_ARMA:
 
             self.menu_armas.menu_ativo = True
-            self.menu_armas.menuEscolherItens(self.screen)
+            self.menu_armas.desenhar_menu(self.screen)
 
         elif self.estado == EstadoDoJogo.JOGANDO:
             self.hud.desenhaFundo()

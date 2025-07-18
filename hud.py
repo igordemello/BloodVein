@@ -322,7 +322,7 @@ class Hud:
             text.set_alpha(self.stats_alpha)
             stats_surface.blit(text, (45, 55 + i * 42))
 
-        self.tela.blit(stats_surface, (970, 750))
+        self.tela.blit(stats_surface, (1305, 770))
 
     def reset_stats_fade(self):
         self.stats_alpha = 0
