@@ -2,17 +2,8 @@ from pygame import *
 import math
 from pygame import time
 from inimigo import Inimigo
-from pathfinding import a_star
+import random
 
-def pixel_para_grid(x, y, offset, tile_size_scaled):
-    grid_x = int((x - offset[0]) / tile_size_scaled)
-    grid_y = int((y - offset[1]) / tile_size_scaled)
-    return grid_x, grid_y
-
-def grid_para_pixel(grid_x, grid_y, offset, tile_size_scaled):
-    x = offset[0] + (grid_x * tile_size_scaled) + (tile_size_scaled / 2)
-    y = offset[1] + (grid_y * tile_size_scaled) + (tile_size_scaled / 2)
-    return x, y
 
 class MorcegoPadrao(Inimigo):
     def __init__(self, x, y, largura=64, altura=64, hp=80, velocidade=2, dano=15):
@@ -20,13 +11,15 @@ class MorcegoPadrao(Inimigo):
 
         self.sprites_idle = image.load('./assets/Enemies/morcego_idle.png').convert_alpha()
         self.sprites_voando = image.load('./assets/Enemies/morcego_correr.png').convert_alpha()
+        self.sprites_ataque = image.load('./assets/Enemies/morcego_ataque.png')
 
         self.frame_width = 27
         self.frame_height = 36
-        self.animation_speed = 0.12
+        self.animation_speed = 0.3
 
         self.frames_idle = [self.get_frame(self.sprites_idle, i) for i in range(4)]
         self.frames_voando = [self.get_frame(self.sprites_voando, i) for i in range(6)]
+        self.frames_ataque = [self.get_frame(self.sprites_ataque, i) for i in range(5)]
         self.frames = self.frames_idle
         self.estado = 'idle'
 
@@ -35,11 +28,25 @@ class MorcegoPadrao(Inimigo):
         self.tempo_ataque = 0
         self.duracao_ataque = 400
 
-        self.tipo_colisao = 'obstaculo'
+        self.tipo_colisao = 'voador'
         self.ultimo_objetivo = None
         self.caminho_atual = []
         self.tile_size_scaled = 32 * 3.25
         self.vivo = True
+
+        # Área de movimento do morcego
+        self.area_movimento = Rect(280, 160, 1350, 650)
+        
+        # Configurações do movimento em zig-zag
+        self.direcao = random.choice([-1, 1])
+        self.altura_zigzag = random.randint(40,80)  # Altura do padrão de zig-zag
+        self.contador_zigzag = random.randint(0, 100)
+        self.velocidade = velocidade * random.uniform(0.8, 1.2)
+        self.frequencia_zigzag = random.uniform(0.08, 0.12)
+        self.ponto_inicial = (x, y)  # Ponto onde o morcego começa
+        self.velocidade_original = velocidade
+
+        
 
     def get_frame(self, spritesheet, index):
         rect = Rect(index * self.frame_width, 0, self.frame_width, self.frame_height)
@@ -54,6 +61,10 @@ class MorcegoPadrao(Inimigo):
             self.vy = 0
             return
         
+        if not self.atacando and self.frames == self.frames_ataque:
+            self.frames = self.frames_voando
+            self.frame_index = 0
+            self.frame_time = 0
         
         # Verificar knockback primeiro
         now = time.get_ticks()
@@ -63,59 +74,49 @@ class MorcegoPadrao(Inimigo):
             self.y += self.vy
             return
         
-        #PATHFINDING A*
-        # 1. Obter offset e tamanho do tile (IGUAL AO MAPA)
-        tile_size_scaled = self.tile_size_scaled
+        # Movimento em zig-zag dentro da área definida
+        self.vx = self.velocidade * self.direcao
         
-        # 2. Converter posições para grid
-        start = pixel_para_grid(self.x, self.y, offset_mapa, tile_size_scaled)
-        goal = pixel_para_grid(player_pos[0], player_pos[1], offset_mapa, tile_size_scaled)
+        # Cálculo do movimento vertical (zig-zag)
+        self.contador_zigzag += 1
+        if self.contador_zigzag > random.randint(80, 120):  # Ajuste este valor para mudar a frequência do zig-zag
+            self.contador_zigzag = 0
+            self.altura_zigzag = random.randint(40,80)  # Varia a altura do zig-zag
+            
+        # Usando seno para criar o padrão de zig-zag suave
+        self.vy = math.sin(self.contador_zigzag * self.frequencia_zigzag) * 2
         
-        # 3. Validar coordenadas
-        if not (0 <= start[1] < len(matriz_colisao)) or not (0 <= start[0] < len(matriz_colisao[0])):
-            return
-            
-        if not (0 <= goal[1] < len(matriz_colisao)) or not (0 <= goal[0] < len(matriz_colisao[0])):
-            return
-            
-        # 4. Verificar se precisa recalcular caminho
-        if self.ultimo_objetivo != goal or not self.caminho_atual:
-            self.caminho_atual = a_star(matriz_colisao, start, goal)
-            self.ultimo_objetivo = goal
-
-        # 5. Seguir caminho
-        if self.caminho_atual and len(self.caminho_atual) > 1:
-            proximo = self.caminho_atual[1]
-            
-            # Converter para posição mundial (centro do tile)
-            destino_x, destino_y = grid_para_pixel(
-                proximo[0], proximo[1], 
-                offset_mapa, 
-                tile_size_scaled
-            )
-            
-            # Calcular direção
-            dx = destino_x - self.x
-            dy = destino_y - self.y
-            dist = math.hypot(dx, dy)
-            
-            if dist > 5:  # Só move se estiver longe
-                self.vx = (dx / dist) * self.velocidade
-                self.vy = (dy / dist) * self.velocidade
-            else:
-                self.caminho_atual.pop(0)  # Chegou neste nó
-        
-        # Aplicar movimento
+        # Atualiza posição
         self.x += self.vx
         self.y += self.vy
+        
+        # Verifica os limites da área de movimento
+        if self.x < self.area_movimento.left:
+            self.direcao = 1
+            self.x = self.area_movimento.left
+        elif self.x > self.area_movimento.right - self.largura:
+            self.direcao = -1
+            self.x = self.area_movimento.right - self.largura
+            
+        if self.y < self.area_movimento.top:
+            self.y = self.area_movimento.top
+            self.vy = abs(self.vy)
+        elif self.y > self.area_movimento.bottom - self.altura:
+            self.y = self.area_movimento.bottom - self.altura
+            self.vy = -abs(self.vy)
 
-        # Resetar velocidade para evitar movimento contínuo
-        self.vx = self.vy = 0
-        #ATÉ AQUI O PATHFINDING
-
-        if self.atacando:
+        # Verifica se está atacando o jogador quando perto
+        if not self.atacando:
+            player_rect = Rect(player_pos[0], player_pos[1], 64, 64)
+            if self.rect.colliderect(player_rect.inflate(self.raio_ataque, self.raio_ataque)):
+                self.atacando = True
+                self.tempo_ataque = now
+                if hasattr(self, "dar_dano") and callable(self.dar_dano):
+                    self.dar_dano()
+        else:
             if now - self.tempo_ataque > self.duracao_ataque:
                 self.atacando = False
+
 
         self.estado = 'voando'
         self.frames = self.frames_voando
@@ -128,6 +129,20 @@ class MorcegoPadrao(Inimigo):
                 self.tempo_ataque = now
                 if hasattr(self, "dar_dano") and callable(self.dar_dano):
                     self.dar_dano()
+
+        if self.atacando:
+            self.frames = self.frames_ataque  # Muda para frames de ataque
+
+            if now - self.tempo_ataque > self.duracao_ataque:
+                self.atacando = False
+                self.frames = self.frames_voando  # Volta para frames normais
+        else:
+            self.frames = self.frames_voando
+
+        if self.atacando and self.frames != self.frames_ataque:
+            self.frames = self.frames_ataque
+            self.frame_index = 0  # Reseta o índice
+            self.frame_time = 0
 
         self.atualizar_animacao()
 
