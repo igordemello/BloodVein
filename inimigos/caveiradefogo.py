@@ -6,7 +6,7 @@ from inimigo import Inimigo
 import random
 
 class CaveiraDeFogo(Inimigo):
-    def __init__(self, x, y, largura, altura, hp, nome="Caveira de Fogo",velocidade=4, dano=20):
+    def __init__(self, x, y, largura, altura, hp, nome="Caveira de Fogo",velocidade=3, dano=20):
         super().__init__(x, y, largura, altura, hp, velocidade, dano)
 
         self.spritesheet = image.load('./assets/Enemies/FireSkull-Sheet.png').convert_alpha()
