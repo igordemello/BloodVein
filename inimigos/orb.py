@@ -151,6 +151,34 @@ class Orb(Inimigo):
             self.stun_ativo = False
         now = time.get_ticks()
 
+         # Atualiza projéteis
+        for projetil in self.projeteis[:]:
+            # Adiciona partículas ao rastro
+            if len(projetil["trail"]) < self.trail_projetil_max or uniform(0, 1) < 0.4:
+                projetil["trail"].append({
+                    "x": projetil["x"],
+                    "y": projetil["y"],
+                    "alpha": randint(150, 200),
+                    "cor": (255, 100 + randint(0, 50), 100 + randint(0, 50)),
+                    "tamanho": randint(10, 15),
+                    "lifetime": randint(200, 255)
+                })
+
+            # Atualiza partículas existentes
+            for part in projetil["trail"][:]:
+                part["alpha"] = max(0, part["alpha"] - self.trail_projetil_fade)
+                if part["alpha"] <= 0:
+                    projetil["trail"].remove(part)
+
+            # Move o projétil
+            projetil["x"] += projetil["vx"]
+            projetil["y"] += projetil["vy"]
+            projetil["lifetime"] -= 1
+
+            # Remove se expirar
+            if projetil["lifetime"] <= 0:
+                self.projeteis.remove(projetil)
+
         if now - self.knockback_time < self.knockback_duration:
             return
         else:
@@ -198,33 +226,7 @@ class Orb(Inimigo):
         self.set_velocidade_x(self.vx)
         self.set_velocidade_y(self.vy)
 
-        # Atualiza projéteis
-        for projetil in self.projeteis[:]:
-            # Adiciona partículas ao rastro
-            if len(projetil["trail"]) < self.trail_projetil_max or uniform(0, 1) < 0.4:
-                projetil["trail"].append({
-                    "x": projetil["x"],
-                    "y": projetil["y"],
-                    "alpha": randint(150, 200),
-                    "cor": (255, 100 + randint(0, 50), 100 + randint(0, 50)),
-                    "tamanho": randint(10, 15),
-                    "lifetime": randint(200, 255)
-                })
-
-            # Atualiza partículas existentes
-            for part in projetil["trail"][:]:
-                part["alpha"] = max(0, part["alpha"] - self.trail_projetil_fade)
-                if part["alpha"] <= 0:
-                    projetil["trail"].remove(part)
-
-            # Move o projétil
-            projetil["x"] += projetil["vx"]
-            projetil["y"] += projetil["vy"]
-            projetil["lifetime"] -= 1
-
-            # Remove se expirar
-            if projetil["lifetime"] <= 0:
-                self.projeteis.remove(projetil)
+       
 
         self.atualizar_animacao()
 
