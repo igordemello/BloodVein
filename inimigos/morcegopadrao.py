@@ -1,14 +1,12 @@
 from pygame import *
-from pygame.locals import QUIT
 import math
-import random
 from pygame import time
 from inimigo import Inimigo
 import random
 
 
 class MorcegoPadrao(Inimigo):
-    def __init__(self, x, y, largura=64, altura=64, nome="Morcego",hp=80, velocidade=2, dano=15):
+    def __init__(self, x, y, largura=64, altura=64, hp=80, velocidade=2, dano=15):
         super().__init__(x, y, largura, altura, hp, velocidade, dano)
 
         self.sprites_idle = image.load('./assets/Enemies/morcego_idle.png').convert_alpha()
@@ -19,26 +17,12 @@ class MorcegoPadrao(Inimigo):
         self.frame_height = 36
         self.animation_speed = 0.3
 
-        self.nome = nome
-
         self.frames_idle = [self.get_frame(self.sprites_idle, i) for i in range(4)]
         self.frames_voando = [self.get_frame(self.sprites_voando, i) for i in range(6)]
         self.frames_ataque = [self.get_frame(self.sprites_ataque, i) for i in range(5)]
         self.frames = self.frames_idle
         self.estado = 'idle'
 
-        # Movimento aleatório
-        self.direcao = self.gerar_direcao()
-        self.tempo_mudanca_direcao = 5000  # ms
-        self.ultimo_tempo_mudanca = time.get_ticks()
-
-        # Limites do mapa (ajuste conforme seu mapa real)
-        self.limite_x_min = 400
-        self.limite_x_max = 1500
-        self.limite_y_min = 400
-        self.limite_y_max = 800
-
-        # Ataque
         self.raio_ataque = 50
         self.atacando = False
         self.tempo_ataque = 0
@@ -55,14 +39,12 @@ class MorcegoPadrao(Inimigo):
 
         # Configurações do movimento em zig-zag
         self.direcao = random.choice([-1, 1])
-        self.altura_zigzag = random.randint(40,80)  # Altura do padrão de zig-zag
+        self.altura_zigzag = random.randint(40, 80)  # Altura do padrão de zig-zag
         self.contador_zigzag = random.randint(0, 100)
         self.velocidade = velocidade * random.uniform(0.8, 1.2)
         self.frequencia_zigzag = random.uniform(0.08, 0.12)
         self.ponto_inicial = (x, y)  # Ponto onde o morcego começa
         self.velocidade_original = velocidade
-
-
 
     def get_frame(self, spritesheet, index):
         rect = Rect(index * self.frame_width, 0, self.frame_width, self.frame_height)
@@ -97,7 +79,7 @@ class MorcegoPadrao(Inimigo):
         self.contador_zigzag += 1
         if self.contador_zigzag > random.randint(80, 120):  # Ajuste este valor para mudar a frequência do zig-zag
             self.contador_zigzag = 0
-            self.altura_zigzag = random.randint(40,80)  # Varia a altura do zig-zag
+            self.altura_zigzag = random.randint(40, 80)  # Varia a altura do zig-zag
 
         # Usando seno para criar o padrão de zig-zag suave
         self.vy = math.sin(self.contador_zigzag * self.frequencia_zigzag) * 2
@@ -132,7 +114,6 @@ class MorcegoPadrao(Inimigo):
         else:
             if now - self.tempo_ataque > self.duracao_ataque:
                 self.atacando = False
-
 
         self.estado = 'voando'
         self.frames = self.frames_voando
@@ -171,12 +152,12 @@ class MorcegoPadrao(Inimigo):
     def desenhar(self, tela, player_pos, offset=(0, 0)):
         if not self.vivo or len(self.frames) == 0:
             return
-        self.desenhar_outline_mouseover(tela, self.hp, self.hp_max)
+        self.desenhar_outline_mouseover(tela,self.hp,self.hp_max)
 
         offset_x, offset_y = offset
         draw_x = round(self.x) + offset_x
         draw_y = round(self.y) + offset_y
-        #HIT VERMELHO COLOCAR ISSO EM TODOS OS INIMIGOS NO METODO DESENHAR DE CADA UM
+        # HIT VERMELHO COLOCAR ISSO EM TODOS OS INIMIGOS NO METODO DESENHAR DE CADA UM
         if self.anima_hit:
             frame = self.aplicar_efeito_hit(self.frames[self.frame_index])
         else:
@@ -190,10 +171,6 @@ class MorcegoPadrao(Inimigo):
         porcentagem = max(0, min(self.hp / vida_maxima, 1))
         largura_hp = porcentagem * largura_barra
 
-        if hasattr(self, 'ultimo_dano') and time.get_ticks() - self.ultimo_dano_tempo < 2500:
-            draw.rect(tela, (255, 200, 200), (draw_x - 20, draw_y + 70, largura_barra, 5))
-            draw.rect(tela, (255, 0, 0), (draw_x - 20, draw_y + 70, largura_hp, 5))
-            draw.rect(tela, (255, 255, 255), (draw_x - 20, draw_y + 70, largura_barra, 5), 1)
         barra_x = 980 - (largura_barra / 2)
         barra_y = 0
 
@@ -208,4 +185,3 @@ class MorcegoPadrao(Inimigo):
             texto_rect = texto.get_rect(
                 center=(barra_x - 20 + largura_barra / 2, barra_y + 30 + 25))  # 25 = altura/2 da barra
             tela.blit(texto, texto_rect)
-

@@ -880,7 +880,7 @@ class Player():
                     inimigo.time_last_hit_frame = time.get_ticks()
                     self.hits += 1
                     self.tempo_ultimo_hit = current_time
-                    self.arma.comboMult = 1.1**self.hits
+                    self.arma.comboMult = 1.0 + (0.1 * self.hits)
                     self.arma.ataquePrincipal(inimigo)
                     inimigo.ultimo_dano_tempo = current_time
                     self.hp = min(self.hp + self.arma.lifeSteal, self.hpMax)
