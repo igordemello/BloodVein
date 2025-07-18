@@ -55,10 +55,11 @@ class Furacao(Inimigo):
         self.ultimo_frame = time.get_ticks()
 
         # Limites do mapa
-        self.limite_x_min = 400
-        self.limite_x_max = 1500
-        self.limite_y_min = 400
-        self.limite_y_max = 800
+        mapa = Rect(310.5,162.5,1250,550)
+        self.limite_x_min = mapa.x
+        self.limite_x_max = mapa.x + mapa.width
+        self.limite_y_min = mapa.y
+        self.limite_y_max = mapa.y + mapa.height
 
     def gerar_direcao(self):
         """Gera uma direção aleatória normalizada"""
@@ -207,8 +208,14 @@ class Furacao(Inimigo):
         draw_y = self.y + offset_y
 
         # Desenha o frame atual
-        frame = self.frames[min(self.frame_index, len(self.frames) - 1)]  # Garante que não ultrapasse
+        #HIT VERMELHO COLOCAR ISSO EM TODOS OS INIMIGOS NO METODO DESENHAR DE CADA UM
+        if self.anima_hit:
+            frame = self.aplicar_efeito_hit(self.frames[min(self.frame_index, len(self.frames) - 1)])
+        else:
+            frame = self.frames[min(self.frame_index, len(self.frames) - 1)]
         tela.blit(frame, (draw_x, draw_y))
+
+        self.desenhar_dano(tela, offset)
 
         # Desenha a barra de vida se tomou dano recentemente
         vida_maxima = getattr(self, "hp_max", 100)

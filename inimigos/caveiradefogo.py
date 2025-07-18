@@ -39,10 +39,11 @@ class CaveiraDeFogo(Inimigo):
         self.ultimo_tempo_mudanca = time.get_ticks()
 
         # Limites do mapa
-        self.limite_x_min = 400
-        self.limite_x_max = 1500
-        self.limite_y_min = 400
-        self.limite_y_max = 800
+        mapa = Rect(310.5,162.5,1250,550)
+        self.limite_x_min = mapa.x
+        self.limite_x_max = mapa.x + mapa.width
+        self.limite_y_min = mapa.y
+        self.limite_y_max = mapa.y + mapa.height
 
     def gerar_direcao(self):
         angulo = random.uniform(0, 2 * math.pi)
@@ -136,8 +137,13 @@ class CaveiraDeFogo(Inimigo):
         draw_x = self.x + offset_x
         draw_y = self.y + offset_y
 
-        frame = self.frames[self.frame_index]
+        #HIT VERMELHO COLOCAR ISSO EM TODOS OS INIMIGOS NO METODO DESENHAR DE CADA UM
+        if self.anima_hit:
+            frame = self.aplicar_efeito_hit(self.frames[self.frame_index])
+        else:
+            frame = self.frames[self.frame_index]
         tela.blit(frame, (draw_x, draw_y))
+        self.desenhar_dano(tela, offset)
 
         vida_maxima = getattr(self, "hp_max", 100)
         largura_barra = 500

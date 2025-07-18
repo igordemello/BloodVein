@@ -68,6 +68,8 @@ class Hud:
         self.tempo_mensagem_mana = 0
         self.duracao_mensagem = 1000
 
+        self.tela_vermelha = image.load('assets/UI/tela-vermelha.png').convert_alpha()
+
     def desenhaFundo(self):
         self.tela.blit(self.fundo, (0, 0))
 
@@ -223,7 +225,7 @@ class Hud:
             ).copy()
             self.tela.blit(barra_stamina, (x_hud + x_inicio_stamina, y_barra))
 
-        # item ativo
+        #item ativo
         margem_item_x = 1920-150
         margem_item_y = 925
         item_slot = {
@@ -249,7 +251,7 @@ class Hud:
                           (margem_item_x + (x * 25) + offset_x, margem_item_y + 104 + offset_y, 20, 8))
 
 
-        # Almas
+        #almas
         self.tela.blit(self.almaIcon, (almas_rect.right, 43))
         self.tela.blit(almas, almas_rect)
 
@@ -283,6 +285,14 @@ class Hud:
             self.tela.blit(comboMult, comboMult_rect.topleft)
 
         self.desenhar_hotkeys()
+
+        #tela fica vermelha com pouca vida
+        proporcao_hp = self.player.hp / self.player.hpMax
+        if proporcao_hp < 0.15:
+            intensidade = int(100 * (1 - proporcao_hp / 0.15))
+            vermelha_surf = self.tela_vermelha.copy()
+            vermelha_surf.set_alpha(intensidade)
+            self.tela.blit(vermelha_surf, (0, 0))
 
         
 

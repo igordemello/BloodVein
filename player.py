@@ -689,17 +689,26 @@ class Player():
 
         self.sistemaparticulas.draw(tela)
 
-        sword_img = self.sword.copy()
-        temp_surface = Surface((sword_img.get_width() * 2, sword_img.get_height() * 2), SRCALPHA)
-        temp_surface.blit(sword_img, (temp_surface.get_width() // 2 - self.sword_pivot[0],
-                                      temp_surface.get_height() // 2 - self.sword_pivot[1]))
-        rotated_surface = transform.rotate(temp_surface, -self.sword_angle)
-        final_rect = rotated_surface.get_rect(center=(base_x, base_y))
+        # sword_img = self.sword.copy()
+        # temp_surface = Surface((sword_img.get_width() * 2, sword_img.get_height() * 2), SRCALPHA)
+        # temp_surface.blit(sword_img, (temp_surface.get_width() // 2 - self.sword_pivot[0],
+        #                               temp_surface.get_height() // 2 - self.sword_pivot[1]))
+        # rotated_surface = transform.rotate(temp_surface, -self.sword_angle)
+        # final_rect = rotated_surface.get_rect(center=(base_x, base_y))
 
-        # Aplicar transparência à espada se o efeito fantasma estiver ativo
-        if 'fantasma' in self.efeitos:
-            rotated_surface.set_alpha(150)  # 150 de 255 (cerca de 60% de opacidade)
-        tela.blit(rotated_surface, final_rect.topleft)
+        # # Aplicar transparência à espada se o efeito fantasma estiver ativo
+        # if 'fantasma' in self.efeitos:
+        #     rotated_surface.set_alpha(150)  # 150 de 255 (cerca de 60% de opacidade)
+        # tela.blit(rotated_surface, final_rect.topleft)
+
+        angulo_graus = math.degrees(angle) % 360
+        desenhar_arma_na_frente = (angulo_graus<=180)
+
+        
+
+        if not desenhar_arma_na_frente:
+            self._desenhar_arma(tela, mouse_pos)
+
 
         frame = self.frame_atual.copy()
         if self.foi_atingido and time.get_ticks() - self.tempo_atingido < self.invencibilidade:
@@ -711,6 +720,9 @@ class Player():
 
         img_rect = frame.get_rect(center=self.player_rect.center)
         tela.blit(frame, img_rect.topleft)
+
+        if desenhar_arma_na_frente:
+            self._desenhar_arma(tela, mouse_pos)
 
         # projeteis
         for projetil in self.projeteis:
@@ -754,7 +766,7 @@ class Player():
             texto_str = f"-{self.dano_recebido:.1f}"
 
             pos_x = 108
-            pos_y = 440 - ((time.get_ticks() - self.dano_recebido_tempo) / 4)
+            pos_y = 200 - ((time.get_ticks() - self.dano_recebido_tempo) / 4)
 
             outline_color = (0, 0, 0)
             outline_size = 1
@@ -768,6 +780,23 @@ class Player():
             dano_text = fonte_atual.render(texto_str, True, cor)
             tela.blit(dano_text, (pos_x - dano_text.get_width() / 2, pos_y))
 
+    def _desenhar_arma(self, tela, mouse_pos):
+        angle = self.calcular_angulo(mouse_pos)
+        centro_jogador = (self.player_rect.centerx, self.player_rect.centery)
+        base_x = centro_jogador[0] + math.cos(angle) * (self.radius - 5)
+        base_y = centro_jogador[1] + math.sin(angle) * (self.radius - 5)
+
+        sword_img = self.sword.copy()
+        temp_surface = Surface((sword_img.get_width() * 2, sword_img.get_height() * 2), SRCALPHA)
+        temp_surface.blit(sword_img, (temp_surface.get_width() // 2 - self.sword_pivot[0],
+                                    temp_surface.get_height() // 2 - self.sword_pivot[1]))
+        rotated_surface = transform.rotate(temp_surface, -self.sword_angle)
+        final_rect = rotated_surface.get_rect(center=(base_x, base_y))
+
+        if 'fantasma' in self.efeitos:
+            rotated_surface.set_alpha(150)
+        tela.blit(rotated_surface, final_rect.topleft)
+    
     def get_hitbox(self):
         return self.player_rect
 

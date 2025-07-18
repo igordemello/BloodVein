@@ -224,11 +224,11 @@ class LaminaDaNoite(Arma):
     def ataquePrincipal(self,inimigo):
         dano_final = self.dano * inimigo.modificadorDanoRecebido * dificuldade_global.mult_dano_inimigo * self.comboMult
         if randint(1, 100) <= self.chanceCritico:
-            inimigo.hp -= dano_final * self.danoCriticoMod
+            inimigo.tomar_dano(dano_final*self.danoCriticoMod, critico=True)
             inimigo.ultimo_dano_critico = True
             inimigo.ultimo_dano = dano_final * self.danoCriticoMod
         else:
-            inimigo.hp -= dano_final * self.comboMult
+            inimigo.tomar_dano(dano_final*self.comboMult)
             inimigo.ultimo_dano_critico = False
             inimigo.ultimo_dano = dano_final * self.comboMult
 
@@ -287,11 +287,11 @@ class Chigatana(Arma):
     def ataquePrincipal(self,inimigo):
         dano_final = self.dano * inimigo.modificadorDanoRecebido * dificuldade_global.mult_dano_inimigo * self.comboMult
         if randint(1, 100) <= self.chanceCritico:
-            inimigo.hp -= dano_final * self.danoCriticoMod
+            inimigo.tomar_dano(dano_final*self.danoCriticoMod, critico=True)
             inimigo.ultimo_dano_critico = True
             inimigo.ultimo_dano = dano_final * self.danoCriticoMod
         else:
-            inimigo.hp -= dano_final
+            inimigo.tomar_dano(dano_final)
             inimigo.ultimo_dano_critico = False
             inimigo.ultimo_dano = dano_final
 
@@ -348,11 +348,11 @@ class Karambit(Arma):
     def ataquePrincipal(self,inimigo):
         dano_final = self.dano * inimigo.modificadorDanoRecebido * dificuldade_global.mult_dano_inimigo * self.comboMult
         if randint(1, 100) <= self.chanceCritico:
-            inimigo.hp -= dano_final * self.danoCriticoMod
+            inimigo.tomar_dano(dano_final*self.danoCriticoMod, critico=True)
             inimigo.ultimo_dano_critico = True
             inimigo.ultimo_dano = dano_final * self.danoCriticoMod
         else:
-            inimigo.hp -= dano_final
+            inimigo.tomar_dano(dano_final)
             inimigo.ultimo_dano_critico = False
             inimigo.ultimo_dano = dano_final
 
@@ -412,11 +412,11 @@ class EspadaDoTita(Arma):
     def ataquePrincipal(self,inimigo):
         dano_final = self.dano * inimigo.modificadorDanoRecebido * dificuldade_global.mult_dano_inimigo * self.comboMult
         if randint(1, 100) <= self.chanceCritico:
-            inimigo.hp -= dano_final * self.danoCriticoMod
+            inimigo.tomar_dano(dano_final*self.danoCriticoMod, critico=True)
             inimigo.ultimo_dano_critico = True
             inimigo.ultimo_dano = dano_final * self.danoCriticoMod
         else:
-            inimigo.hp -= dano_final
+            inimigo.tomar_dano(dano_final)
             inimigo.ultimo_dano_critico = False
             inimigo.ultimo_dano = dano_final
         self.chanceCritico = self.criticoOg
@@ -481,17 +481,17 @@ class MachadoDoInverno(Arma):
     def ataquePrincipal(self,inimigo):
         dano_final = self.dano * inimigo.modificadorDanoRecebido * dificuldade_global.mult_dano_inimigo * self.comboMult
         if inimigo.congelado: #da crit se o inimigo estiver congelado
-            inimigo.hp -= dano_final * self.danoCriticoMod
+            inimigo.tomar_dano(dano_final*self.danoCriticoMod, critico=True)
             inimigo.ultimo_dano_critico = True
             inimigo.ultimo_dano = dano_final * self.danoCriticoMod
             inimigo.congelado = False
             inimigo.velocidade /= 0.25
         if randint(1, 100) <= self.chanceCritico:
-            inimigo.hp -= dano_final * self.danoCriticoMod
+            inimigo.tomar_dano(dano_final*self.danoCriticoMod, critico=True)
             inimigo.ultimo_dano_critico = True
             inimigo.ultimo_dano = dano_final * self.danoCriticoMod
         else:
-            inimigo.hp -= dano_final
+            inimigo.tomar_dano(dano_final)
             inimigo.ultimo_dano_critico = False
             inimigo.ultimo_dano = dano_final
         self.chanceCritico = self.criticoOg
@@ -550,11 +550,11 @@ class EspadaEstelar(Arma):
     def ataquePrincipal(self,inimigo):
         dano_final = self.dano * inimigo.modificadorDanoRecebido * dificuldade_global.mult_dano_inimigo * self.comboMult
         if randint(1, 100) <= self.chanceCritico:
-            inimigo.hp -= dano_final * self.danoCriticoMod
+            inimigo.tomar_dano(dano_final*self.danoCriticoMod, critico=True)
             inimigo.ultimo_dano_critico = True
             inimigo.ultimo_dano = dano_final * self.danoCriticoMod
         else:
-            inimigo.hp -= dano_final
+            inimigo.tomar_dano(dano_final)
             inimigo.ultimo_dano_critico = False
             inimigo.ultimo_dano = dano_final
 
@@ -615,11 +615,11 @@ class MarteloSolar(Arma):
     def ataquePrincipal(self,inimigo):
         dano_final = self.dano * inimigo.modificadorDanoRecebido * dificuldade_global.mult_dano_inimigo * self.comboMult
         if randint(1, 100) <= self.chanceCritico:
-            inimigo.hp -= dano_final * self.danoCriticoMod
+            inimigo.tomar_dano(dano_final*self.danoCriticoMod, critico=True)
             inimigo.ultimo_dano_critico = True
             inimigo.ultimo_dano = dano_final * self.danoCriticoMod
         else:
-            inimigo.hp -= dano_final
+            inimigo.tomar_dano(dano_final)
             inimigo.ultimo_dano_critico = False
             inimigo.ultimo_dano = dano_final
 
