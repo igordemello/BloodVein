@@ -8,7 +8,7 @@ from abc import ABC, abstractmethod
 from som import GerenciadorDeSom
 from som import som
 from dificuldade import dificuldade_global
-
+from utils import resource_path 
 # raridade
 RARIDADES = {
     "comum": 1,
@@ -209,9 +209,9 @@ class LaminaDaNoite(Arma):
         self.ehRanged = False
         self.ehAOE = False
 
-        self.spriteIcon = "assets/UI/LaminaDaNoite.png"
-        self.sprite = 'espada.png'
-        self.carta = 'assets/Itens/Carta_espada_lunar.png'
+        self.spriteIcon = resource_path('assets/UI/LaminaDaNoite.png')
+        self.sprite = resource_path('assets/Player/espada.png')
+        self.carta = resource_path('assets/Itens/Carta_espada_lunar.png')
         self.size = (20 * 2, 54 * 2)
         self.pivot = (self.size[0] / 2, 0)
 
@@ -270,9 +270,9 @@ class Chigatana(Arma):
         self.ehRanged = False
         self.ehAOE = False
 
-        self.spriteIcon = "assets/UI/chigatana.png"
-        self.sprite = 'assets/player/chigatana.png'
-        self.carta = 'assets/Itens/Carta_espada_sangue.png'
+        self.spriteIcon = resource_path('assets/UI/chigatana.png')
+        self.sprite = resource_path('assets/player/chigatana.png')
+        self.carta = resource_path('assets/Itens/Carta_espada_sangue.png')
         self.size = (20 * 2, 54 * 2)
         self.pivot = (self.size[0] / 2, 0)
 
@@ -332,9 +332,9 @@ class Karambit(Arma):
         self.ehRanged = False
         self.ehAOE = False
 
-        self.spriteIcon = "assets/UI/Karambit.png"
-        self.sprite = 'assets/player/Karambit.png'
-        self.carta = 'assets/Itens/Carta_Adaga.png'
+        self.spriteIcon = resource_path('assets/UI/Karambit.png')
+        self.sprite = resource_path('assets/player/Karambit.png')
+        self.carta = resource_path('assets/Itens/Carta_Adaga.png')
         self.size = (32*2,32*2)
         self.pivot = (self.size[0] / 2, 0)
 
@@ -395,9 +395,9 @@ class EspadaDoTita(Arma):
         self.ehRanged = False
         self.ehAOE = False
 
-        self.spriteIcon = "assets/UI/espadadotita.png"
-        self.sprite = 'assets/player/espadadotita.png'
-        self.carta = 'assets/Itens/Carta_titã.png'
+        self.spriteIcon = resource_path('assets/UI/espadadotita.png')
+        self.sprite = resource_path('assets/player/espadadotita.png')
+        self.carta = resource_path('assets/Itens/Carta_titã.png')
         self.size = (25 * 2, 70 * 2)
         self.pivot = (self.size[0] / 2, 0)
 
@@ -464,9 +464,9 @@ class MachadoDoInverno(Arma):
         self.ehRanged = False
         self.ehAOE = False
 
-        self.spriteIcon = "assets/UI/machadodoinverno.png"
-        self.sprite = 'assets/player/machadodoinverno.png'
-        self.carta = 'assets/Itens/Carta_machado_gelo.png'
+        self.spriteIcon = resource_path('assets/UI/machadodoinverno.png')
+        self.sprite = resource_path('assets/player/machadodoinverno.png')
+        self.carta = resource_path('assets/Itens/Carta_machado_gelo.png')
         self.size = (23 * 2, 54 * 2)
         self.pivot = (self.size[0] / 2, 0)
 
@@ -535,9 +535,9 @@ class EspadaEstelar(Arma):
         self.ehRanged = True
         self.ehAOE = False
 
-        self.spriteIcon = "assets/UI/espadaestelar.png"
-        self.sprite = 'assets/player/espadaestelar.png'
-        self.carta = 'assets/Itens/Carta_espada_laser.png'
+        self.spriteIcon = resource_path('assets/UI/espadaestelar.png')
+        self.sprite = resource_path('assets/player/espadaestelar.png')
+        self.carta = resource_path('assets/Itens/Carta_espada_laser.png')
         self.size = (23 * 2, 54 * 2)
         self.pivot = (self.size[0] / 2, 0)
 
@@ -599,9 +599,9 @@ class MarteloSolar(Arma):
         self.danoAOE = self.dano*0.8
 
 
-        self.spriteIcon = "assets/UI/martelo_icone.png"
-        self.sprite = 'assets/player/martelo_solar.png'
-        self.carta = 'assets/Itens/Carta_Sol.png'
+        self.spriteIcon = resource_path('assets/UI/martelo_icone.png')
+        self.sprite = resource_path('assets/player/martelo_solar.png')
+        self.carta = resource_path('assets/Itens/Carta_Sol.png')
         self.size = (27 * 2, 51 * 2)
         self.pivot = (self.size[0] / 2, 0)
 
@@ -665,9 +665,9 @@ class Arco(Arma):
         self.ehRanged = True
         self.ehAOE = False
 
-        self.spriteIcon = "assets/UI/arco.png"
-        self.sprite = 'assets/player/arco.png'
-        self.carta = 'assets/Itens/Carta_Arco.png'
+        self.spriteIcon = resource_path('assets/UI/arco.png')
+        self.sprite = resource_path('assets/player/arco.png')
+        self.carta = resource_path('assets/Itens/Carta_Arco.png')
         self.size = (51 * 2, 27 * 2)
         self.pivot = (self.size[0]/2, 0)
 
@@ -680,13 +680,13 @@ class Arco(Arma):
     def ataquePrincipal(self,player,mouse_pos):
         dano_final = self.dano * dificuldade_global.mult_dano_inimigo * self.comboMult
         som.tocar('arco_acerto')
-        sprite_projetil = image.load("assets/player/flecha.png").convert_alpha()
+        sprite_projetil = image.load(resource_path('assets/player/flecha.png')).convert_alpha()
         player.criar_projetil(mouse_pos, dano=dano_final, cor=None, sprite=sprite_projetil)
 
 
     def ataqueSecundario(self,player,mouse_pos):
         dano_final = self.dano * dificuldade_global.mult_dano_inimigo * self.comboMult
-        sprite_projetil = image.load("assets/player/flecha.png").convert_alpha()
+        sprite_projetil = image.load(resource_path('assets/player/flecha.png')).convert_alpha()
         angulo_central = player.calcular_angulo(mouse_pos)
         angulo_abertura = math.radians(5)  # 15 graus em radianos
         current_time = time.get_ticks()

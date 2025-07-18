@@ -33,7 +33,7 @@ from inventario import Inventario
 
 from enum import Enum, auto
 from dificuldade import dificuldade_global
-
+from utils import resource_path 
 class EstadoDoJogo(Enum):
     MENU = auto()
     JOGANDO = auto()
@@ -52,15 +52,18 @@ class Game:
         self.screen = display.set_mode((1920, 1080), vsync=1, flags=HWSURFACE | DOUBLEBUF)
         display.set_caption("Blood Vein")
         mouse.set_visible(False)
-        logo = image.load("assets/logo.png")
+        logo = image.load(resource_path('assets/logo.png'))
         display.set_icon(logo)
+        
+        data_dir = os.path.join(os.path.dirname(__file__), "data")
+        os.makedirs(data_dir, exist_ok=True)
 
-        self.imagem_cursor = transform.scale(image.load("assets/UI/cursor.png").convert_alpha(), (32, 32))
-        self.imagem_cursor_click = transform.scale(image.load("assets/UI/cursor_click.png").convert_alpha(), (32, 32))
+        self.imagem_cursor = transform.scale(image.load(resource_path('assets/UI/cursor.png')).convert_alpha(), (32, 32))
+        self.imagem_cursor_click = transform.scale(image.load(resource_path('assets/UI/cursor_click.png')).convert_alpha(), (32, 32))
         self.cursor_clicando = False
 
         self.estado = EstadoDoJogo.MENU
-        self.fonte = font.Font("assets/fontes/alagard.ttf", 48)
+        self.fonte = font.Font(resource_path('assets/fontes/alagard.ttf'), 48)
         self.fps_font = font.SysFont("Arial", 24)
         self.fps_text = self.fps_font.render("FPS: 60", True, (255, 255, 255))
 
@@ -135,7 +138,7 @@ class Game:
                     elif escolha == "continuar":
                         som.tocar("click3")
                         try:
-                            dados = self.save_manager.load_game("save_file.json")
+                            dados = self.save_manager.load_game(resource_path("save_file.json"))
                             self.resetar_jogo()
                             self.player.load_save_data(dados['player'], self.sala_atual.itensDisp, self.player.lista_mods)
                             self.andar.load_save_data(dados['map'])
@@ -380,11 +383,16 @@ class Game:
 
     def apagar_saves(self):
         try:
-            os.remove("save_file.json")
-        except:
-            pass
-        for item in os.listdir("data"):
-            try:
-                os.remove(os.path.join("data", item))
-            except:
-                pass
+            save_path = resource_path("save_file.json")
+            if os.path.exists(save_path):
+                os.remove(save_path)
+        except Exception as e:
+            print(f"Erro ao apagar save: {e}")
+
+        data_dir = resource_path("data")
+        if os.path.exists(data_dir):
+            for item in os.listdir(data_dir):
+                try:
+                    os.remove(os.path.join(data_dir, item))
+                except Exception as e:
+                    print(f"Erro ao apagar arquivo em data/: {e}")

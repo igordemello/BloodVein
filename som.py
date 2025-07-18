@@ -2,6 +2,7 @@ from pygame import *
 from pygame import mixer
 import time
 from threading import Thread
+from utils import resource_path 
 
 mixer.init(frequency=44100, size=-16, channels=2, buffer=512)
 class GerenciadorDeSom:
@@ -18,30 +19,30 @@ class GerenciadorDeSom:
 
     def _carregar_sons(self):
         sons_para_carregar = {
-            "hover": "sons/hover.mp3",
-            "buy": "sons/compra.mp3",
-            "martelo2": "sons/AOEMartelo.mp3",
-            "arco": "sons/Arco.mp3",
-            "arco_acerto": "sons/ArcoAcerto.mp3",
-            "click2": "sons/Click2.mp3",
-            "click3": "sons/Click2.mp3",
-            "Dano1": "sons/Dano1.mp3",
-            "Dano2": "sons/Dano2.mp3",
-            "Dano3": "sons/Dano3.mp3",
-            "dash": "sons/dash.mp3",
-            "espada1": "sons/espada1.mp3",
-            "espada2": "sons/espada2.mp3",
-            "espada3": "sons/espada3.mp3",
-            "faca1": "sons/Faca1.mp3",
-            "faca2": "sons/Faca2.mp3",
-            "Inimigomorre": "sons/InimigoMorrendo.mp3",
-            "Inimigomorre2": "sons/InimigoMorrendo2.mp3",
-            "Martelo": "sons/Martelo.mp3",
-            "passar_porta": "sons/PassarPorta.mp3",
-            "Spawn": "sons/Spawn.mp3",
-            "Startar": "sons/StartNewRun.mp3",
-            "tripleshota": "sons/TripleShot.mp3",
-            "carrega_critico": "sons/CarrendoCriticoEspadaDoTita.mp3",
+            "hover": resource_path("sons/hover.mp3"),
+            "buy": resource_path("sons/compra.mp3"),
+            "martelo2": resource_path("sons/AOEMartelo.mp3"),
+            "arco": resource_path("sons/Arco.mp3"),
+            "arco_acerto": resource_path("sons/ArcoAcerto.mp3"),
+            "click2": resource_path("sons/Click2.mp3"),
+            "click3": resource_path("sons/Click2.mp3"),
+            "Dano1": resource_path("sons/Dano1.mp3"),
+            "Dano2": resource_path("sons/Dano2.mp3"),
+            "Dano3": resource_path("sons/Dano3.mp3"),
+            "dash": resource_path("sons/dash.mp3"),
+            "espada1": resource_path("sons/espada1.mp3"),
+            "espada2": resource_path("sons/espada2.mp3"),
+            "espada3": resource_path("sons/espada3.mp3"),
+            "faca1": resource_path("sons/Faca1.mp3"),
+            "faca2": resource_path("sons/Faca2.mp3"),
+            "Inimigomorre": resource_path("sons/InimigoMorrendo.mp3"),
+            "Inimigomorre2": resource_path("sons/InimigoMorrendo2.mp3"),
+            "Martelo": resource_path("sons/Martelo.mp3"),
+            "passar_porta": resource_path("sons/PassarPorta.mp3"),
+            "Spawn": resource_path("sons/Spawn.mp3"),
+            "Startar": resource_path("sons/StartNewRun.mp3"),
+            "tripleshota": resource_path("sons/TripleShot.mp3"),
+            "carrega_critico": resource_path("sons/CarrendoCriticoEspadaDoTita.mp3"),
         }
 
         for nome, caminho in sons_para_carregar.items():

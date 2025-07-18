@@ -5,7 +5,7 @@ from itensDic import ConjuntoItens
 from random import sample
 from botao import Botao
 from random import choices
-
+from utils import resource_path 
 class Bau:
     def __init__(self, conjunto: ConjuntoItens, posx, posy):
         self.itensDisp = conjunto
@@ -31,8 +31,8 @@ class Bau:
             ids_restantes.remove(escolhido)
 
         self.itens_sorteados = [self.itensDisp.itens_por_id[id_] for id_ in self.ids_sorteados]
-        self.font = font.Font('assets/Fontes/alagard.ttf', 24)
-        self.fontDesc = font.Font('assets/Fontes/alagard.ttf', 24)
+        self.font = font.Font(resource_path('assets/Fontes/alagard.ttf'), 24)
+        self.fontDesc = font.Font(resource_path('assets/Fontes/alagard.ttf'), 24)
 
         self.botoes = []
         self.estados_hover = [Vector2(1.0, 0.0) for _ in self.itens_sorteados]
@@ -54,11 +54,11 @@ class Bau:
             )
             self.botoes.append(botao)
 
-        self.botaosair = Botao(image=None, pos=(200,980), text_input="Sair", font=font.Font('assets/Fontes/alagard.ttf', 32), base_color=(244,26,43), hovering_color=(202, 56, 68))
+        self.botaosair = Botao(image=None, pos=(200,980), text_input="Sair", font=font.Font(resource_path('assets/Fontes/alagard.ttf'), 32), base_color=(244,26,43), hovering_color=(202, 56, 68))
         
         #
         self.escala = 3
-        self.spritesheet = image.load('assets/bau_sheet.png').convert_alpha()
+        self.spritesheet = image.load(resource_path('assets/bau_sheet.png')).convert_alpha()
         self.frames = self._carregar_frames()
         self.frame_index = 0
         self.image = self.frames[0]
@@ -130,7 +130,7 @@ class Bau:
             pos_x = base_x + carta_width // 2 - width // 2
             pos_y = base_y + deslocamento_y
 
-            sprite_raridade = image.load(f"assets/itens/carta_{item.raridade}.png").convert_alpha()
+            sprite_raridade = image.load(resource_path(f'assets/itens/carta_{item.raridade}.png')).convert_alpha()
             sprite_carta = transform.scale(sprite_raridade, (width, height))
             tela.blit(sprite_carta, (pos_x, pos_y))
 

@@ -3,7 +3,7 @@ from pygame.math import Vector2
 import cv2
 from som import GerenciadorDeMusica
 from som import musica
-
+from utils import resource_path 
 class BotaoAnimado:
     def __init__(self, pos, text_input, font, base_color, hovering_color):
         self.pos = pos
@@ -48,10 +48,10 @@ class BotaoAnimado:
 
 class Pause:
     def __init__(self):
-        self.font = font.Font('assets/Fontes/alagard.ttf', 24)
+        self.font = font.Font(resource_path('assets/Fontes/alagard.ttf'), 24)
 
         # Botões com hover animado
-        botao_font = font.Font('assets/Fontes/alagard.ttf', 48)
+        botao_font = font.Font(resource_path('assets/Fontes/alagard.ttf'), 48)
         cor_base = (228, 133, 40)
         cor_hover = (255, 190, 80)
 
@@ -61,7 +61,7 @@ class Pause:
 
         self.botoes = [self.botaocontinuar, self.botaoopcoes, self.botaosair]
 
-        self.loop_video = cv2.VideoCapture("assets/UI/pausefundo.mp4")
+        self.loop_video = cv2.VideoCapture(resource_path("assets/UI/pausefundo.mp4"))
         self.menu_ativo = False
 
     def cv2_to_pygame(self, frame):
@@ -83,7 +83,7 @@ class Pause:
         self.menu_ativo = True
 
         # Título
-        pause_font = font.Font("assets/Fontes/alagard.ttf", 72)
+        pause_font = font.Font(resource_path('assets/Fontes/alagard.ttf'), 72)
         pause_text = pause_font.render("PAUSADO", True, (228, 133, 40))
         text_rect = pause_text.get_rect(center=(1920 // 2, 150))
         tela.blit(pause_text, text_rect)

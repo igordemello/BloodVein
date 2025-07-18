@@ -26,6 +26,7 @@ from armas import LaminaDaNoite, Chigatana, Karambit, EspadaDoTita, MachadoDoInv
 from botao import Botao
 from save_manager import SaveManager
 from dificuldade import dificuldade_global
+from utils import resource_path 
 
 def pixel_para_grid(x, y, offset, tile_size_scaled):
     """Converte coordenadas de pixel para grid, considerando offset e tamanho do tile escalado"""
@@ -59,14 +60,14 @@ class Sala:
 
         self.porta_liberada = False
 
-        self.pocoesHp = transform.scale(image.load('assets/itens/pocaodevida.png'), (64,64))
-        self.pocoesMp = transform.scale(image.load('assets/itens/pocaodemana.png'), (64,64))
+        self.pocoesHp = transform.scale(image.load(resource_path('assets/itens/pocaodevida.png')), (64,64))
+        self.pocoesMp = transform.scale(image.load(resource_path('assets/itens/pocaodemana.png')), (64,64))
 
         self.ranges_doors = self.mapa.get_rangesdoors()
 
-        self.almaspritesheet = image.load('./assets/Itens/almaSpriteSheet.png').convert_alpha()
+        self.almaspritesheet = image.load(resource_path('./assets/Itens/almaSpriteSheet.png')).convert_alpha()
 
-        self.lojista_img = transform.scale(image.load('./assets/Player/Ikoojista.png').convert_alpha(),(67.5,132.3))
+        self.lojista_img = transform.scale(image.load(resource_path('./assets/Player/Ikoojista.png')).convert_alpha(),(67.5,132.3))
 
         self.frames_alma = [self.almaspritesheet.subsurface(Rect(i * 32, 0, 32, 32)) for i in range(4)]
 
@@ -145,15 +146,15 @@ class Sala:
 
             if numerodoandar == 1:
                 cenas = [
-                    {"imagem": transform.scale(image.load("assets/cutscene/player.png").convert_alpha(), (640,960)), "fala": "Por essa eu não esperava, agora tem um gigante ter um gigante desse olho maldito....", "lado": "esquerda"},
-                    {"imagem": transform.scale(image.load("assets/cutscene/olhoBoss.png").convert_alpha(), (840,840)), "fala": "Você realmente achou que iria assasinar meus filhos e ficar impune? Você sangra? VAI SANGRAR", "lado": "direita"}
+                    {"imagem": transform.scale(image.load(resource_path('assets/cutscene/player.png')).convert_alpha(), (640,960)), "fala": "Por essa eu não esperava, agora tem um gigante ter um gigante desse olho maldito....", "lado": "esquerda"},
+                    {"imagem": transform.scale(image.load(resource_path('assets/cutscene/olhoBoss.png')).convert_alpha(), (840,840)), "fala": "Você realmente achou que iria assasinar meus filhos e ficar impune? Você sangra? VAI SANGRAR", "lado": "direita"}
                 ]
                 self.cutscene = Cutscene(cenas, fundo, self.tela.get_width(), self.tela.get_height())
 
             if numerodoandar == 2:
                 cenas = [
-                    {"imagem": transform.scale(image.load("assets/cutscene/nuvemBoss.png").convert_alpha(), (800,800)), "fala": "Matar aquele olho nojento é fácil, quero ver conseguir desviar de algo que está por todo canto!", "lado": "direita"},
-                    {"imagem": transform.scale(image.load("assets/cutscene/player.png").convert_alpha(), (640,960)), "fala": "Vai ser ez, eu nunca perderia pra uma nuvem", "lado": "esquerda"}
+                    {"imagem": transform.scale(image.load(resource_path('assets/cutscene/nuvemBoss.png')).convert_alpha(), (800,800)), "fala": "Matar aquele olho nojento é fácil, quero ver conseguir desviar de algo que está por todo canto!", "lado": "direita"},
+                    {"imagem": transform.scale(image.load(resource_path('assets/cutscene/player.png')).convert_alpha(), (640,960)), "fala": "Vai ser ez, eu nunca perderia pra uma nuvem", "lado": "esquerda"}
 
                 ]
                 self.cutscene = Cutscene(cenas, fundo, self.tela.get_width(), self.tela.get_height())
@@ -244,7 +245,7 @@ class Sala:
         elite = "bau" in tipo_sala
 
         tipos_disponiveis = ["furacao","caveiradefogo","morcegopadrao","orb"]
-        # tipos_disponiveis = ["morcegopadrao"]
+        # tipos_disponiveis = ["morcegopadrao"] 
         tipo_escolhido = choice(tipos_disponiveis)
 
 
@@ -539,7 +540,7 @@ class Sala:
                         ])
                         arma = arma_tipo(raridade, self.lista_mods)
 
-                        fontinha = font.Font("assets/fontes/alagard.ttf", 18)
+                        fontinha = font.Font(resource_path('assets/fontes/alagard.ttf'), 18)
                         texto_render = fontinha.render(arma.nome, True, cor)
                         largura = texto_render.get_width() + 20
                         altura = texto_render.get_height() + 10
@@ -604,7 +605,7 @@ class Sala:
             botao.update(tela)
             botao.changeColor(mouse.get_pos())
         if time.get_ticks() - self.inventario_cheio_tempo < self.inventario_cheio_duracao and self.inventario_cheio_msg:
-            font_msg = font.Font("assets/fontes/alagard.ttf", 36)
+            font_msg = font.Font(resource_path('assets/fontes/alagard.ttf'), 36)
             texto = font_msg.render(self.inventario_cheio_msg, True, (255, 0, 0))
             texto_rect = texto.get_rect(center=(self.tela.get_width() // 2, self.tela.get_height() - 75))
 

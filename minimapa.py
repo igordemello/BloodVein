@@ -1,6 +1,6 @@
 from pygame import *
 import math
-
+from utils import resource_path 
 class Minimapa:
     def __init__(self, gerenciador_andar, screen):
         self.gerenciador = gerenciador_andar
@@ -29,11 +29,11 @@ class Minimapa:
         self.path_width = 2
         self.border_radius = 20 
 
-        self.icon_current = image.load('assets/minimapa/icon_current.png').convert_alpha()
-        self.icon_spawn = image.load('assets/minimapa/icon_spawn.png').convert_alpha()
-        self.icon_boss = image.load('assets/minimapa/icon_boss.png').convert_alpha()
-        self.icon_bau = image.load('assets/minimapa/icon_bau.png').convert_alpha()
-        self.icon_loja = image.load('assets/minimapa/icon_loja.png').convert_alpha()
+        self.icon_current = image.load(resource_path('assets/minimapa/icon_current.png')).convert_alpha()
+        self.icon_spawn = image.load(resource_path('assets/minimapa/icon_spawn.png')).convert_alpha()
+        self.icon_boss = image.load(resource_path('assets/minimapa/icon_boss.png')).convert_alpha()
+        self.icon_bau = image.load(resource_path('assets/minimapa/icon_bau.png')).convert_alpha()
+        self.icon_loja = image.load(resource_path('assets/minimapa/icon_loja.png')).convert_alpha()
 
 
     def toggle(self):

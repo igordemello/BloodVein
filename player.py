@@ -13,28 +13,28 @@ from som import som
 from som import GerenciadorDeMusica
 from som import musica
 from dificuldade import dificuldade_global
-
+from utils import resource_path 
 
 class Player():
-    def __init__(self, x, y, largura, altura,hud=None, hp=100, st=100, velocidadeMov=0.5, sprite='hero.png', arma=None):
+    def __init__(self, x, y, largura, altura,hud=None, hp=100, st=100, velocidadeMov=0.5, sprite=resource_path('assets/player/hero.png'), arma=None):
         # animações
         self.hit_landed = None
         self.animacoes = {
-            "baixo": self.carregar_animacao("assets/Player/vampira_andando_frente.png"),
-            "cima": self.carregar_animacao("assets/Player/vampira_andando_tras.png"),
-            "D_cima": self.carregar_animacao("assets/Player/dash_costas.png"),
-            "D_baixo": self.carregar_animacao("assets/Player/dash_frente.png"),
-            "D_direita": self.carregar_animacao("assets/Player/dash _lado.png"),
+            "baixo": self.carregar_animacao(resource_path('assets/Player/vampira_andando_frente.png')),
+            "cima": self.carregar_animacao(resource_path('assets/Player/vampira_andando_tras.png')),
+            "D_cima": self.carregar_animacao(resource_path('assets/Player/dash_costas.png')),
+            "D_baixo": self.carregar_animacao(resource_path('assets/Player/dash_frente.png')),
+            "D_direita": self.carregar_animacao(resource_path('assets/Player/dash _lado.png')),
             "D_esquerda": [transform.flip(img, True, False) for img in
-                           self.carregar_animacao("assets/Player/dash _lado.png")],
-            "direita": self.carregar_animacao("assets/Player/LADOANDAR-Sheet.png"),
+                           self.carregar_animacao(resource_path('assets/Player/dash _lado.png'))],
+            "direita": self.carregar_animacao(resource_path('assets/Player/LADOANDAR-Sheet.png')),
             "esquerda": [transform.flip(img, True, False) for img in
-                         self.carregar_animacao("assets/Player/LADOANDAR-Sheet.png")],
-            "idle": self.carregar_animacao("assets/Player/IDLE.png"),
-            "idle_costas": self.carregar_animacao("assets/Player/IDLE_COSTAS.png"),
-            "idle_lado1": self.carregar_animacao("assets/Player/IDLE_LADO.png"),
+                         self.carregar_animacao(resource_path('assets/Player/LADOANDAR-Sheet.png'))],
+            "idle": self.carregar_animacao(resource_path('assets/Player/IDLE.png')),
+            "idle_costas": self.carregar_animacao(resource_path('assets/Player/IDLE_COSTAS.png')),
+            "idle_lado1": self.carregar_animacao(resource_path('assets/Player/IDLE_LADO.png')),
             "idle_lado2": [transform.flip(img, True, False) for img in
-                           self.carregar_animacao("assets/Player/IDLE_LADO.png")],
+                           self.carregar_animacao(resource_path('assets/Player/IDLE_LADO.png'))],
         }
 
         self.atributos = {
@@ -113,7 +113,7 @@ class Player():
 
         self.macarronada = 0
 
-        self.telaSangue = image.load('assets/UI/sangueTelaDano.png').convert_alpha()
+        self.telaSangue = image.load(resource_path('assets/UI/sangueTelaDano.png')).convert_alpha()
         self.telaSangue_alpha = 0
         self.telaSangue_surface = None
 
@@ -762,7 +762,7 @@ class Player():
 
             cor = (255, 0, 0)
             tamanho_fonte = 48
-            fonte_atual = font.Font('assets/Fontes/KiwiSoda.ttf', tamanho_fonte)
+            fonte_atual = font.Font(resource_path('assets/Fontes/KiwiSoda.ttf'), tamanho_fonte)
             texto_str = f"-{self.dano_recebido:.1f}"
 
             pos_x = 108
@@ -1133,7 +1133,7 @@ class Player():
         if "Bola de Fogo" not in self.habilidades:
             return
         mouse_pos = mouse.get_pos()
-        sprite_projetil = image.load("assets/player/bola_de_fogo.png").convert_alpha()
+        sprite_projetil = image.load(resource_path('assets/player/bola_de_fogo.png')).convert_alpha()
         current_time = time.get_ticks()
         custoHabilidade = 30 * self.mpModificador
         if self.mp < custoHabilidade:
@@ -1189,7 +1189,7 @@ class Player():
             return
         self.nevascaAtivada = True
         mouse_pos = mouse.get_pos()
-        sprite_projetil = image.load("assets/player/bola_de_gelo.png").convert_alpha()
+        sprite_projetil = image.load(resource_path('assets/player/bola_de_gelo.png')).convert_alpha()
         current_time = time.get_ticks()
         custoHabilidade = 30*self.mpModificador
         if self.mp < custoHabilidade:
@@ -1209,7 +1209,7 @@ class Player():
             return
         self.trovaoAtivado = True
         mouse_pos = mouse.get_pos()
-        sprite_projetil = image.load("assets/player/Raio.png").convert_alpha()
+        sprite_projetil = image.load(resource_path('assets/player/Raio.png')).convert_alpha()
         current_time = time.get_ticks()
         custoHabilidade = 40*self.mpModificador
         if self.mp < custoHabilidade:

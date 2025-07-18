@@ -1,6 +1,8 @@
 import json
 import networkx as nx
 from random import randint,shuffle,choice
+from utils import resource_path
+import os
 
 
 class GerenciadorAndar:
@@ -12,12 +14,19 @@ class GerenciadorAndar:
 
     
     def carregar_andar(self):
+
+        data_dir = os.path.join(os.path.dirname(__file__), "data")
+        andar_path = os.path.join(data_dir, "andar_atual.json")
+        
         try:
-            with open('data/andar_atual.json', 'r') as f:
+            if not os.path.exists(andar_path):
+                self.gerar_andar(1)
+            with open(andar_path, 'r') as f:
                 data = json.load(f)
                 self.grafo = nx.node_link_graph(data)
                 self.numero_andar = data.get('numero_andar', 1)
-        except (FileNotFoundError, ValueError, json.JSONDecodeError):
+        except Exception as e:
+            print(f"Erro ao carregar andar: {e}")
             self.gerar_andar(1)
             
         self.sala_atual = self.get_sala_spawn()
@@ -164,10 +173,10 @@ class GerenciadorAndar:
                 G.nodes[sala]["portas"] = {}
 
 
-        with open('data/andar_atual.json', 'w') as f:
+        with open(resource_path('data/andar_atual.json'), 'w') as f:
             json.dump(nx.node_link_data(G), f, ensure_ascii=False, indent=4)
 
-        with open('data/andar_atual.json', 'r', encoding='utf-8') as f:
+        with open(resource_path('data/andar_atual.json'), 'r', encoding='utf-8') as f:
             data = json.load(f)
             self.grafo = nx.node_link_graph(data)
 
@@ -198,7 +207,7 @@ class GerenciadorAndar:
         self.salas_visitadas = {self.sala_atual}
         self.salas_conquistadas = set()
 
-        with open('data/andar_atual.json', 'w', encoding='utf-8') as f:
+        with open(resource_path('data/andar_atual.json'), 'w', encoding='utf-8') as f:
             json.dump(graph_data, f, ensure_ascii=False, indent=4)
 
         

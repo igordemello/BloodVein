@@ -4,6 +4,7 @@ import random
 from pygame import time
 from inimigo import Inimigo
 from inimigos.orb import Orb
+from utils import resource_path 
 
 class MouthOrb(Inimigo):
     def __init__(self, x, y, largura=192, altura=192, hp=3000, velocidade=3, dano=40):
@@ -16,9 +17,9 @@ class MouthOrb(Inimigo):
 
         # Spritesheets
         self.animacoes = {
-            "idle": self.carregar_animacao("./assets/Enemies/MouthOrb-IdleSheet-Sheet2.png", 12),
-            "ataque": self.carregar_animacao("./assets/Enemies/MouthOrb-AttackSheet.png", 4),
-            "invocacao": self.carregar_animacao("./assets/Enemies/MouthOrb-SpawnSheet.png", 10),
+            "idle": self.carregar_animacao(resource_path('./assets/Enemies/MouthOrb-IdleSheet-Sheet2.png'), 12),
+            "ataque": self.carregar_animacao(resource_path('./assets/Enemies/MouthOrb-AttackSheet.png'), 4),
+            "invocacao": self.carregar_animacao(resource_path('./assets/Enemies/MouthOrb-SpawnSheet.png'), 10),
         }
 
         self.animacao_atual = "idle"

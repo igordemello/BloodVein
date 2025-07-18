@@ -1,7 +1,7 @@
 from pygame import *
 import sys
 from pygame.locals import QUIT
-
+from utils import resource_path 
 class Cutscene:
     def __init__(self, cenas, fundo_surface, largura_tela, altura_tela):
         self.cenas = cenas
@@ -15,7 +15,7 @@ class Cutscene:
         self.personagem_x = 0
         self.velocidade = 20
 
-        self.dialogo_font = font.Font('assets/Fontes/alagard.ttf',24)
+        self.dialogo_font = font.Font(resource_path('assets/Fontes/alagard.ttf'),24)
         self.caixa_dialogo = Surface((largura_tela - 500, 100))
 
         self.caixa_dialogo.fill((243, 236, 215))

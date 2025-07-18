@@ -4,6 +4,7 @@ from pygame.locals import QUIT
 import math
 from inimigo import Inimigo
 import random
+from utils import resource_path 
 
 class Furacao(Inimigo):
     def __init__(self, x, y, largura, altura, hp, nome="Furacao",velocidade=3, dano=20):
@@ -25,8 +26,8 @@ class Furacao(Inimigo):
         self.desaceleracao = 0.08
         
         # Spritesheets com dimensões específicas
-        self.spritesheet_idle = image.load('./assets/Enemies/furacão_idle.png').convert_alpha()
-        self.spritesheet_ataque = image.load('./assets/Enemies/furação_ataque.png').convert_alpha()
+        self.spritesheet_idle = image.load(resource_path('./assets/Enemies/furacão_idle.png')).convert_alpha()
+        self.spritesheet_ataque = image.load(resource_path('./assets/Enemies/furação_ataque.png')).convert_alpha()
         self.spritesheet = self.spritesheet_idle  # Começa com idle
 
         # Configuração de animação
@@ -232,7 +233,7 @@ class Furacao(Inimigo):
             draw.rect(tela, (255, 255, 255), (barra_x - 20, barra_y + 30, largura_barra, 50), 1)
 
             # Desenhar o nome centralizado
-            fonte = font.Font("assets/Fontes/alagard.ttf", 24)
+            fonte = font.Font(resource_path('assets/Fontes/alagard.ttf'), 24)
             texto = fonte.render(str(self.nome), True, (255, 255, 255))
             texto_rect = texto.get_rect(
                 center=(barra_x - 20 + largura_barra / 2, barra_y + 30 + 25))  # 25 = altura/2 da barra

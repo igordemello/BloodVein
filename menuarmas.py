@@ -7,7 +7,7 @@ from random import sample
 from botao import Botao
 from armas import *
 from player import Player
-
+from utils import resource_path 
 
 class MenuArmas:
     def __init__(self, hud):
@@ -16,7 +16,7 @@ class MenuArmas:
 
         self.estado_hover = Vector2(1.0, 0.0)
 
-        self.atributosFundo = image.load("assets/ui/atributo_fundo.png").convert_alpha()
+        self.atributosFundo = image.load(resource_path('assets/ui/atributo_fundo.png')).convert_alpha()
 
         self.todas_armas = [
             LaminaDaNoite("comum", self.lista_mods),
@@ -59,7 +59,7 @@ class MenuArmas:
             image=None,
             pos=(1500, 150),
             text_input="INICIAR",
-            font=font.Font('assets/Fontes/alagard.ttf', 96),
+            font=font.Font(resource_path('assets/Fontes/alagard.ttf'), 96),
             base_color=(255, 255, 255),
             hovering_color=(200, 200, 200)
         )
@@ -87,7 +87,7 @@ class MenuArmas:
         tela.blit(atributos_bg, atributos_bg.get_rect(center=(665, tela.get_height() // 2 + 100)))
 
         y_pos = 300
-        font_atributos = font.Font('assets/Fontes/alagard.ttf', 48)
+        font_atributos = font.Font(resource_path('assets/Fontes/alagard.ttf'), 48)
         atributos = self.get_atributos_por_trait()
 
         for nome, valor in atributos.items():
@@ -98,12 +98,12 @@ class MenuArmas:
             y_pos += 70
 
         y_pos += 40
-        trait_font = font.Font('assets/Fontes/alagard.ttf', 32)
+        trait_font = font.Font(resource_path('assets/Fontes/alagard.ttf'), 32)
         trait_text = trait_font.render(self.traits[self.trait_selecionada], True, (255, 255, 255))
         tela.blit(trait_text, trait_text.get_rect(center=(635, y_pos)))
 
-        seta_esq = image.load("assets/UI/seta_esquerda.png").convert_alpha()
-        seta_dir = image.load("assets/UI/seta_direita.png").convert_alpha()
+        seta_esq = image.load(resource_path('assets/UI/seta_esquerda.png')).convert_alpha()
+        seta_dir = image.load(resource_path('assets/UI/seta_direita.png')).convert_alpha()
 
         seta_esq_rect = seta_esq.get_rect(center=(635 - 200, y_pos))
         seta_dir_rect = seta_dir.get_rect(center=(635 + 200, y_pos))
@@ -112,11 +112,11 @@ class MenuArmas:
         tela.blit(seta_dir, seta_dir_rect)
 
         y_pos += 70
-        dificuldade_titulo = font.Font('assets/Fontes/alagard.ttf', 48).render("DIFICULDADE", True, (255, 255, 255))
+        dificuldade_titulo = font.Font(resource_path('assets/Fontes/alagard.ttf'), 48).render("DIFICULDADE", True, (255, 255, 255))
         tela.blit(dificuldade_titulo, (635 - dificuldade_titulo.get_width() // 2, y_pos))
 
         y_pos += 90
-        dificuldade_font = font.Font('assets/Fontes/alagard.ttf', 32)
+        dificuldade_font = font.Font(resource_path('assets/Fontes/alagard.ttf'), 32)
         dificuldade_text = dificuldade_font.render(self.dificuldades[self.dificuldade_selecionada], True,
                                                    (255, 255, 255))
         tela.blit(dificuldade_text, dificuldade_text.get_rect(center=(635, y_pos)))
@@ -129,8 +129,8 @@ class MenuArmas:
         self.desenhar_carta_arma(tela)
 
         if self.traits[self.trait_selecionada] == "Humano":
-            seta_esq_arma = image.load("assets/UI/seta_esquerda.png").convert_alpha()
-            seta_dir_arma = image.load("assets/UI/seta_direita.png").convert_alpha()
+            seta_esq_arma = image.load(resource_path('assets/UI/seta_esquerda.png')).convert_alpha()
+            seta_dir_arma = image.load(resource_path('assets/UI/seta_direita.png')).convert_alpha()
 
             seta_esq_arma_rect = seta_esq_arma.get_rect(center=(1490 - 250, 580))
             seta_dir_arma_rect = seta_dir_arma.get_rect(center=(1490 + 250, 580))

@@ -27,7 +27,7 @@ from pause import Pause
 import os
 import shutil
 from habilidades import GerenciadorHabilidades
-
+from utils import resource_path 
 class Inventario():
     def __init__(self, screen, player, hud):
         self.botoes_atributos = []
@@ -36,26 +36,26 @@ class Inventario():
         self.visible = False
         self.player = player
         self.hud = hud
-        self.armasFundo = image.load('assets/UI/armas_inventario.png').convert_alpha()
-        self.itensFundo = image.load('assets/UI/itens_inventario.png').convert_alpha()
-        self.atributosFundo = image.load('assets/UI/status_inventario.png').convert_alpha()
+        self.armasFundo = image.load(resource_path('assets/UI/armas_inventario.png')).convert_alpha()
+        self.itensFundo = image.load(resource_path('assets/UI/itens_inventario.png')).convert_alpha()
+        self.atributosFundo = image.load(resource_path('assets/UI/status_inventario.png')).convert_alpha()
 
         self.aba_atual = 0
         self.botoes_navegacao = []
-        self.fonte_botoes = font.Font("assets/fontes/alagard.ttf", 24)
+        self.fonte_botoes = font.Font(resource_path('assets/fontes/alagard.ttf'), 24)
 
         self.gerenciador_habilidades = GerenciadorHabilidades()
 
         self.item_width, self.item_height = 230, 240
 
         self.carta_imgs = {
-            "comum": transform.scale(image.load("assets/itens/carta_comum.png").convert_alpha(),
+            "comum": transform.scale(image.load(resource_path('assets/itens/carta_comum.png')).convert_alpha(),
                                      (self.item_width + 40, self.item_height + 130)),
-            "rara": transform.scale(image.load("assets/itens/carta_rara.png").convert_alpha(),
+            "rara": transform.scale(image.load(resource_path('assets/itens/carta_rara.png')).convert_alpha(),
                                     (self.item_width + 40, self.item_height + 130)),
-            "lendaria": transform.scale(image.load("assets/itens/carta_lendaria.png").convert_alpha(),
+            "lendaria": transform.scale(image.load(resource_path('assets/itens/carta_lendaria.png')).convert_alpha(),
                                         (self.item_width + 40, self.item_height + 130)),
-            "ativo": transform.scale(image.load("assets/itens/carta_ativo.png").convert_alpha(),
+            "ativo": transform.scale(image.load(resource_path('assets/itens/carta_ativo.png')).convert_alpha(),
                                      (self.item_width + 40, self.item_height + 130))
         }
 
@@ -177,8 +177,8 @@ class Inventario():
 
             # Só desenha o conteúdo textual e o ícone se alpha for suficientemente alto
             if self.alpha_hover > 10:
-                fonte_nome = font.Font("assets/fontes/alagard.ttf", int(20 * escala))
-                fonte_desc = font.Font("assets/fontes/alagard.ttf", int(16 * escala))
+                fonte_nome = font.Font(resource_path('assets/fontes/alagard.ttf'), int(20 * escala))
+                fonte_desc = font.Font(resource_path('assets/fontes/alagard.ttf'), int(16 * escala))
                 icon_size = int(80 * escala)
                 icon = transform.scale(item_hover.sprite, (icon_size, icon_size))
                 icon_x = carta_x + (largura - icon_size) // 2
@@ -225,10 +225,10 @@ class Inventario():
         # --- ATRIBUTOS DO PLAYER ---
         if self.player:
             player = self.player
-            fonte_attr = font.Font("assets/fontes/alagard.ttf", 48)
-            fonte_custo = font.Font("assets/fontes/alagard.ttf", 32)
-            fonte_desc = font.Font("assets/fontes/alagard.ttf", 20)  # Nova fonte para descrição
-            fonte_hotkey = font.Font("assets/fontes/alagard.ttf", 24)  # Fonte para os números das hotkeys
+            fonte_attr = font.Font(resource_path('assets/fontes/alagard.ttf'), 48)
+            fonte_custo = font.Font(resource_path('assets/fontes/alagard.ttf'), 32)
+            fonte_desc = font.Font(resource_path('assets/fontes/alagard.ttf'), 20)  # Nova fonte para descrição
+            fonte_hotkey = font.Font(resource_path('assets/fontes/alagard.ttf'), 24)  # Fonte para os números das hotkeys
             cor_attr = (253, 246, 225)
             cor_desc = (200, 200, 200)
 
@@ -303,7 +303,7 @@ class Inventario():
                 (1094, 340), (1277, 340), (1469, 340)
             ]
 
-            fonte_habilidade = font.Font("assets/fontes/alagard.ttf", 16)
+            fonte_habilidade = font.Font(resource_path('assets/fontes/alagard.ttf'), 16)
             self.botoes_habilidades = []
             explicacao = fonte_habilidade.render(
                 'Aperte 1,2,3 ou 4 com o cursor em cima de uma \n      habilidade para vincula-la a essa tecla', True,
@@ -431,7 +431,7 @@ class Inventario():
             self.screen.blit(sprite, (x, y))
 
         if arma_hover:
-            fonte_attr = font.Font("assets/fontes/alagard.ttf", 32)
+            fonte_attr = font.Font(resource_path('assets/fontes/alagard.ttf'), 32)
             cor_attr = (253, 246, 225)
 
             atributos = [
@@ -462,8 +462,8 @@ class Inventario():
 
         if self.player.arma:
             arma = self.player.arma
-            fonte_attr = font.Font("assets/fontes/alagard.ttf", 32)
-            fonte_nome = font.Font("assets/fontes/alagard.ttf", 48)
+            fonte_attr = font.Font(resource_path('assets/fontes/alagard.ttf'), 32)
+            fonte_nome = font.Font(resource_path('assets/fontes/alagard.ttf'), 48)
             cor_attr = (253, 246, 225)
             nome = f"{arma.nome}"
             atributos = [
@@ -574,7 +574,7 @@ class Inventario():
                         arma_removida = self.player.inventario.pop(i)
 
                         # Cria botão para o item dropado
-                        fontinha = font.Font("assets/fontes/alagard.ttf", 18)
+                        fontinha = font.Font(resource_path('assets/fontes/alagard.ttf'), 18)
                         cor = (255, 255, 255)  # Cor base para comum
                         hover = (100, 100, 100)
 
@@ -662,8 +662,8 @@ class Inventario():
             self.screen.blit(carta_img, (carta_x, carta_y))
 
 
-            fonte_nome = font.Font("assets/fontes/alagard.ttf", 20)
-            fonte_desc = font.Font("assets/fontes/alagard.ttf", 16)
+            fonte_nome = font.Font(resource_path('assets/fontes/alagard.ttf'), 20)
+            fonte_desc = font.Font(resource_path('assets/fontes/alagard.ttf'), 16)
 
 
             icon_size = 80
@@ -719,7 +719,7 @@ class Inventario():
         # --- ATRIBUTOS DA ARMA ---
         if self.player.arma:
             arma = self.player.arma
-            fonte_attr = font.Font("assets/fontes/alagard.ttf", 32)
+            fonte_attr = font.Font(resource_path('assets/fontes/alagard.ttf'), 32)
             cor_attr = (253, 246, 225)
 
             atributos = [
@@ -741,8 +741,8 @@ class Inventario():
         # --- ATRIBUTOS DO PLAYER ---
         if self.player:
             player = self.player
-            fonte_attr = font.Font("assets/fontes/alagard.ttf", 32)
-            fonte_custo = font.Font("assets/fontes/alagard.ttf", 24)
+            fonte_attr = font.Font(resource_path('assets/fontes/alagard.ttf'), 32)
+            fonte_custo = font.Font(resource_path('assets/fontes/alagard.ttf'), 24)
             cor_attr = (253, 246, 225)
 
             atributos = [

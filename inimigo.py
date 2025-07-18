@@ -6,7 +6,7 @@ from random import randint
 from modificadores_inimigos import *
 from screen_shake import screen_shaker
 from pygame.mask import from_surface as mask_from_surface
-
+from utils import resource_path 
 class Inimigo:
     def __init__(self, x, y, largura, altura, hp, velocidade=2, dano=0):
         self.alma_coletada = None
@@ -21,7 +21,7 @@ class Inimigo:
         self.particulas_dano = []
 
         self.ultimo_dano_tempo = 0
-        self.fonte_dano = font.Font('assets/Fontes/KiwiSoda.ttf', 20)
+        self.fonte_dano = font.Font(resource_path('assets/Fontes/KiwiSoda.ttf'), 20)
 
         self.knockback_x = 0
         self.knockback_y = 0
@@ -210,7 +210,7 @@ class Inimigo:
             draw.rect(tela, (150, 0, 0), (barra_x - 20, barra_y + 30, largura_hp, 50))
             draw.rect(tela, (255, 255, 255), (barra_x - 20, barra_y + 30, largura_barra, 50), 1)
 
-            fonte = font.Font("assets/Fontes/alagard.ttf", 24)
+            fonte = font.Font(resource_path('assets/Fontes/alagard.ttf'), 24)
             texto = fonte.render(str(self.nome), True, (255, 255, 255))
             texto_rect = texto.get_rect(center=(barra_x - 20 + largura_barra / 2, barra_y + 30 + 25))
             tela.blit(texto, texto_rect)
@@ -235,7 +235,7 @@ class Inimigo:
             tamanho_fonte = 24
             texto_sufixo = ""
 
-        fonte = font.Font('assets/Fontes/KiwiSoda.ttf', tamanho_fonte)
+        fonte = font.Font(resource_path('assets/Fontes/KiwiSoda.ttf'), tamanho_fonte)
         texto_str = f"{self.ultimo_dano:.1f}{texto_sufixo}"
 
         offset_y_text = (time.get_ticks() - self.ultimo_dano_tempo) / 4

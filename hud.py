@@ -6,30 +6,30 @@ import pygame.font
 from random import randint
 from armas import *
 from screen_shake import screen_shaker
-
+from utils import resource_path 
 
 class Hud:
     def __init__(self, player,tela):
         self.player = player
         
-        self.fundo = image.load('assets/UI/tela_fundo1.png').convert_alpha()
+        self.fundo = image.load(resource_path('assets/UI/tela_fundo1.png')).convert_alpha()
         self.fundo = transform.scale(self.fundo, (1920, 1080))
 
-        self.hud = image.load('assets/UI/HUD.png').convert_alpha()
+        self.hud = image.load(resource_path('assets/UI/HUD.png')).convert_alpha()
         self.hud = transform.scale(self.hud, (self.hud.get_width()*0.9, self.hud.get_height()*0.9))
 
-        self.full_stamina_mana = image.load('assets/UI/full_stamina_mana.png').convert_alpha()
+        self.full_stamina_mana = image.load(resource_path('assets/UI/full_stamina_mana.png')).convert_alpha()
         self.full_stamina_mana = transform.scale(self.full_stamina_mana, (self.full_stamina_mana.get_width()*0.9, self.full_stamina_mana.get_height()*0.9))
 
-        self.full_hp = image.load('assets/UI/full_hp.png').convert_alpha()
+        self.full_hp = image.load(resource_path('assets/UI/full_hp.png')).convert_alpha()
         self.full_hp = transform.scale(self.full_hp, (self.full_hp.get_width()*0.9, self.full_hp.get_height()*0.9))
 
-        self.pocoesHp = transform.scale(image.load('assets/itens/pocaodevida.png').convert_alpha(),(64,64))
-        self.pocoesMp = transform.scale(image.load('assets/itens/pocaodemana.png').convert_alpha(),(64,64))
+        self.pocoesHp = transform.scale(image.load(resource_path('assets/itens/pocaodevida.png')).convert_alpha(),(64,64))
+        self.pocoesMp = transform.scale(image.load(resource_path('assets/itens/pocaodemana.png')).convert_alpha(),(64,64))
 
-        self.almaIcon = transform.scale(image.load('assets/Itens/alma.png').convert_alpha(), (76,76))
+        self.almaIcon = transform.scale(image.load(resource_path('assets/Itens/alma.png')).convert_alpha(), (76,76))
         
-        self.statsArma = transform.scale(image.load('assets/UI/stats.png').convert_alpha(),(300*1.3,250*1.3))
+        self.statsArma = transform.scale(image.load(resource_path('assets/UI/stats.png')).convert_alpha(),(300*1.3,250*1.3))
         
         self.stats_alpha = None
 
@@ -41,7 +41,7 @@ class Hud:
             {"rect": Rect(50, 320 + i * 125, 100, 100), "color": (100, 100, 100, 200)}
             for i in range(4)
         ]
-        self.hotkey_font = font.Font('assets/Fontes/alagard.ttf', 20)
+        self.hotkey_font = font.Font(resource_path('assets/Fontes/alagard.ttf'), 20)
 
         self.hotkey_pressed = [False] * 4
         self.hotkey_press_time = [0] * 4
@@ -68,7 +68,7 @@ class Hud:
         self.tempo_mensagem_mana = 0
         self.duracao_mensagem = 1000
 
-        self.tela_vermelha = image.load('assets/UI/tela-vermelha.png').convert_alpha()
+        self.tela_vermelha = image.load(resource_path('assets/UI/tela-vermelha.png')).convert_alpha()
 
     def desenhaFundo(self):
         self.tela.blit(self.fundo, (0, 0))
@@ -116,10 +116,10 @@ class Hud:
 
     def desenhar(self, minimal=False):
         offset_x, offset_y = screen_shaker.offset
-        almas_font = font.Font('assets/Fontes/alagard.ttf', 55)
+        almas_font = font.Font(resource_path('assets/Fontes/alagard.ttf'), 55)
         almas = almas_font.render(f"{self.player.almas}x", True, (243, 236, 215))
 
-        pocoes_font = font.Font('assets/Fontes/alagard.ttf', 32)
+        pocoes_font = font.Font(resource_path('assets/Fontes/alagard.ttf'), 32)
 
         pocao_slot_size = 100
         pocao_slots = [
@@ -133,11 +133,11 @@ class Hud:
         combo_mult = self.player.arma.comboMult
 
         current_font_size = int(self.normal_font_size * self.combo_scale)
-        combo_font = font.Font('assets/Fontes/alagard.ttf',
+        combo_font = font.Font(resource_path('assets/Fontes/alagard.ttf'),
                                max(72, min(int(current_font_size * combo_mult * 0.6), 165)))
         combo = combo_font.render(f"{total_hits}", True, (243, 236, 215))
 
-        comboMult_font = font.Font('assets/Fontes/alagard.ttf', min(int(24 * combo_mult), 48))
+        comboMult_font = font.Font(resource_path('assets/Fontes/alagard.ttf'), min(int(24 * combo_mult), 48))
         comboMult = comboMult_font.render(f"{combo_mult:.2f}x", True, (253, 246, 225))
 
         almas_rect = almas.get_rect()
@@ -312,7 +312,7 @@ class Hud:
         dano_critico = arma_atual.dano * arma_atual.danoCriticoMod
         modificador = arma_atual.modificador.nome
 
-        stats_font = font.Font('assets/Fontes/alagard.ttf', 24)
+        stats_font = font.Font(resource_path('assets/Fontes/alagard.ttf'), 24)
 
         stats_surface = Surface((400, 300), SRCALPHA)
 

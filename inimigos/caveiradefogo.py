@@ -4,12 +4,13 @@ from pygame.locals import QUIT
 import math
 from inimigo import Inimigo
 import random
+from utils import resource_path 
 
 class CaveiraDeFogo(Inimigo):
     def __init__(self, x, y, largura, altura, hp, nome="Caveira de Fogo",velocidade=3, dano=20):
         super().__init__(x, y, largura, altura, hp, velocidade, dano)
 
-        self.spritesheet = image.load('./assets/Enemies/FireSkull-Sheet.png').convert_alpha()
+        self.spritesheet = image.load(resource_path('./assets/Enemies/FireSkull-Sheet.png')).convert_alpha()
 
         self.frame_width = 32
         self.frame_height = 32
@@ -158,7 +159,7 @@ class CaveiraDeFogo(Inimigo):
             draw.rect(tela, (150, 0, 0), (barra_x - 20, barra_y + 30, largura_hp, 50))
             draw.rect(tela, (255, 255, 255), (barra_x - 20, barra_y + 30, largura_barra, 50), 1)
 
-            fonte = font.Font("assets/Fontes/alagard.ttf", 24)
+            fonte = font.Font(resource_path('assets/Fontes/alagard.ttf'), 24)
             texto = fonte.render(str(self.nome), True, (255, 255, 255))
             texto_rect = texto.get_rect(
                 center=(barra_x - 20 + largura_barra / 2, barra_y + 30 + 25))  # 25 = altura/2 da barra

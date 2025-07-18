@@ -6,11 +6,12 @@ from pytmx.util_pygame import load_pygame
 import pytmx
 from gerenciador_andar import GerenciadorAndar
 from screen_shake import screen_shaker
+from utils import resource_path 
 
 
 class Mapa:
     def __init__(self, caminho_tmx, tela, tela_width, tela_heigth, gerenciador_andar, escala=3.25):
-        self.tmx_data = load_pygame(f'mapas/{caminho_tmx}')
+        self.tmx_data = load_pygame(resource_path(f'mapas/{caminho_tmx}'))
         self.escala = escala
         self.tela = tela
         self.tela_width = tela_width

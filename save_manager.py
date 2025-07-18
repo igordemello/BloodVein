@@ -1,9 +1,10 @@
 import json
 import os
 from datetime import datetime
+from utils import resource_path 
 
 class SaveManager:
-    def __init__(self, save_dir="saves"):
+    def __init__(self, save_dir=resource_path("saves")):
         self.save_dir = save_dir
         if not os.path.exists(save_dir):
             os.makedirs(save_dir)
@@ -13,7 +14,7 @@ class SaveManager:
     
     def create_save(self, game_state):
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-        save_path = os.path.join(self.save_dir, f"save_{timestamp}.json")
+        save_path = os.path.join(self.save_dir, resource_path(f"save_{timestamp}.json"))
         self.save_game(game_state, save_path)
         return save_path
     

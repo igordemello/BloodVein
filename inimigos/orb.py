@@ -4,12 +4,12 @@ from pygame.locals import QUIT
 import math
 from inimigo import Inimigo
 from random import uniform, randint
-
+from utils import resource_path 
 
 class Orb(Inimigo):
     def __init__(self, x, y, largura, altura, nome="Orb", hp=100, velocidade=2, dano=10):
         super().__init__(x, y, largura, altura, hp, velocidade, dano)
-        self.spritesheet = image.load('./assets/Enemies/EyeOrbSprite.png').convert_alpha()
+        self.spritesheet = image.load(resource_path('./assets/Enemies/EyeOrbSprite.png')).convert_alpha()
         self.nome = nome
         self.frame_width = 32
         self.frame_height = 32
@@ -22,7 +22,7 @@ class Orb(Inimigo):
         self.orbital_size = (40, 20)
         self.hitboxArma = (70, 100)
 
-        self.sprite_hit = image.load("assets/Enemies/orbTomandoDano.png").convert_alpha()
+        self.sprite_hit = image.load(resource_path('assets/Enemies/orbTomandoDano.png')).convert_alpha()
         self.frames_hit = []
         self.total_frames_hit = 4
         self.hit_frame_duration = 100
@@ -110,7 +110,7 @@ class Orb(Inimigo):
             draw.rect(tela, (255, 255, 255), (barra_x - 20, barra_y + 30, largura_barra, 50), 1)
 
             # Desenhar o nome centralizado
-            fonte = font.Font("assets/Fontes/alagard.ttf", 24)
+            fonte = font.Font(resource_path('assets/Fontes/alagard.ttf'), 24)
             texto = fonte.render(str(self.nome), True, (255, 255, 255))
             texto_rect = texto.get_rect(
                 center=(barra_x - 20 + largura_barra / 2, barra_y + 30 + 25))  # 25 = altura/2 da barra

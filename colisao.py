@@ -3,7 +3,7 @@ import sys
 from pygame.locals import QUIT
 import math
 
-
+from utils import resource_path 
 from screen_shake import screen_shaker
 
 

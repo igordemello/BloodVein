@@ -3,6 +3,7 @@ import math
 import random
 from pygame import time
 from inimigo import Inimigo
+from utils import resource_path 
 
 class NuvemBoss(Inimigo):
     def __init__(self, x, y, largura=200, altura=200, nome="Nuvem", hp=10000, velocidade=5, dano=70):
@@ -13,10 +14,10 @@ class NuvemBoss(Inimigo):
 
         # Spritesheets
         self.sprites = {
-            'idle': image.load('./assets/Enemies/nuvem_idle.png').convert_alpha(),
-            'run': image.load('./assets/Enemies/nuvem_run.png').convert_alpha(),
-            'campo': image.load('./assets/Enemies/nuvem_campo_de_força.png').convert_alpha(),
-            'raio': image.load('./assets/Enemies/nuvem_raio.png').convert_alpha(),
+            'idle': image.load(resource_path('./assets/Enemies/nuvem_idle.png')).convert_alpha(),
+            'run': image.load(resource_path('./assets/Enemies/nuvem_run.png')).convert_alpha(),
+            'campo': image.load(resource_path('./assets/Enemies/nuvem_campo_de_força.png')).convert_alpha(),
+            'raio': image.load(resource_path('./assets/Enemies/nuvem_raio.png')).convert_alpha(),
         }
 
         # Frame sizes

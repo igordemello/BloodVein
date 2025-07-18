@@ -3,15 +3,15 @@ import math
 from pygame import time
 from inimigo import Inimigo
 import random
-
+from utils import resource_path 
 
 class MorcegoPadrao(Inimigo):
     def __init__(self, x, y, largura=64, altura=64, hp=80, velocidade=2, dano=15):
         super().__init__(x, y, largura, altura, hp, velocidade, dano)
 
-        self.sprites_idle = image.load('./assets/Enemies/morcego_idle.png').convert_alpha()
-        self.sprites_voando = image.load('./assets/Enemies/morcego_correr.png').convert_alpha()
-        self.sprites_ataque = image.load('./assets/Enemies/morcego_ataque.png')
+        self.sprites_idle = image.load(resource_path('./assets/Enemies/morcego_idle.png')).convert_alpha()
+        self.sprites_voando = image.load(resource_path('./assets/Enemies/morcego_correr.png')).convert_alpha()
+        self.sprites_ataque = image.load(resource_path('./assets/Enemies/morcego_ataque.png'))
 
         self.frame_width = 27
         self.frame_height = 36
@@ -182,7 +182,7 @@ class MorcegoPadrao(Inimigo):
             draw.rect(tela, (255, 255, 255), (barra_x - 20, barra_y + 30, largura_barra, 50), 1)
 
             # Desenhar o nome centralizado
-            fonte = font.Font("assets/Fontes/alagard.ttf", 24)
+            fonte = font.Font(resource_path('assets/Fontes/alagard.ttf'), 24)
             texto = fonte.render(str(self.nome), True, (255, 255, 255))
             texto_rect = texto.get_rect(
                 center=(barra_x - 20 + largura_barra / 2, barra_y + 30 + 25))  # 25 = altura/2 da barra

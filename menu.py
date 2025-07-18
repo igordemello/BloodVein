@@ -9,7 +9,7 @@ from som import GerenciadorDeSom
 from som import som
 from som import GerenciadorDeMusica
 from som import musica
-
+from utils import resource_path 
 
 class gerenciamento():
     def __init__(self):
@@ -20,8 +20,8 @@ class Menu():
     def __init__(self, SCREEN):
         self.screen = SCREEN
         self.screen_width, self.screen_height = self.screen.get_size()
-        self.fonte = font.Font("assets/Fontes/Alkhemikal.ttf", 180)
-        self.fonte_botoes = font.Font("assets/Fontes/alagard.ttf", 72)
+        self.fonte = font.Font(resource_path('assets/Fontes/Alkhemikal.ttf'), 180)
+        self.fonte_botoes = font.Font(resource_path('assets/Fontes/alagard.ttf'), 72)
 
         self.cor_base = (253, 246, 225)
         self.cor_hover = (0, 0, 0)
@@ -37,13 +37,13 @@ class Menu():
         self.ultimo_hover = -1
 
         #vídeo
-        self.intro_video = cv2.VideoCapture("assets/UI/inicio.mp4")
-        self.loop_video = cv2.VideoCapture("assets/UI/loop.mp4")
+        self.intro_video = cv2.VideoCapture(resource_path("assets/UI/inicio.mp4"))
+        self.loop_video = cv2.VideoCapture(resource_path("assets/UI/loop.mp4"))
         self.showing_intro = True
         self.menu_active = False
 
         self.index_selecionado = 0
-        self.espada_img = image.load("assets/UI/Espada menu.png").convert_alpha()
+        self.espada_img = image.load(resource_path('assets/UI/Espada menu.png')).convert_alpha()
         self.espada_img = transform.scale(self.espada_img, (100, 50))
 
     def cv2_to_pygame(self, frame):

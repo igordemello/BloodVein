@@ -5,6 +5,7 @@ from pygame.locals import QUIT
 import math
 from efeito import *
 from random import randint
+from utils import resource_path 
 
 class ConjuntoItens:
     def __init__(self):
@@ -15,7 +16,7 @@ class ConjuntoItens:
                 efeitos=[
                     DanoUsuario(20, "+"),
                 ],
-                sprite=image.load("assets\itens\ChapeuDeBruxa.png").convert_alpha(),
+                sprite=image.load(resource_path("assets\itens\ChapeuDeBruxa.png")).convert_alpha(),
                 raridade = "comum",
                 id=1,
             ),
@@ -25,7 +26,7 @@ class ConjuntoItens:
                 efeitos=[
                     VelocidadeMovimento(0.3)
                 ],
-                sprite=image.load("assets\itens\Botasdesangue.png").convert_alpha(),
+                sprite=image.load(resource_path("assets\itens\Botasdesangue.png")).convert_alpha(),
                 raridade="comum",
                 id=2,
             ),
@@ -35,7 +36,7 @@ class ConjuntoItens:
                 efeitos=[
                     VelocidadeAtaque(1)  #temporário, nada disso funciona
                 ],
-                sprite=image.load("assets\itens\LuvaDeTita.png").convert_alpha(),
+                sprite=image.load(resource_path("assets\itens\LuvaDeTita.png")).convert_alpha(),
                 raridade="comum",
                 id=3,
             ),
@@ -45,7 +46,7 @@ class ConjuntoItens:
                 efeitos=[
                     DecaimentoVida(0.75)  #transforma em 75%
                 ],
-                sprite=image.load("assets\itens\SeringaDeSangue.png").convert_alpha(),
+                sprite=image.load(resource_path("assets\itens\SeringaDeSangue.png")).convert_alpha(),
                 raridade="rara",
                 id=4,
             ),
@@ -55,7 +56,7 @@ class ConjuntoItens:
                 efeitos=[
                     DanoUsuario(1.5, "*")
                 ],
-                sprite=image.load("assets\itens\Varinhamagica.png").convert_alpha(),
+                sprite=image.load(resource_path("assets\itens\Varinhamagica.png")).convert_alpha(),
                 raridade="rara",
                 id=5,
             ),
@@ -66,7 +67,7 @@ class ConjuntoItens:
                     DanoUsuario(2, "*"),
                     DecaimentoVida(2)
                 ],
-                sprite=image.load("assets\itens\AguaBenta.png").convert_alpha(),
+                sprite=image.load(resource_path("assets\itens\AguaBenta.png")).convert_alpha(),
                 raridade="rara",
                 id=6,
             ),
@@ -77,7 +78,7 @@ class ConjuntoItens:
                     VidaMaxima(-50),
                     DecaimentoVida(0)
                 ],
-                sprite=image.load("assets\itens\coração.png").convert_alpha(),
+                sprite=image.load(resource_path("assets\itens\coração.png")).convert_alpha(),
                 raridade="lendaria",
                 id=7
             ),
@@ -87,7 +88,7 @@ class ConjuntoItens:
                 efeitos=[
                     Revives(1)
                 ],
-                sprite=image.load("assets\itens\caixao.png").convert_alpha(),
+                sprite=image.load(resource_path("assets\itens\caixao.png")).convert_alpha(),
                 raridade="lendaria",
                 id=8,
             ),
@@ -102,7 +103,7 @@ class ConjuntoItens:
                     DecaimentoVida(0.75),
                     CooldownStamina(850),
                 ],
-                sprite=image.load("assets\itens\Máscara_da_Comédia.png").convert_alpha(),
+                sprite=image.load(resource_path("assets\itens\Máscara_da_Comédia.png")).convert_alpha(),
                 raridade="rara",
                 id=9,
             ),
@@ -117,7 +118,7 @@ class ConjuntoItens:
                     DecaimentoVida(1.4),
                     CooldownStamina(-850),
                 ],
-                sprite=image.load("assets\itens\Máscara_da_Tragedia.png").convert_alpha(),
+                sprite=image.load(resource_path("assets\itens\Máscara_da_Tragedia.png")).convert_alpha(),
                 raridade="rara",
                 id=10,
             ),
@@ -127,7 +128,7 @@ class ConjuntoItens:
                 efeitos=[
                     DanoUsuario(randint(1,35),"+")
                 ],
-                sprite=image.load("assets\itens\AmuletodeSeth.png").convert_alpha(),
+                sprite=image.load(resource_path("assets\itens\AmuletodeSeth.png")).convert_alpha(),
                 raridade="comum",
                 id=11
             ),
@@ -138,7 +139,7 @@ class ConjuntoItens:
                     CooldownStamina(2000),
                     DanoUsuario(-10,"+")
                 ],
-                sprite=image.load("assets\itens\AnelDoReiRato.png").convert_alpha(),
+                sprite=image.load(resource_path("assets\itens\AnelDoReiRato.png")).convert_alpha(),
                 raridade="rara",
                 id=12,
             ),
@@ -148,7 +149,7 @@ class ConjuntoItens:
                 efeitos=[
                     ModificadorDanoRecebido(0.75)
                 ],
-                sprite=image.load("assets\itens\Escudo.png").convert_alpha(),
+                sprite=image.load(resource_path("assets\itens\Escudo.png")).convert_alpha(),
                 raridade="rara",
                 id = 13
             ),
@@ -159,7 +160,7 @@ class ConjuntoItens:
                     ModificadorDanoRecebido(2),
                     DanoUsuario(2,"*")
                 ],
-                sprite=image.load("assets\itens\Osso.png").convert_alpha(),
+                sprite=image.load(resource_path("assets\itens\Osso.png")).convert_alpha(),
                 raridade="lendaria",
                 id = 14
             ),
@@ -172,7 +173,7 @@ class ConjuntoItens:
                     DuraçãoDash(180),
                     CustoDash(0.75)
                 ],
-                sprite=image.load("assets\itens\BotasdeHermes.png").convert_alpha(),
+                sprite=image.load(resource_path("assets\itens\BotasdeHermes.png")).convert_alpha(),
                 raridade="lendaria",
                 id = 15
             ),
@@ -185,7 +186,7 @@ class ConjuntoItens:
                     DanoUsuario(20, "+")
                 ],
                 afetaIni=False,
-                sprite=image.load("assets\itens\crucifixoinvertido.png").convert_alpha(),
+                sprite=image.load(resource_path("assets\itens\crucifixoinvertido.png")).convert_alpha(),
                 raridade="ativo",
                 id=16,
             ),
@@ -197,7 +198,7 @@ class ConjuntoItens:
                     VelocidadeMovimento(0.25)
                 ],
                 afetaIni=False,
-                sprite=image.load("assets\itens\AranhaDeBrinquedo.png").convert_alpha(),
+                sprite=image.load(resource_path("assets\itens\AranhaDeBrinquedo.png")).convert_alpha(),
                 raridade="ativo",
                 id=17,
             ),
@@ -209,7 +210,7 @@ class ConjuntoItens:
                     DarDano(20)
                 ],
                 afetaIni=True,
-                sprite=image.load("assets\itens\Bomba.png").convert_alpha(),
+                sprite=image.load(resource_path("assets\itens\Bomba.png")).convert_alpha(),
                 raridade="ativo",
                 id=18,
             ),
@@ -221,7 +222,7 @@ class ConjuntoItens:
                     ModificadorDanoRecebido(2)
                 ],
                 afetaIni=True,
-                sprite=image.load("assets\itens\AdagaSangrenta.png").convert_alpha(),
+                sprite=image.load(resource_path("assets\itens\AdagaSangrenta.png")).convert_alpha(),
                 raridade="ativo",
                 id=19,
             )

@@ -10,11 +10,11 @@ from som import GerenciadorDeSom
 from som import som
 from som import GerenciadorDeMusica
 from som import musica
-
+from utils import resource_path 
 class Loja():
     def __init__(self, conjunto: ConjuntoItens, player,ids_sorteados=None, comprado=None, no_grafo=None):
-        self.personagem_img = transform.scale(transform.flip(image.load('assets/iko.png').convert_alpha(), True, False),(910, 840))
-        self.fundo = image.load("assets/loja.png").convert_alpha()
+        self.personagem_img = transform.scale(transform.flip(image.load(resource_path('assets/iko.png')).convert_alpha(), True, False),(910, 840))
+        self.fundo = image.load(resource_path('assets/loja.png')).convert_alpha()
         
         self.itensDisp = conjunto
 
@@ -35,10 +35,10 @@ class Loja():
         self.player = player
         self.tempo = 0  # Para animação
 
-        self.font_titulo = font.Font("assets/Fontes/alagard.ttf", 30,)
-        self.font_desc = font.Font("assets/Fontes/alagard.ttf", 20)
-        self.font_preco = font.Font("assets/Fontes/alagard.ttf", 35, )
-        self.font_chata = font.Font("assets/Fontes/alagard.ttf", 20, )
+        self.font_titulo = font.Font(resource_path('assets/Fontes/alagard.ttf'), 30,)
+        self.font_desc = font.Font(resource_path('assets/Fontes/alagard.ttf'), 20)
+        self.font_preco = font.Font(resource_path('assets/Fontes/alagard.ttf'), 35, )
+        self.font_chata = font.Font(resource_path('assets/Fontes/alagard.ttf'), 20, )
 
         self.musica = 0
 
@@ -54,10 +54,10 @@ class Loja():
     
         # Carregar imagens de cartas por raridade
         self.carta_imgs = {
-            "comum": transform.scale(image.load("assets/itens/carta_comum_loja.png").convert_alpha(), (self.item_width + 40, self.item_height + 130)),
-            "rara": transform.scale(image.load("assets/itens/carta_rara_loja.png").convert_alpha(), (self.item_width + 40, self.item_height + 130)),
-            "lendaria": transform.scale(image.load("assets/itens/carta_lendaria_loja.png").convert_alpha(), (self.item_width + 40, self.item_height + 130)),
-            "ativo": transform.scale(image.load("assets/itens/carta_ativo_loja.png").convert_alpha(), (self.item_width + 40, self.item_height + 130))
+            "comum": transform.scale(image.load(resource_path('assets/itens/carta_comum_loja.png')).convert_alpha(), (self.item_width + 40, self.item_height + 130)),
+            "rara": transform.scale(image.load(resource_path('assets/itens/carta_rara_loja.png')).convert_alpha(), (self.item_width + 40, self.item_height + 130)),
+            "lendaria": transform.scale(image.load(resource_path('assets/itens/carta_lendaria_loja.png')).convert_alpha(), (self.item_width + 40, self.item_height + 130)),
+            "ativo": transform.scale(image.load(resource_path('assets/itens/carta_ativo_loja.png')).convert_alpha(), (self.item_width + 40, self.item_height + 130))
         }
             
         for i in range(3):
@@ -81,10 +81,10 @@ class Loja():
         
 
     def img_alma(self,tam):
-        return transform.scale(image.load('assets/Itens/alma.png').convert_alpha(),(tam,tam))
+        return transform.scale(image.load(resource_path('assets/Itens/alma.png')).convert_alpha(),(tam,tam))
 
     def alagard(self, tam):
-        return font.Font("assets/Fontes/alagard.ttf", tam)
+        return font.Font(resource_path('assets/Fontes/alagard.ttf'), tam)
     
 
     def desenhar_loja(self, tela):

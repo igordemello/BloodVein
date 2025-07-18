@@ -1,7 +1,7 @@
 from pygame import *
 from pygame.math import Vector2
 import cv2
-
+from utils import resource_path 
 class BotaoAnimado:
     def __init__(self, pos, text_input, font, base_color, hovering_color):
         self.pos = pos
@@ -46,10 +46,10 @@ class BotaoAnimado:
 
 class GameOver:
     def __init__(self):
-        self.font = font.Font('assets/Fontes/alagard.ttf', 24)
+        self.font = font.Font(resource_path('assets/Fontes/alagard.ttf'), 24)
 
         # Fonte e cores dos botões
-        botao_font = font.Font('assets/Fontes/alagard.ttf', 72)
+        botao_font = font.Font(resource_path('assets/Fontes/alagard.ttf'), 72)
         cor_base = (180, 180, 180)
         cor_hover = (255, 255, 255)
 
@@ -66,7 +66,7 @@ class GameOver:
         self.menu_ativo = False
 
         # Carrega imagem de fundo do game over
-        self.fundo_gameover = image.load("assets/ui/gameover.png").convert_alpha()
+        self.fundo_gameover = image.load(resource_path('assets/ui/gameover.png')).convert_alpha()
         self.fundo_gameover = transform.scale(self.fundo_gameover, (1920, 1080))  # Redimensiona se necessário
 
     def gameOverFuncionamento(self, tela):
@@ -82,7 +82,7 @@ class GameOver:
         tela.blit(fundo_com_alpha, (0, 0))
 
         # Título
-        pause_font = font.Font("assets/Fontes/alagard.ttf", 96)
+        pause_font = font.Font(resource_path('assets/Fontes/alagard.ttf'), 96)
         pause_text = pause_font.render("Você Morreu!", True, (255, 255, 255))
         text_rect = pause_text.get_rect(center=(1920 // 2, 150))
         tela.blit(pause_text, text_rect)
