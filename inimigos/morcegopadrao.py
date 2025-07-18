@@ -159,8 +159,10 @@ class MorcegoPadrao(Inimigo):
         draw_y = round(self.y) + offset_y
         # HIT VERMELHO COLOCAR ISSO EM TODOS OS INIMIGOS NO METODO DESENHAR DE CADA UM
         if self.anima_hit:
+            self.frame_index = min(self.frame_index, len(self.frames) - 1)
             frame = self.aplicar_efeito_hit(self.frames[self.frame_index])
         else:
+            self.frame_index = min(self.frame_index, len(self.frames) - 1)
             frame = self.frames[self.frame_index]
         tela.blit(frame, (draw_x, draw_y))
 
