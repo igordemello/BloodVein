@@ -425,8 +425,10 @@ class Player():
         if self.stamina > self.staminaMaximo:
             self.stamina = self.staminaMaximo
 
-        if self.hp < 0:
-            self.hp = 0
+        if self.hp < 30:
+            self.hp = 30
+        # if self.hp < 0:
+        #     self.hp = 0
         if self.hp > self.hpMax:
             self.hp = self.hpMax
         if self.mp < 0:
