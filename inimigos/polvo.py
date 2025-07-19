@@ -7,7 +7,7 @@ from random import uniform, randint
 from utils import resource_path 
 
 class Polvo(Inimigo):
-    def __init__(self, x, y, largura, altura, nome="Polvo", hp=100, velocidade=2, dano=10):
+    def __init__(self, x, y, largura, altura, nome="Polvo", hp=100, velocidade=2.3, dano=5):
         super().__init__(x, y, largura, altura, hp, velocidade, dano)
         self.spritesheet = image.load(resource_path('./assets/Enemies/polvo_roxo-Andando.png')).convert_alpha()
         self.nome = nome
@@ -37,7 +37,7 @@ class Polvo(Inimigo):
         # Atributos para ataque com projéteis
         self.projeteis = []
         self.ultimo_ataque = 0
-        self.cooldown_ataque = 1000  # 2 segundos entre ataques
+        self.cooldown_ataque = 500  # 2 segundos entre ataques
         self.distancia_ideal = 300  # Distância que o Orb tenta manter do jogador
         self.trail_projetil_max = 5
         self.trail_projetil_fade = 25
