@@ -92,6 +92,8 @@ class Game:
         self.cd_arma_jogo = 350
         self.foi_pra_jogo = 0
 
+        self.imagem_fundo_pause = None
+
     def resetar_jogo(self, com_nova_run=False):
         self.player = Player(950, 400, 32 * 2, 48 * 2)
         self.hud = Hud(self.player, self.screen)
@@ -189,6 +191,7 @@ class Game:
                                 break
 
                     if ev.key == K_ESCAPE:
+                        self.imagem_fundo_pause = self.screen.copy()
                         self.estado = EstadoDoJogo.PAUSADO
                     elif ev.key == K_i:
                         self.inventario.toggle()
@@ -377,8 +380,7 @@ class Game:
 
 
         elif self.estado == EstadoDoJogo.PAUSADO:
-            self.pause.runPause(self.screen)
-            self.pause.pauseFuncionamento(self.screen)
+            self.pause.pauseFuncionamento(self.screen, self.imagem_fundo_pause)
 
         elif self.estado == EstadoDoJogo.GAME_OVER:
             self.game_over.gameOverFuncionamento(self.screen)
