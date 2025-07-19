@@ -88,6 +88,10 @@ class Game:
         self.inventario = None
         self.menu_armas_ativo = None
 
+        
+        self.cd_arma_jogo = 350
+        self.foi_pra_jogo = 0
+
     def resetar_jogo(self, com_nova_run=False):
         self.player = Player(950, 400, 32 * 2, 48 * 2)
         self.hud = Hud(self.player, self.screen)
@@ -282,6 +286,7 @@ class Game:
                         self.hud.atualizar_arma_icon()
                         som.tocar("clique3")
                         self.estado = EstadoDoJogo.JOGANDO
+                        self.foi_pra_jogo = time.get_ticks()
 
 
 
@@ -303,6 +308,12 @@ class Game:
         if self.estado == EstadoDoJogo.JOGANDO:
             self.sala_atual.atualizar(dt, keys, eventos)
             self.player.atualizar(dt, keys)
+            mouse_buttons = mouse.get_pressed()
+            mouse_pos = mouse.get_pos()
+
+            if time.get_ticks() - self.foi_pra_jogo > self.cd_arma_jogo:
+                if mouse_buttons[0]: 
+                    self.player.ataque_espadaPrincipal(self.sala_atual.inimigos, mouse_pos, dt)
 
 
             if (
