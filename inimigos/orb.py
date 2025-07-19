@@ -32,6 +32,15 @@ class Orb(Inimigo):
 
         self.tipo_colisao = 'voador'
 
+        self.attack_spritesheet = image.load(resource_path('assets/Enemies/EyeOrbSprite-AttackSheet.png')).convert_alpha()
+        self.attack_frames = []
+        self.attack_total_frames = 6
+        self.attack_frame_index = 0
+        self.attack_animando = False
+        self.attack_frame_duration = 80  # ms por frame
+        self.attack_ultimo_frame = 0
+        self.carregar_attack_sprites()
+
         # Atributos para ataque com projéteis
         self.projeteis = []
         self.ultimo_ataque = 0
@@ -39,6 +48,14 @@ class Orb(Inimigo):
         self.distancia_ideal = 300  # Distância que o Orb tenta manter do jogador
         self.trail_projetil_max = 5
         self.trail_projetil_fade = 25
+
+    def carregar_attack_sprites(self):
+        for i in range(self.attack_total_frames):
+            rect = Rect(i * self.frame_width, 0, self.frame_width, self.frame_height)
+            frame = Surface((self.frame_width, self.frame_height), SRCALPHA)
+            frame.blit(self.attack_spritesheet, (0, 0), rect)
+            frame = transform.scale(frame, (self.largura, self.altura))
+            self.attack_frames.append(frame)
 
     def desenhar(self, tela, player_pos, offset=(0, 0)):
         offset_x, offset_y = offset
@@ -57,8 +74,9 @@ class Orb(Inimigo):
                     return
 
 
-
-        if self.anima_hit:
+        if self.attack_animando and self.attack_frames:
+            frame = self.attack_frames[self.attack_frame_index]
+        elif self.anima_hit:
             frame = self.frames[self.frame_index]  # Obtém o frame normal
             frame = self.aplicar_efeito_hit(frame)  # Aplica o efeito de hit se necessário
             tela.blit(frame, (draw_x, draw_y))
@@ -226,7 +244,13 @@ class Orb(Inimigo):
         self.set_velocidade_x(self.vx)
         self.set_velocidade_y(self.vy)
 
-       
+        if self.attack_animando:
+            now = time.get_ticks()
+            if now - self.attack_ultimo_frame >= self.attack_frame_duration:
+                self.attack_frame_index += 1
+                self.attack_ultimo_frame = now
+                if self.attack_frame_index >= len(self.attack_frames):
+                    self.attack_animando = False
 
         self.atualizar_animacao()
 
@@ -267,4 +291,7 @@ class Orb(Inimigo):
             "tamanho": 20,
             "trail": []  # Partículas de rastro
         }
+        self.attack_animando = True
+        self.attack_frame_index = 0
+        self.attack_ultimo_frame = time.get_ticks()
         self.projeteis.append(projetil)
