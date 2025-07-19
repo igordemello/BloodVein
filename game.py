@@ -149,6 +149,8 @@ class Game:
                             self.sala_atual = Sala(self.andar.get_arquivo_atual(), self.screen, self.player, self.andar, self.set_minimapa)
                             self.sala_atual.load_save_data(dados['sala'], self.sala_atual.itensDisp)
                             self.estado = EstadoDoJogo.JOGANDO
+                            self.player.atualizar_arma()
+                            self.player.atualizar_atributos()
                         except Exception as e:
                             print(f"Erro ao carregar jogo: {e}")
                     elif escolha == "sair":
