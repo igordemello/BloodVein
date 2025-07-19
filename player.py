@@ -1059,8 +1059,12 @@ class Player():
             'itens': [item.id for item in self.itens],
             'itemAtivo': self.itemAtivo.id if self.itemAtivo else None,
             'arma': self.arma.get_save_data() if hasattr(self.arma, 'get_save_data') else None,
+            'inventario': [x.get_save_data() for x in self.inventario],
             'trait': self.trait,
-            # 'inventario': [x.get_save_data() for x in self.inventario] resolver isso depois
+            'habilidades': self.habilidades,
+            'hotkeys': self.hotkeys,
+            'pocoes': {'hp': self.pocoesHp, 'mp': self.pocoesMp},
+            'revives': self.revives,
         }
 
     def load_save_data(self, data, conjunto_itens, lista_mods):
@@ -1078,6 +1082,8 @@ class Player():
         self.itens = {}
         # self.inventario = data["inventario"] resolver isso depois
         for item_id in data['itens']:
+            if item_id == 2:
+                self.atributos['agilidade'] -= 0.3
             item = conjunto_itens.itens_por_id[item_id]
             self.adicionarItem(item)
 
@@ -1092,9 +1098,33 @@ class Player():
                 self.arma.aplicaModificador()  # Adicione esta linha
                 self.atualizar_arma()
 
+        if 'inventario' in data:
+            self.inventario = []
+            for arma_data in data['inventario']:
+                arma_class = globals().get(arma_data['tipo'])
+                if arma_class:
+                    arma = arma_class(arma_data['raridade'], lista_mods)
+                    arma.load_save_data(arma_data, lista_mods)
+                    arma.aplicaModificador()
+                    self.inventario.append(arma)
+                    self.atualizar_arma()
+
         if 'trait' in data:
             self.trait = data['trait']
             self.atualizar_traits(self.trait)
+
+        if 'habilidades' in data:
+            self.habilidades = data['habilidades']
+
+        if 'hotkeys' in data:
+            self.hotkeys = data['hotkeys']
+
+        if 'pocoes' in data:
+            self.pocoesHp = data['pocoes'].get('hp', 0)
+            self.pocoesMp = data['pocoes'].get('mp', 0)
+
+        if 'revives' in data:
+            self.revives = data['revives']
 
         self.atualizar_atributos()
 

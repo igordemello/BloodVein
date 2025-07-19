@@ -28,7 +28,7 @@ class ConjuntoItens:
                 ],
                 sprite=image.load(resource_path("assets\itens\Botasdesangue.png")).convert_alpha(),
                 raridade="comum",
-                id=2,
+                id=2, #ISSO NUNCA PODE SER ALTERADO SE NAO VC VAI MORRER LENTAMENTE ASSISTINDO SEU PIOR PESADELO
             ),
             "Luva de Titã": Item(
                 nome="Luva de Titã",

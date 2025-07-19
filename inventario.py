@@ -239,7 +239,7 @@ class Inventario():
             atributos = [
                 f'Força: {round(player.atributos["forca"], 1)}',
                 f'Destreza: {round(player.atributos["destreza"], 1)}',
-                f'Agilidade: {round(player.atributos["agilidade"], 1)}',
+                f'Agilidade: {int(player.atributos["agilidade"])}',
                 f'Vigor: {round(player.atributos["vigor"], 1)}',
                 f'Resistência: {round(player.atributos["resistencia"], 1)}',
                 f'Estamina: {round(player.atributos["estamina"], 1)}',
