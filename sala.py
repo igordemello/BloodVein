@@ -102,8 +102,12 @@ class Sala:
         self.cutscene = None
 
         self.spawn_points = self.mapa.get_inimigospawn()
-        self.leve_atual = 0
-        self.max_leves = randint(2*dificuldade_global.levas,5*dificuldade_global.levas) #levas
+        if tipo == 'loja':
+            self.max_leves = 0
+            self.leve_atual = self.max_leves + 2 
+        else:
+            self.leve_atual = 0
+            self.max_leves = randint(2*dificuldade_global.levas,5*dificuldade_global.levas) #levas
         #self.max_leves = 0
         self.inimigos_por_leva = 1
         self.tempo_entrada = time.get_ticks()
@@ -244,8 +248,8 @@ class Sala:
     def _criar_inimigo_aleatorio(self, x, y, tipo_sala):
         elite = "bau" in tipo_sala
 
-        # tipos_disponiveis = ["furacao","caveiradefogo","morcegopadrao","orb"]
-        tipos_disponiveis = ["orb"] 
+        tipos_disponiveis = ["furacao","caveiradefogo","morcegopadrao","orb"]
+        # tipos_disponiveis = ["orb"] 
         tipo_escolhido = choice(tipos_disponiveis)
 
 
