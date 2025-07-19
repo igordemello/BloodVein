@@ -24,6 +24,8 @@ from inimigos.morcegopadrao import MorcegoPadrao
 from inimigos.furacao import Furacao
 from inimigos.nuvemBoss import NuvemBoss
 from inimigos.polvo import Polvo
+# from inimigos.esqueleto_gelo import EsqueletoGelo
+from inimigos.massa_de_olhos import Massa
 from armas import LaminaDaNoite, Chigatana, Karambit, EspadaDoTita, MachadoDoInverno, EspadaEstelar, MarteloSolar, Arco, ListaMods
 from botao import Botao
 from save_manager import SaveManager
@@ -250,8 +252,8 @@ class Sala:
     def _criar_inimigo_aleatorio(self, x, y, tipo_sala):
         elite = "bau" in tipo_sala
 
-        # tipos_disponiveis = ["furacao","caveiradefogo","morcegopadrao","orb","espectro","polvo"]
-        tipos_disponiveis = ["polvo"] 
+        # tipos_disponiveis = ["furacao","caveiradefogo","morcegopadrao","orb","espectro","polvo", "esqueletogelo", "massa"]
+        tipos_disponiveis = ["massa"] 
         tipo_escolhido = choice(tipos_disponiveis)
 
 
@@ -286,6 +288,11 @@ class Sala:
         elif tipo_escolhido == "polvo":
             inimigo = Polvo(x, y, 64, 64, hp=200 if not elite else 300)
             inimigo.nome_base = "Polvo"
+            inimigo.aplicar_modificadores(elite=elite)
+
+        elif tipo_escolhido == "massa":
+            inimigo = Massa(x, y, 100, 100, hp=200 if not elite else 300)
+            inimigo.nome_base = "Massa de Olhos"
             inimigo.aplicar_modificadores(elite=elite)
 
         # Adicione outros tipos de inimigos aqui no futuro:
