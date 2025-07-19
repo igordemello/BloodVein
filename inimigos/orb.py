@@ -30,7 +30,7 @@ class Orb(Inimigo):
         self.time_last_hit_frame = 0
         self.anima_hit = False
 
-        self.tipo_colisao = 'voador'
+        self.tipo_colisao = 'obstaculo'
 
         self.attack_spritesheet = image.load(resource_path('assets/Enemies/EyeOrbSprite-AttackSheet.png')).convert_alpha()
         self.attack_frames = []

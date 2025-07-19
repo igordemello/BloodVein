@@ -244,8 +244,8 @@ class Sala:
     def _criar_inimigo_aleatorio(self, x, y, tipo_sala):
         elite = "bau" in tipo_sala
 
-        tipos_disponiveis = ["furacao","caveiradefogo","morcegopadrao","orb"]
-        # tipos_disponiveis = ["morcegopadrao"] 
+        # tipos_disponiveis = ["furacao","caveiradefogo","morcegopadrao","orb"]
+        tipos_disponiveis = ["orb"] 
         tipo_escolhido = choice(tipos_disponiveis)
 
 

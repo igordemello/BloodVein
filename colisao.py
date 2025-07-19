@@ -18,15 +18,21 @@ class Colisao:
 
     def remover_entidades_menos_player(self):
         from player import Player
+        
         self.entidades = [ent for ent in self.entidades if isinstance(ent, Player)]
 
     def checar_colisoes(self,dt):
         from player import Player
+        from inimigos.orb import Orb
         for i, ent1 in enumerate(self.entidades):
             if isinstance(ent1, Player):
                 continue
+            if isinstance(ent1, Orb):
+                continue
             for ent2 in self.entidades[i+1:]:
                 if isinstance(ent2, Player):
+                    continue
+                if isinstance(ent1, Orb):
                     continue
                 self._colisao_entidade_entidade(ent1, ent2)
 
@@ -296,8 +302,8 @@ class Colisao:
                         inimigo.projeteis.remove(projetil)
                         break
 
-                    # Colisão com o mapa (opcional)
-                    for collider in self.mapa.colliders:
+                    # Colisão com o mapa SOMENTE PAREDES
+                    for collider in self.mapa.colliders_sem_obstaculo:
                         if Rect(projetil["x"] - projetil_raio, projetil["y"] - projetil_raio,
                                 projetil_raio * 2, projetil_raio * 2).colliderect(collider['rect']):
                             if projetil in inimigo.projeteis:
