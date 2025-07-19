@@ -235,9 +235,9 @@ class Sala:
             inimigos = []
 
             for x, y in self.spawn_points:
-                testrect = Rect(x,y,50,50)
-                if self.player.get_hitbox().colliderect(testrect):
-                    continue
+                # testrect = Rect(x,y,50,50)
+                # # if self.player.get_hitbox().colliderect(testrect):
+                # #     continue
                 inimigo = self._criar_inimigo_aleatorio(x, y, tipo_sala)
                 inimigos.append(inimigo)
 
