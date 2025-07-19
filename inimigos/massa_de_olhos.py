@@ -37,7 +37,7 @@ class Massa(Inimigo):
         # Atributos para ataque com projéteis
         self.projeteis = []
         self.ultimo_ataque = 0
-        self.cooldown_ataque = 300  # 2 segundos entre ataques
+        self.cooldown_ataque = 150  # 2 segundos entre ataques
         self.distancia_ideal = 400  # Distância que o Orb tenta manter do jogador
         self.trail_projetil_max = 5
         self.trail_projetil_fade = 25
@@ -233,6 +233,11 @@ class Massa(Inimigo):
             # Se estiver muito perto, se afasta
             self.vx = -self.velocidade if player_x > self.x else self.velocidade
             self.vy = -self.velocidade if player_y > self.y else self.velocidade
+
+            # Continua atirando enquanto foge
+            if now - self.ultimo_ataque > self.cooldown_ataque:
+                self.atirar_projetil(player_pos)
+                self.ultimo_ataque = now
         else:
             # Se estiver na distância ideal, fica parado e atira
             if now - self.ultimo_ataque > self.cooldown_ataque:
