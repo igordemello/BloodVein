@@ -290,9 +290,8 @@ class Hud:
         proporcao_hp = self.player.hp / self.player.hpMax
         if proporcao_hp < 0.15:
             intensidade = int(100 * (1 - proporcao_hp / 0.15))
-            vermelha_surf = self.tela_vermelha.copy()
-            vermelha_surf.set_alpha(intensidade)
-            self.tela.blit(vermelha_surf, (0, 0))
+            self.tela_vermelha.set_alpha(intensidade)
+            self.tela.blit(self.tela_vermelha, (0, 0))
 
         
 
