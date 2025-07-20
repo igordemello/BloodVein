@@ -218,8 +218,6 @@ class Inventario():
                     desc_y = nome_y + int(55 * escala) + i * int(24 * escala)
                     self.screen.blit(texto_desc, (desc_x, desc_y))
 
-        
-
     def desenharStats(self):
         self.screen.blit(self.atributosFundo, (0, 0))
         # --- ATRIBUTOS DO PLAYER ---
@@ -227,8 +225,9 @@ class Inventario():
             player = self.player
             fonte_attr = font.Font(resource_path('assets/fontes/alagard.ttf'), 48)
             fonte_custo = font.Font(resource_path('assets/fontes/alagard.ttf'), 32)
-            fonte_desc = font.Font(resource_path('assets/fontes/alagard.ttf'), 20)  # Nova fonte para descrição
-            fonte_hotkey = font.Font(resource_path('assets/fontes/alagard.ttf'), 24)  # Fonte para os números das hotkeys
+            fonte_desc = font.Font(resource_path('assets/fontes/alagard.ttf'), 20)
+            fonte_hotkey = font.Font(resource_path('assets/fontes/alagard.ttf'),
+                                     24)
             cor_attr = (253, 246, 225)
             cor_desc = (200, 200, 200)
 
@@ -293,8 +292,6 @@ class Inventario():
 
                     y_pos += 60
 
-            # habilidades
-
             habilidades = list(self.gerenciador_habilidades.habilidades.keys())
             posicoes_botoes = [
                 (1094, 820), (1373, 820),
@@ -311,6 +308,13 @@ class Inventario():
             self.screen.blit(explicacao, (800, 1020))
             hovered_habilidade = None
 
+            cadeado_img = None
+            try:
+                cadeado_img = image.load(resource_path('assets/habilidades/cadeado.png')).convert_alpha()
+                cadeado_img = transform.scale(cadeado_img, (100, 100))  # Tamanho ajustável
+            except Exception as e:
+                print(f"Erro ao carregar imagem do cadeado: {e}")
+
             for i, (pos_x, pos_y) in enumerate(posicoes_botoes):
                 if i >= len(habilidades):
                     break
@@ -318,14 +322,50 @@ class Inventario():
                 hab_nome = habilidades[i]
                 hab = self.gerenciador_habilidades.habilidades[hab_nome]
 
+                pode_comprar = self.gerenciador_habilidades.pode_desbloquear(self.player, hab_nome)
+                ja_comprada = hab_nome in player.habilidades
                 cor = self.gerenciador_habilidades.get_cor_botao(player, hab_nome)
 
-                botao_surface = Surface((104, 104), SRCALPHA)
-                botao_surface.fill(cor)
+                botao_image = None
 
-                if hab.sprite:
-                    icon = transform.scale(hab.sprite, (80, 80))
-                    botao_surface.blit(icon, (12, 12))
+                if hasattr(hab, 'sprite_path'):
+                    try:
+                        botao_image = image.load(resource_path(hab.sprite_path)).convert_alpha()
+                        botao_image = transform.scale(botao_image, (104, 104))
+
+                        overlay = Surface((104, 104), SRCALPHA)
+
+                        if ja_comprada:
+                            overlay.fill((0, 0, 0, 100))
+                        elif not pode_comprar:
+                            overlay.fill((150, 0, 0, 100))
+                            if cadeado_img:
+                                cadeado_x = (104 - cadeado_img.get_width()) // 2
+                                cadeado_y = (104 - cadeado_img.get_height()) // 2
+                                overlay.blit(cadeado_img, (cadeado_x, cadeado_y))
+
+                        botao_image.blit(overlay, (0, 0))
+                    except Exception as e:
+                        print(f"Error loading skill image {hab.sprite_path}: {e}")
+                        botao_surface = Surface((104, 104), SRCALPHA)
+                        if not pode_comprar:
+                            botao_surface.fill((255, 0, 0, 150))
+                            if cadeado_img:
+                                cadeado_x = (104 - cadeado_img.get_width()) // 2
+                                cadeado_y = (104 - cadeado_img.get_height()) // 2
+                                botao_surface.blit(cadeado_img, (cadeado_x, cadeado_y))
+                        else:
+                            botao_surface.fill(cor)
+                else:
+                    botao_surface = Surface((104, 104), SRCALPHA)
+                    if not pode_comprar:
+                        botao_surface.fill((255, 0, 0, 150))
+                        if cadeado_img:
+                            cadeado_x = (104 - cadeado_img.get_width()) // 2
+                            cadeado_y = (104 - cadeado_img.get_height()) // 2
+                            botao_surface.blit(cadeado_img, (cadeado_x, cadeado_y))
+                    else:
+                        botao_surface.fill(cor)
 
                 hotkey_num = None
                 for num, habilidade in enumerate(player.hotkeys, 1):
@@ -334,7 +374,7 @@ class Inventario():
                         break
 
                 botao = Botao(
-                    image=botao_surface,
+                    image=botao_image if botao_image is not None else botao_surface,
                     pos=(pos_x + 52, pos_y + 52),
                     text_input="",
                     font=fonte_habilidade,
@@ -360,7 +400,7 @@ class Inventario():
                 for botao in self.botoes_habilidades:
                     if botao.value == hovered_habilidade.nome:
                         desc_x = botao.rect.centerx - desc_largura // 2
-                        desc_y = botao.rect.bottom + desc_margem
+                        desc_y = botao.rect.bottom + desc_margem - 20
 
                         desc_fundo = Surface((desc_largura, desc_altura), SRCALPHA)
                         desc_fundo.fill((0, 0, 0, 180))
@@ -387,6 +427,7 @@ class Inventario():
                             texto_y = desc_y + 10 + i * (fonte_desc.get_height() + 2)
                             self.screen.blit(texto_desc, (texto_x, texto_y))
                         break
+
 
     def desenharArma(self):
         if not self.visible:

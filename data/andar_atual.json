@@ -9,11 +9,11 @@
                 "baixo": "sala3",
                 "esquerda": "sala11"
             },
+            "tipo": "loja",
             "pos": [
                 0,
                 0
             ],
-            "tipo": "comum",
             "visitada": false,
             "arquivotmx": "andar1/8.tmx",
             "salaanterior": null,
@@ -52,6 +52,7 @@
             "pos": [
                 0,
                 -2
+                -2
             ],
             "tipo": "comum",
             "visitada": false,
@@ -72,6 +73,7 @@
             "pos": [
                 0,
                 1
+                1
             ],
             "tipo": "comum",
             "visitada": false,
@@ -91,6 +93,7 @@
             },
             "pos": [
                 0,
+                2
                 2
             ],
             "tipo": "comum",
@@ -165,6 +168,7 @@
                 "direita": "sala4",
                 "cima": "sala13"
             },
+            "tipo": "spawn",
             "pos": [
                 -1,
                 2
@@ -230,7 +234,7 @@
             "conexoes": [
                 "sala0"
             ],
-            "id": "sala11"
+            "id": "sala10"
         },
         {
             "portas": {
@@ -245,6 +249,7 @@
             "arquivotmx": "andar1/boss.tmx",
             "salaanterior": null,
             "conexoes": [
+                "sala10"
                 "sala10"
             ],
             "id": "sala12"
@@ -275,6 +280,7 @@
         {
             "source": "sala0",
             "target": "sala3"
+            "target": "sala3"
         },
         {
             "source": "sala0",
@@ -283,6 +289,7 @@
         {
             "source": "sala1",
             "target": "sala2"
+            "target": "sala2"
         },
         {
             "source": "sala2",
@@ -290,6 +297,7 @@
         },
         {
             "source": "sala2",
+            "target": "sala7"
             "target": "sala7"
         },
         {
