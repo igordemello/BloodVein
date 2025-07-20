@@ -34,7 +34,7 @@ class MenuArmas:
 
         self.traits_armas = {
             "Vampira": LaminaDaNoite("comum", self.lista_mods),
-            "Translúcido": EspadaEstelar("comum", self.lista_mods),
+            "Ancião": EspadaEstelar("comum", self.lista_mods),
             "Peçonhento": Karambit("comum", self.lista_mods),
             "Mercúrio": Arco("comum", self.lista_mods),
             "Humano": LaminaDaNoite("comum", self.lista_mods)  # Começa com Lâmina da Noite
@@ -68,7 +68,7 @@ class MenuArmas:
         traits_atributos = {
             "Vampira": {"forca": 5, "destreza": 5, "agilidade": 5, "vigor": 5, "resistencia": 5, "estamina": 5,
                         "sorte": 5},
-            "Translúcido": {"forca": 3, "destreza": 6, "agilidade": 7, "vigor": 3, "resistencia": 4, "estamina": 6,
+            "Ancião": {"forca": 3, "destreza": 6, "agilidade": 7, "vigor": 3, "resistencia": 4, "estamina": 6,
                             "sorte": 5},
             "Peçonhento": {"forca": 4, "destreza": 6, "agilidade": 5, "vigor": 6, "resistencia": 3, "estamina": 6,
                            "sorte": 4},

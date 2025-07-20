@@ -594,6 +594,7 @@ class Inventario():
                     rect_item = Rect(x, y, 100, 100)
 
                     if rect_item.collidepoint(mouse_x, mouse_y):
+                        print(arma.raridade)
                         arma_antiga = self.player.arma
 
                         self.player.arma = arma
@@ -604,7 +605,7 @@ class Inventario():
                         break
 
             # Adicionado: Dropar item no chão com botão direito
-            if evento.type == MOUSEBUTTONDOWN and evento.button == 3:
+            if evento.type == MOUSEBUTTONDOWN and evento.button == 3:  # Botão direito do mouse
                 for i, arma in enumerate(self.player.inventario):
                     x = 413 + (i % 7) * 107
                     y = 647 + (i // 7) * 107
@@ -614,46 +615,62 @@ class Inventario():
                         # Remove do inventário
                         arma_removida = self.player.inventario.pop(i)
 
-                        # Cria botão para o item dropado
+                        # Determina a raridade e cores
+                        raridade = getattr(arma_removida, 'raridadeStr', 'comum').lower()
+
+                        # Cores baseadas na raridade (usando o mesmo padrão do loot normal)
+                        if raridade == "lendaria":
+                            cor = (255, 255, 0)
+                            hover = (255, 255, 150)
+                        elif raridade == "raro":
+                            cor = (128, 0, 128)
+                            hover = (230, 150, 230)
+                        elif raridade == "incomum":
+                            cor = (0, 255, 0)
+                            hover = (144, 238, 144)
+                        else:  # comum
+                            cor = (255, 255, 255)
+                            hover = (255, 255, 255)
+
+                        # Carrega a imagem da bola correspondente à raridade
+                        try:
+                            bola_img = transform.scale(
+                                image.load(f"assets/itens/bola{raridade.capitalize()}.png"),
+                                (64, 64)
+                            )
+                        except:
+
+                            bola_img = None
+
                         fontinha = font.Font(resource_path('assets/fontes/alagard.ttf'), 18)
-                        cor = (255, 255, 255)  # Cor base para comum
-                        hover = (100, 100, 100)
 
-                        if hasattr(arma_removida, 'raridadeStr'):
-                            if arma_removida.raridadeStr == "incomum":
-                                cor = (0, 255, 0)
-                                hover = (0, 100, 0)
-                            elif arma_removida.raridadeStr == "raro":
-                                cor = (128, 0, 128)
-                                hover = (28, 0, 28)
-                            elif arma_removida.raridadeStr == "lendaria":
-                                cor = (255, 255, 0)
-                                hover = (100, 100, 0)
+                        drop_x = self.player.x + randint(-80, 80)
+                        drop_y = self.player.y + randint(-80, 80)
 
-                        texto_render = fontinha.render(arma_removida.nome, True, cor)
-                        largura = texto_render.get_width() + 20
-                        altura = texto_render.get_height() + 10
-
-                        fundo = Surface((largura, altura), SRCALPHA)
-                        fundo.fill((0, 0, 0, 160))
-
-                        # Posiciona o drop próximo ao jogador
                         drop_x = self.player.x + randint(-50, 50)
-                        drop_y = self.player.y + randint(-50, 50)
+                        drop_y = self.player.y + randint(-50, 50) + 100
 
                         botao = Botao(
-                            image=fundo,
+                            image=bola_img,
                             pos=(drop_x, drop_y),
                             text_input=arma_removida.nome,
                             font=fontinha,
                             base_color=cor,
-                            hovering_color=hover,
+                            hovering_color=cor,
                             value=arma_removida
                         )
 
-                        # Adiciona à lista de loots da sala
-                        if hasattr(self.player, 'sala_atual'):  # Garante que o jogador tem referência à sala
+                        if bola_img:
+                            botao.rect = bola_img.get_rect(center=(drop_x, drop_y))
+                        else:
+                            texto_render = fontinha.render(arma_removida.nome, True, cor)
+                            botao.image = texto_render
+                            botao.rect = texto_render.get_rect(center=(drop_x, drop_y))
+
+                        if hasattr(self.player, 'sala_atual'):
                             self.player.sala_atual.loots.append((botao, arma_removida))
+
+                            som.tocar("ItemDrop")
 
                         break
     '''
