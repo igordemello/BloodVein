@@ -23,14 +23,16 @@ from inimigos.caveiradefogo import CaveiraDeFogo
 from inimigos.morcegopadrao import MorcegoPadrao
 from inimigos.furacao import Furacao
 from inimigos.nuvemBoss import NuvemBoss
-from inimigos.polvo import Polvo
-# from inimigos.esqueleto_gelo import EsqueletoGelo
+from inimigos.Cachorro import Cerbero
 from inimigos.massa_de_olhos import Massa
+from inimigos.zombie import Zombie
 from armas import LaminaDaNoite, Chigatana, Karambit, EspadaDoTita, MachadoDoInverno, EspadaEstelar, MarteloSolar, Arco, ListaMods
 from botao import Botao
+from inimigos.polvo import Polvo
 from save_manager import SaveManager
 from dificuldade import dificuldade_global
 from utils import resource_path 
+import pygame
 
 def pixel_para_grid(x, y, offset, tile_size_scaled):
     """Converte coordenadas de pixel para grid, considerando offset e tamanho do tile escalado"""
@@ -106,13 +108,9 @@ class Sala:
         self.cutscene = None
 
         self.spawn_points = self.mapa.get_inimigospawn()
-        if tipo == 'loja':
-            self.max_leves = 0
-            self.leve_atual = self.max_leves + 2 
-        else:
-            self.leve_atual = 0
-            self.max_leves = randint(2*dificuldade_global.levas,5*dificuldade_global.levas) #levas
-        #self.max_leves = 0
+        self.leve_atual = 0
+        #self.max_leves = randint(2*dificuldade_global.levas,5*dificuldade_global.levas) #levas
+        self.max_leves = 1
         self.inimigos_por_leva = 1
         self.tempo_entrada = time.get_ticks()
         self.cooldown_inicial = 1000
@@ -193,6 +191,8 @@ class Sala:
         game_state = self.save_manager.generate_game_state(self.player, self.gerenciador_andar, self)
         self.save_manager.save_game(game_state, "save_file.json")
 
+        self.alagard = font.Font(resource_path('assets/fontes/alagard.ttf'), 25)
+
 
     def _criar_inimigos(self):
         if self.gerenciador_andar.sala_foi_conquistada(self.gerenciador_andar.sala_atual):
@@ -204,8 +204,8 @@ class Sala:
             self.leve_atual = self.max_leves + 2
             return []
 
-        #self.leve_atual = self.max_leves + 2
-        #return []
+        self.leve_atual = self.max_leves + 2
+        return []
 
         tempo_atual = time.get_ticks()
         if tempo_atual - self.tempo_entrada < self.cooldown_inicial and not self.inimigos_spawnados:
@@ -216,6 +216,7 @@ class Sala:
             musica.tocar("BloodVein SCORE/OST/MusicaDoBoss.mp3")
             xboss,yboss= self.spawn_points[0]
             numero = self.gerenciador_andar.numero_andar
+            numero = 3
             if numero == 1:
                 boss = bossmod.MouthOrb(xboss, yboss)
                 boss.nome_base = "Mãe Orbe"
@@ -226,6 +227,12 @@ class Sala:
                 boss.nome_base = "Nuvem Sombria"
                 self.leve_atual = self.max_leves + 2
                 return[boss]
+            elif numero == 3:
+                boss = Cerbero(xboss, yboss)
+                boss.nome_base = "Cerbero"
+                boss.player = self.player  # Define a referência ao jogador
+                self.leve_atual = self.max_leves + 2
+                return [boss]
 
 
 
@@ -252,8 +259,8 @@ class Sala:
     def _criar_inimigo_aleatorio(self, x, y, tipo_sala):
         elite = "bau" in tipo_sala
 
-        # tipos_disponiveis = ["furacao","caveiradefogo","morcegopadrao","orb","espectro","polvo", "esqueletogelo", "massa"]
-        tipos_disponiveis = ["massa"] 
+        # tipos_disponiveis = ["furacao","caveiradefogo","morcegopadrao","orb","espectro","polvo", "esqueletogelo", "massa", "zombie"]
+        tipos_disponiveis = ["zombie"] 
         tipo_escolhido = choice(tipos_disponiveis)
 
 
@@ -293,6 +300,11 @@ class Sala:
         elif tipo_escolhido == "massa":
             inimigo = Massa(x, y, 100, 100, hp=200 if not elite else 300)
             inimigo.nome_base = "Massa de Olhos"
+            inimigo.aplicar_modificadores(elite=elite)
+
+        elif tipo_escolhido == "zombie":
+            inimigo = Zombie(x, y, 96, 96, hp=200 if not elite else 300)
+            inimigo.nome_base = "Zombie"
             inimigo.aplicar_modificadores(elite=elite)
 
         # Adicione outros tipos de inimigos aqui no futuro:
@@ -357,10 +369,10 @@ class Sala:
         for inimigo in self.inimigos:
             if inimigo.vivo and self.player.hp > 0:
                 p_rect = Rect(self.player.x, self.player.y, 60, 120)
-                try:
-                    inimigo.atualizar(p_rect.center, self.tela, self.mapa.matriz, self.mapa.get_offset())
-                except:
-                    inimigo.atualizar(p_rect.center, self.tela)
+                
+                inimigo.atualizar(p_rect.center, self.tela, self.mapa.matriz, self.mapa.get_offset())
+                # except:
+                #     inimigo.atualizar(p_rect.center, self.tela)
                 inimigo.dar_dano = lambda val=inimigo.dano: self.player.tomar_dano(val)
 
 
@@ -596,8 +608,67 @@ class Sala:
 
 
         if self.bau:
-            tela.blit(self.bau.image, (self.bau.rect.x + offset_x, self.bau.rect.y + offset_y))
+            bau_pos = (self.bau.rect.x + offset_x, self.bau.rect.y + offset_y)
 
+            if self.porta_liberada and not self.bau.aberto:
+                # Criar uma máscara da imagem do baú
+                bau_mask = pygame.mask.from_surface(self.bau.image)
+                outline_points = bau_mask.outline()
+
+                # Superfície para o contorno com tamanho idêntico à imagem do baú
+                outline_surface = Surface(self.bau.image.get_size(), SRCALPHA)
+
+                # Desenhar o contorno (outline) diretamente na posição certa
+                espessura = 3  # Aumente esse valor para contornos mais grossos
+                for dx in range(-espessura, espessura + 1):
+                    for dy in range(-espessura, espessura + 1):
+                        if dx == 0 and dy == 0:
+                            continue
+                        for x, y in outline_points:
+                            nx, ny = x + dx, y + dy
+                            if 0 <= nx < outline_surface.get_width() and 0 <= ny < outline_surface.get_height():
+                                outline_surface.set_at((nx, ny), (255, 255, 255, 255))
+
+                # Desenhar brilho pulsante
+                tempo = time.get_ticks() / 500
+                alpha = int(100 + 80 * math.sin(tempo))
+                # Criar brilho maior que o baú
+                brilho_size = (self.bau.image.get_width() + 20, self.bau.image.get_height() + 20)
+                brilho = Surface(brilho_size, SRCALPHA)
+
+                # Desenhar elipse centralizada no brilho
+                draw.ellipse(brilho, (255, 255, 150, alpha), brilho.get_rect())
+
+                # Calcular posição para centralizar brilho em cima do baú
+                brilho_pos = (
+                    bau_pos[0] - (brilho.get_width() - self.bau.image.get_width()) // 2,
+                    bau_pos[1] - (brilho.get_height() - self.bau.image.get_height()) // 2
+                )
+
+                # Blit do brilho no lugar certo
+                tela.blit(brilho, brilho_pos)
+
+                # Desenhar o outline na mesma posição do baú
+                tela.blit(outline_surface, bau_pos)
+
+            # Desenhar o baú por cima do contorno e brilho
+            tela.blit(self.bau.image, bau_pos)
+
+        if self.pode_trocar_de_sala():
+            texto = self.alagard.render(f"Aperte E para entrar na porta", True, (255, 255, 255))
+            rect_texto = texto.get_rect(center=(tela.get_width() // 2, 50))
+            tela.blit(texto, rect_texto)
+
+        if self.bau and not self.bau.aberto and self.player.get_hitbox().colliderect(self.bau.rect) and self.porta_liberada:
+            texto_bau = self.alagard.render("Aperte E para abrir o baú", True, (255, 255, 255))
+            rect_bau = texto_bau.get_rect(center=(tela.get_width() // 2, 50))
+            tela.blit(texto_bau, rect_bau)
+
+        if self.hitbox_loja():
+            if self.player.get_hitbox().colliderect(self.hitbox_loja()[0]):
+                texto_loja = self.alagard.render("Aperte E para entrar na loja", True, (255, 255, 255))
+                rect_loja = texto_loja.get_rect(center=(tela.get_width() // 2, 50))
+                tela.blit(texto_loja, rect_loja)
 
         offset_x, offset_y = screen_shaker.offset
 

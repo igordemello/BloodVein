@@ -13,7 +13,7 @@ from som import musica
 from utils import resource_path 
 class Loja():
     def __init__(self, conjunto: ConjuntoItens, player,ids_sorteados=None, comprado=None, no_grafo=None):
-        self.personagem_img = transform.scale(transform.flip(image.load(resource_path('assets/iko.png')).convert_alpha(), True, False),(910, 840))
+        self.personagem_img = transform.scale(transform.flip(image.load(resource_path('assets/iko.png')).convert_alpha(), True, False),(1183, 1092))
         self.fundo = image.load(resource_path('assets/loja.png')).convert_alpha()
         
         self.itensDisp = conjunto
@@ -92,7 +92,7 @@ class Loja():
         musica.tocar("BloodVein SCORE/OST/Loja.mp3")
         tela.fill((0, 0, 0))
         tela.blit(self.fundo,(0,0))
-        tela.blit(self.personagem_img, (1100, 300))
+        tela.blit(self.personagem_img, (800, 50))
 
         mouse_pos = mouse.get_pos()
         self.tempo += 0.05
