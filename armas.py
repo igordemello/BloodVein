@@ -193,7 +193,7 @@ class LaminaDaNoite(Arma):
         self.ataqueTipo = "melee"
         self.raridadeStr = raridadeStr
         self.raridade = RARIDADES.get(self.raridadeStr, 1)
-        self.dano = 10+randint(5*self.raridade,10*self.raridade)
+        self.dano = 10+randint(5*self.raridade,10*self.raridade) + 10000
         self.velocidade = 1 #analisar esses valores depois
         self.cooldown = 400
         self.range = (40, 90) #hitbox arma

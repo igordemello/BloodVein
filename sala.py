@@ -22,6 +22,7 @@ from inimigos.caveiradefogo import CaveiraDeFogo
 from inimigos.morcegopadrao import MorcegoPadrao
 from inimigos.furacao import Furacao
 from inimigos.nuvemBoss import NuvemBoss
+from inimigos.Cachorro import Cerbero
 from armas import LaminaDaNoite, Chigatana, Karambit, EspadaDoTita, MachadoDoInverno, EspadaEstelar, MarteloSolar, Arco, ListaMods
 from botao import Botao
 from save_manager import SaveManager
@@ -103,8 +104,8 @@ class Sala:
 
         self.spawn_points = self.mapa.get_inimigospawn()
         self.leve_atual = 0
-        self.max_leves = randint(2*dificuldade_global.levas,5*dificuldade_global.levas) #levas
-        #self.max_leves = 0
+        #self.max_leves = randint(2*dificuldade_global.levas,5*dificuldade_global.levas) #levas
+        self.max_leves = 1
         self.inimigos_por_leva = 1
         self.tempo_entrada = time.get_ticks()
         self.cooldown_inicial = 1000
@@ -208,6 +209,7 @@ class Sala:
             musica.tocar("BloodVein SCORE/OST/MusicaDoBoss.mp3")
             xboss,yboss= self.spawn_points[0]
             numero = self.gerenciador_andar.numero_andar
+            numero = 3
             if numero == 1:
                 boss = bossmod.MouthOrb(xboss, yboss)
                 boss.nome_base = "Mãe Orbe"
@@ -218,6 +220,12 @@ class Sala:
                 boss.nome_base = "Nuvem Sombria"
                 self.leve_atual = self.max_leves + 2
                 return[boss]
+            elif numero == 3:
+                boss = Cerbero(xboss, yboss)
+                boss.nome_base = "Cerbero"
+                boss.player = self.player  # Define a referência ao jogador
+                self.leve_atual = self.max_leves + 2
+                return [boss]
 
 
 

@@ -94,7 +94,7 @@ class Player():
         self.base_rate = 0
         self.base_rateSt = 1
         self.base_velocidadeMov = 0.5
-        self.base_custoDash = 2.75
+        self.base_custoDash = 0
         self.base_modificadorDanoRecebido = 1
         self.base_invencibilidade = 500
         self.base_cooldown_st = 3222.22
@@ -493,6 +493,19 @@ class Player():
                     lifetime=200,  # vida curta (ms)
                     size=3  # tamanho da partícula
                 )
+
+
+    def tratar_eventos(self, eventos):
+        for ev in eventos:
+            # Libera a paralisia do grito
+            if ev.type == USEREVENT + 11:
+                self.travado = False
+
+            # Restaura a velocidade após o grito
+            elif ev.type == USEREVENT + 12:
+                if hasattr(self, 'velocidade_original_grito'):
+                    self.velocidadeMov = self.velocidade_original_grito
+                    del self.velocidade_original_grito
 
 
 
