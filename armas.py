@@ -371,7 +371,7 @@ class Karambit(Arma):
             return
         else:
             player.mp -= custo
-            inimigo.envenenar(5, self.dano+1000)
+            inimigo.envenenar(5, self.dano)
 
 
 class EspadaDoTita(Arma):
