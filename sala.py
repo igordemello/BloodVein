@@ -844,8 +844,9 @@ class Sala:
 
 
                         print(f"Transição para: {nova_sala} via {codigo_porta}")
-                self.em_transicao = False
-                self.fade(fade_in=True, duration=2000)
+                        self.em_transicao = False
+                        self.fade(fade_in=True, duration=2000)
+                        return
                 break
 
 
