@@ -547,7 +547,7 @@ class Sala:
                             inimigo.pocao_coletada = True
                 if not getattr(inimigo, "loot_coletado", True):
                     if not hasattr(inimigo, "vai_dropar_loot"):
-                        inimigo.vai_dropar_loot = randint(1, 100) <= 100  # 30% de chance de cair loot
+                        inimigo.vai_dropar_loot = randint(1, 100) <= 20  # 30% de chance de cair loot
 
                     if getattr(inimigo, "vai_dropar_loot", False) and not hasattr(inimigo, "loot_botao_criado"):
                         pos = (inimigo.x + 16, inimigo.y + 32)
