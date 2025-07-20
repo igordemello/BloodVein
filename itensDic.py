@@ -21,7 +21,7 @@ class ConjuntoItens:
                 raridade="comum",
                 id=1,
             ),
-            "Sapato de Sangue": Item(
+            "Botas de Sangue": Item(
                 nome="Sapato de Sangue",
                 descricao="Aumenta sua agilidade",
                 efeitos=[

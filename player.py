@@ -129,14 +129,14 @@ class Player():
 
         self.itens = {}
         # só comentar isso daqui em baixo e volta ao normal:
-        conjunto = ConjuntoItens()
-        itens_iniciais_ids = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]
-        for item_id in itens_iniciais_ids:
-            item = conjunto.itens_por_id[item_id]
-            self.adicionarItem(item)
+        #conjunto = ConjuntoItens()
+        #itens_iniciais_ids = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]
+        #for item_id in itens_iniciais_ids:
+        #    item = conjunto.itens_por_id[item_id]
+        #    self.adicionarItem(item)
 
-        # self.itemAtivo = None
-        self.itemAtivo = conjunto.itens_por_id[19]
+        self.itemAtivo = None
+        #self.itemAtivo = conjunto.itens_por_id[19]
         self.salaAtivoUsado = None
         self.itemAtivoEsgotado = None
         self.mpMaximo = 100
@@ -277,18 +277,20 @@ class Player():
 
     def usarItemAtivo(self, sala_atual: Sala):
         if isinstance(self.itemAtivo, ItemAtivo):
+            if hasattr(self, 'itemAtivoEsgotado') and self.itemAtivoEsgotado:
+                self.itemAtivoEsgotado.remover_efeitos(self)
             if self.itemAtivo.afetaIni:
                 self.itemAtivo.listaInimigos = sala_atual.inimigos
             else:
                 self.itemAtivo.player = self
+
             self.itemAtivo.aplicar_em()
             self.itemAtivo.usos -= 1
             self.salaAtivoUsado = sala_atual
-            if self.itemAtivo.usos == 0:
+
+            if self.itemAtivo.usos <= 0:
                 self.itemAtivoEsgotado = self.itemAtivo
                 self.itemAtivo = None
-        else:
-            print("Não tem item ativo")
 
     def atualizar(self, dt, teclas):
         self.fonte_arcana()
@@ -1025,6 +1027,7 @@ class Player():
             self.velocidadeMov += 0.2
             self.arma.dano -= 5
         elif trait == "Humano":
+            self.base_rate = 0
             self.rate = 0
             self.arma.dano -= 10
             self.arma.lifeSteal /= 2
