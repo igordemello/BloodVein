@@ -5,36 +5,37 @@ from pygame.locals import QUIT
 import math
 from efeito import *
 from random import randint
-from utils import resource_path 
+from utils import resource_path
+from random import choice
 
 class ConjuntoItens:
     def __init__(self):
         self.itens = {
             "Chapéu de bruxa": Item(
                 nome="Chapéu de bruxa",
-                descricao="Aumenta seu dano",
+                descricao="Aumenta sua força",
                 efeitos=[
-                    DanoUsuario(20, "+"),
+                    AumentarForca(3),
                 ],
                 sprite=image.load(resource_path("assets\itens\ChapeuDeBruxa.png")).convert_alpha(),
-                raridade = "comum",
+                raridade="comum",
                 id=1,
             ),
             "Sapato de Sangue": Item(
                 nome="Sapato de Sangue",
-                descricao="Aumenta sua velocidade",
+                descricao="Aumenta sua agilidade",
                 efeitos=[
-                    VelocidadeMovimento(0.3)
+                    AumentarAgilidade(2)
                 ],
                 sprite=image.load(resource_path("assets\itens\Botasdesangue.png")).convert_alpha(),
                 raridade="comum",
-                id=2, #ISSO NUNCA PODE SER ALTERADO SE NAO VC VAI MORRER LENTAMENTE ASSISTINDO SEU PIOR PESADELO
+                id=2,
             ),
             "Luva de Titã": Item(
                 nome="Luva de Titã",
-                descricao="Diminui a duração do ataque",
+                descricao="Aumenta sua destreza",
                 efeitos=[
-                    VelocidadeAtaque(1)  #temporário, nada disso funciona
+                    AumentarDestreza(3)
                 ],
                 sprite=image.load(resource_path("assets\itens\LuvaDeTita.png")).convert_alpha(),
                 raridade="comum",
@@ -42,9 +43,9 @@ class ConjuntoItens:
             ),
             "Seringa de Sangue": Item(
                 nome="Seringa de Sangue",
-                descricao="Diminui o decaimento de vida",
+                descricao="Aumenta seu vigor",
                 efeitos=[
-                    DecaimentoVida(0.75)  #transforma em 75%
+                    AumentarVigor(3)
                 ],
                 sprite=image.load(resource_path("assets\itens\SeringaDeSangue.png")).convert_alpha(),
                 raridade="rara",
@@ -52,9 +53,10 @@ class ConjuntoItens:
             ),
             "Cajado Mágico": Item(
                 nome="Cajado Mágico",
-                descricao="Aumenta o dano",
+                descricao="Aumenta sua força e sorte",
                 efeitos=[
-                    DanoUsuario(1.5, "*")
+                    AumentarForca(2),
+                    AumentarSorte(2)
                 ],
                 sprite=image.load(resource_path("assets\itens\Varinhamagica.png")).convert_alpha(),
                 raridade="rara",
@@ -62,21 +64,21 @@ class ConjuntoItens:
             ),
             "Água Benta": Item(
                 nome="Água Benta",
-                descricao="Duplica a velocidade do decaimento e duplica o seu dano",
+                descricao="Aumenta muito sua força mas reduz vigor",
                 efeitos=[
-                    DanoUsuario(2, "*"),
-                    DecaimentoVida(2)
+                    AumentarForca(5),
+                    AumentarVigor(-2)
                 ],
                 sprite=image.load(resource_path("assets\itens\AguaBenta.png")).convert_alpha(),
                 raridade="rara",
                 id=6,
             ),
             "Coração Humano": Item(
-                nome="Coração Humano", #só entra em efeito depois do jogador tomar dano, corrigir
-                descricao="Sua vida não decaí mais, mas ela é reduzida pela metade",
+                nome="Coração Humano",
+                descricao="Aumenta vigor mas reduz força",
                 efeitos=[
-                    VidaMaxima(-50),
-                    DecaimentoVida(0)
+                    AumentarVigor(5),
+                    AumentarForca(-2)
                 ],
                 sprite=image.load(resource_path("assets\itens\coração.png")).convert_alpha(),
                 raridade="lendaria",
@@ -84,7 +86,7 @@ class ConjuntoItens:
             ),
             "Caixão do Papa Vamp": Item(
                 nome="Caixão do Papa Vamp",
-                descricao="Ao morrer, você revive uma vez",
+                descricao="Dá uma chance extra de reviver",
                 efeitos=[
                     Revives(1)
                 ],
@@ -94,14 +96,15 @@ class ConjuntoItens:
             ),
             "Máscara da Comédia": Item(
                 nome="Máscara da Comédia",
-                descricao="Todos os seus status recebem um leve aumento",
-                efeitos=[ #aumenta um pouco de tudo
-                    DanoUsuario(10, "+"),
-                    VidaMaxima(20),
-                    VelocidadeAtaque(-0.2),
-                    VelocidadeMovimento(0.1),
-                    DecaimentoVida(0.75),
-                    CooldownStamina(850),
+                descricao="Aumenta levemente todos os atributos",
+                efeitos=[
+                    AumentarForca(1),
+                    AumentarDestreza(1),
+                    AumentarAgilidade(1),
+                    AumentarVigor(1),
+                    AumentarResistencia(1),
+                    AumentarEstamina(1),
+                    AumentarSorte(1)
                 ],
                 sprite=image.load(resource_path("assets\itens\Máscara_da_Comédia.png")).convert_alpha(),
                 raridade="rara",
@@ -109,81 +112,87 @@ class ConjuntoItens:
             ),
             "Máscara da Tragédia": Item(
                 nome="Máscara da Tragédia",
-                descricao="Diminui todos os status mas aumenta absurdamente sua força",
-                efeitos=[ #diminui tudo mas aumenta o dano
-                    DanoUsuario(75, "+"),
-                    VidaMaxima(-15),
-                    VelocidadeAtaque(-0.2),
-                    VelocidadeMovimento(-0.1),
-                    DecaimentoVida(1.4),
-                    CooldownStamina(-850),
+                descricao="Aumenta muito a força mas reduz outros atributos",
+                efeitos=[
+                    AumentarForca(5),
+                    AumentarDestreza(-1),
+                    AumentarAgilidade(-1),
+                    AumentarVigor(-1),
+                    AumentarResistencia(-1),
+                    AumentarEstamina(-1)
                 ],
                 sprite=image.load(resource_path("assets\itens\Máscara_da_Tragedia.png")).convert_alpha(),
                 raridade="rara",
                 id=10,
             ),
-            "Amuleto de Seth" : Item(
+            "Amuleto de Seth": Item(
                 nome="Amuleto de Seth",
-                descricao="Aumenta seu dano num valor aleatório quando obtido",
+                descricao="Aumenta um atributo aleatório",
                 efeitos=[
-                    DanoUsuario(randint(1,35),"+")
+                    choice([
+                        AumentarForca(randint(1,3)),
+                        AumentarDestreza(randint(1,3)),
+                        AumentarAgilidade(randint(1,3)),
+                        AumentarVigor(randint(1,3)),
+                        AumentarResistencia(randint(1,3)),
+                        AumentarEstamina(randint(1,3)),
+                        AumentarSorte(randint(1,3))
+                    ])
                 ],
                 sprite=image.load(resource_path("assets\itens\AmuletodeSeth.png")).convert_alpha(),
                 raridade="comum",
                 id=11
             ),
-            "Anel do Rei Rato" : Item(
+            "Anel do Rei Rato": Item(
                 nome="Anel do Rei Rato",
-                descricao="Diminui seu dano, mas também diminui o cooldown de recuperação\nde estamina",
+                descricao="Aumenta estamina mas reduz força",
                 efeitos=[
-                    CooldownStamina(2000),
-                    DanoUsuario(-10,"+")
+                    AumentarEstamina(3),
+                    AumentarForca(-1)
                 ],
                 sprite=image.load(resource_path("assets\itens\AnelDoReiRato.png")).convert_alpha(),
                 raridade="rara",
                 id=12,
             ),
-            "Escudo de Rubi" : Item(
+            "Escudo de Rubi": Item(
                 nome="Escudo de Rubi",
-                descricao="Diminui o dano que você recebe",
+                descricao="Aumenta resistência",
                 efeitos=[
-                    ModificadorDanoRecebido(0.75)
+                    AumentarResistencia(3)
                 ],
                 sprite=image.load(resource_path("assets\itens\Escudo.png")).convert_alpha(),
                 raridade="rara",
-                id = 13
+                id=13
             ),
-            "Osso" : Item(
-                nome="Osso Frágil", #mudar o nome depois, tá muito basico
-                descricao="Dobra o dano que você recebe, mas também dobra o dano que você dá",
+            "Osso": Item(
+                nome="Osso Frágil",
+                descricao="Aumenta força mas reduz resistência",
                 efeitos=[
-                    ModificadorDanoRecebido(2),
-                    DanoUsuario(2,"*")
+                    AumentarForca(4),
+                    AumentarResistencia(-2)
                 ],
                 sprite=image.load(resource_path("assets\itens\Osso.png")).convert_alpha(),
                 raridade="lendaria",
-                id = 14
+                id=14
             ),
-            "Sapatos Do Hermes" : Item(
-                nome="Sapatos Do Hermes", 
-                descricao="Super Dash",
+            "Sapatos Do Hermes": Item(
+                nome="Sapatos Do Hermes",
+                descricao="Aumenta muito agilidade e estamina",
                 efeitos=[
-                    CooldownStamina(900),
-                    CooldownDash(100),
-                    DuraçãoDash(180),
-                    CustoDash(0.75)
+                    AumentarAgilidade(4),
+                    AumentarEstamina(3)
                 ],
                 sprite=image.load(resource_path("assets\itens\BotasdeHermes.png")).convert_alpha(),
                 raridade="lendaria",
-                id = 15
+                id=15
             ),
-            #Itens Ativos:
+            # Itens Ativos:
             "Crucifixo Invertido": ItemAtivo(
                 nome="Crucifixo Invertido",
-                descricao="Aumenta seu dano temporariamente na sala atual",
+                descricao="Aumenta temporariamente sua força",
                 usos=2,
                 efeitos=[
-                    DanoUsuario(20, "+")
+                    AumentarForca(5)
                 ],
                 afetaIni=False,
                 sprite=image.load(resource_path("assets\itens\crucifixoinvertido.png")).convert_alpha(),
@@ -192,10 +201,10 @@ class ConjuntoItens:
             ),
             "Aranha de brinquedo": ItemAtivo(
                 nome="Aranha de brinquedo",
-                descricao="Aumenta sua velocidade nesta sala",
+                descricao="Aumenta temporariamente sua agilidade",
                 usos=3,
                 efeitos=[
-                    VelocidadeMovimento(0.25)
+                    AumentarAgilidade(3)
                 ],
                 afetaIni=False,
                 sprite=image.load(resource_path("assets\itens\AranhaDeBrinquedo.png")).convert_alpha(),
@@ -204,7 +213,7 @@ class ConjuntoItens:
             ),
             "Bomba": ItemAtivo(
                 nome="Bomba",
-                descricao="Dá dano em todos os inimigos nesta sala",
+                descricao="Causa dano em todos os inimigos",
                 usos=2,
                 efeitos=[
                     DarDano(20)
@@ -216,7 +225,7 @@ class ConjuntoItens:
             ),
             "Adaga Sangrenta": ItemAtivo(
                 nome="Adaga Sangrenta",
-                descricao="Quando ativado, aplica sangramento a todos os inimigo duplicando dano recebido",
+                descricao="Aumenta dano recebido pelos inimigos",
                 usos=2,
                 efeitos=[
                     ModificadorDanoRecebido(2)
@@ -226,6 +235,5 @@ class ConjuntoItens:
                 raridade="ativo",
                 id=19,
             )
-
         }
         self.itens_por_id = {item.id: item for item in self.itens.values()}
