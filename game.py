@@ -160,6 +160,7 @@ class Game:
                         sys.exit()
 
         elif self.estado == EstadoDoJogo.JOGANDO:
+            self.player.tratar_eventos(eventos)
             for ev in eventos:
                 if ev.type == KEYDOWN:
                     current_time = time.get_ticks()
@@ -208,12 +209,14 @@ class Game:
                     elif ev.button == 3:
                         self.player.ataque_espadaSecundario(self.sala_atual.inimigos, mouse_pos, dt)
 
+
         elif self.estado == EstadoDoJogo.LOJA:
             for ev in eventos:
                 if ev.type == MOUSEBUTTONDOWN and ev.button == 1:
                     resultado = self.sala_atual.loja.checar_compra(mouse_pos, self.screen)
                     if resultado == "sair":
                         self.estado = EstadoDoJogo.JOGANDO
+
 
         elif self.estado == EstadoDoJogo.BAU:
             for ev in eventos:

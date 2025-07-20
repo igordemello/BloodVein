@@ -30,11 +30,11 @@
                 "cima": "sala7",
                 "esquerda": "sala10"
             },
+            "tipo": "loja",
             "pos": [
                 0,
                 -1
             ],
-            "tipo": "comum",
             "visitada": false,
             "arquivotmx": "andar1/21.tmx",
             "salaanterior": null,
@@ -53,7 +53,9 @@
             "pos": [
                 0,
                 1
+                1
             ],
+            "tipo": "comum",
             "tipo": "comum",
             "visitada": false,
             "arquivotmx": "andar1/19.tmx",
@@ -138,6 +140,7 @@
             "salaanterior": null,
             "conexoes": [
                 "sala4"
+                "sala4"
             ],
             "id": "sala6"
         },
@@ -158,7 +161,24 @@
                 "sala1",
                 "sala9"
             ],
-            "id": "sala7"
+            "id": "sala9"
+        },
+        {
+            "portas": {
+                "baixo": "sala9"
+            },
+            "tipo": "spawn",
+            "pos": [
+                1,
+                -3
+            ],
+            "visitada": true,
+            "arquivotmx": "andar1/spawn.tmx",
+            "salaanterior": null,
+            "conexoes": [
+                "sala9"
+            ],
+            "id": "sala10"
         },
         {
             "portas": {
@@ -168,6 +188,7 @@
             },
             "pos": [
                 -1,
+                1
                 1
             ],
             "tipo": "comum",
@@ -179,11 +200,11 @@
                 "sala11",
                 "sala13"
             ],
-            "id": "sala8"
+            "id": "sala11"
         },
         {
             "portas": {
-                "baixo": "sala7"
+                "cima": "sala11"
             },
             "tipo": "spawn",
             "pos": [
@@ -194,9 +215,9 @@
             "arquivotmx": "andar1/spawn.tmx",
             "salaanterior": null,
             "conexoes": [
-                "sala7"
+                "sala11"
             ],
-            "id": "sala9"
+            "id": "sala12"
         },
         {
             "portas": {
@@ -213,7 +234,7 @@
             "conexoes": [
                 "sala1"
             ],
-            "id": "sala10"
+            "id": "sala13"
         },
         {
             "portas": {
@@ -294,6 +315,7 @@
         {
             "source": "sala0",
             "target": "sala2"
+            "target": "sala2"
         },
         {
             "source": "sala0",
@@ -328,7 +350,7 @@
             "target": "sala8"
         },
         {
-            "source": "sala7",
+            "source": "sala4",
             "target": "sala9"
         },
         {
