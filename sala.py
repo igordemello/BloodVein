@@ -32,6 +32,7 @@ from inimigos.polvo import Polvo
 from save_manager import SaveManager
 from dificuldade import dificuldade_global
 from utils import resource_path 
+import pygame
 
 def pixel_para_grid(x, y, offset, tile_size_scaled):
     """Converte coordenadas de pixel para grid, considerando offset e tamanho do tile escalado"""
@@ -607,7 +608,51 @@ class Sala:
 
 
         if self.bau:
-            tela.blit(self.bau.image, (self.bau.rect.x + offset_x, self.bau.rect.y + offset_y))
+            bau_pos = (self.bau.rect.x + offset_x, self.bau.rect.y + offset_y)
+
+            if self.porta_liberada and not self.bau.aberto:
+                # Criar uma máscara da imagem do baú
+                bau_mask = pygame.mask.from_surface(self.bau.image)
+                outline_points = bau_mask.outline()
+
+                # Superfície para o contorno com tamanho idêntico à imagem do baú
+                outline_surface = Surface(self.bau.image.get_size(), SRCALPHA)
+
+                # Desenhar o contorno (outline) diretamente na posição certa
+                espessura = 3  # Aumente esse valor para contornos mais grossos
+                for dx in range(-espessura, espessura + 1):
+                    for dy in range(-espessura, espessura + 1):
+                        if dx == 0 and dy == 0:
+                            continue
+                        for x, y in outline_points:
+                            nx, ny = x + dx, y + dy
+                            if 0 <= nx < outline_surface.get_width() and 0 <= ny < outline_surface.get_height():
+                                outline_surface.set_at((nx, ny), (255, 255, 255, 255))
+
+                # Desenhar brilho pulsante
+                tempo = time.get_ticks() / 500
+                alpha = int(100 + 80 * math.sin(tempo))
+                # Criar brilho maior que o baú
+                brilho_size = (self.bau.image.get_width() + 20, self.bau.image.get_height() + 20)
+                brilho = Surface(brilho_size, SRCALPHA)
+
+                # Desenhar elipse centralizada no brilho
+                draw.ellipse(brilho, (255, 255, 150, alpha), brilho.get_rect())
+
+                # Calcular posição para centralizar brilho em cima do baú
+                brilho_pos = (
+                    bau_pos[0] - (brilho.get_width() - self.bau.image.get_width()) // 2,
+                    bau_pos[1] - (brilho.get_height() - self.bau.image.get_height()) // 2
+                )
+
+                # Blit do brilho no lugar certo
+                tela.blit(brilho, brilho_pos)
+
+                # Desenhar o outline na mesma posição do baú
+                tela.blit(outline_surface, bau_pos)
+
+            # Desenhar o baú por cima do contorno e brilho
+            tela.blit(self.bau.image, bau_pos)
 
         if self.pode_trocar_de_sala():
             texto = self.alagard.render(f"Aperte E para entrar na porta", True, (255, 255, 255))
