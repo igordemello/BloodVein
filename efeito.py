@@ -146,6 +146,18 @@ class Revives(Efeito):
     def aplicar(self, jogador):
         jogador.revives += self.valor
 
+class VidaMaxima(Efeito): #atualmente não funciona muito bem porque o sprite não mostra nada acima de 100 de HP
+    def __init__(self, valor):
+        self.valor = valor
+    def aplicar(self, jogador):
+        jogador.hpMax += self.valor
+
+class DecaimentoVida(Efeito):
+    def __init__(self, valor):
+        self.valor = valor
+    def aplicar(self, jogador):
+        jogador.base_rate = jogador.base_rate*self.valor
+
 
 class Item:
     def __init__(self, nome: str, descricao: str, efeitos: list, sprite, raridade: str, id: int):

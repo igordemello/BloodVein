@@ -64,10 +64,10 @@ class ConjuntoItens:
             ),
             "Água Benta": Item(
                 nome="Água Benta",
-                descricao="Aumenta muito sua força mas reduz vigor",
+                descricao="Duplica a velocidade do decaimento e aumenta bastante sua força",
                 efeitos=[
-                    AumentarForca(5),
-                    AumentarVigor(-2)
+                    AumentarForca(3),
+                    DecaimentoVida(2)
                 ],
                 sprite=image.load(resource_path("assets\itens\AguaBenta.png")).convert_alpha(),
                 raridade="rara",
@@ -75,10 +75,10 @@ class ConjuntoItens:
             ),
             "Coração Humano": Item(
                 nome="Coração Humano",
-                descricao="Aumenta vigor mas reduz força",
+                descricao="Sua vida não decaí mais, mas ela é reduzida pela metade",
                 efeitos=[
-                    AumentarVigor(5),
-                    AumentarForca(-2)
+                    VidaMaxima(-50),
+                    DecaimentoVida(0)
                 ],
                 sprite=image.load(resource_path("assets\itens\coração.png")).convert_alpha(),
                 raridade="lendaria",
