@@ -33,7 +33,9 @@ from inventario import Inventario
 
 from enum import Enum, auto
 from dificuldade import dificuldade_global
-from utils import resource_path 
+from utils import resource_path
+
+
 class EstadoDoJogo(Enum):
     MENU = auto()
     JOGANDO = auto()
@@ -45,6 +47,7 @@ class EstadoDoJogo(Enum):
     BAU = auto()
     CUTSCENE = auto()
 
+
 class Game:
     def __init__(self):
         init()
@@ -54,13 +57,17 @@ class Game:
         mouse.set_visible(False)
         logo = image.load(resource_path('assets/logo.png'))
         display.set_icon(logo)
-        
+
         data_dir = os.path.join(os.path.dirname(__file__), "data")
         os.makedirs(data_dir, exist_ok=True)
 
-        self.imagem_cursor = transform.scale(image.load(resource_path('assets/UI/cursor.png')).convert_alpha(), (32, 32))
-        self.imagem_cursor_click = transform.scale(image.load(resource_path('assets/UI/cursor_click.png')).convert_alpha(), (32, 32))
+        self.imagem_cursor = transform.scale(image.load(resource_path('assets/UI/cursor.png')).convert_alpha(),
+                                             (32, 32))
+        self.imagem_cursor_click = transform.scale(
+            image.load(resource_path('assets/UI/cursor_click.png')).convert_alpha(), (32, 32))
         self.cursor_clicando = False
+
+        self.dados_run_salvos = None
 
         self.estado = EstadoDoJogo.MENU
         self.fonte = font.Font(resource_path('assets/fontes/alagard.ttf'), 48)
@@ -71,8 +78,6 @@ class Game:
         self.pause = Pause()
         self.game_over = GameOver()
         self.menu = Menu(self.screen)
-
-
 
         self.mensagem_salvo = None
         self.tempo_mensagem_salvo = 0
@@ -88,7 +93,6 @@ class Game:
         self.inventario = None
         self.menu_armas_ativo = None
 
-        
         self.cd_arma_jogo = 350
         self.foi_pra_jogo = 0
 
@@ -102,8 +106,75 @@ class Game:
         self.minimapa = Minimapa(self.andar, self.screen)
         self.sala_atual = Sala("andar1/spawn.tmx", self.screen, self.player, self.andar, self.set_minimapa)
         self.menu_armas = MenuArmas(self.hud)
+        if com_nova_run:
+            self.dados_run_salvos = {
+                "arma_data": self.menu_armas.arma_atual.get_save_data(),
+                "arma_tipo": self.menu_armas.arma_atual.__class__.__name__,
+                "modificador" : self.menu_armas.arma_atual.modificador.nome,
+                'modificador_detalhes': {
+                    'nome': self.menu_armas.arma_atual.modificador.nome,
+                    'valor': self.menu_armas.arma_atual.modificador.valor
+                },
+                "dificuldade": self.menu_armas.dificuldades[self.menu_armas.dificuldade_selecionada],
+                "trait": self.menu_armas.traits[self.menu_armas.trait_selecionada]
+            }
         self.inventario = Inventario(self.screen, self.player, self.hud)
         self.menu_armas_ativo = com_nova_run
+
+    def reiniciar_run_salva(self):
+        if not self.dados_run_salvos:
+            return
+
+        from dificuldade import dificuldade_global
+        from armas import ListaMods
+
+        dificuldade_global.set_dificuldade(self.dados_run_salvos["dificuldade"])
+
+        trait_salva = self.dados_run_salvos["trait"]
+
+        # Resetar tudo
+        self.resetar_jogo(com_nova_run=False)
+
+        if not self.menu_armas:
+            self.menu_armas = MenuArmas(self.hud)
+        if trait_salva in self.menu_armas.traits:
+            self.menu_armas.trait_selecionada = self.menu_armas.traits.index(trait_salva)
+
+        atributos_por_trait = {
+            "Vampira": {"forca": 5, "destreza": 5, "agilidade": 5, "vigor": 5, "resistencia": 5, "estamina": 5,
+                        "sorte": 5},
+            "Ancião": {"forca": 3, "destreza": 6, "agilidade": 7, "vigor": 3, "resistencia": 4, "estamina": 6,
+                       "sorte": 5},
+            "Peçonhento": {"forca": 4, "destreza": 6, "agilidade": 5, "vigor": 6, "resistencia": 3, "estamina": 6,
+                           "sorte": 4},
+            "Mercúrio": {"forca": 4, "destreza": 7, "agilidade": 7, "vigor": 2, "resistencia": 4, "estamina": 6,
+                         "sorte": 2},
+            "Humano": {"forca": 3, "destreza": 3, "agilidade": 3, "vigor": 3, "resistencia": 3, "estamina": 3,
+                       "sorte": 8}
+        }
+        if trait_salva in atributos_por_trait:
+            self.player.atributos.update(atributos_por_trait[trait_salva])
+
+        arma_tipo = self.dados_run_salvos["arma_tipo"]
+        arma_data = self.dados_run_salvos["arma_data"]
+        mods = ListaMods()
+        arma_classe = getattr(__import__('armas'), arma_tipo)
+        nova_arma = arma_classe(arma_data["raridade"], mods)
+        nova_arma.load_save_data(arma_data, mods)
+
+        mod_class = getattr(sys.modules[__name__], self.dados_run_salvos['modificador'])
+        nova_arma.modificador = mod_class(nova_arma)
+        if self.dados_run_salvos.get('modificador_detalhes'):
+            nova_arma.modificador.valor = self.dados_run_salvos['modificador_detalhes']['valor']
+            nova_arma.nome = f"{nova_arma.tipoDeArma} {nova_arma.modificador.nome} {nova_arma.raridadeStr}"
+
+
+        self.player.arma = nova_arma
+
+        self.player.set_hud(self.hud)
+        self.player.atualizar_atributos()
+        self.player.atualizar_arma()
+
 
     def set_minimapa(self, novo):
         self.minimapa = novo
@@ -146,9 +217,11 @@ class Game:
                         try:
                             dados = self.save_manager.load_game(resource_path("save_file.json"))
                             self.resetar_jogo()
-                            self.player.load_save_data(dados['player'], self.sala_atual.itensDisp, self.player.lista_mods)
+                            self.player.load_save_data(dados['player'], self.sala_atual.itensDisp,
+                                                       self.player.lista_mods)
                             self.andar.load_save_data(dados['map'])
-                            self.sala_atual = Sala(self.andar.get_arquivo_atual(), self.screen, self.player, self.andar, self.set_minimapa)
+                            self.sala_atual = Sala(self.andar.get_arquivo_atual(), self.screen, self.player, self.andar,
+                                                   self.set_minimapa)
                             self.sala_atual.load_save_data(dados['sala'], self.sala_atual.itensDisp)
                             self.estado = EstadoDoJogo.JOGANDO
                             self.player.atualizar_arma()
@@ -164,16 +237,16 @@ class Game:
             for ev in eventos:
                 if ev.type == KEYDOWN:
                     current_time = time.get_ticks()
-                    #item ativo
+                    # item ativo
                     if ev.key == K_q and current_time - self.player.ativo_ultimo_uso > 2500:
                         self.player.ativo_ultimo_uso = current_time
                         self.player.usarItemAtivo(self.sala_atual)
-                    #hablidades
+                    # hablidades
                     teclas_para_verificar = [K_1, K_2, K_3, K_4]
                     for i in range(4):
                         if ev.key == teclas_para_verificar[i] and self.player.hotkeys[i] != 0:
                             self.player.ativar_habilidade(self.player.hotkeys[i])
-                    #pocoes
+                    # pocoes
                     if ev.key == K_c:
                         self.player.usar_pocao_vida()
                     if ev.key == K_v:
@@ -200,7 +273,8 @@ class Game:
                     elif ev.key == K_TAB:
                         self.minimapa.toggle()
                     elif ev.key == K_e:
-                        if self.sala_atual.hitbox_loja() and self.player.get_hitbox().colliderect(self.sala_atual.hitbox_loja()[0]):
+                        if self.sala_atual.hitbox_loja() and self.player.get_hitbox().colliderect(
+                                self.sala_atual.hitbox_loja()[0]):
                             self.estado = EstadoDoJogo.LOJA
                 elif ev.type == MOUSEBUTTONDOWN:
                     if ev.button == 1:
@@ -230,7 +304,8 @@ class Game:
                         self.sala_atual.player.travado = False
                     elif resultado:
                         self.player.adicionarItem(resultado)
-                        self.sala_atual.gerenciador_andar.grafo.nodes[self.sala_atual.gerenciador_andar.sala_atual]["bau_aberto"] = True
+                        self.sala_atual.gerenciador_andar.grafo.nodes[self.sala_atual.gerenciador_andar.sala_atual][
+                            "bau_aberto"] = True
                         self.estado = EstadoDoJogo.JOGANDO
                         self.sala_atual.bau.menu_ativo = False
                         self.sala_atual.ativar_menu_bau = False
@@ -274,8 +349,12 @@ class Game:
                         self.apagar_saves()
                         self.resetar_jogo(com_nova_run=True)
                         self.estado = EstadoDoJogo.ESCOLHA_ARMA
+                    elif escolha == "reiniciar":
+                        self.reiniciar_run_salva()
+                        self.estado = EstadoDoJogo.JOGANDO
                     elif escolha == "sair":
                         self.estado = EstadoDoJogo.MENU
+
 
         elif self.estado == EstadoDoJogo.ESCOLHA_ARMA:
             for ev in eventos:
@@ -288,15 +367,23 @@ class Game:
                         self.player.atualizar_arma()
                         self.player.atualizar_atributos()
                         self.player.atualizar_traits(trait)
-
                         dificuldade_global.set_dificuldade(dificuldade.lower())
+                        self.dados_run_salvos = {
+                            "arma_data": arma.get_save_data(),
+                            "arma_tipo": arma.__class__.__name__,
+                            "modificador": arma.modificador.nome,
+                            'modificador_detalhes': {
+                                'nome': arma.modificador.nome,
+                                'valor': arma.modificador.valor
+                            },
+                            "dificuldade": dificuldade,
+                            "trait": trait
+                        }
 
                         self.hud.atualizar_arma_icon()
                         som.tocar("clique3")
                         self.estado = EstadoDoJogo.JOGANDO
                         self.foi_pra_jogo = time.get_ticks()
-
-
 
         for ev in eventos:
             if ev.type == MOUSEBUTTONDOWN:
@@ -320,21 +407,19 @@ class Game:
             mouse_pos = mouse.get_pos()
 
             if time.get_ticks() - self.foi_pra_jogo > self.cd_arma_jogo:
-                if mouse_buttons[0]: 
+                if mouse_buttons[0]:
                     self.player.ataque_espadaPrincipal(self.sala_atual.inimigos, mouse_pos, dt)
 
-
             if (
-                self.estado == EstadoDoJogo.JOGANDO and
-                self.sala_atual.bau and
-                self.sala_atual.ativar_menu_bau and
-                not self.bau_foi_aberto_esse_frame
+                    self.estado == EstadoDoJogo.JOGANDO and
+                    self.sala_atual.bau and
+                    self.sala_atual.ativar_menu_bau and
+                    not self.bau_foi_aberto_esse_frame
             ):
                 if self.sala_atual.bau.menu_ativo:
                     self.estado = EstadoDoJogo.BAU
                     self.player.travado = True
                     self.bau_foi_aberto_esse_frame = True
-
 
             if self.player.gameOver:
                 self.apagar_saves()
