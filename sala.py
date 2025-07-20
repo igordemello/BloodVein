@@ -24,8 +24,10 @@ from inimigos.morcegopadrao import MorcegoPadrao
 from inimigos.furacao import Furacao
 from inimigos.nuvemBoss import NuvemBoss
 from inimigos.Cachorro import Cerbero
+from inimigos.massa_de_olhos import Massa
 from armas import LaminaDaNoite, Chigatana, Karambit, EspadaDoTita, MachadoDoInverno, EspadaEstelar, MarteloSolar, Arco, ListaMods
 from botao import Botao
+from inimigos.polvo import Polvo
 from save_manager import SaveManager
 from dificuldade import dificuldade_global
 from utils import resource_path 
