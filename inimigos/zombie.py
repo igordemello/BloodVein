@@ -15,7 +15,7 @@ def grid_para_pixel(grid_x, grid_y, offset, tile_size_scaled):
     return x, y
 
 class Zombie(Inimigo):
-    def __init__(self, x, y, largura, altura, nome="Zombie", hp=150, velocidade=1.6, dano=15):
+    def __init__(self, x, y, largura, altura, nome="Zombie", hp=150, velocidade=2.2, dano=15):
         super().__init__(x, y, largura, altura, hp, velocidade, dano)
         self.nome = nome
 
@@ -102,8 +102,9 @@ class Zombie(Inimigo):
             self.ultimo_objetivo = goal
 
         # Se estiver perto o suficiente do jogador, atacar
-        distancia = math.hypot(player_pos[0] - self.x, player_pos[1] - self.y)
-        if distancia < 60 and not self.em_cooldown:
+        distancia = math.hypot(player_pos[0] - center_x, player_pos[1] - center_y)
+        if distancia < 150 and not self.em_cooldown:
+            self.caminho_atual = []
             if now - self.tempo_ultimo_ataque > self.intervalo_entre_socos:
                 self.estado = "atacando"
                 self.frames = self.frames_ataque
@@ -153,9 +154,8 @@ class Zombie(Inimigo):
                         self.frame_index = 0
                     self.inverter_lado = False  # Não inverter para frente/costas
 
-                self.x += self.vx
-                self.y += self.vy
-                self.vx = self.vy = 0
+                self.set_velocidade_x(self.vx)
+                self.set_velocidade_y(self.vy)
 
         self.rect.topleft = (round(self.x), round(self.y))
         self.atualizar_animacao()
@@ -185,3 +185,6 @@ class Zombie(Inimigo):
 
         tela.blit(frame, (draw_x, draw_y))
         self.desenhar_dano(tela, offset)
+
+    def get_hitbox(self):
+        return Rect(self.x+20, self.y+20, self.largura-40, self.altura-40)
