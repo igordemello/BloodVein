@@ -627,6 +627,8 @@ class Sala:
         for botao, _ in self.loots:
             botao.update(tela)
             botao.changeColor(mouse.get_pos())
+            posicaoLoot = botao.pos
+            self.tela.blit(self.lojista_img, (posicaoLoot))
         if time.get_ticks() - self.inventario_cheio_tempo < self.inventario_cheio_duracao and self.inventario_cheio_msg:
             font_msg = font.Font(resource_path('assets/fontes/alagard.ttf'), 36)
             texto = font_msg.render(self.inventario_cheio_msg, True, (255, 0, 0))
