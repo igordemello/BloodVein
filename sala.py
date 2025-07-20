@@ -692,25 +692,21 @@ class Sala:
         #     draw.rect(tela, (255,0,0), collider['rect'], 1)
         # draw.rect(tela, (0,255,0), self.player.player_rect, 2)
         for botao, arma in self.loots:
-            # Desenha apenas a bola (imagem do botão)
+            if len(self.loots) < 0:
+                print("cucucucucu")
             self.tela.blit(botao.image, botao.rect)
 
-            # Verifica hover e desenha texto se necessário
             mouse_pos = mouse.get_pos()
             if botao.rect.collidepoint(mouse_pos):
-                # Atualiza a cor do texto
                 botao.changeColor(mouse_pos)
 
-                # Renderiza o texto acima da bola
                 texto_render = botao.font.render(botao.text_input, True, botao.hovering_color)
                 largura = texto_render.get_width() + 20
                 altura = texto_render.get_height() + 10
 
-                # Posiciona o texto acima da bola
                 texto_x = botao.x_pos - largura // 2
-                texto_y = botao.y_pos - 50  # Ajuste esta distância conforme necessário
+                texto_y = botao.y_pos - 50
 
-                # Fundo do texto
                 fundo = Surface((largura, altura), SRCALPHA)
                 fundo.fill((0, 0, 0, 160))
                 self.tela.blit(fundo, (texto_x, texto_y))
