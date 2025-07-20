@@ -853,6 +853,7 @@ class Player():
             )
 
     def ataque_espadaPrincipal(self, inimigos, mouse_pos, dt):
+        print(self.efeitos)
         current_time = time.get_ticks()
         if self.arma.velocidade <= 0:
             self.arma.velocidade = 1
@@ -912,7 +913,7 @@ class Player():
                     # efeitos
                     for i in self.efeitos:
                         if i == ("lentidao"):
-                            inimigo.velocidade *= 0.5
+                            inimigo.velocidade *= 0.4
                         elif i == ("veneno"):
                             inimigo.envenenar(5, self.arma.dano)
 
