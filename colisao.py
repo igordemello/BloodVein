@@ -24,16 +24,28 @@ class Colisao:
     def checar_colisoes(self,dt):
         from player import Player
         from inimigos.orb import Orb
+        from inimigos.zombie import Zombie
+
         for i, ent1 in enumerate(self.entidades):
-            if isinstance(ent1, Player):
-                continue
+            # Ignora completamente o Orb (não colide com ninguém)
             if isinstance(ent1, Orb):
                 continue
-            for ent2 in self.entidades[i+1:]:
-                if isinstance(ent2, Player):
+
+            for ent2 in self.entidades[i + 1:]:
+                if isinstance(ent2, Orb):
                     continue
-                if isinstance(ent1, Orb):
+
+                # Ignora Player com qualquer coisa que não seja Zombie
+                if isinstance(ent1, Player):
+                    if not isinstance(ent2, Zombie):
+                        continue
+                elif isinstance(ent2, Player):
+                    if not isinstance(ent1, Zombie):
+                        continue
+
+                if isinstance(ent1, Zombie) and isinstance(ent2, Zombie):
                     continue
+
                 self._colisao_entidade_entidade(ent1, ent2)
 
         for entidade in self.entidades:
@@ -127,8 +139,8 @@ class Colisao:
 
 
     def _colisao_entidade_entidade(self, ent1, ent2):
-        if self.player.is_dashing:
-            return
+        # if self.player.is_dashing:
+        #     return
         vx1, vy1 = ent1.get_velocidade()
         vx2, vy2 = ent2.get_velocidade()
 
