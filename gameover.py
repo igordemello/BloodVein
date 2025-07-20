@@ -98,7 +98,7 @@ class GameOver:
         if not self.menu_ativo:
             return None
         if self.botaonovarun.checkForInput(mouse_pos):
-            return "nova_run"
+            return "nova run"
         if self.botaoreiniciar.checkForInput(mouse_pos):
             return "reiniciar"
         if self.botaosair.checkForInput(mouse_pos):
