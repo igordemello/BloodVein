@@ -290,6 +290,9 @@ class Player():
         self.escudo()
         # print(f'HP: {self.hp}, Stamina: {self.stamina}, Mana: {self.mp}')
 
+        if self.pocoesMp > 4: self.pocoesMp = 4
+        if self.pocoesHp > 4: self.pocoesHp = 4
+
         if self.travado:
             self.vx = 0
             self.vy = 0
@@ -422,8 +425,10 @@ class Player():
         if self.stamina > self.staminaMaximo:
             self.stamina = self.staminaMaximo
 
-        if self.hp < 0:
-            self.hp = 0
+        if self.hp < 30:
+            self.hp = 30
+        # if self.hp < 0:
+        #     self.hp = 0
         if self.hp > self.hpMax:
             self.hp = self.hpMax
         if self.mp < 0:
@@ -1031,7 +1036,6 @@ class Player():
             self.base_velocidade = self.arma.velocidade
             self.base_chanceCritico = self.arma.chanceCritico
             self.macarronada += 1
-            # O PROBLEMA ESTÁ AQUI
 
         self.base_rate = 1
         self.base_rateSt = 1
@@ -1044,6 +1048,7 @@ class Player():
         self.base_dash_duration_max = 150
 
         self.arma.dano = self.base_dano * (1 + (self.atributos["forca"] - 5) / 5)
+        self.arma.lifeSteal = self.arma.dano/self.arma.lifeStealMod
         self.arma.danoCriticoMod = self.base_danoCriticoMod * (1 + (self.atributos["forca"] - 5) / 5)
         self.arma.velocidade = self.base_velocidade * (1 + ((self.atributos["destreza"] - 5) / 5) * 0.5)
         self.arma.chanceCritico = self.base_chanceCritico * (1 + ((self.atributos["sorte"] - 5) / 5) * 3)

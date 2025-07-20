@@ -6,6 +6,7 @@ from bau import Bau
 from itensDic import ConjuntoItens
 from mapa import Mapa
 from inimigos.orb import Orb
+from inimigos.espectro import Espectro
 import inimigos.MouthOrbBoss as bossmod
 from colisao import Colisao
 from loja import Loja
@@ -238,9 +239,9 @@ class Sala:
             inimigos = []
 
             for x, y in self.spawn_points:
-                testrect = Rect(x,y,50,50)
-                if self.player.get_hitbox().colliderect(testrect):
-                    continue
+                # testrect = Rect(x,y,50,50)
+                # # if self.player.get_hitbox().colliderect(testrect):
+                # #     continue
                 inimigo = self._criar_inimigo_aleatorio(x, y, tipo_sala)
                 inimigos.append(inimigo)
 
@@ -251,8 +252,8 @@ class Sala:
     def _criar_inimigo_aleatorio(self, x, y, tipo_sala):
         elite = "bau" in tipo_sala
 
-        # tipos_disponiveis = ["furacao","caveiradefogo","morcegopadrao","orb"]
-        tipos_disponiveis = ["orb"] 
+        # tipos_disponiveis = ["furacao","caveiradefogo","morcegopadrao","orb","espectro","polvo", "esqueletogelo", "massa"]
+        tipos_disponiveis = ["massa"] 
         tipo_escolhido = choice(tipos_disponiveis)
 
 
@@ -277,6 +278,21 @@ class Sala:
         elif tipo_escolhido == "orb":
             inimigo = Orb(x, y, 64, 64, hp=200 if not elite else 300)
             inimigo.nome_base = "Orb"
+            inimigo.aplicar_modificadores(elite=elite)
+
+        elif tipo_escolhido == "espectro":
+            inimigo = Espectro(x, y, 64, 64, hp=200 if not elite else 300)
+            inimigo.nome_base = "Espectro"
+            inimigo.aplicar_modificadores(elite=elite)
+
+        elif tipo_escolhido == "polvo":
+            inimigo = Polvo(x, y, 64, 64, hp=200 if not elite else 300)
+            inimigo.nome_base = "Polvo"
+            inimigo.aplicar_modificadores(elite=elite)
+
+        elif tipo_escolhido == "massa":
+            inimigo = Massa(x, y, 100, 100, hp=200 if not elite else 300)
+            inimigo.nome_base = "Massa de Olhos"
             inimigo.aplicar_modificadores(elite=elite)
 
         # Adicione outros tipos de inimigos aqui no futuro:

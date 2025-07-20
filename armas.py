@@ -200,6 +200,7 @@ class LaminaDaNoite(Arma):
         self.radius = 100
         self.efeitos = None
         self.lifeSteal = self.dano/2
+        self.lifeStealMod = 2
         self.chanceCritico = 8
         self.danoCriticoMod = 2
         self.comboMult = 1
@@ -261,6 +262,7 @@ class Chigatana(Arma):
         self.radius = 100
         self.efeitos = None
         self.lifeSteal = self.dano/4
+        self.lifeStealMod = 4
         self.chanceCritico = 5
         self.danoCriticoMod = 2
         self.comboMult = 1
@@ -323,6 +325,7 @@ class Karambit(Arma):
         self.radius = 80
         self.efeitos = None
         self.lifeSteal = self.dano/2
+        self.lifeStealMod = 2
         self.chanceCritico = 5
         self.danoCriticoMod = 2
         self.comboMult = 1
@@ -384,6 +387,7 @@ class EspadaDoTita(Arma):
         self.radius = 100
         self.efeitos = None
         self.lifeSteal = self.dano/2
+        self.lifeStealMod = 2
         self.chanceCritico = 12
         self.danoCriticoMod = 3
         self.comboMult = 1
@@ -453,6 +457,7 @@ class MachadoDoInverno(Arma):
         self.radius = 100
         self.efeitos = None
         self.lifeSteal = self.dano/2
+        self.lifeStealMod = 2
         self.chanceCritico = 15
         self.danoCriticoMod = 1.5
         self.comboMult = 1
@@ -526,6 +531,7 @@ class EspadaEstelar(Arma):
         self.radius = 100
         self.efeitos = None
         self.lifeSteal = self.dano/2
+        self.lifeStealMod = 2
         self.chanceCritico = 10
         self.danoCriticoMod = 2
         self.comboMult = 1
@@ -588,6 +594,7 @@ class MarteloSolar(Arma):
         self.radius = 100
         self.efeitos = None
         self.lifeSteal = self.dano/2
+        self.lifeStealMod = 2
         self.chanceCritico = 13
         self.danoCriticoMod = 2
         self.comboMult = 1
@@ -656,6 +663,7 @@ class Arco(Arma):
         self.radius = 90
         self.efeitos = None
         self.lifeSteal = self.dano/2
+        self.lifeStealMod = 2
         self.chanceCritico = 10
         self.danoCriticoMod = 2
         self.comboMult = 1
