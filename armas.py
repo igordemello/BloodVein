@@ -37,6 +37,7 @@ class Arma(ABC):
 
     def ataqueSecundario(self, inimigo):
         pass
+    
 
     def get_save_data(self):
         return {

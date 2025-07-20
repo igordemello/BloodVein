@@ -55,9 +55,10 @@ class GameOver:
 
         # Botões empilhados verticalmente
         pos_y = 900
-        self.botaonovarun = BotaoAnimado((1920 // 2, pos_y), "REINICIAR", botao_font, cor_base, cor_hover)
+        self.botaonovarun = BotaoAnimado((1920 // 2, pos_y-100), "NOVA RUN", botao_font, cor_base, cor_hover)
+        self.botaoreiniciar = BotaoAnimado((1920 // 2, pos_y), "REINICIAR", botao_font, cor_base, cor_hover)
         self.botaosair = BotaoAnimado((1920 // 2, pos_y + 100), "SAIR", botao_font, cor_base, cor_hover)
-        self.botoes = [self.botaonovarun, self.botaosair]
+        self.botoes = [self.botaonovarun, self.botaoreiniciar,self.botaosair]
 
         # Controle do fade-in da imagem
         self.alpha_overlay = 0
@@ -97,9 +98,9 @@ class GameOver:
         if not self.menu_ativo:
             return None
         if self.botaonovarun.checkForInput(mouse_pos):
-            self.menu_ativo = False
-            self.alpha_overlay = 0
-            return "nova run"
+            return "nova_run"
+        if self.botaoreiniciar.checkForInput(mouse_pos):
+            return "reiniciar"
         if self.botaosair.checkForInput(mouse_pos):
             return "sair"
         return None

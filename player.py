@@ -425,10 +425,10 @@ class Player():
         if self.stamina > self.staminaMaximo:
             self.stamina = self.staminaMaximo
 
-        if self.hp < 30:
-            self.hp = 30
-        # if self.hp < 0:
-        #     self.hp = 0
+        #if self.hp < 30:
+        #    self.hp = 30
+        if self.hp < 0:
+            self.hp = 0
         if self.hp > self.hpMax:
             self.hp = self.hpMax
         if self.mp < 0:
@@ -1359,3 +1359,4 @@ class Player():
             # Posiciona o escudo centrado no jogador
             escudo_rect = escudo_surface.get_rect(center=self.player_rect.center)
             tela.blit(escudo_surface, escudo_rect.topleft)
+
