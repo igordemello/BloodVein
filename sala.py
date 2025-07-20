@@ -29,6 +29,7 @@ from inimigos.zombie import Zombie
 from armas import LaminaDaNoite, Chigatana, Karambit, EspadaDoTita, MachadoDoInverno, EspadaEstelar, MarteloSolar, Arco, ListaMods
 from botao import Botao
 from inimigos.polvo import Polvo
+from inimigos.aranha_lunar import AranhaLunar
 from save_manager import SaveManager
 from dificuldade import dificuldade_global
 from utils import resource_path 
@@ -259,8 +260,8 @@ class Sala:
     def _criar_inimigo_aleatorio(self, x, y, tipo_sala):
         elite = "bau" in tipo_sala
 
-        # tipos_disponiveis = ["furacao","caveiradefogo","morcegopadrao","orb","espectro","polvo", "esqueletogelo", "massa", "zombie"]
-        tipos_disponiveis = ["zombie"] 
+        # tipos_disponiveis = ["furacao","caveiradefogo","morcegopadrao","orb","espectro","polvo", "esqueletogelo", "massa", "zombie","aranhalunar"]
+        tipos_disponiveis = ["aranhalunar"] 
         tipo_escolhido = choice(tipos_disponiveis)
 
 
@@ -305,6 +306,11 @@ class Sala:
         elif tipo_escolhido == "zombie":
             inimigo = Zombie(x, y, 96, 96, hp=200 if not elite else 300)
             inimigo.nome_base = "Zombie"
+            inimigo.aplicar_modificadores(elite=elite)
+
+        elif tipo_escolhido == "aranhalunar":
+            inimigo = AranhaLunar(x, y, 50, 50, hp=200 if not elite else 300)
+            inimigo.nome_base = "Aranha Lunar"
             inimigo.aplicar_modificadores(elite=elite)
 
         # Adicione outros tipos de inimigos aqui no futuro:
@@ -728,60 +734,60 @@ class Sala:
             self.tela.blit(texto, texto_rect)
 
 
-        # # DEBUG: Desenhar grade e caminho
-        # offset_x, offset_y = self.mapa.get_offset()
-        # tile_size_scaled = 32 * 3.25
+        # DEBUG: Desenhar grade e caminho
+        offset_x, offset_y = self.mapa.get_offset()
+        tile_size_scaled = 32 * 3.25
         
-        # # 1. Desenhar grade de tiles
-        # for y in range(self.mapa.tmx_data.height + 1):
-        #     draw.line(
-        #         tela, (100, 100, 100, 150),
-        #         (offset_x, offset_y + y * tile_size_scaled),
-        #         (offset_x + self.mapa.tmx_data.width * tile_size_scaled, offset_y + y * tile_size_scaled),
-        #         1
-        #     )
-        # for x in range(self.mapa.tmx_data.width + 1):
-        #     draw.line(
-        #         tela, (100, 100, 100, 150),
-        #         (offset_x + x * tile_size_scaled, offset_y),
-        #         (offset_x + x * tile_size_scaled, offset_y + self.mapa.tmx_data.height * tile_size_scaled),
-        #         1
-        #     )
+        # 1. Desenhar grade de tiles
+        for y in range(self.mapa.tmx_data.height + 1):
+            draw.line(
+                tela, (100, 100, 100, 150),
+                (offset_x, offset_y + y * tile_size_scaled),
+                (offset_x + self.mapa.tmx_data.width * tile_size_scaled, offset_y + y * tile_size_scaled),
+                1
+            )
+        for x in range(self.mapa.tmx_data.width + 1):
+            draw.line(
+                tela, (100, 100, 100, 150),
+                (offset_x + x * tile_size_scaled, offset_y),
+                (offset_x + x * tile_size_scaled, offset_y + self.mapa.tmx_data.height * tile_size_scaled),
+                1
+            )
         
-        # # 2. Desenhar caminho do inimigo
-        # for inimigo in self.inimigos:
-        #     if not inimigo.vivo:
-        #         continue
-        #     if hasattr(inimigo, 'caminho_atual') and inimigo.caminho_atual:
-        #         for i, (gx, gy) in enumerate(inimigo.caminho_atual):
-        #             px, py = grid_para_pixel(
-        #                 gx, gy, 
-        #                 self.mapa.get_offset(), 
-        #                 tile_size_scaled
-        #             )
-        #             # Desenhar ponto do caminho
-        #             draw.circle(tela, (0, 255, 0), (int(px), int(py)), 5)
+        # 2. Desenhar caminho do inimigo
+        for inimigo in self.inimigos:
+            if not inimigo.vivo:
+                continue
+            if hasattr(inimigo, 'caminho_atual') and inimigo.caminho_atual:
+                for i, (gx, gy) in enumerate(inimigo.caminho_atual):
+                    px, py = grid_para_pixel(
+                        gx, gy, 
+                        self.mapa.get_offset(), 
+                        tile_size_scaled
+                    )
+                    # Desenhar ponto do caminho
+                    draw.circle(tela, (0, 255, 0), (int(px), int(py)), 5)
                     
-        #             # Desenhar linha entre pontos
-        #             if i > 0:
-        #                 prev_px, prev_py = grid_para_pixel(
-        #                     inimigo.caminho_atual[i-1][0], inimigo.caminho_atual[i-1][1],
-        #                     self.mapa.get_offset(), 
-        #                     tile_size_scaled
-        #                 )
-        #                 draw.line(tela, (0, 200, 0), (prev_px, prev_py), (px, py), 2)
+                    # Desenhar linha entre pontos
+                    if i > 0:
+                        prev_px, prev_py = grid_para_pixel(
+                            inimigo.caminho_atual[i-1][0], inimigo.caminho_atual[i-1][1],
+                            self.mapa.get_offset(), 
+                            tile_size_scaled
+                        )
+                        draw.line(tela, (0, 200, 0), (prev_px, prev_py), (px, py), 2)
         
-        # # 3. Desenhar posição atual em grid
-        # for inimigo in self.inimigos:
-        #     if not inimigo.vivo:
-        #         continue
-        #     gx, gy = pixel_para_grid(
-        #         inimigo.x, inimigo.y,
-        #         self.mapa.get_offset(),
-        #         tile_size_scaled
-        #     )
-        #     text = fonte.render(f"({gx},{gy})", True, (255, 255, 255))
-        #     tela.blit(text, (inimigo.x - 20, inimigo.y - 30))
+        # 3. Desenhar posição atual em grid
+        for inimigo in self.inimigos:
+            if not inimigo.vivo:
+                continue
+            gx, gy = pixel_para_grid(
+                inimigo.x, inimigo.y,
+                self.mapa.get_offset(),
+                tile_size_scaled
+            )
+            text = fonte.render(f"({gx},{gy})", True, (255, 255, 255))
+            tela.blit(text, (inimigo.x - 20, inimigo.y - 30))
 
 
 
