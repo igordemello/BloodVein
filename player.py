@@ -130,7 +130,7 @@ class Player():
         self.itens = {}
         # só comentar isso daqui em baixo e volta ao normal:
         conjunto = ConjuntoItens()
-        itens_iniciais_ids = [1, 2, 4, 5, 13]
+        itens_iniciais_ids = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]
         for item_id in itens_iniciais_ids:
             item = conjunto.itens_por_id[item_id]
             self.adicionarItem(item)

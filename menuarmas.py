@@ -34,7 +34,7 @@ class MenuArmas:
 
         self.traits_armas = {
             "Vampira": LaminaDaNoite("comum", self.lista_mods),
-            "Ancião": EspadaEstelar("comum", self.lista_mods),
+            "Ancião": MachadoDoInverno("comum", self.lista_mods),
             "Peçonhento": Karambit("comum", self.lista_mods),
             "Mercúrio": Arco("comum", self.lista_mods),
             "Humano": LaminaDaNoite("comum", self.lista_mods)  # Começa com Lâmina da Noite
