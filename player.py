@@ -566,7 +566,6 @@ class Player():
     def adicionarItem(self, item):
         if isinstance(item, Item):
             item.aplicar_em(self)
-            self.atualizar_atributos()
             if item not in self.itens:
                 self.itens[item] = 1
             else:

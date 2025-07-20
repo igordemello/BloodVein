@@ -22,13 +22,12 @@ class AumentarForca(Efeito):
         self.valor_original = None
 
     def aplicar(self, jogador):
-        if not hasattr(self, 'valor_original'):
-            self.valor_original = jogador.atributos["forca"]
+        self.valor_original = jogador.atributos["forca"]
         jogador.atributos["forca"] += self.valor
+        jogador.atualizar_atributos()
 
     def remover(self, jogador):
-        if hasattr(self, 'valor_original'):
-            jogador.atributos["forca"] = self.valor_original
+        jogador.atributos["forca"] = self.valor_original
 
 
 class AumentarAgilidade(Efeito):
@@ -37,13 +36,13 @@ class AumentarAgilidade(Efeito):
         self.valor_original = None
 
     def aplicar(self, jogador):
-        if not hasattr(self, 'valor_original'):
-            self.valor_original = jogador.atributos["agilidade"]
+        self.valor_original = jogador.atributos["agilidade"]
+        print(self.valor_original)
         jogador.atributos["agilidade"] += self.valor
+        jogador.atualizar_atributos()
 
     def remover(self, jogador):
-        if hasattr(self, 'valor_original'):
-            jogador.atributos["agilidade"] = self.valor_original
+        jogador.atributos["agilidade"] = self.valor_original
 
 
 class AumentarDestreza(Efeito):
@@ -52,9 +51,9 @@ class AumentarDestreza(Efeito):
         self.valor_original = None
 
     def aplicar(self, jogador):
-        if not hasattr(self, 'valor_original'):
-            self.valor_original = jogador.atributos["destreza"]
+        self.valor_original = jogador.atributos["destreza"]
         jogador.atributos["destreza"] += self.valor
+        jogador.atualizar_atributos()
 
     def remover(self, jogador):
         if hasattr(self, 'valor_original'):
@@ -67,9 +66,9 @@ class AumentarVigor(Efeito):
         self.valor_original = None
 
     def aplicar(self, jogador):
-        if not hasattr(self, 'valor_original'):
-            self.valor_original = jogador.atributos["vigor"]
+        self.valor_original = jogador.atributos["vigor"]
         jogador.atributos["vigor"] += self.valor
+        jogador.atualizar_atributos()
 
     def remover(self, jogador):
         if hasattr(self, 'valor_original'):
@@ -82,9 +81,9 @@ class AumentarResistencia(Efeito):
         self.valor_original = None
 
     def aplicar(self, jogador):
-        if not hasattr(self, 'valor_original'):
-            self.valor_original = jogador.atributos["resistencia"]
+        self.valor_original = jogador.atributos["resistencia"]
         jogador.atributos["resistencia"] += self.valor
+        jogador.atualizar_atributos()
 
     def remover(self, jogador):
         if hasattr(self, 'valor_original'):
@@ -97,9 +96,9 @@ class AumentarEstamina(Efeito):
         self.valor_original = None
 
     def aplicar(self, jogador):
-        if not hasattr(self, 'valor_original'):
-            self.valor_original = jogador.atributos["estamina"]
+        self.valor_original = jogador.atributos["estamina"]
         jogador.atributos["estamina"] += self.valor
+        jogador.atualizar_atributos()
 
     def remover(self, jogador):
         if hasattr(self, 'valor_original'):
@@ -112,9 +111,9 @@ class AumentarSorte(Efeito):
         self.valor_original = None
 
     def aplicar(self, jogador):
-        if not hasattr(self, 'valor_original'):
-            self.valor_original = jogador.atributos["sorte"]
+        self.valor_original = jogador.atributos["sorte"]
         jogador.atributos["sorte"] += self.valor
+        jogador.atualizar_atributos()
 
     def remover(self, jogador):
         if hasattr(self, 'valor_original'):
@@ -192,4 +191,5 @@ class ItemAtivo:
             for efeito in self.efeitos_ativos:
                 if hasattr(efeito, 'remover'):
                     efeito.remover(player)
+                    print(efeito.valor_original)
             self.efeitos_ativos = []

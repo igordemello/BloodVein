@@ -411,9 +411,6 @@ class Sala:
                 # Remove efeitos do item ativo atual (se existir e não afetar inimigos)
                 if hasattr(self.player, 'itemAtivo') and self.player.itemAtivo is not None:
                     if not self.player.itemAtivo.afetaIni:
-                        # Faz backup dos atributos antes de remover
-                        atributos_backup = self.player.atributos.copy()
-
                         # Remove os efeitos
                         self.player.itemAtivo.remover_efeitos(self.player)
 
@@ -422,7 +419,6 @@ class Sala:
                         self.player.vx, self.player.vy = original_vel
 
                         # Atualiza atributos para garantir consistência
-                        self.player.atributos = atributos_backup
                         self.player.atualizar_atributos()
 
                 # Remove efeitos do item ativo esgotado (se existir e não afetar inimigos)
