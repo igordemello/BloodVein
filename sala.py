@@ -30,6 +30,7 @@ from armas import LaminaDaNoite, Chigatana, Karambit, EspadaDoTita, MachadoDoInv
 from botao import Botao
 from inimigos.polvo import Polvo
 from inimigos.aranha_lunar import AranhaLunar
+from inimigos.esqueleto_gelo import EsqueletoGelo
 from save_manager import SaveManager
 from dificuldade import dificuldade_global
 from utils import resource_path 
@@ -260,8 +261,8 @@ class Sala:
     def _criar_inimigo_aleatorio(self, x, y, tipo_sala):
         elite = "bau" in tipo_sala
 
-        # tipos_disponiveis = ["furacao","caveiradefogo","morcegopadrao","orb","espectro","polvo", "esqueletogelo", "massa", "zombie","aranhalunar"]
-        tipos_disponiveis = ["aranhalunar"] 
+        # tipos_disponiveis = ["furacao","caveiradefogo","morcegopadrao","orb","espectro","polvo", "esqueletogelo", "massa", "zombie","aranhalunar","esqueletogelo"]
+        tipos_disponiveis = ["esqueletogelo"] 
         tipo_escolhido = choice(tipos_disponiveis)
 
 
@@ -311,6 +312,11 @@ class Sala:
         elif tipo_escolhido == "aranhalunar":
             inimigo = AranhaLunar(x, y, 50, 50, hp=200 if not elite else 300)
             inimigo.nome_base = "Aranha Lunar"
+            inimigo.aplicar_modificadores(elite=elite)
+
+        elif tipo_escolhido == "esqueletogelo":
+            inimigo = EsqueletoGelo(x, y, 96, 96, hp=200 if not elite else 300)
+            inimigo.nome_base = "Esqueleto de Gelo"
             inimigo.aplicar_modificadores(elite=elite)
 
         # Adicione outros tipos de inimigos aqui no futuro:
@@ -376,7 +382,10 @@ class Sala:
             if inimigo.vivo and self.player.hp > 0:
                 p_rect = Rect(self.player.x, self.player.y, 60, 120)
                 
-                inimigo.atualizar(p_rect.center, self.tela, self.mapa.matriz, self.mapa.get_offset())
+                if isinstance(inimigo, EsqueletoGelo):
+                    inimigo.atualizar(p_rect.center, self.tela, self.mapa.matriz, self.mapa.get_offset(), self.player)
+                else:
+                    inimigo.atualizar(p_rect.center, self.tela, self.mapa.matriz, self.mapa.get_offset())
                 # except:
                 #     inimigo.atualizar(p_rect.center, self.tela)
                 inimigo.dar_dano = lambda val=inimigo.dano: self.player.tomar_dano(val)

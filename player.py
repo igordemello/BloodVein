@@ -233,6 +233,11 @@ class Player():
 
         self.hud = hud
 
+        self.duracao_lentidao = 0
+        self.lentidao_ativa = False
+        self.tempo_lentidao = 0
+        self.velocidadeOld = self.velocidadeMov
+
     def set_hud(self, hud):
         self.hud = hud
 
@@ -425,10 +430,10 @@ class Player():
         if self.stamina > self.staminaMaximo:
             self.stamina = self.staminaMaximo
 
-        #if self.hp < 30:
-        #    self.hp = 30
-        if self.hp < 0:
-            self.hp = 0
+        if self.hp < 30:
+           self.hp = 30
+        # if self.hp < 0:
+        #     self.hp = 0
         if self.hp > self.hpMax:
             self.hp = self.hpMax
         if self.mp < 0:
@@ -498,6 +503,8 @@ class Player():
                     lifetime=200,  # vida curta (ms)
                     size=3  # tamanho da partícula
                 )
+
+        self.atualizar_lentidao()
 
 
     def tratar_eventos(self, eventos):
@@ -1359,4 +1366,20 @@ class Player():
             # Posiciona o escudo centrado no jogador
             escudo_rect = escudo_surface.get_rect(center=self.player_rect.center)
             tela.blit(escudo_surface, escudo_rect.topleft)
+
+
+
+    def aplicar_lentidao(self, mult, duracao):
+        self.duracao_lentidao = duracao
+        if not self.lentidao_ativa:
+            self.velocidadeOld = self.velocidadeMov
+            self.lentidao_ativa = True
+            self.velocidadeMov *= mult
+            self.tempo_lentidao = pygame.time.get_ticks()
+
+    def atualizar_lentidao(self):
+        if self.lentidao_ativa:
+            if pygame.time.get_ticks() - self.tempo_lentidao > self.duracao_lentidao:
+                self.lentidao_ativa = False
+                self.velocidadeMov = self.velocidadeOld
 
