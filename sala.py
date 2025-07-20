@@ -26,6 +26,7 @@ from inimigos.nuvemBoss import NuvemBoss
 from inimigos.polvo import Polvo
 # from inimigos.esqueleto_gelo import EsqueletoGelo
 from inimigos.massa_de_olhos import Massa
+from inimigos.zombie import Zombie
 from armas import LaminaDaNoite, Chigatana, Karambit, EspadaDoTita, MachadoDoInverno, EspadaEstelar, MarteloSolar, Arco, ListaMods
 from botao import Botao
 from save_manager import SaveManager
@@ -252,8 +253,8 @@ class Sala:
     def _criar_inimigo_aleatorio(self, x, y, tipo_sala):
         elite = "bau" in tipo_sala
 
-        # tipos_disponiveis = ["furacao","caveiradefogo","morcegopadrao","orb","espectro","polvo", "esqueletogelo", "massa"]
-        tipos_disponiveis = ["massa"] 
+        # tipos_disponiveis = ["furacao","caveiradefogo","morcegopadrao","orb","espectro","polvo", "esqueletogelo", "massa", "zombie"]
+        tipos_disponiveis = ["zombie"] 
         tipo_escolhido = choice(tipos_disponiveis)
 
 
@@ -293,6 +294,11 @@ class Sala:
         elif tipo_escolhido == "massa":
             inimigo = Massa(x, y, 100, 100, hp=200 if not elite else 300)
             inimigo.nome_base = "Massa de Olhos"
+            inimigo.aplicar_modificadores(elite=elite)
+
+        elif tipo_escolhido == "zombie":
+            inimigo = Zombie(x, y, 96, 96, hp=200 if not elite else 300)
+            inimigo.nome_base = "Zombie"
             inimigo.aplicar_modificadores(elite=elite)
 
         # Adicione outros tipos de inimigos aqui no futuro:
@@ -357,10 +363,10 @@ class Sala:
         for inimigo in self.inimigos:
             if inimigo.vivo and self.player.hp > 0:
                 p_rect = Rect(self.player.x, self.player.y, 60, 120)
-                try:
-                    inimigo.atualizar(p_rect.center, self.tela, self.mapa.matriz, self.mapa.get_offset())
-                except:
-                    inimigo.atualizar(p_rect.center, self.tela)
+                
+                inimigo.atualizar(p_rect.center, self.tela, self.mapa.matriz, self.mapa.get_offset())
+                # except:
+                #     inimigo.atualizar(p_rect.center, self.tela)
                 inimigo.dar_dano = lambda val=inimigo.dano: self.player.tomar_dano(val)
 
 
