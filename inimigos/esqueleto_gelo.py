@@ -15,7 +15,7 @@ def grid_para_pixel(grid_x, grid_y, offset, tile_size_scaled):
     return x, y
 
 class EsqueletoGelo(Inimigo):
-    def __init__(self, x, y, largura, altura, nome="Esqueleto de Gelo", hp=150, velocidade=1, dano=15):
+    def __init__(self, x, y, largura, altura, nome="Esqueleto de Gelo", hp=150, velocidade=0.5, dano=15):
         super().__init__(x, y, largura, altura, hp, velocidade, dano)
         self.nome = nome
 
