@@ -102,7 +102,7 @@ class EsqueletoGelo(Inimigo):
 
         # Se estiver perto o suficiente do jogador, atacar
         distancia = math.hypot(player_pos[0] - center_x, player_pos[1] - center_y)
-        if distancia < 150:
+        if distancia < 100:
             self.caminho_atual = []
             if now - self.tempo_ultimo_ataque > self.cooldown_ataque:
                 self.estado = "atacando"
