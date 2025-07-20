@@ -163,8 +163,7 @@ class Item:
 
 
 class ItemAtivo:
-    def __init__(self, nome: str, descricao: str, usos: int, efeitos: list, afetaIni: bool, sprite, raridade: str,
-                 id: int, listaInimigos=None, player=None):
+    def __init__(self, nome: str, descricao: str, usos: int, efeitos: list, afetaIni: bool, sprite, raridade: str, id: int, listaInimigos=None, player=None):
         self.nome = nome
         self.descricao = descricao
         self.efeitos = efeitos
@@ -175,17 +174,22 @@ class ItemAtivo:
         self.sprite = sprite
         self.raridade = raridade
         self.id = id
+        self.efeitos_ativos = []  # Para rastrear quais efeitos foram aplicados
 
     def aplicar_em(self):
         if self.afetaIni:
             for efeito in self.efeitos:
                 for inimigo in self.listaInimigos:
                     efeito.aplicar(inimigo)
+                    self.efeitos_ativos.append(efeito)
         else:
             for efeito in self.efeitos:
                 efeito.aplicar(self.player)
+                self.efeitos_ativos.append(efeito)
 
-    def remover_efeitos(self, player):
-        if not self.afetaIni:
-            for efeito in self.efeitos:
-                efeito.remover(player)
+    def remover_efeitos(self, player=None):
+        if not self.afetaIni and player:
+            for efeito in self.efeitos_ativos:
+                if hasattr(efeito, 'remover'):
+                    efeito.remover(player)
+            self.efeitos_ativos = []

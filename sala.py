@@ -262,7 +262,7 @@ class Sala:
         elite = "bau" in tipo_sala
 
         # tipos_disponiveis = ["furacao","caveiradefogo","morcegopadrao","orb","espectro","polvo", "esqueletogelo", "massa", "zombie","aranhalunar","esqueletogelo"]
-        tipos_disponiveis = ["esqueletogelo"] 
+        tipos_disponiveis = ["esqueletogelo"]
         tipo_escolhido = choice(tipos_disponiveis)
 
 
@@ -407,20 +407,50 @@ class Sala:
             original_pos = (self.player.x, self.player.y)
             original_vel = (self.player.vx, self.player.vy)
 
-            if self.player.itemAtivo is not None:
-                if not self.player.itemAtivo.afetaIni:
-                    # Remove efeitos mas mantém a posição/velocidade
-                    self.player.itemAtivo.remover_efeitos(self.player)
-                    self.player.x, self.player.y = original_pos
-                    self.player.vx, self.player.vy = original_vel
+            try:
+                # Remove efeitos do item ativo atual (se existir e não afetar inimigos)
+                if hasattr(self.player, 'itemAtivo') and self.player.itemAtivo is not None:
+                    if not self.player.itemAtivo.afetaIni:
+                        # Faz backup dos atributos antes de remover
+                        atributos_backup = self.player.atributos.copy()
 
+                        # Remove os efeitos
+                        self.player.itemAtivo.remover_efeitos(self.player)
 
-            if self.player.itemAtivoEsgotado is not None :
-                if not self.player.itemAtivoEsgotado.afetaIni:
-                    self.player.itemAtivoEsgotado.remover_efeitos()
-                    self.player.x, self.player.y = original_pos
-                    self.player.vx, self.player.vy = original_vel
-                self.player.itemAtivoEsgotado = None
+                        # Restaura a posição/velocidade
+                        self.player.x, self.player.y = original_pos
+                        self.player.vx, self.player.vy = original_vel
+
+                        # Atualiza atributos para garantir consistência
+                        self.player.atributos = atributos_backup
+                        self.player.atualizar_atributos()
+
+                # Remove efeitos do item ativo esgotado (se existir e não afetar inimigos)
+                if hasattr(self.player, 'itemAtivoEsgotado') and self.player.itemAtivoEsgotado is not None:
+                    if not self.player.itemAtivoEsgotado.afetaIni:
+                        # Faz backup dos atributos antes de remover
+                        atributos_backup = self.player.atributos.copy()
+
+                        # Remove os efeitos
+                        self.player.itemAtivoEsgotado.remover_efeitos(self.player)
+
+                        # Restaura a posição/velocidade
+                        self.player.x, self.player.y = original_pos
+                        self.player.vx, self.player.vy = original_vel
+
+                        # Atualiza atributos para garantir consistência
+                        self.player.atributos = atributos_backup
+                        self.player.atualizar_atributos()
+
+                    self.player.itemAtivoEsgotado = None
+
+            except Exception as e:
+                print(f"Erro ao remover efeitos de item ativo: {e}")
+                # Garante que a posição/velocidade seja restaurada mesmo em caso de erro
+                self.player.x, self.player.y = original_pos
+                self.player.vx, self.player.vy = original_vel
+                if hasattr(self.player, 'atributos'):
+                    self.player.atualizar_atributos()
             self.player.player_rect.topleft = (self.player.x, self.player.y)
 
 
