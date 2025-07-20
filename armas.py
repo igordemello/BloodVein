@@ -13,8 +13,8 @@ from utils import resource_path
 RARIDADES = {
     "comum": 1,
     "incomum": 2,
-    "rara": 3,
-    "lendária": 4
+    "raro": 3,
+    "lendaria": 4
 }
 
 

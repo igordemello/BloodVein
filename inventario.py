@@ -594,6 +594,7 @@ class Inventario():
                     rect_item = Rect(x, y, 100, 100)
 
                     if rect_item.collidepoint(mouse_x, mouse_y):
+                        print(arma.raridade)
                         arma_antiga = self.player.arma
 
                         self.player.arma = arma
@@ -619,16 +620,16 @@ class Inventario():
 
                         # Cores baseadas na raridade (usando o mesmo padrão do loot normal)
                         if raridade == "lendaria":
-                            cor = (255, 215, 0)  # Dourado
+                            cor = (255, 255, 0)
                             hover = (255, 255, 150)
                         elif raridade == "raro":
-                            cor = (180, 0, 180)  # Roxo
+                            cor = (128, 0, 128)
                             hover = (230, 150, 230)
                         elif raridade == "incomum":
-                            cor = (50, 205, 50)  # Verde
+                            cor = (0, 255, 0)
                             hover = (144, 238, 144)
                         else:  # comum
-                            cor = (220, 220, 220)  # Cinza claro
+                            cor = (255, 255, 255)
                             hover = (255, 255, 255)
 
                         # Carrega a imagem da bola correspondente à raridade
@@ -638,17 +639,14 @@ class Inventario():
                                 (64, 64)
                             )
                         except:
-                            # Fallback caso a imagem não exista
+
                             bola_img = None
 
-                        # Cria o botão com a bola como imagem
                         fontinha = font.Font(resource_path('assets/fontes/alagard.ttf'), 18)
 
-                        # Posiciona o drop próximo ao jogador com um pouco de aleatoriedade
                         drop_x = self.player.x + randint(-80, 80)
                         drop_y = self.player.y + randint(-80, 80)
 
-                        # Garante que não spawna em cima do jogador
                         drop_x = self.player.x + randint(-50, 50)
                         drop_y = self.player.y + randint(-50, 50) + 100
 
@@ -658,20 +656,17 @@ class Inventario():
                             text_input=arma_removida.nome,
                             font=fontinha,
                             base_color=cor,
-                            hovering_color=hover,
+                            hovering_color=cor,
                             value=arma_removida
                         )
 
-                        # Ajusta o rect para a posição correta
                         if bola_img:
                             botao.rect = bola_img.get_rect(center=(drop_x, drop_y))
                         else:
-                            # Fallback para texto sem imagem
                             texto_render = fontinha.render(arma_removida.nome, True, cor)
                             botao.image = texto_render
                             botao.rect = texto_render.get_rect(center=(drop_x, drop_y))
 
-                        # Adiciona à lista de loots da sala
                         if hasattr(self.player, 'sala_atual'):
                             self.player.sala_atual.loots.append((botao, arma_removida))
 
