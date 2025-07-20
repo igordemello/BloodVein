@@ -5,14 +5,25 @@ from pygame import time
 from inimigo import Inimigo
 from utils import resource_path 
 from pygame.locals import USEREVENT
+from random import uniform, randint
 
 class Cerbero(Inimigo):
     def __init__(self, x, y, largura=256, altura=256, hp=5000, velocidade=3, dano=40):
         super().__init__(x, y, largura, altura, hp, velocidade, dano)
+        self.vivo
         self.hp = hp
         self.hp_max = hp
         self.tipo_colisao = "terrestre"
         self.estado = "perseguindo"  # Estados: perseguindo, patada, grito, cospe_fogo
+
+
+        # Atributos para ataque com projéteis
+        self.projeteis = []
+        self.ultimo_ataque = 0
+        self.cooldown_ataque = 150  # 2 segundos entre ataques
+        self.distancia_ideal = 400  # Distância que o Orb tenta manter do jogador
+        self.trail_projetil_max = 5
+        self.trail_projetil_fade = 25
 
 
         self.bola_fogo = transform.scale(
@@ -79,7 +90,7 @@ class Cerbero(Inimigo):
             frames = []
             for i in range(total_frames):
                 frame = spritesheet.subsurface((i * frame_width, 0, frame_width, frame_height))
-                frame = transform.scale(frame, (self.largura, self.altura))
+                frame = transform.scale(frame, (128 * 3.5, 96 * 3.5))
                 frames.append(frame)
             return frames
 
@@ -102,7 +113,10 @@ class Cerbero(Inimigo):
             self.frame_index = (self.frame_index + 1) % len(self.animacoes[self.animacao_atual])
 
     def atualizar(self, player_pos, tela, mapa_matriz,offset):
-        if not self.vivo:
+
+        if self.hp <= 0:
+            self.vivo = False
+            self.alma_coletada = False
             return
 
         now = time.get_ticks()
@@ -121,11 +135,17 @@ class Cerbero(Inimigo):
             self.executar_cuspe_fogo(now, player_pos)
 
         # Atualizar projéteis e lava
-        self.atualizar_bolas_fogo(now)
+        self.atirar_projetil(player_pos)
         self.atualizar_lava(now)
 
         # Atualizar posição da hitbox
         self.rect.topleft = (self.x, self.y)
+
+
+    def colide_com_player(self, player_pos):
+        player_rect = Rect(player_pos[0], player_pos[1], 64, 64)
+        hitbox, _ = self.get_hitbox_ataque(player_pos)
+        return hitbox.colliderect(player_rect)
 
     def executar_perseguir(self, player_pos, now):
         dx = player_pos[0] - (self.x + self.largura/2)
@@ -245,15 +265,55 @@ class Cerbero(Inimigo):
             self.contador_cuspe = 0
             self.trocar_estado("perseguindo")
 
-    def atualizar_bolas_fogo(self, now):
-        for bola in self.bolas_fogo[:]:
-            # Atualiza posição
-            bola['x'] += bola['vx']
-            bola['y'] += bola['vy']
-            
-            # Verifica tempo de vida
-            if now - bola['criado'] > self.duracao_bola_fogo:
-                self.bolas_fogo.remove(bola)
+    def atirar_projetil(self, player_pos):
+        """Cria um novo projétil direcionado ao jogador"""
+        player_x = player_pos[0] + 32
+        player_y = player_pos[1] + 50
+        angle = math.atan2(player_y - (self.y + self.altura / 2),
+                           player_x - (self.x + self.largura / 2))
+
+        projetil = {
+            "x": self.x + self.largura / 2,
+            "y": self.y + self.altura / 2,
+            "vx": math.cos(angle) * 12,  # Velocidade aumentada
+            "vy": math.sin(angle) * 12,  # Velocidade aumentada
+            "dano": self.dano,
+            "lifetime": 1000,  # 1 segundo de vida
+            "raio_hitbox": 10,
+            "cor": (135, 98, 73),  # Vermelho claro
+            "tamanho": 7,
+            "trail": []  # Partículas de rastro
+        }
+        projetil2 = {
+            "x": self.x + self.largura / 2 +15,
+            "y": self.y + self.altura / 2 +15,
+            "vx": math.cos(angle) * 12,  # Velocidade aumentada
+            "vy": math.sin(angle) * 12,  # Velocidade aumentada
+            "dano": self.dano,
+            "lifetime": 1000,  # 1 segundo de vida
+            "raio_hitbox": 10,
+            "cor": (135, 98, 73),  # Vermelho claro
+            "tamanho": 7,
+            "trail": []  # Partículas de rastro
+        }
+        projetil3 = {
+            "x": self.x + self.largura / 2 -15,
+            "y": self.y + self.altura / 2 -15,
+            "vx": math.cos(angle) * 12,  # Velocidade aumentada
+            "vy": math.sin(angle) * 12,  # Velocidade aumentada
+            "dano": self.dano,
+            "lifetime": 1000,  # 1 segundo de vida
+            "raio_hitbox": 10,
+            "cor": (135, 98, 73),  # Vermelho claro
+            "tamanho": 7,
+            "trail": []  # Partículas de rastro
+        }
+        self.attack_animando = True
+        self.attack_frame_index = 0
+        self.attack_ultimo_frame = time.get_ticks()
+        self.projeteis.append(projetil)
+        self.projeteis.append(projetil2)
+        self.projeteis.append(projetil3)
 
     def atualizar_lava(self, now):
         for lava in self.lava_posicoes[:]:
@@ -284,7 +344,7 @@ class Cerbero(Inimigo):
             #tela.blit(s, (lava['rect'].x + offset[0], lava['rect'].y + offset[1]))
         
         # Desenha barra de vida
-        self.desenhar_barra_vida(tela, offset)
+        self.desenhar_barra_boss(tela, tela.get_width())
 
         now = time.get_ticks()
         if hasattr(self, 'veneno_ativo') and self.veneno_ativo:
@@ -302,24 +362,59 @@ class Cerbero(Inimigo):
             if self.veneno_ticks <= 0:
                 self.veneno_ativo = False
 
-    def desenhar_barra_vida(self, tela, offset):
-        largura_barra = 300
-        altura_barra = 20
-        x = self.x + (self.largura - largura_barra) // 2 + offset[0]
-        y = self.y - 30 + offset[1]
+
         
+
+    def atualizar_projeteis(self):
+        now = time.get_ticks()
+        for projetil in self.projeteis[:]:
+            # Adiciona partículas ao rastro
+            if len(projetil["trail"]) < self.trail_projetil_max or random.random() < 0.4:
+                projetil["trail"].append({
+                    "x": projetil["x"],
+                    "y": projetil["y"],
+                    "alpha": randint(150, 200),
+                    "cor": (255, 50 + randint(0, 50), randint(0, 50)),  # Tons de laranja/vermelho
+                    "tamanho": randint(8, 12),
+                    "lifetime": randint(200, 255)
+                })
+
+            # Atualiza partículas existentes
+            for part in projetil["trail"][:]:
+                part["alpha"] = max(0, part["alpha"] - self.trail_projetil_fade)
+                if part["alpha"] <= 0:
+                    projetil["trail"].remove(part)
+
+            # Move o projétil
+            projetil["x"] += projetil["vx"]
+            projetil["y"] += projetil["vy"]
+            projetil["lifetime"] -= 1
+
+            # Remove se expirar
+            if projetil["lifetime"] <= 0:
+                self.projeteis.remove(projetil)
+                
+    def desenhar_barra_boss(self, tela, largura_tela):
+        if not self.vivo:
+            return
+
+        tempo_apos_dano = time.get_ticks() - self.ultimo_dano_tempo
+        if tempo_apos_dano > 4000:
+            return  # só exibe a barra por 4 segundos após o dano
+
+        # Configurações da barra
+        largura_barra = 600
+        altura_barra = 20
+        x = (largura_tela - largura_barra) // 2
+        y = 225  # margem do topo
+
+        vida_maxima = getattr(self, "hp_max", self.hp)
+        porcentagem = max(0, min(self.hp / vida_maxima, 1))
+        largura_hp = int(porcentagem * largura_barra)
+
         # Fundo
         draw.rect(tela, (50, 50, 50), (x, y, largura_barra, altura_barra))
-        
-        # Vida atual
-        porcentagem = self.hp / self.hp_max
-        largura_vida = int(porcentagem * largura_barra)
-        draw.rect(tela, (200, 0, 0), (x, y, largura_vida, altura_barra))
-        
-        # Borda
-        draw.rect(tela, (255, 255, 255), (x, y, largura_barra, altura_barra), 2)
-        
-        # Nome
-        fonte = font.Font(None, 24)
-        texto = fonte.render("Cerbero", True, (255, 255, 255))
-        tela.blit(texto, (x + largura_barra//2 - texto.get_width()//2, y - 25))
+        # Vida
+        draw.rect(tela, (180, 0, 0), (x, y, largura_hp, altura_barra))
+        # Moldura
+        draw.rect(tela, (255, 200, 0), (x, y, largura_barra, altura_barra), 2)
