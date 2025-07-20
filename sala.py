@@ -209,7 +209,6 @@ class Sala:
             musica.tocar("BloodVein SCORE/OST/MusicaDoBoss.mp3")
             xboss,yboss= self.spawn_points[0]
             numero = self.gerenciador_andar.numero_andar
-            numero = 3
             if numero == 1:
                 boss = bossmod.MouthOrb(xboss, yboss)
                 boss.nome_base = "Mãe Orbe"
