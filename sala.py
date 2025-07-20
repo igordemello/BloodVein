@@ -190,6 +190,8 @@ class Sala:
         game_state = self.save_manager.generate_game_state(self.player, self.gerenciador_andar, self)
         self.save_manager.save_game(game_state, "save_file.json")
 
+        self.alagard = font.Font(resource_path('assets/fontes/alagard.ttf'), 25)
+
 
     def _criar_inimigos(self):
         if self.gerenciador_andar.sala_foi_conquistada(self.gerenciador_andar.sala_atual):
@@ -201,8 +203,8 @@ class Sala:
             self.leve_atual = self.max_leves + 2
             return []
 
-        #self.leve_atual = self.max_leves + 2
-        #return []
+        self.leve_atual = self.max_leves + 2
+        return []
 
         tempo_atual = time.get_ticks()
         if tempo_atual - self.tempo_entrada < self.cooldown_inicial and not self.inimigos_spawnados:
@@ -606,6 +608,21 @@ class Sala:
         if self.bau:
             tela.blit(self.bau.image, (self.bau.rect.x + offset_x, self.bau.rect.y + offset_y))
 
+        if self.pode_trocar_de_sala():
+            texto = self.alagard.render(f"Aperte E para entrar na porta", True, (255, 255, 255))
+            rect_texto = texto.get_rect(center=(tela.get_width() // 2, 50))
+            tela.blit(texto, rect_texto)
+
+        if self.bau and not self.bau.aberto and self.player.get_hitbox().colliderect(self.bau.rect) and self.porta_liberada:
+            texto_bau = self.alagard.render("Aperte E para abrir o baú", True, (255, 255, 255))
+            rect_bau = texto_bau.get_rect(center=(tela.get_width() // 2, 50))
+            tela.blit(texto_bau, rect_bau)
+
+        if self.hitbox_loja():
+            if self.player.get_hitbox().colliderect(self.hitbox_loja()[0]):
+                texto_loja = self.alagard.render("Aperte E para entrar na loja", True, (255, 255, 255))
+                rect_loja = texto_loja.get_rect(center=(tela.get_width() // 2, 50))
+                tela.blit(texto_loja, rect_loja)
 
         offset_x, offset_y = screen_shaker.offset
 
