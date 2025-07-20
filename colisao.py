@@ -21,10 +21,11 @@ class Colisao:
         
         self.entidades = [ent for ent in self.entidades if isinstance(ent, Player)]
 
-    def checar_colisoes(self,dt):
+    def checar_colisoes(self, dt):
         from player import Player
         from inimigos.orb import Orb
         from inimigos.zombie import Zombie
+        from inimigos.aranha_lunar import AranhaLunar
 
         for i, ent1 in enumerate(self.entidades):
             # Ignora completamente o Orb (não colide com ninguém)
@@ -35,15 +36,20 @@ class Colisao:
                 if isinstance(ent2, Orb):
                     continue
 
-                # Ignora Player com qualquer coisa que não seja Zombie
+                # Ignora Player com qualquer coisa que não seja Zombie ou AranhaLunar
                 if isinstance(ent1, Player):
-                    if not isinstance(ent2, Zombie):
+                    if not isinstance(ent2, (Zombie, AranhaLunar)):
                         continue
                 elif isinstance(ent2, Player):
-                    if not isinstance(ent1, Zombie):
+                    if not isinstance(ent1, (Zombie, AranhaLunar)):
                         continue
 
+                # Ignora colisões entre zombies
                 if isinstance(ent1, Zombie) and isinstance(ent2, Zombie):
+                    continue
+
+                # Ignora colisões entre aranhas
+                if isinstance(ent1, AranhaLunar) and isinstance(ent2, AranhaLunar):
                     continue
 
                 self._colisao_entidade_entidade(ent1, ent2)
