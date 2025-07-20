@@ -836,7 +836,7 @@ class Sala:
 
                         self.__dict__.update(nova_instancia.__dict__)
 
-                        self.player.proibir_dash_ate = time.get_ticks() + 1000
+                        self.player.proibir_dash_ate = time.get_ticks() + 300
 
                         self.player.resetar_estado_temporario()
 
