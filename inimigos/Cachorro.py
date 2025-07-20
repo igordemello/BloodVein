@@ -23,7 +23,7 @@ class Cerbero(Inimigo):
         # Carregar animações
         self.animacoes = {
             "idle": self.carregar_animacao(resource_path('./assets/Enemies/atena_andar.png'), 8),
-            "patada": self.carregar_animacao(resource_path('./assets/Enemies/atena_ataque.png'), 12),
+            "patada": self.carregar_animacao(resource_path('./assets/Enemies/atena_ataque.png'), 8),
             "grito": self.carregar_animacao(resource_path('./assets/Enemies/atena_grito.png'), 9),
             "cospe_fogo": self.carregar_animacao(resource_path('./assets/Enemies/atena_fogo.png'), 9),
             "andando": self.carregar_animacao(resource_path('./assets/Enemies/atena_andar.png'), 8),
@@ -101,7 +101,7 @@ class Cerbero(Inimigo):
             self.frame_time = 0
             self.frame_index = (self.frame_index + 1) % len(self.animacoes[self.animacao_atual])
 
-    def atualizar(self, player_pos, tela):
+    def atualizar(self, player_pos, tela, mapa_matriz,offset):
         if not self.vivo:
             return
 
