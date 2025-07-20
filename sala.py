@@ -204,8 +204,8 @@ class Sala:
             self.leve_atual = self.max_leves + 2
             return []
 
-        self.leve_atual = self.max_leves + 2
-        return []
+        #sself.leve_atual = self.max_leves + 2
+        #return []
 
         tempo_atual = time.get_ticks()
         if tempo_atual - self.tempo_entrada < self.cooldown_inicial and not self.inimigos_spawnados:
@@ -547,27 +547,27 @@ class Sala:
                             inimigo.pocao_coletada = True
                 if not getattr(inimigo, "loot_coletado", True):
                     if not hasattr(inimigo, "vai_dropar_loot"):
-                        inimigo.vai_dropar_loot = randint(1, 100) <= 20  # 30% de chance de cair loot
+                        inimigo.vai_dropar_loot = randint(1, 100) <= 100  # 30% de chance de cair loot
 
                     if getattr(inimigo, "vai_dropar_loot", False) and not hasattr(inimigo, "loot_botao_criado"):
                         pos = (inimigo.x + 16, inimigo.y + 32)
                         chance = randint(1, 100)
-                        if chance <= dificuldade_global.chance("comum"):
-                            raridade = "comum"
-                            cor = (255, 255, 255)
-                            hover = (100, 100, 100)
-                        elif chance <= dificuldade_global.chance("incomum"):
-                            raridade = "incomum"
-                            cor = (0, 255, 0)
-                            hover = (0, 100, 0)
+                        if chance <= dificuldade_global.chance("lendaria"):
+                            raridade = "lendaria"
+                            cor = (255, 255, 0)
+                            hover = (100, 100, 0)
                         elif chance <= dificuldade_global.chance("raro"):
                             raridade = "raro"
                             cor = (128, 0, 128)
                             hover = (28, 0, 28)
+                        elif chance <= dificuldade_global.chance("incomum"):
+                            raridade = "incomum"
+                            cor = (0, 255, 0)
+                            hover = (0, 100, 0)
                         else:
-                            raridade = "lendaria"
-                            cor = (255, 255, 0)
-                            hover = (100, 100, 0)
+                            raridade = "comum"
+                            cor = (255, 255, 255)
+                            hover = (100, 100, 100)
 
                         arma_tipo = choice([
                             LaminaDaNoite, Chigatana, Karambit, EspadaDoTita,
@@ -575,23 +575,17 @@ class Sala:
                         ])
                         arma = arma_tipo(raridade, self.lista_mods)
 
-                        fontinha = font.Font(resource_path('assets/fontes/alagard.ttf'), 18)
-                        texto_render = fontinha.render(arma.nome, True, cor)
-                        largura = texto_render.get_width() + 20
-                        altura = texto_render.get_height() + 10
-
-                        fundo = Surface((largura, altura), SRCALPHA)
-                        fundo.fill((0, 0, 0, 160))  # fundo preto semi-transparente
-
                         botao = Botao(
-                            image=fundo,
+                            image=None,
                             pos=pos,
-                            text_input=arma.nome,
-                            font=fontinha,
+                            text_input="",
+                            font=None,
                             base_color=cor,
                             hovering_color=hover,
                             value=arma
                         )
+                        botao.raridade = raridade
+                        botao.show_text = False
 
                         self.loots.append((botao, arma))
                         inimigo.loot_botao_criado = True
@@ -695,11 +689,33 @@ class Sala:
         # for collider in self.mapa.get_colliders():
         #     draw.rect(tela, (255,0,0), collider['rect'], 1)
         # draw.rect(tela, (0,255,0), self.player.player_rect, 2)
-        for botao, _ in self.loots:
-            botao.update(tela)
-            botao.changeColor(mouse.get_pos())
-            posicaoLoot = botao.pos
-            self.tela.blit(self.lojista_img, (posicaoLoot))
+        for botao, arma in self.loots:
+            # Desenha a bola da raridade
+            raridadeArma = botao.raridade
+            spriteLoot = transform.scale(image.load(f"assets/itens/bola{raridadeArma}.png"), (64, 64))
+            self.tela.blit(spriteLoot, (botao.x_pos - 32, botao.y_pos - 32))
+
+            # Verifica se o mouse está sobre a bola
+            mouse_pos = mouse.get_pos()
+            bola_rect = Rect(botao.x_pos - 32, botao.y_pos - 32, 64, 64)
+            if bola_rect.collidepoint(mouse_pos):
+                # Mostra o texto quando hover
+                fontinha = font.Font(resource_path('assets/fontes/alagard.ttf'), 18)
+                texto_render = fontinha.render(arma.nome, True, botao.base_color)
+                largura = texto_render.get_width() + 20
+                altura = texto_render.get_height() + 10
+
+                # Posiciona o texto acima da bola
+                texto_x = botao.x_pos - largura // 2
+                texto_y = botao.y_pos - 50  # Ajuste esta distância conforme necessário
+
+                # Fundo do texto
+                fundo = Surface((largura, altura), SRCALPHA)
+                fundo.fill((0, 0, 0, 160))
+                self.tela.blit(fundo, (texto_x, texto_y))
+
+                # Texto
+                self.tela.blit(texto_render, (texto_x + 10, texto_y + 5))
         if time.get_ticks() - self.inventario_cheio_tempo < self.inventario_cheio_duracao and self.inventario_cheio_msg:
             font_msg = font.Font(resource_path('assets/fontes/alagard.ttf'), 36)
             texto = font_msg.render(self.inventario_cheio_msg, True, (255, 0, 0))
