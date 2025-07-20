@@ -555,19 +555,15 @@ class Sala:
                         if chance <= dificuldade_global.chance("lendaria"):
                             raridade = "lendaria"
                             cor = (255, 255, 0)
-                            hover = (100, 100, 0)
                         elif chance <= dificuldade_global.chance("raro"):
                             raridade = "raro"
                             cor = (128, 0, 128)
-                            hover = (28, 0, 28)
                         elif chance <= dificuldade_global.chance("incomum"):
                             raridade = "incomum"
                             cor = (0, 255, 0)
-                            hover = (0, 100, 0)
                         else:
                             raridade = "comum"
                             cor = (255, 255, 255)
-                            hover = (100, 100, 100)
 
                         arma_tipo = choice([
                             LaminaDaNoite, Chigatana, Karambit, EspadaDoTita,
@@ -575,17 +571,23 @@ class Sala:
                         ])
                         arma = arma_tipo(raridade, self.lista_mods)
 
+                        # Carrega a imagem da bola
+                        bola_img = transform.scale(image.load(f"assets/itens/bola{raridade}.png"), (64, 64))
+
+                        # Cria o botão com a bola como imagem
+                        fontinha = font.Font(resource_path('assets/fontes/alagard.ttf'), 18)
                         botao = Botao(
-                            image=None,
+                            image=bola_img,
                             pos=pos,
-                            text_input="",
-                            font=None,
+                            text_input=arma.nome,
+                            font=fontinha,
                             base_color=cor,
-                            hovering_color=hover,
+                            hovering_color=cor,
                             value=arma
                         )
-                        botao.raridade = raridade
-                        botao.show_text = False
+
+                        # Ajusta a posição do retângulo para centralizar a bola
+                        botao.rect = bola_img.get_rect(center=(pos[0], pos[1]))
 
                         self.loots.append((botao, arma))
                         inimigo.loot_botao_criado = True
@@ -690,18 +692,17 @@ class Sala:
         #     draw.rect(tela, (255,0,0), collider['rect'], 1)
         # draw.rect(tela, (0,255,0), self.player.player_rect, 2)
         for botao, arma in self.loots:
-            # Desenha a bola da raridade
-            raridadeArma = botao.raridade
-            spriteLoot = transform.scale(image.load(f"assets/itens/bola{raridadeArma}.png"), (64, 64))
-            self.tela.blit(spriteLoot, (botao.x_pos - 32, botao.y_pos - 32))
+            # Desenha apenas a bola (imagem do botão)
+            self.tela.blit(botao.image, botao.rect)
 
-            # Verifica se o mouse está sobre a bola
+            # Verifica hover e desenha texto se necessário
             mouse_pos = mouse.get_pos()
-            bola_rect = Rect(botao.x_pos - 32, botao.y_pos - 32, 64, 64)
-            if bola_rect.collidepoint(mouse_pos):
-                # Mostra o texto quando hover
-                fontinha = font.Font(resource_path('assets/fontes/alagard.ttf'), 18)
-                texto_render = fontinha.render(arma.nome, True, botao.base_color)
+            if botao.rect.collidepoint(mouse_pos):
+                # Atualiza a cor do texto
+                botao.changeColor(mouse_pos)
+
+                # Renderiza o texto acima da bola
+                texto_render = botao.font.render(botao.text_input, True, botao.hovering_color)
                 largura = texto_render.get_width() + 20
                 altura = texto_render.get_height() + 10
 
