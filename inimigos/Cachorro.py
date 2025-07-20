@@ -286,6 +286,22 @@ class Cerbero(Inimigo):
         # Desenha barra de vida
         self.desenhar_barra_vida(tela, offset)
 
+        now = time.get_ticks()
+        if hasattr(self, 'veneno_ativo') and self.veneno_ativo:
+            if now >= self.veneno_proximo_tick and self.veneno_ticks > 0:
+                self.hp -= self.veneno_dano_por_tick
+                self.veneno_ticks -= 1
+                self.veneno_proximo_tick = now + self.veneno_intervalo
+
+                # Inicia animação de hit como feedback visual (opcional)
+                self.anima_hit = True
+                self.time_last_hit_frame = now
+                self.ultimo_dano = self.veneno_dano_por_tick
+                self.ultimo_dano_tempo = time.get_ticks()
+
+            if self.veneno_ticks <= 0:
+                self.veneno_ativo = False
+
     def desenhar_barra_vida(self, tela, offset):
         largura_barra = 300
         altura_barra = 20
