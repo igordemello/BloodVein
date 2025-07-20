@@ -1048,11 +1048,11 @@ class Player():
         self.base_dash_cooldown_max = 1000
         self.base_dash_duration_max = 150
 
-        self.arma.dano = self.base_dano * (1 + (self.atributos["forca"] - 5) / 5)
+        self.arma.dano = max(1,self.base_dano * (1 + (self.atributos["forca"] - 5) / 5))
         self.arma.lifeSteal = self.arma.dano/self.arma.lifeStealMod
         self.arma.danoCriticoMod = self.base_danoCriticoMod * (1 + (self.atributos["forca"] - 5) / 5)
-        self.arma.velocidade = self.base_velocidade * (1 + ((self.atributos["destreza"] - 5) / 5) * 0.5)
-        self.arma.chanceCritico = self.base_chanceCritico * (1 + ((self.atributos["sorte"] - 5) / 5) * 3)
+        self.arma.velocidade = max(0.2,self.base_velocidade * (1 + ((self.atributos["destreza"] - 5) / 5) * 0.5))
+        self.arma.chanceCritico = max(1,self.base_chanceCritico * (1 + ((self.atributos["sorte"] - 5) / 5) * 3))
         self.rate = self.base_rate - (self.atributos["vigor"] - 5) / 20
         self.rateSt = self.base_rateSt + ((self.atributos["estamina"] - 5) / 5) * 0.6
         self.velocidadeMov = self.base_velocidadeMov + ((self.atributos["agilidade"] - 5) / 5) * 0.5
