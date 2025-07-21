@@ -3,6 +3,8 @@ import sys
 from pygame.locals import QUIT
 import math
 from bau import Bau
+from inimigos.aranhadosol import AranhaDoSol
+from inimigos.arqueiro import Arqueiro
 from inimigos.ratodesangue import RatoDeSangue
 from itensDic import ConjuntoItens
 from mapa import Mapa
@@ -35,7 +37,7 @@ from inimigos.esqueleto_gelo import EsqueletoGelo
 from inimigos.esqueleto_peconhento import EsqueletoPeconhento
 from save_manager import SaveManager
 from dificuldade import dificuldade_global
-from utils import resource_path 
+from utils import resource_path
 import pygame
 
 def pixel_para_grid(x, y, offset, tile_size_scaled):
@@ -263,8 +265,8 @@ class Sala:
     def _criar_inimigo_aleatorio(self, x, y, tipo_sala):
         elite = "bau" in tipo_sala
 
-        # tipos_disponiveis = ["furacao","caveiradefogo","morcegopadrao","orb","espectro","polvo", "esqueletogelo", "massa", "zombie","aranhalunar","esqueletogelo","ratodesangue"]
-        tipos_disponiveis = ["ratodesangue"]
+        # tipos_disponiveis = ["furacao","caveiradefogo","morcegopadrao","orb","espectro","polvo", "esqueletogelo", "massa", "zombie","aranhalunar","esqueletogelo","ratodesangue", "aranhadosol","arqueiro"]
+        tipos_disponiveis = ["arqueiro"]
         tipo_escolhido = choice(tipos_disponiveis)
 
 
@@ -331,6 +333,16 @@ class Sala:
             inimigo.nome_base = "Esqueleto Peçonhento"
             inimigo.aplicar_modificadores(elite=elite)
 
+        elif tipo_escolhido == "aranhadosol":
+            inimigo = AranhaDoSol(x, y, 48, 48, hp=100 if not elite else 300)
+            inimigo.nome_base = "Aranha Sol"
+            inimigo.aplicar_modificadores(elite=elite)
+
+        elif tipo_escolhido == "arqueiro":
+            inimigo = Arqueiro(x, y, 128, 128, hp=100 if not elite else 300)
+            inimigo.nome_base = "Arqueiro"
+            inimigo.aplicar_modificadores(elite=elite)
+
         # Adicione outros tipos de inimigos aqui no futuro:
         # elif tipo_escolhido == "novo_inimigo":
         #     inimigo = NovoInimigo(x, y, ...)
@@ -393,7 +405,7 @@ class Sala:
         for inimigo in self.inimigos:
             if inimigo.vivo and self.player.hp > 0:
                 p_rect = Rect(self.player.x, self.player.y, 60, 120)
-                
+
                 if isinstance(inimigo, (EsqueletoGelo, EsqueletoPeconhento)):
                     inimigo.atualizar(p_rect.center, self.tela, self.mapa.matriz, self.mapa.get_offset(), self.player)
                 else:
@@ -784,7 +796,7 @@ class Sala:
         # # DEBUG: Desenhar grade e caminho
         # offset_x, offset_y = self.mapa.get_offset()
         # tile_size_scaled = 32 * 3.25
-        
+
         # # 1. Desenhar grade de tiles
         # for y in range(self.mapa.tmx_data.height + 1):
         #     draw.line(
@@ -800,7 +812,7 @@ class Sala:
         #         (offset_x + x * tile_size_scaled, offset_y + self.mapa.tmx_data.height * tile_size_scaled),
         #         1
         #     )
-        
+
         # # 2. Desenhar caminho do inimigo
         # for inimigo in self.inimigos:
         #     if not inimigo.vivo:
@@ -814,7 +826,7 @@ class Sala:
         #             )
         #             # Desenhar ponto do caminho
         #             draw.circle(tela, (0, 255, 0), (int(px), int(py)), 5)
-                    
+
         #             # Desenhar linha entre pontos
         #             if i > 0:
         #                 prev_px, prev_py = grid_para_pixel(
@@ -823,7 +835,7 @@ class Sala:
         #                     tile_size_scaled
         #                 )
         #                 draw.line(tela, (0, 200, 0), (prev_px, prev_py), (px, py), 2)
-        
+
         # # 3. Desenhar posição atual em grid
         # for inimigo in self.inimigos:
         #     if not inimigo.vivo:
