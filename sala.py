@@ -428,17 +428,7 @@ class Sala:
                     inimigo.atualizar(p_rect.center, self.tela, self.mapa.matriz, self.mapa.get_offset(), self.player)
                 elif isinstance(inimigo, bossmod.MouthOrb):
                     inimigo.atualizar(p_rect.center, self.tela, self)
-                elif isinstance(inimigo, Orb):
-                    inimigo.atualizar(p_rect.center, self.tela)
-                elif isinstance(inimigo, Espectro):
-                    inimigo.atualizar(p_rect.center, self.tela)
-                elif isinstance(inimigo, Massa):
-                    inimigo.atualizar(p_rect.center, self.tela)
-                elif isinstance(inimigo, Furacao):
-                    inimigo.atualizar(p_rect.center, self.tela)
-                elif isinstance(inimigo, CaveiraDeFogo):
-                    inimigo.atualizar(p_rect.center, self.tela)
-                elif isinstance(inimigo, Polvo):
+                elif isinstance(inimigo, (Orb, Espectro, Massa, Furacao, CaveiraDeFogo, Polvo)):
                     inimigo.atualizar(p_rect.center, self.tela)
                 else:
                     inimigo.atualizar(p_rect.center, self.tela, self.mapa.matriz, self.mapa.get_offset())
