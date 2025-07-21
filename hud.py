@@ -49,6 +49,15 @@ class Hud:
         self.potion_press_time = [0] * 2
         self.press_duration = 200
 
+        self.hotkeys_bg = image.load(resource_path('assets/UI/hotbar.png')).convert_alpha()
+        self.hotkeys_bg = transform.scale(self.hotkeys_bg, (104, 104))
+
+        # Update the hotkey_slots initialization:
+        self.hotkey_slots = [
+            {"rect": Rect(50, 320 + i * 125, 104, 104), "color": (100, 100, 100, 200)}
+            for i in range(4)
+        ]
+
         self.combo_shake_intensity = 0
         self.combo_shake_duration = 0
         self.last_combo_count = 0
@@ -161,25 +170,32 @@ class Hud:
 
         #pocoes
         for i, slot in enumerate(pocao_slots):
+            # Fundo padrão da hotbar
+            self.tela.blit(self.hotkeys_bg, (slot["rect"].x + offset_x, slot["rect"].y + offset_y))
+
+            # Cor de destaque ao pressionar
             if i == 0 and self.potion_pressed[0]:
-                color = (100, 0, 0, 200)
+                color = (100, 0, 0, 100)  # Vermelho para poção de vida
             elif i == 1 and self.potion_pressed[1]:
-                color = (0, 0, 100, 200)
+                color = (0, 0, 100, 100)  # Azul para poção de mana
             else:
-                color = slot["color"]
+                color = None
 
-            slot_surface = Surface((slot["rect"].width, slot["rect"].height), SRCALPHA)
-            slot_surface.fill(color)
-            draw.rect(slot_surface, (255, 255, 255, 150), slot_surface.get_rect(), 2)
-            self.tela.blit(slot_surface, (slot["rect"].x + offset_x, slot["rect"].y + offset_y))
+            if color:
+                overlay = Surface((slot["rect"].width, slot["rect"].height), SRCALPHA)
+                overlay.fill(color)
+                self.tela.blit(overlay, (slot["rect"].x + offset_x, slot["rect"].y + offset_y))
 
+            # Tecla
             tecla_texto = self.hotkey_font.render(slot["tecla"], True, (243, 236, 215))
             self.tela.blit(tecla_texto, (slot["rect"].x + 45 + offset_x, slot["rect"].y - 20 + offset_y))
 
+            # Ícone da poção
             pocao_img = slot["pocao"]
             img_rect = pocao_img.get_rect(center=slot["rect"].center)
             self.tela.blit(pocao_img, (img_rect.x + offset_x, img_rect.y + offset_y))
 
+            # Quantidade
             qtd_text = pocoes_font.render(f"{slot['qtd']}x", True, (243, 236, 215))
             self.tela.blit(qtd_text, (slot["rect"].right - 65 + offset_x, slot["rect"].bottom + 5 + offset_y))
 
@@ -235,10 +251,8 @@ class Hud:
         }
 
         if self.player.itemAtivo is not None:
-            slot_surface = Surface((item_slot["rect"].width, item_slot["rect"].height), SRCALPHA)
-            slot_surface.fill(item_slot["color"])
-            draw.rect(slot_surface, (255, 255, 255, 150), slot_surface.get_rect(), 2)
-            self.tela.blit(slot_surface, (item_slot["rect"].x + offset_x, item_slot["rect"].y + offset_y))
+            self.tela.blit(self.hotkeys_bg, (item_slot["rect"].x + offset_x, item_slot["rect"].y + offset_y))
+
 
             tecla_texto = self.hotkey_font.render(item_slot["tecla"], True, (243, 236, 215))
             self.tela.blit(tecla_texto, (item_slot["rect"].x + 45 + offset_x, item_slot["rect"].y - 20 + offset_y))
@@ -349,23 +363,28 @@ class Hud:
         teclas = ["1", "2", "3", "4"]
 
         for i, slot in enumerate(self.hotkey_slots):
-            if self.hotkey_pressed[i]:
-                color = (0, 100, 0, 200)
-            elif self.player.hotkeys[i] != 0:
-                color = (0, 200, 0, 200)
-            else:
-                color = (100, 100, 100, 200)
+            # Draw the hotbar background
+            self.tela.blit(self.hotkeys_bg, (slot["rect"].x + offset_x, slot["rect"].y + offset_y))
 
-            slot_surface = Surface((slot["rect"].width, slot["rect"].height), SRCALPHA)
-            slot_surface.fill(color)
-            draw.rect(slot_surface, (255, 255, 255, 150), slot_surface.get_rect(), 2)
-            self.tela.blit(slot_surface, (slot["rect"].x + offset_x, slot["rect"].y + offset_y))
-
+            # Draw the key number
             tecla_texto = self.hotkey_font.render(teclas[i], True, (243, 236, 215))
             self.tela.blit(tecla_texto, (slot["rect"].x + 45 + offset_x, slot["rect"].y - 20 + offset_y))
 
+            # Draw the skill sprite if assigned
             if self.player.hotkeys[i] != 0:
                 hab_nome = self.player.hotkeys[i]
-                texto = self.hotkey_font.render(hab_nome[:4], True, (243, 236, 215))
-                texto_rect = texto.get_rect(center=slot["rect"].center)
-                self.tela.blit(texto, (texto_rect.x + offset_x, texto_rect.y + offset_y))
+                print(hab_nome)
+                # Get the skill sprite from the habilidades manager
+
+                hab_sprite = image.load(
+                    self.player.gerenciador_habilidades.habilidades[hab_nome].sprite_path).convert_alpha()
+                hab_sprite = transform.scale(hab_sprite, (100, 100))
+                img_rect = hab_sprite.get_rect(center=slot["rect"].center)
+                self.tela.blit(hab_sprite, (img_rect.x + offset_x, img_rect.y + offset_y))
+
+
+            # Add highlight if pressed
+            if self.hotkey_pressed[i]:
+                highlight = Surface((104, 104), SRCALPHA)
+                highlight.fill((0, 255, 0, 100))
+                self.tela.blit(highlight, (slot["rect"].x + offset_x, slot["rect"].y + offset_y))

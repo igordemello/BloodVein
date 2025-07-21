@@ -1,5 +1,8 @@
 from pygame import *
 
+from utils import resource_path
+
+
 class Habilidade:
     def __init__(self, nome, custo, requisitos=[], requisito_alternativo=False,
                  descricao="", sprite_path=None):
@@ -16,24 +19,35 @@ class GerenciadorHabilidades:
     def __init__(self):
         self.habilidades = {
             "Bola de Fogo": Habilidade("Bola de Fogo", 1,
-                                       descricao="Dispara uma bola de fogo que causa dano ao atingir inimigos", sprite_path="assets\Habilidades\BolaDeFogo.png"),
-            "Fonte Arcana": Habilidade("Fonte Arcana", 1, descricao="Recupera mana gradualmente",sprite_path="assets\Habilidades\FonteArcana.png"),
+                                       descricao="Dispara uma bola de fogo que causa dano ao atingir inimigos",
+                                       sprite_path=resource_path("assets\\Habilidades\\BolaDeFogo.png")),
+            "Fonte Arcana": Habilidade("Fonte Arcana", 1,
+                                       descricao="Recupera mana gradualmente",
+                                       sprite_path=resource_path("assets\\Habilidades\\FonteArcana.png")),
             "Clarão": Habilidade("Clarão", 1, ["Bola de Fogo"],
-                                 descricao="Explosão de luz que causa dano em área",sprite_path="assets\Habilidades\Clarao.png"),
+                                 descricao="Explosão de luz que causa dano em área",
+                                 sprite_path=resource_path("assets\\Habilidades\\Clarao.png")),
             "Nevasca": Habilidade("Nevasca", 1, ["Bola de Fogo"],
-                                  descricao="Dispara projéteis de gelo que reduzem velocidade",sprite_path="assets\Habilidades/Nevasca.png"),
+                                  descricao="Dispara projéteis de gelo que reduzem velocidade",
+                                  sprite_path=resource_path("assets\\Habilidades\\Nevasca.png")),
             "Trovão": Habilidade("Trovão", 2, ["Clarão"],
-                                 descricao="Ataque elétrico poderoso que deixa inimigos imoveis",sprite_path="assets\Habilidades\Trovao.png"),
+                                 descricao="Ataque elétrico poderoso que deixa inimigos imoveis",
+                                 sprite_path=resource_path("assets\\Habilidades\\Trovao.png")),
             "Núvem de Veneno": Habilidade("Núvem de Veneno", 2, ["Nevasca"],
-                                          descricao="Cria uma nuvem venenosa que causa dano contínuo",sprite_path="assets\Habilidades/NuvemDeVeneno.png"),
+                                          descricao="Cria uma nuvem venenosa que causa dano contínuo",
+                                          sprite_path=resource_path("assets\\Habilidades\\NuvemDeVeneno.png")),
             "Escudo": Habilidade("Escudo", 2, ["Fonte Arcana"],
-                                 descricao="Reduz mana máxima e lhe concede um escudo que diminui dano recebido",sprite_path="assets\Habilidades\Escudo.png"),
+                                 descricao="Reduz mana máxima e lhe concede um escudo que diminui dano recebido",
+                                 sprite_path=resource_path("assets\\Habilidades\\Escudo.png")),
             "Corrente Elétrica": Habilidade("Corrente Elétrica", 3, ["Trovão", "Núvem de Veneno"], True,
-                                            descricao="Seu dash agora é uma corrente elétrica que da dano nos inimigos em seu caminho",sprite_path="assets\Habilidades\CorrenteEletrica.png"),
+                                            descricao="Seu dash agora é uma corrente elétrica que da dano nos inimigos em seu caminho",
+                                            sprite_path=resource_path("assets\\Habilidades\\CorrenteEletrica.png")),
             "Eficiência Arcana": Habilidade("Eficiência Arcana", 3, ["Escudo"],
-                                            descricao="Reduz custo de mana de todas as habilidades",sprite_path="assets\Habilidades\EficienciaArcana.png"),
+                                            descricao="Reduz custo de mana de todas as habilidades",
+                                            sprite_path=resource_path("assets\\Habilidades\\EficienciaArcana.png")),
             "Estomago de Mana": Habilidade("Estomago de Mana", 3, ["Escudo"],
-                                           descricao="Poções de mana recuperam completamente sua mana",sprite_path="assets\Habilidades\estômago_de_mana.png"),
+                                           descricao="Poções de mana recuperam completamente sua mana",
+                                           sprite_path=resource_path("assets\\Habilidades\\estômago_de_mana.png")),
         }
 
         self.passivas = ["Fonte Arcana", "Escudo", "Corrente Elétrica", "Eficiência Arcana", "Estomago de Mana"]

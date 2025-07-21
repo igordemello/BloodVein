@@ -2,8 +2,7 @@ from pygame import *
 import sys
 from pygame.locals import QUIT
 import math
-
-from utils import resource_path 
+from utils import resource_path
 from screen_shake import screen_shaker
 
 
@@ -28,6 +27,10 @@ class Colisao:
         from inimigos.aranha_lunar import AranhaLunar
         from inimigos.esqueleto_gelo import EsqueletoGelo
         from inimigos.esqueleto_peconhento import EsqueletoPeconhento
+        from inimigos.Cachorro import Cerbero
+        from inimigos.MagoElementar import MagoElementar
+        from inimigos.aranhadosol import AranhaDoSol
+        from inimigos.vampirosol import VampiroSol
 
         for i, ent1 in enumerate(self.entidades):
             # Ignora completamente o Orb (não colide com ninguém)
@@ -40,10 +43,10 @@ class Colisao:
 
                 # Ignora Player com qualquer coisa que não seja Zombie ou AranhaLunar
                 if isinstance(ent1, Player):
-                    if not isinstance(ent2, (Zombie, AranhaLunar, EsqueletoGelo, EsqueletoPeconhento)):
+                    if not isinstance(ent2, (Zombie, AranhaLunar, EsqueletoGelo, EsqueletoPeconhento,Cerbero,VampiroSol,AranhaDoSol,MagoElementar)):
                         continue
                 elif isinstance(ent2, Player):
-                    if not isinstance(ent1, (Zombie, AranhaLunar, EsqueletoGelo, EsqueletoPeconhento)):
+                    if not isinstance(ent1, (Zombie, AranhaLunar, EsqueletoGelo, EsqueletoPeconhento,Cerbero,VampiroSol,AranhaDoSol,MagoElementar)):
                         continue
 
                 # Ignora colisões entre zombies
@@ -308,32 +311,40 @@ class Colisao:
 
     def _colisao_projetil_inimigo_player(self):
         from player import Player
+        from pygame import event, time, USEREVENT
+
         for inimigo in self.entidades:
             if hasattr(inimigo, 'projeteis') and not isinstance(inimigo, Player):
                 for projetil in inimigo.projeteis[:]:
-                    # Criar hitbox circular mais precisa
-                    projetil_raio = projetil["raio_hitbox"]
+                    try:
+                        projetil_raio = projetil["raio_hitbox"]
+                    except KeyError:
+                        projetil_raio = 12  # valor padrão
+
                     centro_projetil = (projetil["x"], projetil["y"])
 
-                    # Verificar colisão com player (também circular)
+                    # Verificar colisão com player (circular)
                     player_rect = self.player.get_hitbox()
                     player_centro = (player_rect.centerx, player_rect.centery)
                     player_raio = max(player_rect.width, player_rect.height) // 2
 
-                    distancia = math.sqrt((centro_projetil[0] - player_centro[0]) ** 2 +
-                                          (centro_projetil[1] - player_centro[1]) ** 2)
+                    distancia = math.hypot(centro_projetil[0] - player_centro[0],
+                                           centro_projetil[1] - player_centro[1])
 
                     if distancia < (projetil_raio + player_raio):
-                        self.player.tomar_dano(projetil["dano"])
-                        inimigo.projeteis.remove(projetil)
-                        break
+                        self.player.tomar_dano(projetil.get("dano", 0))
 
-                    # Colisão com o mapa SOMENTE PAREDES
+                        if projetil.get("congelar", False):
+                            self.player.congelar(2000)
+
+                        inimigo.projeteis.remove(projetil)
+                        break  # sai do loop de projéteis após o primeiro hit
+
+                    # Colisão com o mapa (paredes)
                     for collider in self.mapa.colliders_sem_obstaculo:
                         if Rect(projetil["x"] - projetil_raio, projetil["y"] - projetil_raio,
                                 projetil_raio * 2, projetil_raio * 2).colliderect(collider['rect']):
                             if projetil in inimigo.projeteis:
                                 inimigo.projeteis.remove(projetil)
                             break
-
 

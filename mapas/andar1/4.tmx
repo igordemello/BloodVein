@@ -74,10 +74,10 @@
 </data>
  </layer>
  <objectgroup id="36" name="inimigo_spawn">
-  <object id="125" x="298.108" y="53.1393" width="13.9131" height="12.7147"/>
-  <object id="126" x="135.526" y="54.6787" width="15.036" height="12.5164"/>
-  <object id="132" x="272.401" y="169.117" width="10.7901" height="9.54423"/>
-  <object id="133" x="210.411" y="109.412" width="13.0639" height="11.441"/>
+  <object id="125" x="320" y="64" width="13.9131" height="12.7147"/>
+  <object id="126" x="128" y="64" width="15.036" height="12.5164"/>
+  <object id="132" x="256" y="160" width="10.7901" height="9.54423"/>
+  <object id="133" x="224" y="128" width="13.0639" height="11.441"/>
  </objectgroup>
  <objectgroup id="15" name="colisor_obstaculo">
   <object id="76" name="bau" x="356.5" y="34.4773" width="21.2386" height="21.1705"/>

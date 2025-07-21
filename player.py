@@ -4,6 +4,8 @@ from pygame.locals import QUIT
 import math
 from efeito import *
 import time as t
+
+from habilidades import GerenciadorHabilidades
 from sala import *
 from armas import *
 from random import *
@@ -55,6 +57,8 @@ class Player():
         self.venenoDano = 40
 
         self.lista_mods = ListaMods()
+
+        self.gerenciador_habilidades = GerenciadorHabilidades()
 
         self.inventario = [
             LaminaDaNoite("comum", self.lista_mods),
@@ -299,6 +303,11 @@ class Player():
                 self.itemAtivo = None
 
     def atualizar(self, dt, teclas):
+        current_time = time.get_ticks()
+        if hasattr(self, 'tempo_descongelar') and current_time >= self.tempo_descongelar:
+            self.travado = False
+            if hasattr(self, 'tempo_descongelar'):
+                del self.tempo_descongelar
         self.fonte_arcana()
         self.escudo()
         # print(f'HP: {self.hp}, Stamina: {self.stamina}, Mana: {self.mp}')
@@ -869,6 +878,8 @@ class Player():
             )
 
     def ataque_espadaPrincipal(self, inimigos, mouse_pos, dt):
+        if hasattr(self, 'tempo_descongelar'):
+            return
         print(self.efeitos)
         current_time = time.get_ticks()
         if self.arma.velocidade <= 0:
@@ -945,7 +956,8 @@ class Player():
 
     def ataque_espadaSecundario(self, inimigos, mouse_pos, dt):
         current_time = time.get_ticks()
-
+        if hasattr(self, 'tempo_descongelar'):
+            return
         if self.arma.velocidade <= 0:
             self.arma.velocidade = 1
         cooldown = self.cooldown_ataque_base / self.arma.velocidade
@@ -1409,3 +1421,10 @@ class Player():
                     self.hp = 1  # evita que morra pelo veneno
             if agora - self.tempo_veneno > self.duracao_veneno:
                 self.envenenado = False
+
+    def congelar(self, duracao):
+        """Congela o jogador por uma determinada duração em milissegundos."""
+        current_time = time.get_ticks()
+        self.travado = True
+        self.proibir_dash_ate = current_time + duracao  # Impede dash durante o congelamento
+        self.tempo_descongelar = current_time + duracao  # Armazena quando deve descongelar
