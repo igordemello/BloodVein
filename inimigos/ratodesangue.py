@@ -124,6 +124,21 @@ class RatoDeSangue(Inimigo):
         if self.em_cooldown and now - self.tempo_ultimo_ataque > self.cooldown_ataque:
             self.em_cooldown = False
 
+        if hasattr(self, 'veneno_ativo') and self.veneno_ativo:
+            if now >= self.veneno_proximo_tick and self.veneno_ticks > 0:
+                self.hp -= self.veneno_dano_por_tick
+                self.veneno_ticks -= 1
+                self.veneno_proximo_tick = now + self.veneno_intervalo
+
+                # Inicia animação de hit como feedback visual (opcional)
+                self.anima_hit = True
+                self.time_last_hit_frame = now
+                self.ultimo_dano = self.veneno_dano_por_tick
+                self.ultimo_dano_tempo = time.get_ticks()
+
+            if self.veneno_ticks <= 0:
+                self.veneno_ativo = False
+
         self.flip_horizontal = self.vx < -0.5
         self.flip_vertical = self.vy < -0.5
 

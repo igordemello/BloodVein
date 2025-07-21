@@ -18,7 +18,7 @@ class Dificuldade:
             self.levas = 2
         elif nivel == 'lua de sangue':
             self.mult_dano_jogador = 3.0
-            self.mult_dano_inimigo = 0.1
+            self.mult_dano_inimigo = 2
             self.levas = 3
         else:
             self.mult_dano_jogador = 1.0

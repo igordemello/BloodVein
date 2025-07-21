@@ -118,6 +118,21 @@ class MagoElementar(Inimigo):
                 self.frame_index = 0
             self.vx = self.vy = 0
 
+        if hasattr(self, 'veneno_ativo') and self.veneno_ativo:
+            if now >= self.veneno_proximo_tick and self.veneno_ticks > 0:
+                self.hp -= self.veneno_dano_por_tick
+                self.veneno_ticks -= 1
+                self.veneno_proximo_tick = now + self.veneno_intervalo
+
+                # Inicia animação de hit como feedback visual (opcional)
+                self.anima_hit = True
+                self.time_last_hit_frame = now
+                self.ultimo_dano = self.veneno_dano_por_tick
+                self.ultimo_dano_tempo = time.get_ticks()
+
+            if self.veneno_ticks <= 0:
+                self.veneno_ativo = False
+
         self.set_velocidade_x(self.vx)
         self.set_velocidade_y(self.vy)
 
@@ -198,3 +213,5 @@ class MagoElementar(Inimigo):
             texto = fonte.render(str(self.nome), True, (255, 255, 255))
             texto_rect = texto.get_rect(center=(barra_x - 20 + largura_barra / 2, barra_y + 55))
             tela.blit(texto, texto_rect)
+
+        self.desenhar_dano(tela, offset)

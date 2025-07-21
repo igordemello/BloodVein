@@ -138,6 +138,21 @@ class VampiroSol(Inimigo):
                 self.frames = self.frames_morcego
                 self.frame_index = 0
 
+        if hasattr(self, 'veneno_ativo') and self.veneno_ativo:
+            if now >= self.veneno_proximo_tick and self.veneno_ticks > 0:
+                self.hp -= self.veneno_dano_por_tick
+                self.veneno_ticks -= 1
+                self.veneno_proximo_tick = now + self.veneno_intervalo
+
+                # Inicia animação de hit como feedback visual (opcional)
+                self.anima_hit = True
+                self.time_last_hit_frame = now
+                self.ultimo_dano = self.veneno_dano_por_tick
+                self.ultimo_dano_tempo = time.get_ticks()
+
+            if self.veneno_ticks <= 0:
+                self.veneno_ativo = False
+
         self.set_velocidade_x(self.vx)
         self.set_velocidade_y(self.vy)
         self.atualizar_animacao()
