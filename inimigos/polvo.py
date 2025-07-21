@@ -139,7 +139,7 @@ class Polvo(Inimigo):
         tela.blit(rot_surf, rot_rect)
 
         self.desenhar_dano(tela, offset)
-
+        now = time.get_ticks()
         if hasattr(self, 'veneno_ativo') and self.veneno_ativo:
             if now >= self.veneno_proximo_tick and self.veneno_ticks > 0:
                 self.hp -= self.veneno_dano_por_tick

@@ -240,6 +240,7 @@ class Furacao(Inimigo):
             texto_rect = texto.get_rect(
                 center=(barra_x - 20 + largura_barra / 2, barra_y + 30 + 25))  # 25 = altura/2 da barra
             tela.blit(texto, texto_rect)
+            self.desenha_debuffs(tela, barra_x, barra_y, largura_barra)
 
         now = time.get_ticks()
         if hasattr(self, 'veneno_ativo') and self.veneno_ativo:

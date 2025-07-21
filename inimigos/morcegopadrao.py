@@ -168,13 +168,6 @@ class MorcegoPadrao(Inimigo):
 
         self.desenhar_dano(tela, offset)
 
-        vida_maxima = getattr(self, "hp_max", 100)
-        largura_barra = 500
-        porcentagem = max(0, min(self.hp / vida_maxima, 1))
-        largura_hp = porcentagem * largura_barra
-
-        barra_x = 980 - (largura_barra / 2)
-        barra_y = 0
         now = time.get_ticks()
         if hasattr(self, 'veneno_ativo') and self.veneno_ativo:
             if now >= self.veneno_proximo_tick and self.veneno_ticks > 0:
@@ -191,6 +184,15 @@ class MorcegoPadrao(Inimigo):
             if self.veneno_ticks <= 0:
                 self.veneno_ativo = False
 
+
+        vida_maxima = getattr(self, "hp_max", 100)
+        largura_barra = 500
+        porcentagem = max(0, min(self.hp / vida_maxima, 1))
+        largura_hp = porcentagem * largura_barra
+
+        barra_x = 980 - (largura_barra / 2)
+        barra_y = 0
+
         if hasattr(self, 'ultimo_dano') and time.get_ticks() - self.ultimo_dano_tempo < 2500:
             draw.rect(tela, (10, 10, 10), (barra_x - 20, barra_y + 30, largura_barra, 50))
             draw.rect(tela, (150, 0, 0), (barra_x - 20, barra_y + 30, largura_hp, 50))
@@ -202,3 +204,4 @@ class MorcegoPadrao(Inimigo):
             texto_rect = texto.get_rect(
                 center=(barra_x - 20 + largura_barra / 2, barra_y + 30 + 25))  # 25 = altura/2 da barra
             tela.blit(texto, texto_rect)
+            self.desenha_debuffs(tela, barra_x, barra_y, largura_barra)

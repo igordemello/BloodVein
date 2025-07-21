@@ -114,6 +114,7 @@ class Orb(Inimigo):
             tela.blit(s, (projetil["x"] - projetil["tamanho"] // 2 + offset_x,
                           projetil["y"] - projetil["tamanho"] // 2 + offset_y))
 
+
         vida_maxima = getattr(self, "hp_max", 100)
         largura_barra = 500
         porcentagem = max(0, min(self.hp / vida_maxima, 1))
@@ -133,6 +134,7 @@ class Orb(Inimigo):
             texto_rect = texto.get_rect(
                 center=(barra_x - 20 + largura_barra / 2, barra_y + 30 + 25))  # 25 = altura/2 da barra
             tela.blit(texto, texto_rect)
+            self.desenha_debuffs(tela, barra_x, barra_y, largura_barra)
 
         rot_rect, rot_surf = self.get_hitbox_ataque((player_pos[0] + offset_x, player_pos[1] + offset_y))
         tela.blit(rot_surf, rot_rect)

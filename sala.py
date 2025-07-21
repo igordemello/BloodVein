@@ -273,9 +273,28 @@ class Sala:
     def _criar_inimigo_aleatorio(self, x, y, tipo_sala):
         elite = "bau" in tipo_sala
 
-        # tipos_disponiveis = ["furacao","caveiradefogo","morcegopadrao","orb","espectro","polvo", "esqueletogelo", "massa", "zombie","aranhalunar","esqueletogelo","ratodesangue", "aranhadosol","arqueiro", "vampirosol","magoelementar"]
-        tipos_disponiveis = ["furacao","caveiradefogo","morcegopadrao","orb","espectro","polvo", "esqueletogelo", "massa", "zombie","aranhalunar","esqueletogelo","ratodesangue", "aranhadosol","arqueiro", "vampirosol","magoelementar"]
-        tipo_escolhido = choice(tipos_disponiveis)
+        # tipos_disponiveis = ["furacao","caveiradefogo","morcegopadrao","orb","espectro","polvo", "esqueletogelo", "massa", "zombie","aranhalunar","esqueletogelo","ratodesangue", "aranhadosol","arqueiro", "vampirosol","magoelementar","esqueletopeconhento"]
+        #tipos_disponiveis = ["furacao","caveiradefogo","morcegopadrao","orb","espectro","polvo", "esqueletogelo", "massa", "zombie","aranhalunar","esqueletogelo","ratodesangue", "aranhadosol","arqueiro", "vampirosol","magoelementar","esqueletopeconhento"]
+
+        geral = ["caveiradefogo", "furacao", "orb", "morcegopadrao", "zombie", "magoelementar"]
+        andar1 = geral + ["aranhalunar", "ratodesangue", "polvo"]
+        andar2 = geral + ["massa", "esqueletogelo", "esqueletopeconhento"]
+        andar3 = geral + ["arqueiro", "espectro", "aranhadosol"]
+        andar4 = geral + ["vampirosol"]
+
+        andar_atual = self.gerenciador_andar.numero_andar
+        if andar_atual == 1:
+            pool_inimigos = andar1
+        elif andar_atual == 2:
+            pool_inimigos = andar2
+        elif andar_atual == 3:
+            pool_inimigos = andar3
+        elif andar_atual >= 4:
+            pool_inimigos = andar4
+        else:
+            pool_inimigos = geral
+
+        tipo_escolhido = choice(pool_inimigos)
 
 
         if tipo_escolhido == "furacao":
@@ -318,7 +337,7 @@ class Sala:
 
         elif tipo_escolhido == "zombie":
             inimigo = Zombie(x, y, 96, 96, hp=200 if not elite else 300)
-            inimigo.nome_base = "Zombie"
+            inimigo.nome_base = "Zumbi"
             inimigo.aplicar_modificadores(elite=elite)
 
         elif tipo_escolhido == "aranhalunar":
@@ -635,7 +654,7 @@ class Sala:
                             inimigo.pocao_coletada = True
                 if not getattr(inimigo, "loot_coletado", True):
                     if not hasattr(inimigo, "vai_dropar_loot"):
-                        inimigo.vai_dropar_loot = randint(1, 100) <= 70  # 30% de chance de cair loot
+                        inimigo.vai_dropar_loot = randint(1, 100) <= 20  # 30% de chance de cair loot
 
                     if getattr(inimigo, "vai_dropar_loot", False) and not hasattr(inimigo, "loot_botao_criado"):
                         pos = (inimigo.x + 16, inimigo.y + 32)
@@ -660,7 +679,7 @@ class Sala:
                         arma = arma_tipo(raridade, self.lista_mods)
 
                         # Carrega a imagem da bola
-                        bola_img = transform.scale(image.load(f"assets/itens/bola{raridade}.png"), (64, 64))
+                        bola_img = transform.scale(image.load(resource_path(f"assets/itens/bola{raridade}.png")), (64, 64))
 
                         # Cria o botão com a bola como imagem
                         fontinha = font.Font(resource_path('assets/fontes/alagard.ttf'), 18)
@@ -738,7 +757,7 @@ class Sala:
             # Desenhar o baú por cima do contorno e brilho
             tela.blit(self.bau.image, bau_pos)
 
-        if self.pode_trocar_de_sala():
+        if self.pode_trocar_de_sala() and not self.em_transicao:
             texto = self.alagard.render(f"Aperte E para entrar na porta", True, (255, 255, 255))
             rect_texto = texto.get_rect(center=(tela.get_width() // 2, 50))
             tela.blit(texto, rect_texto)
