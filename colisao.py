@@ -28,6 +28,7 @@ class Colisao:
         from inimigos.aranha_lunar import AranhaLunar
         from inimigos.esqueleto_gelo import EsqueletoGelo
         from inimigos.esqueleto_peconhento import EsqueletoPeconhento
+        from inimigos.Cachorro import Cerbero
 
         for i, ent1 in enumerate(self.entidades):
             # Ignora completamente o Orb (não colide com ninguém)
@@ -40,10 +41,10 @@ class Colisao:
 
                 # Ignora Player com qualquer coisa que não seja Zombie ou AranhaLunar
                 if isinstance(ent1, Player):
-                    if not isinstance(ent2, (Zombie, AranhaLunar, EsqueletoGelo, EsqueletoPeconhento)):
+                    if not isinstance(ent2, (Zombie, AranhaLunar, EsqueletoGelo, EsqueletoPeconhento,Cerbero)):
                         continue
                 elif isinstance(ent2, Player):
-                    if not isinstance(ent1, (Zombie, AranhaLunar, EsqueletoGelo, EsqueletoPeconhento)):
+                    if not isinstance(ent1, (Zombie, AranhaLunar, EsqueletoGelo, EsqueletoPeconhento,Cerbero)):
                         continue
 
                 # Ignora colisões entre zombies
