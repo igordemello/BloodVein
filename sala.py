@@ -294,8 +294,6 @@ class Sala:
         else:
             pool_inimigos = geral
 
-
-        pool_inimigos = ["zombie"]
         tipo_escolhido = choice(pool_inimigos)
 
 

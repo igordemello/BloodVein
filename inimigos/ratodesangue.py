@@ -16,7 +16,7 @@ def grid_para_pixel(grid_x, grid_y, offset, tile_size_scaled):
 class RatoDeSangue(Inimigo):
     def __init__(self, x, y, largura=24, altura=24, nome="Rato de Sangue", hp=60, velocidade=2.5, dano=8):
         super().__init__(x, y, largura, altura, hp, velocidade, dano)
-        self.rect.inflate_ip(10, 10)  # aumenta a hitbox sem afetar animações
+        self.rect.inflate_ip(10, 10)
         self.nome = nome
 
         self.tipo_colisao = 'obstaculo'
@@ -41,9 +41,6 @@ class RatoDeSangue(Inimigo):
         self.cooldown_ataque = 600
         self.tempo_ultimo_ataque = 0
         self.em_cooldown = False
-
-        self.flip_vertical = False
-        self.flip_horizontal = False
 
     def carregar_frames(self, spritesheet, total_frames):
         frames = []
@@ -117,9 +114,9 @@ class RatoDeSangue(Inimigo):
                 area_ataque = self.rect.inflate(self.rect.width * 0.5, self.rect.height * 0.5)
                 if hasattr(self, "dar_dano") and callable(self.dar_dano):
                     try:
-                        self.dar_dano(area_ataque, None)  # Se aceitar jogador
+                        self.dar_dano(area_ataque, None)
                     except TypeError:
-                        self.dar_dano()  # compatível com lambda
+                        self.dar_dano()
 
         if self.em_cooldown and now - self.tempo_ultimo_ataque > self.cooldown_ataque:
             self.em_cooldown = False
@@ -130,7 +127,6 @@ class RatoDeSangue(Inimigo):
                 self.veneno_ticks -= 1
                 self.veneno_proximo_tick = now + self.veneno_intervalo
 
-                # Inicia animação de hit como feedback visual (opcional)
                 self.anima_hit = True
                 self.time_last_hit_frame = now
                 self.ultimo_dano = self.veneno_dano_por_tick
@@ -138,9 +134,6 @@ class RatoDeSangue(Inimigo):
 
             if self.veneno_ticks <= 0:
                 self.veneno_ativo = False
-
-        self.flip_horizontal = self.vx < -0.5
-        self.flip_vertical = self.vy < -0.5
 
         self.set_velocidade_x(self.vx)
         self.set_velocidade_y(self.vy)
@@ -158,10 +151,15 @@ class RatoDeSangue(Inimigo):
         self.desenhar_outline_mouseover(tela, self.hp, self.hp_max)
 
         frame = self.frames[self.frame_index % len(self.frames)]
+
+        if abs(self.vx) > abs(self.vy):
+            if self.vx > 0:
+                frame = transform.rotate(frame, 90)
+            else:
+                frame = transform.rotate(frame, -90)
+
         if self.anima_hit:
             frame = self.aplicar_efeito_hit(frame)
-
-        frame = transform.flip(frame, self.flip_horizontal, self.flip_vertical)
 
         tela.blit(frame, (draw_x, draw_y))
 
@@ -178,11 +176,9 @@ class RatoDeSangue(Inimigo):
             draw.rect(tela, (150, 0, 0), (barra_x - 20, barra_y + 30, largura_hp, 50))
             draw.rect(tela, (255, 255, 255), (barra_x - 20, barra_y + 30, largura_barra, 50), 1)
 
-            # Desenhar o nome centralizado
             fonte = font.Font(resource_path('assets/Fontes/alagard.ttf'), 24)
             texto = fonte.render(str(self.nome), True, (255, 255, 255))
-            texto_rect = texto.get_rect(
-                center=(barra_x - 20 + largura_barra / 2, barra_y + 30 + 25))  # 25 = altura/2 da barra
+            texto_rect = texto.get_rect(center=(barra_x - 20 + largura_barra / 2, barra_y + 30 + 25))
             tela.blit(texto, texto_rect)
 
         self.desenhar_dano(tela, offset)
