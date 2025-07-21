@@ -108,6 +108,21 @@ class Arqueiro(Inimigo):
                 self.frame_index = 0
                 self._atirar(player_pos)
 
+        if hasattr(self, 'veneno_ativo') and self.veneno_ativo:
+            if now >= self.veneno_proximo_tick and self.veneno_ticks > 0:
+                self.hp -= self.veneno_dano_por_tick
+                self.veneno_ticks -= 1
+                self.veneno_proximo_tick = now + self.veneno_intervalo
+
+                # Inicia animação de hit como feedback visual (opcional)
+                self.anima_hit = True
+                self.time_last_hit_frame = now
+                self.ultimo_dano = self.veneno_dano_por_tick
+                self.ultimo_dano_tempo = time.get_ticks()
+
+            if self.veneno_ticks <= 0:
+                self.veneno_ativo = False
+
         self.rect.topleft = (round(self.x), round(self.y))
         self.atualizar_animacao()
         self._atualizar_projeteis(player_pos)
@@ -187,3 +202,5 @@ class Arqueiro(Inimigo):
             sprite_rotacionado = transform.rotate(p["sprite"], -p["angulo"])
             sprite_resized = transform.scale(sprite_rotacionado, (p["tamanho"], p["tamanho"]))
             tela.blit(sprite_resized, (p["x"] + offset[0], p["y"] + offset[1]))
+
+        self.desenhar_dano(tela, offset)

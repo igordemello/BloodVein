@@ -76,6 +76,7 @@
                 -1
             ],
             "tipo": "comum",
+            "tipo": "comum",
             "visitada": false,
             "arquivotmx": "andar1/7.tmx",
             "salaanterior": null,
@@ -154,7 +155,7 @@
             ],
             "tipo": "comum",
             "visitada": false,
-            "arquivotmx": "andar1/12.tmx",
+            "arquivotmx": "andar1/22.tmx",
             "salaanterior": null,
             "conexoes": [
                 "sala0",
@@ -167,11 +168,12 @@
             "portas": {
                 "baixo": "sala3"
             },
+            "tipo": "bau",
             "pos": [
                 -1,
                 -2
             ],
-            "tipo": "comum",
+            "bau_aberto": false,
             "visitada": false,
             "arquivotmx": "andar1/17.tmx",
             "salaanterior": null,
@@ -188,6 +190,7 @@
                 1,
                 -2
             ],
+            "tipo": "comum",
             "tipo": "comum",
             "visitada": false,
             "arquivotmx": "andar1/26.tmx",
@@ -229,7 +232,7 @@
             "arquivotmx": "andar1/boss.tmx",
             "salaanterior": null,
             "conexoes": [
-                "sala7"
+                "sala5"
             ],
             "id": "sala11"
         },
@@ -272,16 +275,16 @@
             "portas": {
                 "direita": "sala4"
             },
+            "tipo": "loja",
             "pos": [
                 -1,
                 -3
             ],
-            "tipo": "comum",
             "visitada": false,
             "arquivotmx": "andar1/21.tmx",
             "salaanterior": null,
             "conexoes": [
-                "sala4"
+                "sala9"
             ],
             "id": "sala14"
         }
@@ -328,8 +331,8 @@
             "target": "sala14"
         },
         {
-            "source": "sala5",
-            "target": "sala6"
+            "source": "sala4",
+            "target": "sala7"
         },
         {
             "source": "sala7",

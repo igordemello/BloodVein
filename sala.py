@@ -119,7 +119,7 @@ class Sala:
         self.spawn_points = self.mapa.get_inimigospawn()
         self.leve_atual = 0
         #self.max_leves = randint(2*dificuldade_global.levas,5*dificuldade_global.levas) #levas
-        self.max_leves = 1
+        self.max_leves = 3
         self.inimigos_por_leva = 1
         self.tempo_entrada = time.get_ticks()
         self.cooldown_inicial = 1000
@@ -246,8 +246,8 @@ class Sala:
 
         self.inimigos_spawnados = True
 
-        self.leve_atual = self.max_leves + 2
-        return []
+        #self.leve_atual = self.max_leves + 2
+        #return []
 
         if not self.visitada:
             self.leve_atual = 0
@@ -274,7 +274,7 @@ class Sala:
         elite = "bau" in tipo_sala
 
         # tipos_disponiveis = ["furacao","caveiradefogo","morcegopadrao","orb","espectro","polvo", "esqueletogelo", "massa", "zombie","aranhalunar","esqueletogelo","ratodesangue", "aranhadosol","arqueiro", "vampirosol","magoelementar"]
-        tipos_disponiveis = ["magoelementar"]
+        tipos_disponiveis = ["furacao","caveiradefogo","morcegopadrao","orb","espectro","polvo", "esqueletogelo", "massa", "zombie","aranhalunar","esqueletogelo","ratodesangue", "aranhadosol","arqueiro", "vampirosol","magoelementar"]
         tipo_escolhido = choice(tipos_disponiveis)
 
 
@@ -358,7 +358,7 @@ class Sala:
 
         elif tipo_escolhido == "magoelementar":
             inimigo = MagoElementar(x, y, 96, 96, hp=100 if not elite else 300)
-            inimigo.nome_base = "magoelementar"
+            inimigo.nome_base = "Mago Elementar"
             inimigo.aplicar_modificadores(elite=elite)
 
         # Adicione outros tipos de inimigos aqui no futuro:
@@ -430,7 +430,7 @@ class Sala:
                     inimigo.atualizar(p_rect.center, self.tela, self)
                 elif isinstance(inimigo, NuvemBoss):
                     inimigo.atualizar(p_rect.center, self.tela, self.player)
-                elif isinstance(inimigo, Orb):
+                elif isinstance(inimigo, (Orb, Espectro, Massa, Furacao, CaveiraDeFogo, Polvo)):
                     inimigo.atualizar(p_rect.center, self.tela)
                 else:
                     inimigo.atualizar(p_rect.center, self.tela, self.mapa.matriz, self.mapa.get_offset())
@@ -635,7 +635,7 @@ class Sala:
                             inimigo.pocao_coletada = True
                 if not getattr(inimigo, "loot_coletado", True):
                     if not hasattr(inimigo, "vai_dropar_loot"):
-                        inimigo.vai_dropar_loot = randint(1, 100) <= 20  # 30% de chance de cair loot
+                        inimigo.vai_dropar_loot = randint(1, 100) <= 70  # 30% de chance de cair loot
 
                     if getattr(inimigo, "vai_dropar_loot", False) and not hasattr(inimigo, "loot_botao_criado"):
                         pos = (inimigo.x + 16, inimigo.y + 32)
@@ -785,22 +785,22 @@ class Sala:
             self.tela.blit(botao.image, botao.rect)
 
             mouse_pos = mouse.get_pos()
-            if botao.rect.collidepoint(mouse_pos):
-                botao.changeColor(mouse_pos)
+            #if botao.rect.collidepoint(mouse_pos):
+            botao.changeColor(mouse_pos)
 
-                texto_render = botao.font.render(botao.text_input, True, botao.hovering_color)
-                largura = texto_render.get_width() + 20
-                altura = texto_render.get_height() + 10
+            texto_render = botao.font.render(botao.text_input, True, botao.hovering_color)
+            largura = texto_render.get_width() + 20
+            altura = texto_render.get_height() + 10
 
-                texto_x = botao.x_pos - largura // 2
-                texto_y = botao.y_pos - 50
+            texto_x = botao.x_pos - largura // 2
+            texto_y = botao.y_pos - 50
 
-                fundo = Surface((largura, altura), SRCALPHA)
-                fundo.fill((0, 0, 0, 160))
-                self.tela.blit(fundo, (texto_x, texto_y))
+            fundo = Surface((largura, altura), SRCALPHA)
+            fundo.fill((0, 0, 0, 160))
+            self.tela.blit(fundo, (texto_x, texto_y))
 
-                # Texto
-                self.tela.blit(texto_render, (texto_x + 10, texto_y + 5))
+            # Texto
+            self.tela.blit(texto_render, (texto_x + 10, texto_y + 5))
         if time.get_ticks() - self.inventario_cheio_tempo < self.inventario_cheio_duracao and self.inventario_cheio_msg:
             font_msg = font.Font(resource_path('assets/fontes/alagard.ttf'), 36)
             texto = font_msg.render(self.inventario_cheio_msg, True, (255, 0, 0))
