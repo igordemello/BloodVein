@@ -80,9 +80,16 @@ class MagoElementar(Inimigo):
                 self.vy = self.direcao_atual[1] * self.velocidade
 
             if abs(self.vx) > abs(self.vy):
-                self.frames = self.frames_direita if self.vx > 0 else self.frames_direita_flip
+                nova_frames = self.frames_direita if self.vx > 0 else self.frames_direita_flip
             else:
-                self.frames = self.frames_frente if self.vy > 0 else self.frames_costas
+                nova_frames = self.frames_frente if self.vy > 0 else self.frames_costas
+
+            if self.frames != nova_frames:
+                self.frames = nova_frames
+                self.frame_index = 0
+
+            if self.vx == 0 and self.vy == 0:
+                self.frame_index = 0  # animação parada
 
             if now - self.ultimo_gelo >= self.cooldown_gelo:
                 self.estado = "atacando_gelo"
@@ -98,6 +105,8 @@ class MagoElementar(Inimigo):
                 self.atacar_gelo(player_pos)
                 self.estado = "andando"
                 self.ultimo_gelo = now
+                self.frames = self.frames_frente
+                self.frame_index = 0
             self.vx = self.vy = 0
 
         elif self.estado == "atacando_fogo":
@@ -105,6 +114,8 @@ class MagoElementar(Inimigo):
                 self.atacar_fogo()
                 self.estado = "andando"
                 self.ultimo_fogo = now
+                self.frames = self.frames_frente
+                self.frame_index = 0
             self.vx = self.vy = 0
 
         self.set_velocidade_x(self.vx)
@@ -158,8 +169,8 @@ class MagoElementar(Inimigo):
         self.desenhar_outline_mouseover(tela, self.hp, self.hp_max)
 
         if self.frames:
-            self.frame_index %= len(self.frames)
-            frame = self.frames[self.frame_index]
+            frame_index = min(self.frame_index, len(self.frames) - 1)
+            frame = self.frames[frame_index]
         else:
             frame = Surface((self.largura, self.altura))
 
