@@ -479,7 +479,7 @@ class Game:
         if time.get_ticks() % 500 < 16:
             fps = int(self.clock.get_fps())
             self.fps_text = self.fps_font.render(f"FPS: {fps}", True, (255, 255, 255))
-        self.screen.blit(self.fps_text, (10 + offset_x, 10 + offset_y))
+            self.screen.blit(self.fps_text, (10 + offset_x, 10 + offset_y))
 
         if self.mensagem_salvo and time.get_ticks() - self.tempo_mensagem_salvo < 2000:
             self.screen.blit(self.mensagem_salvo, (1920 // 2 - self.mensagem_salvo.get_width() // 2, 900))

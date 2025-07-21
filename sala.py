@@ -3,6 +3,7 @@ import sys
 from pygame.locals import QUIT
 import math
 from bau import Bau
+from inimigos.MagoElementar import MagoElementar
 from inimigos.aranhadosol import AranhaDoSol
 from inimigos.arqueiro import Arqueiro
 from inimigos.ratodesangue import RatoDeSangue
@@ -266,8 +267,8 @@ class Sala:
     def _criar_inimigo_aleatorio(self, x, y, tipo_sala):
         elite = "bau" in tipo_sala
 
-        # tipos_disponiveis = ["furacao","caveiradefogo","morcegopadrao","orb","espectro","polvo", "esqueletogelo", "massa", "zombie","aranhalunar","esqueletogelo","ratodesangue", "aranhadosol","arqueiro", "vampirosol"]
-        tipos_disponiveis = ["vampirosol"]
+        # tipos_disponiveis = ["furacao","caveiradefogo","morcegopadrao","orb","espectro","polvo", "esqueletogelo", "massa", "zombie","aranhalunar","esqueletogelo","ratodesangue", "aranhadosol","arqueiro", "vampirosol","magoelementar"]
+        tipos_disponiveis = ["magoelementar"]
         tipo_escolhido = choice(tipos_disponiveis)
 
 
@@ -343,9 +344,15 @@ class Sala:
             inimigo = Arqueiro(x, y, 128, 128, hp=100 if not elite else 300)
             inimigo.nome_base = "Arqueiro"
             inimigo.aplicar_modificadores(elite=elite)
+
         elif tipo_escolhido == "vampirosol":
             inimigo = VampiroSol(x, y, 96, 96, hp=100 if not elite else 300)
             inimigo.nome_base = "Vampiro Sol"
+            inimigo.aplicar_modificadores(elite=elite)
+
+        elif tipo_escolhido == "magoelementar":
+            inimigo = MagoElementar(x, y, 96, 96, hp=100 if not elite else 300)
+            inimigo.nome_base = "magoelementar"
             inimigo.aplicar_modificadores(elite=elite)
 
         # Adicione outros tipos de inimigos aqui no futuro:
