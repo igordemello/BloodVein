@@ -4,6 +4,8 @@ from pygame.locals import QUIT
 import math
 from efeito import *
 import time as t
+
+from habilidades import GerenciadorHabilidades
 from sala import *
 from armas import *
 from random import *
@@ -55,6 +57,8 @@ class Player():
         self.venenoDano = 40
 
         self.lista_mods = ListaMods()
+
+        self.gerenciador_habilidades = GerenciadorHabilidades()
 
         self.inventario = [
             LaminaDaNoite("comum", self.lista_mods),
