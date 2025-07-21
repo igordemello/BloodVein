@@ -174,8 +174,16 @@ class Inimigo:
             self.tempo_mouseover = 0
 
         if self.rect.collidepoint(mouse_pos):
-            self.tempo_mouseover = time.get_ticks()
+            vida_maxima = getattr(self, "hp_max", 100)
+            largura_barra = 500
+            porcentagem = max(0, min(self.hp / vida_maxima, 1))
+            largura_hp = porcentagem * largura_barra
 
+            barra_x = 980 - (largura_barra / 2)
+            barra_y = 0
+
+            self.tempo_mouseover = time.get_ticks()
+            self.desenha_debuffs(tela, barra_x, barra_y, largura_barra)
             if not self.frames:
                 return
 
@@ -206,6 +214,7 @@ class Inimigo:
             barra_x = 980 - (largura_barra / 2)
             barra_y = 0
 
+            # Desenha a barra de vida
             draw.rect(tela, (10, 10, 10), (barra_x - 20, barra_y + 30, largura_barra, 50))
             draw.rect(tela, (150, 0, 0), (barra_x - 20, barra_y + 30, largura_hp, 50))
             draw.rect(tela, (255, 255, 255), (barra_x - 20, barra_y + 30, largura_barra, 50), 1)
@@ -214,6 +223,8 @@ class Inimigo:
             texto = fonte.render(str(self.nome), True, (255, 255, 255))
             texto_rect = texto.get_rect(center=(barra_x - 20 + largura_barra / 2, barra_y + 30 + 25))
             tela.blit(texto, texto_rect)
+
+
 
 
 
@@ -252,3 +263,39 @@ class Inimigo:
 
         texto = fonte.render(texto_str, True, cor)
         tela.blit(texto, (draw_x - texto.get_width() / 2, pos_y))
+
+    def desenha_debuffs(self, tela, barra_x, barra_y, largura_barra):
+        # Desenha ícones de status acima da barra de vida
+        icon_y = barra_y + 90  # Posição acima da barra de vida
+        icon_spacing = 40  # Espaço entre ícones
+        current_x = barra_x - 200 + largura_barra // 2 - icon_spacing  # Posição inicial
+
+        # Ícone de veneno se estiver envenenado
+        if hasattr(self, 'veneno_ativo') and self.veneno_ativo:
+            try:
+                veneno_img = image.load(
+                    resource_path('assets/Efeitos_Atributos_Classes/veneno.png')).convert_alpha()
+                veneno_img = transform.scale(veneno_img, (30, 30))
+                tela.blit(veneno_img, (current_x, icon_y))
+                current_x += icon_spacing  # Move para a próxima posição
+            except:
+                pass  # Caso a imagem não carregue, não faz nada
+
+        # Ícone de stun se estiver atordoado
+        if hasattr(self, 'stun_ativo') and self.stun_ativo:
+            try:
+                stun_img = image.load(resource_path('assets/Efeitos_Atributos_Classes/stun.png')).convert_alpha()
+                stun_img = transform.scale(stun_img, (30, 30))
+                tela.blit(stun_img, (current_x, icon_y))
+                current_x += icon_spacing  # Move para a próxima posição
+            except:
+                pass  # Caso a imagem não carregue, não faz nada
+
+        # Ícone de congelado se estiver congelado
+        if hasattr(self, 'congelado') and self.congelado:
+            try:
+                frozen_img = image.load(resource_path('assets/Efeitos_Atributos_Classes/congela1.png')).convert_alpha()
+                frozen_img = transform.scale(frozen_img, (30, 30))
+                tela.blit(frozen_img, (current_x, icon_y))
+            except:
+                pass  # Caso a imagem não carregue, não faz nada

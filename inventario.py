@@ -635,7 +635,7 @@ class Inventario():
                         # Carrega a imagem da bola correspondente à raridade
                         try:
                             bola_img = transform.scale(
-                                image.load(f"assets/itens/bola{raridade.capitalize()}.png"),
+                                image.load(resource_path(f"assets/itens/bola{raridade.capitalize()}.png")),
                                 (64, 64)
                             )
                         except:

@@ -351,6 +351,15 @@ class Player():
 
         self.vx *= self.atrito
         self.vy *= self.atrito
+
+        # Limiar para zerar a velocidade (evita deslize infinito)
+        limiar_parada = 2
+        if abs(self.vx) < limiar_parada:
+            self.vx = 0
+        if abs(self.vy) < limiar_parada:
+            self.vy = 0
+
+        # Limita a velocidade máxima
         max_vel = self.velocidadeMov * 10
         self.vx = max(-max_vel, min(self.vx, max_vel))
         self.vy = max(-max_vel, min(self.vy, max_vel))

@@ -195,6 +195,29 @@ class EsqueletoPeconhento(Inimigo):
             frame = transform.flip(frame, True, False)
 
         tela.blit(frame, (draw_x, draw_y))
+
+
+        vida_maxima = getattr(self, "hp_max", 100)
+        largura_barra = 500
+        porcentagem = max(0, min(self.hp / vida_maxima, 1))
+        largura_hp = porcentagem * largura_barra
+
+        barra_x = 980 - (largura_barra / 2)
+        barra_y = 0
+
+        if hasattr(self, 'ultimo_dano') and time.get_ticks() - self.ultimo_dano_tempo < 2500:
+            draw.rect(tela, (10, 10, 10), (barra_x - 20, barra_y + 30, largura_barra, 50))
+            draw.rect(tela, (150, 0, 0), (barra_x - 20, barra_y + 30, largura_hp, 50))
+            draw.rect(tela, (255, 255, 255), (barra_x - 20, barra_y + 30, largura_barra, 50), 1)
+
+            # Desenhar o nome centralizado
+            fonte = font.Font(resource_path('assets/Fontes/alagard.ttf'), 24)
+            texto = fonte.render(str(self.nome), True, (255, 255, 255))
+            texto_rect = texto.get_rect(
+                center=(barra_x - 20 + largura_barra / 2, barra_y + 30 + 25))  # 25 = altura/2 da barra
+            tela.blit(texto, texto_rect)
+            self.desenha_debuffs(tela, barra_x, barra_y, largura_barra)
+
         self.desenhar_dano(tela, offset)
 
         # draw.rect(tela,(255,0,0), self.get_hitbox(), 1)
