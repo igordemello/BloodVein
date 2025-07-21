@@ -154,7 +154,9 @@ class MorcegoPadrao(Inimigo):
             return
 
         self.desenha_debuffs(tela)
+        self.detalhesElite(tela)
         self.desenhar_outline_mouseover(tela,self.hp,self.hp_max)
+
 
         offset_x, offset_y = offset
         draw_x = round(self.x) + offset_x

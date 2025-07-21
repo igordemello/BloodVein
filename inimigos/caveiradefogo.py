@@ -132,6 +132,9 @@ class CaveiraDeFogo(Inimigo):
     def desenhar(self, tela, player_pos, offset=(0, 0)):
         if not self.vivo or len(self.frames) == 0:
             return
+        self.desenha_debuffs(tela)
+        self.desenhar_dano(tela, offset)
+        self.detalhesElite(tela)
         self.desenhar_outline_mouseover(tela, self.hp, self.hp_max)
 
         offset_x, offset_y = offset
@@ -145,8 +148,8 @@ class CaveiraDeFogo(Inimigo):
             frame = self.frames[self.frame_index]
         tela.blit(frame, (draw_x, draw_y))
 
-        self.desenha_debuffs(tela)
-        self.desenhar_dano(tela, offset)
+
+
 
         vida_maxima = getattr(self, "hp_max", 100)
         largura_barra = 500
@@ -184,3 +187,4 @@ class CaveiraDeFogo(Inimigo):
 
             if self.veneno_ticks <= 0:
                 self.veneno_ativo = False
+

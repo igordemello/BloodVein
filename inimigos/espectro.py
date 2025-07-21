@@ -158,6 +158,7 @@ class Espectro(Inimigo):
     def desenhar(self, tela, player_pos, offset=(0, 0)):
         if not self.vivo or not self.frames:
             return
+        self.detalhesElite(tela)
         self.desenhar_outline_mouseover(tela, self.hp, self.hp_max)
 
         offset_x, offset_y = offset
@@ -172,6 +173,7 @@ class Espectro(Inimigo):
 
         self.desenha_debuffs(tela)
         self.desenhar_dano(tela, offset)
+
 
         vida_maxima = getattr(self, "hp_max", 100)
         largura_barra = 500

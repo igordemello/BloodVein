@@ -186,7 +186,9 @@ class Zombie(Inimigo):
         draw_x = self.x + offset_x
         draw_y = self.y + offset_y
 
+        self.detalhesElite(tela)
         self.desenhar_outline_mouseover(tela, self.hp, self.hp_max)
+
 
         self.desenha_debuffs(tela)
 
