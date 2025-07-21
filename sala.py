@@ -3,6 +3,7 @@ import sys
 from pygame.locals import QUIT
 import math
 from bau import Bau
+from inimigos.ratodesangue import RatoDeSangue
 from itensDic import ConjuntoItens
 from mapa import Mapa
 from inimigos.orb import Orb
@@ -261,8 +262,8 @@ class Sala:
     def _criar_inimigo_aleatorio(self, x, y, tipo_sala):
         elite = "bau" in tipo_sala
 
-        # tipos_disponiveis = ["furacao","caveiradefogo","morcegopadrao","orb","espectro","polvo", "esqueletogelo", "massa", "zombie","aranhalunar","esqueletogelo"]
-        tipos_disponiveis = ["esqueletogelo"]
+        # tipos_disponiveis = ["furacao","caveiradefogo","morcegopadrao","orb","espectro","polvo", "esqueletogelo", "massa", "zombie","aranhalunar","esqueletogelo","ratodesangue"]
+        tipos_disponiveis = ["ratodesangue"]
         tipo_escolhido = choice(tipos_disponiveis)
 
 
@@ -317,6 +318,11 @@ class Sala:
         elif tipo_escolhido == "esqueletogelo":
             inimigo = EsqueletoGelo(x, y, 96, 96, hp=200 if not elite else 300)
             inimigo.nome_base = "Esqueleto de Gelo"
+            inimigo.aplicar_modificadores(elite=elite)
+
+        elif tipo_escolhido == "ratodesangue":
+            inimigo = RatoDeSangue(x, y, 64, 64, hp=100 if not elite else 300)
+            inimigo.nome_base = "Rato De Sangue"
             inimigo.aplicar_modificadores(elite=elite)
 
         # Adicione outros tipos de inimigos aqui no futuro:
