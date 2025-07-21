@@ -144,6 +144,8 @@ class CaveiraDeFogo(Inimigo):
         else:
             frame = self.frames[self.frame_index]
         tela.blit(frame, (draw_x, draw_y))
+
+        self.desenha_debuffs(tela)
         self.desenhar_dano(tela, offset)
 
         vida_maxima = getattr(self, "hp_max", 100)
@@ -165,7 +167,7 @@ class CaveiraDeFogo(Inimigo):
             texto_rect = texto.get_rect(
                 center=(barra_x - 20 + largura_barra / 2, barra_y + 30 + 25))  # 25 = altura/2 da barra
             tela.blit(texto, texto_rect)
-            self.desenha_debuffs(tela, barra_x, barra_y, largura_barra)
+
 
         now = time.get_ticks()
         if hasattr(self, 'veneno_ativo') and self.veneno_ativo:

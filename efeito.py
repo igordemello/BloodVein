@@ -127,6 +127,7 @@ class ModificadorDanoRecebido(Efeito):
     def aplicar(self, jogador):
         if isinstance(jogador, Inimigo):
             jogador.modificadorDanoRecebido *= self.valor
+            jogador.sangrando = True
         else:
             jogador.base_modificadorDanoRecebido *= self.valor
 

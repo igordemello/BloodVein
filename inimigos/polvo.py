@@ -62,6 +62,7 @@ class Polvo(Inimigo):
         offset_x, offset_y = offset
         draw_x = self.x + offset_x
         draw_y = self.y + offset_y
+        self.desenha_debuffs(tela)
         self.desenhar_outline_mouseover(tela, self.hp, self.hp_max)
 
         if self.anima_hit:

@@ -325,6 +325,7 @@ class Chigatana(Arma):
         else:
             player.mp -= custo
             inimigo.modificadorDanoRecebido = self.valorSangramento
+            inimigo.sangrando = True
 
 
 # [...] (as demais classes de armas seguem o mesmo padrão, garantindo os valores mínimos)

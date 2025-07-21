@@ -188,6 +188,8 @@ class Zombie(Inimigo):
 
         self.desenhar_outline_mouseover(tela, self.hp, self.hp_max)
 
+        self.desenha_debuffs(tela)
+
         frame = self.frames[self.frame_index]
 
         # Aplica efeito de hit, se necessário
@@ -220,7 +222,6 @@ class Zombie(Inimigo):
             texto_rect = texto.get_rect(
                 center=(barra_x - 20 + largura_barra / 2, barra_y + 30 + 25))  # 25 = altura/2 da barra
             tela.blit(texto, texto_rect)
-            self.desenha_debuffs(tela, barra_x, barra_y, largura_barra)
 
         self.desenhar_dano(tela, offset)
 

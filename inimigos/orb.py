@@ -61,6 +61,7 @@ class Orb(Inimigo):
         offset_x, offset_y = offset
         draw_x = self.x + offset_x
         draw_y = self.y + offset_y
+        self.desenha_debuffs(tela)
         self.desenhar_outline_mouseover(tela, self.hp, self.hp_max)
 
         if self.anima_hit:
@@ -134,7 +135,6 @@ class Orb(Inimigo):
             texto_rect = texto.get_rect(
                 center=(barra_x - 20 + largura_barra / 2, barra_y + 30 + 25))  # 25 = altura/2 da barra
             tela.blit(texto, texto_rect)
-            self.desenha_debuffs(tela, barra_x, barra_y, largura_barra)
 
         rot_rect, rot_surf = self.get_hitbox_ataque((player_pos[0] + offset_x, player_pos[1] + offset_y))
         tela.blit(rot_surf, rot_rect)

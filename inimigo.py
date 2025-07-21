@@ -185,7 +185,6 @@ class Inimigo:
             barra_y = 0
 
             self.tempo_mouseover = time.get_ticks()
-            self.desenha_debuffs(tela, barra_x, barra_y, largura_barra)
             if not self.frames:
                 return
 
@@ -269,20 +268,20 @@ class Inimigo:
         texto = fonte.render(texto_str, True, cor)
         tela.blit(texto, (draw_x - texto.get_width() / 2, pos_y))
 
-    def desenha_debuffs(self, tela, barra_x, barra_y, largura_barra):
-        # Desenha ícones de status acima da barra de vida
-        icon_y = barra_y + 90  # Posição acima da barra de vida
+    def desenha_debuffs(self, tela):
+        # Posição abaixo do sprite do inimigo (ajuste os valores conforme necessário)
+        icon_y = self.y + self.altura + 10  # 10 pixels abaixo do sprite
+        icon_x = self.x + 20+self.largura // 2 - 60  # Centralizado horizontalmente (ajuste conforme necessário)
         icon_spacing = 40  # Espaço entre ícones
-        current_x = barra_x - 200 + largura_barra // 2 - icon_spacing  # Posição inicial
 
         # Ícone de veneno se estiver envenenado
         if hasattr(self, 'veneno_ativo') and self.veneno_ativo:
             try:
                 veneno_img = image.load(
                     resource_path('assets/Efeitos_Atributos_Classes/veneno.png')).convert_alpha()
-                veneno_img = transform.scale(veneno_img, (30, 30))
-                tela.blit(veneno_img, (current_x, icon_y))
-                current_x += icon_spacing  # Move para a próxima posição
+                veneno_img = transform.scale(veneno_img, (16, 16))
+                tela.blit(veneno_img, (icon_x, icon_y))
+                icon_x += icon_spacing  # Move para a próxima posição
             except:
                 pass  # Caso a imagem não carregue, não faz nada
 
@@ -290,9 +289,9 @@ class Inimigo:
         if hasattr(self, 'stun_ativo') and self.stun_ativo:
             try:
                 stun_img = image.load(resource_path('assets/Efeitos_Atributos_Classes/stun.png')).convert_alpha()
-                stun_img = transform.scale(stun_img, (30, 30))
-                tela.blit(stun_img, (current_x, icon_y))
-                current_x += icon_spacing  # Move para a próxima posição
+                stun_img = transform.scale(stun_img, (16, 16))
+                tela.blit(stun_img, (icon_x, icon_y))
+                icon_x += icon_spacing  # Move para a próxima posição
             except:
                 pass  # Caso a imagem não carregue, não faz nada
 
@@ -300,7 +299,14 @@ class Inimigo:
         if hasattr(self, 'congelado') and self.congelado:
             try:
                 frozen_img = image.load(resource_path('assets/Efeitos_Atributos_Classes/congela1.png')).convert_alpha()
-                frozen_img = transform.scale(frozen_img, (30, 30))
-                tela.blit(frozen_img, (current_x, icon_y))
+                frozen_img = transform.scale(frozen_img, (16, 16))
+                tela.blit(frozen_img, (icon_x, icon_y))
+            except:
+                pass  # Caso a imagem não carregue, não faz nada
+        if hasattr(self, 'sangrando') and self.sangrando:
+            try:
+                blood_img = image.load(resource_path('assets/Efeitos_Atributos_Classes/bleed.png')).convert_alpha()
+                blood_img = transform.scale(blood_img, (16, 16))
+                tela.blit(blood_img, (icon_x, icon_y))
             except:
                 pass  # Caso a imagem não carregue, não faz nada
