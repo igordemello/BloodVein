@@ -74,6 +74,8 @@ class Inimigo:
         self.hit_color = (255, 0, 0)  # Cor vermelha para o efeito de hit
 
     def tomar_dano(self, valor, critico=False):
+        if getattr(self, 'invulneravel', False):
+            return
         self.hp -= valor
         self.anima_hit = True
         self.time_last_hit_frame = time.get_ticks()
@@ -217,7 +219,10 @@ class Inimigo:
             # Desenha a barra de vida
             draw.rect(tela, (10, 10, 10), (barra_x - 20, barra_y + 30, largura_barra, 50))
             draw.rect(tela, (150, 0, 0), (barra_x - 20, barra_y + 30, largura_hp, 50))
-            draw.rect(tela, (255, 255, 255), (barra_x - 20, barra_y + 30, largura_barra, 50), 1)
+            if hasattr(self,'ehboss'):
+                draw.rect(tela, (255, 200, 0), (barra_x - 20, barra_y + 30, largura_barra, 50), 1)
+            else:
+                draw.rect(tela, (255, 255, 255), (barra_x - 20, barra_y + 30, largura_barra, 50), 1)
 
             fonte = font.Font(resource_path('assets/Fontes/alagard.ttf'), 24)
             texto = fonte.render(str(self.nome), True, (255, 255, 255))
