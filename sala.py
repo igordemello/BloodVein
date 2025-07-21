@@ -62,7 +62,8 @@ class Sala:
     def __init__(self, caminho_mapa, tela, player, gerenciador_andar, set_minimapa_callback):
         self.tela = tela
         self.gerenciador_andar = gerenciador_andar
-        self.mapa = Mapa(caminho_mapa,self.tela,self.tela.get_width(),self.tela.get_height(),self.gerenciador_andar)
+        #self.mapa = Mapa(caminho_mapa,self.tela,self.tela.get_width(),self.tela.get_height(),self.gerenciador_andar)
+        self.mapa = Mapa("andar1/1.tmx",self.tela,self.tela.get_width(),self.tela.get_height(),self.gerenciador_andar)
 
         self.lista_mods = ListaMods()
         self.loots = []

@@ -289,41 +289,14 @@ class Cerbero(Inimigo):
             if p["lifetime"] <= 0:
                 self.projeteis.remove(p)
 
-
-    def verificar_colisao(self, dx, dy, mapa_matriz):
-        nova_hitbox = self.player_rect.move(dx, dy)
-        # checa se a nova hitbox bate em tiles sólidos do mapa
-        for linha in mapa_matriz:
-            for tile in linha:
-                if tile.tipo == "parede" and nova_hitbox.colliderect(tile.rect):
-                    return False, False
-        return True, True
-
     def verificar_colisao_jogador(self, player_rect):
         if not self.vivo:
             return False
-
         now = time.get_ticks()
-        hitbox = self.get_hitbox()
-        if hitbox.colliderect(player_rect):
+        colidiu = self.get_hitbox().colliderect(player_rect)
+        if colidiu:
             self.ultimo_dano = now
-
-            # Aplica pushback simples no jogador para fora do boss
-            dx = player_rect.centerx - hitbox.centerx
-            dy = player_rect.centery - hitbox.centery
-            distancia = math.hypot(dx, dy)
-
-            if distancia != 0:
-                forca_empurrao = 5  # você pode ajustar
-                dx_normalizado = dx / distancia
-                dy_normalizado = dy / distancia
-                self.player.player_rect.x += int(dx_normalizado * forca_empurrao)
-                self.player.player_rect.y += int(dy_normalizado * forca_empurrao)
-                self.player.x, self.player.y = self.player.player_rect.topleft
-
-            return True
-        return False
-
+            return colidiu
 
     def desenhar(self, tela, player_pos, offset=(0, 0)):
         if not self.vivo:
