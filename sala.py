@@ -207,8 +207,7 @@ class Sala:
             self.leve_atual = self.max_leves + 2
             return []
 
-        #sself.leve_atual = self.max_leves + 2
-        #return []
+        
 
         tempo_atual = time.get_ticks()
         if tempo_atual - self.tempo_entrada < self.cooldown_inicial and not self.inimigos_spawnados:
@@ -219,9 +218,9 @@ class Sala:
             musica.tocar("BloodVein SCORE/OST/MusicaDoBoss.mp3")
             xboss,yboss= self.spawn_points[0]
             numero = self.gerenciador_andar.numero_andar
-            numero = 3
+            numero = 1
             if numero == 1:
-                boss = bossmod.MouthOrb(xboss, yboss)
+                boss = bossmod.MouthOrb(xboss, yboss, 192, 192)
                 boss.nome_base = "Mãe Orbe"
                 self.leve_atual = self.max_leves + 2
                 return[boss]
@@ -241,6 +240,9 @@ class Sala:
 
         self.inimigos_spawnados = True
 
+        self.leve_atual = self.max_leves + 2
+        return []
+
         if not self.visitada:
             self.leve_atual = 0
 
@@ -259,6 +261,9 @@ class Sala:
 
         return []
 
+    def adicionar_inimigo(self, inimigo):
+        self.inimigos.append(inimigo)
+    
     def _criar_inimigo_aleatorio(self, x, y, tipo_sala):
         elite = "bau" in tipo_sala
 
@@ -390,10 +395,13 @@ class Sala:
                 
                 if isinstance(inimigo, (EsqueletoGelo, EsqueletoPeconhento)):
                     inimigo.atualizar(p_rect.center, self.tela, self.mapa.matriz, self.mapa.get_offset(), self.player)
+                elif isinstance(inimigo, bossmod.MouthOrb):
+                    inimigo.atualizar(p_rect.center, self.tela, self)
+                elif isinstance(inimigo, Orb):
+                    inimigo.atualizar(p_rect.center, self.tela)
                 else:
                     inimigo.atualizar(p_rect.center, self.tela, self.mapa.matriz, self.mapa.get_offset())
-                # except:
-                #     inimigo.atualizar(p_rect.center, self.tela)
+                
                 inimigo.dar_dano = lambda val=inimigo.dano: self.player.tomar_dano(val)
 
 
