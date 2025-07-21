@@ -168,6 +168,8 @@ class Inimigo:
     def aplicar_modificadores(self, elite=False):
         gerenciador = GerenciadorModificadores()
         gerenciador.aplicar_modificadores(self, elite)
+        if elite==True:
+            self.elite = True
 
     def desenhar_outline_mouseover(self, tela, hp, hpMax):
         mouse_pos = mouse.get_pos()
@@ -310,3 +312,28 @@ class Inimigo:
                 tela.blit(blood_img, (icon_x, icon_y))
             except:
                 pass  # Caso a imagem não carregue, não faz nada
+
+    def detalhesElite(self,tela):
+        if not hasattr(self,"elite"):
+            return
+        self.tempo_mouseover = time.get_ticks()
+        if not self.frames:
+            return
+
+        sprite = self.frames[self.frame_index]
+        mask = mask_from_surface(sprite)
+
+        outline_size = 3
+        outline_surf = Surface(
+            (sprite.get_width() + 2 * outline_size, sprite.get_height() + 2 * outline_size), SRCALPHA)
+
+        outline_mask = mask.to_surface(setcolor=(255, 200, 0, 20), unsetcolor=(0, 0, 0, 0))
+
+        for dx in range(-outline_size, outline_size + 1):
+            for dy in range(-outline_size, outline_size + 1):
+                if dx == 0 and dy == 0:
+                    continue
+                outline_surf.blit(outline_mask, (dx + outline_size, dy + outline_size))
+
+        outline_pos = (self.rect.x - outline_size, self.rect.y - outline_size)
+        tela.blit(outline_surf, outline_pos)

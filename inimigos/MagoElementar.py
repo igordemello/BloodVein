@@ -181,7 +181,9 @@ class MagoElementar(Inimigo):
         draw_x = self.x + offset_x
         draw_y = self.y + offset_y
         self.desenha_debuffs(tela)
+        self.detalhesElite(tela)
         self.desenhar_outline_mouseover(tela, self.hp, self.hp_max)
+
 
         if self.frames:
             frame_index = min(self.frame_index, len(self.frames) - 1)

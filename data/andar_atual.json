@@ -35,6 +35,7 @@
                 -1
             ],
             "tipo": "comum",
+            "tipo": "comum",
             "visitada": false,
             "arquivotmx": "andar1/20.tmx",
             "salaanterior": null,
@@ -57,6 +58,7 @@
             ],
             "tipo": "comum",
             "visitada": false,
+            "arquivotmx": "andar1/23.tmx",
             "arquivotmx": "andar1/23.tmx",
             "salaanterior": null,
             "conexoes": [
@@ -94,11 +96,12 @@
                 "baixo": "sala5",
                 "esquerda": "sala6"
             },
+            "tipo": "bau",
             "pos": [
                 0,
                 2
             ],
-            "tipo": "comum",
+            "bau_aberto": false,
             "visitada": false,
             "arquivotmx": "andar1/19.tmx",
             "salaanterior": null,
@@ -130,6 +133,7 @@
             "portas": {
                 "direita": "sala4"
             },
+            "tipo": "spawn",
             "pos": [
                 -1,
                 2
@@ -139,7 +143,7 @@
             "arquivotmx": "andar1/26.tmx",
             "salaanterior": null,
             "conexoes": [
-                "sala4"
+                "sala5"
             ],
             "id": "sala6"
         },
@@ -148,11 +152,11 @@
                 "direita": "sala2",
                 "esquerda": "sala11"
             },
+            "tipo": "loja",
             "pos": [
                 -1,
                 1
             ],
-            "tipo": "comum",
             "visitada": false,
             "arquivotmx": "andar1/18.tmx",
             "salaanterior": null,
@@ -207,7 +211,9 @@
                 -1
             ],
             "tipo": "comum",
+            "tipo": "comum",
             "visitada": false,
+            "arquivotmx": "andar1/3.tmx",
             "arquivotmx": "andar1/3.tmx",
             "salaanterior": null,
             "conexoes": [
@@ -245,7 +251,7 @@
             "arquivotmx": "andar1/boss.tmx",
             "salaanterior": null,
             "conexoes": [
-                "sala8"
+                "sala4"
             ],
             "id": "sala12"
         },
@@ -262,7 +268,7 @@
             "arquivotmx": "andar1/27.tmx",
             "salaanterior": null,
             "conexoes": [
-                "sala3"
+                "sala5"
             ],
             "id": "sala13"
         }
@@ -310,7 +316,7 @@
         },
         {
             "source": "sala4",
-            "target": "sala6"
+            "target": "sala11"
         },
         {
             "source": "sala7",

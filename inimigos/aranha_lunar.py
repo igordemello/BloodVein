@@ -150,6 +150,7 @@ class AranhaLunar(Inimigo):
         draw_y = self.y + offset[1]
 
         self.desenha_debuffs(tela)
+        self.detalhesElite(tela)
         self.desenhar_outline_mouseover(tela, self.hp, self.hp_max)
 
         frame = self.frames[self.frame_index]

@@ -186,6 +186,7 @@ class Arqueiro(Inimigo):
             return
 
         self.desenha_debuffs(tela)
+        self.detalhesElite(tela)
         self.desenhar_outline_mouseover(tela, self.hp, self.hp_max)
         draw_x = self.x + offset[0]
         draw_y = self.y + offset[1]

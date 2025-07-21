@@ -181,7 +181,9 @@ class VampiroSol(Inimigo):
         draw_x = self.rect.x + offset_x
         draw_y = self.rect.y + offset_y
 
+        self.detalhesElite(tela)
         self.desenhar_outline_mouseover(tela, self.hp, self.hp_max)
+
 
         frame = self.frames[min(self.frame_index, len(self.frames) - 1)]
         if self.anima_hit:
