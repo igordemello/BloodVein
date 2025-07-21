@@ -6,244 +6,287 @@ from inimigo import Inimigo
 from utils import resource_path 
 
 class NuvemBoss(Inimigo):
-    def __init__(self, x, y, largura=200, altura=200, nome="Nuvem", hp=10000, velocidade=5, dano=70):
+    def __init__(self, x, y, largura, altura, nome="Visão Carmesim", hp=10000, velocidade=5, dano=70):
         super().__init__(x, y, largura, altura, hp, velocidade, dano)
+
         self.nome = nome
-        self.hp = hp
-        self.hp_max = hp
+        self.ehboss = True
 
-        # Spritesheets
-        self.sprites = {
-            'idle': image.load(resource_path('./assets/Enemies/nuvem_idle.png')).convert_alpha(),
-            'run': image.load(resource_path('./assets/Enemies/nuvem_run.png')).convert_alpha(),
-            'campo': image.load(resource_path('./assets/Enemies/nuvem_campo_de_força.png')).convert_alpha(),
-            'raio': image.load(resource_path('./assets/Enemies/nuvem_raio.png')).convert_alpha(),
-        }
+        self.sprites_idle = image.load(resource_path('./assets/Enemies/nuvem_idle.png')).convert_alpha() #4frames
+        self.sprites_run = image.load(resource_path('./assets/Enemies/nuvem_run.png')).convert_alpha() #8frames
+        self.sprites_raio = image.load(resource_path('./assets/Enemies/nuvem_raio.png')).convert_alpha() #4frames
+        self.sprites_chuva = image.load(resource_path('./assets/Enemies/nuvem_chuva.png')).convert_alpha() #8frames
+        self.sprites_campo_forca = image.load(resource_path('./assets/Enemies/nuvem_campo_de_força.png')).convert_alpha() #5frames
 
-        # Frame sizes
-        self.frame_sizes = {
-            'idle': 100,
-            'run': 100,
-            'campo': 102,
-            'raio': 160,
-        }
+        self.frame_width = 200
+        self.frame_height = 200
+        self.animation_speed = 0.10
 
-        # Frame counts
-        self.frame_counts = {
-            'idle': 4,
-            'run': 8,
-            'campo': 4,
-            'raio': 4,
-        }
+        self.asset_raio_frame_width = 200
+        self.asset_raio_frame_height = 200
 
-        self.animation_speed = 0.15
-        self.frame_index = 0
-        self.last_update = time.get_ticks()
+        self.asset_orb = image.load(resource_path('./assets/Enemies/bola_de_ataque_nuvem.png')).convert_alpha()
+        self.asset_orb_size = 32
 
-        # Animações separadas
-        self.offsets = {}
-        self.frames = {key: self.carregar_frames(key) for key in self.sprites}
-        self.estado = 'idle'
-        self.current_frames = self.frames['idle']
+        self.frames_idle = self.carregar_frames(self.sprites_idle, 4)
+        self.frames_run = self.carregar_frames(self.sprites_run, 8)
+        self.frames_raio = self.carregar_frames(self.sprites_raio, 4)
+        self.frames_chuva = self.carregar_frames(self.sprites_chuva, 8)
+        self.frames_campo_forca = self.carregar_frames(self.sprites_campo_forca, 5)
 
-        # Estados de ataque
-        self.executando_ataque = False
-        self.ataque_atual = None
-        self.tempo_ultimo_ataque = 0
-        self.cooldown_ataque = 2500
-        self.tempo_fim_ataque = 0
 
-        self.rect = self.get_hitbox()
+        self.frames = self.frames_idle
+
+        self.estado = "idle"
         
-
         self.tipo_colisao = 'voador'
 
-    def carregar_frames(self, chave):
-        spritesheet = self.sprites[chave]
-        frame_size = self.frame_sizes[chave]  # pode ser 100, 160, etc.
-        frame_count = self.frame_counts[chave]
+
+        self.cooldown_ataque = 3000 #ms
+
+        self.estado_ataque = "esperando"  # pode ser: esperando, campo_forca, raio
+        self.inicio_ataque = 0
+        self.invulneravel = False
+        self.projeteis = []
+        self.cooldown_entre_ataques = 1000
+        self.ultimo_ataque = 0
+        
+        self.tempo_ataque_campo = 3000
+        self.tempo_ataque_raio = 2000
+        self.raio_atual = 0
+        self.raio_maximo = 200
+        self.frame_raio_index = 0
+
+        # Área de movimento do morcego
+        self.area_movimento = Rect(280, 160, 1350, 650)
+
+        # Configurações do movimento em zig-zag
+        self.direcao = random.choice([-1, 1])
+        self.altura_zigzag = random.randint(20, 100)  # Altura do padrão de zig-zag
+        self.contador_zigzag = random.randint(0, 100)
+        self.velocidade = velocidade * random.uniform(0.8, 1.2)
+        self.frequencia_zigzag = random.uniform(0.08, 0.12)
+        self.ponto_inicial = (x, y)  # Ponto onde o morcego começa
+        self.velocidade_original = velocidade
+        
+    def carregar_frames(self, spritesheet, num_frames):
         frames = []
-        offsets = []
-
-        for i in range(frame_count):
-            # Frame bruto da spritesheet
-            rect = Rect(i * frame_size, 0, frame_size, frame_size)
-            frame_surface = Surface((frame_size, frame_size), SRCALPHA)
-            frame_surface.blit(spritesheet, (0, 0), rect)
-
-            # Centraliza a nuvem de 100x100 no meio do frame
-            offset_x = (frame_size - 100) // 2
-            offset_y = (frame_size - 100) // 2
-            offsets.append((offset_x, offset_y))
-
-            frames.append(frame_surface)
-
-        self.offsets[chave] = offsets
+        for i in range(num_frames):
+            rect = Rect(i * self.frame_width, 0, self.frame_width, self.frame_height)
+            frame = Surface((self.frame_width, self.frame_height), SRCALPHA)
+            frame.blit(spritesheet, (0, 0), rect)
+            frame = transform.scale(frame, (self.largura, self.altura))
+            frames.append(frame)
         return frames
+    
+    def atualizar_animacao(self):
+        self.frame_time += self.animation_speed
+        if self.frame_time >= 1:
+            self.frame_time = 0
+            self.frame_index = (self.frame_index + 1) % len(self.frames)
 
-    def escolher_ataque(self):
-        return random.choice(['campo', 'raio'])
+    def trocar_estado(self, novo_estado):
+        if self.estado != novo_estado:
+            self.estado = novo_estado
+            self.frame_index = 0
+            self.frame_time = 0
 
-    def atualizar(self, player_pos, tela):
+            if novo_estado == "idle":
+                self.frames = self.frames_idle
+            elif novo_estado == "run":
+                self.frames = self.frames_run
+            elif novo_estado == "raio":
+                self.frames = self.frames_raio
+            elif novo_estado == "chuva":
+                self.frames = self.frames_chuva
+            elif novo_estado == "campo_forca":
+                self.frames = self.frames_campo_forca
+
+    def atualizar(self, player_pos, tela, player):
+        if self.esta_atordoado() or self.hp <= 0:
+            self.vivo = False
+            self.vx = 0
+            self.vy = 0
+            return
+        
         now = time.get_ticks()
-
-
+        # Knockback
         if now - self.knockback_time < self.knockback_duration:
-            # O knockback ainda está ativo → não atualiza perseguição
+            self.x += self.vx
+            self.y += self.vy
+            self.rect.topleft = (self.x, self.y)
             return
         else:
-            # Knockback acabou → zera velocidade
             self.knockback_x = 0
             self.knockback_y = 0
             self.set_velocidade_x(0)
             self.set_velocidade_y(0)
-        self.old_x = self.x
-        self.old_y = self.y
-        # inimigo morrendo
-        if self.hp <= 0:
-            self.vivo = False
-            self.alma_coletada = False
-            self.vx = 0
-            self.vy = 0
-            self.rect.topleft = (self.x, self.y)
-            return
+        
 
+        
+        distancia_player = math.hypot(player_pos[0] - self.x, player_pos[1] - self.y)
 
-        if self.executando_ataque:
-            if now >= self.tempo_fim_ataque:
-                self.executando_ataque = False
-                self.estado = 'idle'
-                self.frame_index = 0 
-            self.atualizar_animacao()
-            return
+        # Movimento zig-zag
+        self.vx = self.velocidade * self.direcao
 
-        # Verifica se pode atacar
-        if now - self.tempo_ultimo_ataque >= self.cooldown_ataque:
-            self.ataque_atual = self.escolher_ataque()
-            self.estado = self.ataque_atual
-            self.frame_index = 0
-            self.executando_ataque = True
-            self.tempo_fim_ataque = now + 1200
-            self.frame_index = 0
-            self.tempo_ultimo_ataque = now
+        # Cálculo do movimento vertical (zig-zag)
+        self.contador_zigzag += 1
+        if self.contador_zigzag > random.randint(80, 120):  # Ajuste este valor para mudar a frequência do zig-zag
+            self.contador_zigzag = 0
+            self.altura_zigzag = random.randint(40, 80)  # Varia a altura do zig-zag
 
-            if self.ataque_atual == 'raio':
-                player_rect = Rect(player_pos[0], player_pos[1], 64, 64)
-                rect_raio = Rect(self.x + 50, self.y + 50, 100, 100)
-                if player_rect.colliderect(rect_raio):
-                    if hasattr(self, "dar_dano") and callable(self.dar_dano):
-                        self.dar_dano()
-                
-            elif self.ataque_atual == 'campo':
-                player_rect = Rect(player_pos[0], player_pos[1], 64, 64)
-                rect_raio = Rect(self.x + 50, self.y + 50, 100, 100)
-                if player_rect.colliderect(rect_raio):
-                    if hasattr(self, "dar_dano") and callable(self.dar_dano):
-                        self.dar_dano()
+        # Usando seno para criar o padrão de zig-zag suave
+        self.vy = math.sin(self.contador_zigzag * self.frequencia_zigzag) * 2
 
-            self.atualizar_animacao()
-            return
-
-        # Movimento flutuante básico
-        dx = player_pos[0] - self.x
-        dy = player_pos[1] - self.y
-        dist = math.hypot(dx, dy)
-
-        if dist != 0:
-            self.vx = self.velocidade * dx / dist
-            self.vy = self.velocidade * dy / dist
-        else:
-            self.vx = 0
-            self.vy = 0
-
+        # Atualiza posição
         self.x += self.vx
         self.y += self.vy
-        self.rect.topleft = (round(self.x), round(self.y))
 
-        self.estado = 'run' if self.vx or self.vy else 'idle'
+        # Verifica os limites da área de movimento
+        if self.x < self.area_movimento.left:
+            self.direcao = 1
+            self.x = self.area_movimento.left
+        elif self.x > self.area_movimento.right - self.largura:
+            self.direcao = -1
+            self.x = self.area_movimento.right - self.largura
+
+        if self.y < self.area_movimento.top:
+            self.y = self.area_movimento.top
+            self.vy = abs(self.vy)
+        elif self.y > self.area_movimento.bottom - self.altura:
+            self.y = self.area_movimento.bottom - self.altura
+            self.vy = -abs(self.vy)
+
+        if self.estado_ataque == "esperando":
+            if now - self.ultimo_ataque > self.cooldown_entre_ataques:
+                self.estado_ataque = random.choice(["campo_forca", "raio"])
+                self.inicio_ataque = now
+
+                if self.estado_ataque == "campo_forca":
+                    self.invulneravel = True
+                    self.trocar_estado("campo_forca")
+
+                elif self.estado_ataque == "raio":
+                    self.invulneravel = False
+                    self.trocar_estado("raio")
+                    self.raio_atual = 0
+
+        elif self.estado_ataque == "campo_forca":
+            if now - self.inicio_ataque > self.tempo_ataque_campo:
+                self.estado_ataque = "esperando"
+                self.ultimo_ataque = now
+                self.invulneravel = False
+                self.trocar_estado("idle")
+            else:
+                # Disparar orbes perseguidoras
+                if now % 500 < 50:  # a cada ~500ms
+                    self.atirar_orbe(player_pos)
+
+        elif self.estado_ataque == "raio":
+            f1 = Rect(self.x + 100, self.y + 120, self.largura - 200, self.altura - 240)
+            f2 = Rect(self.x + 66, self.y + 86, self.largura - 132, self.altura - 172)
+            f3 = Rect(self.x + 33, self.y + 53, self.largura - 66, self.altura - 106)
+            f4 = Rect(self.x, self.y + 20, self.largura, self.altura - 40)
+
+            if now - self.inicio_ataque < self.tempo_ataque_raio:
+                # Cresce o raio
+                t = (now - self.inicio_ataque) / self.tempo_ataque_raio
+                self.raio_atual = self.raio_maximo * t
+
+                hitbox_player = player.get_hitbox()
+
+                if self.frame_index == 0 and f1.colliderect(hitbox_player):
+                    if hasattr(self, "dar_dano") and callable(self.dar_dano):
+                        self.dar_dano()
+                elif self.frame_index == 1 and f2.colliderect(hitbox_player):
+                    if hasattr(self, "dar_dano") and callable(self.dar_dano):
+                        self.dar_dano()
+                elif self.frame_index == 2 and f3.colliderect(hitbox_player):
+                    if hasattr(self, "dar_dano") and callable(self.dar_dano):
+                        self.dar_dano()
+                elif self.frame_index == 3 and f4.colliderect(hitbox_player):
+                    if hasattr(self, "dar_dano") and callable(self.dar_dano):
+                        self.dar_dano()
+
+            else:
+                self.estado_ataque = "esperando"
+                self.ultimo_ataque = now
+                self.raio_atual = 0
+                self.trocar_estado("idle")
+
+
+        
+        for projetil in self.projeteis[:]:
+            # Atualiza direção em tempo real (teleguiado)
+            dx = player_pos[0] - projetil["x"]
+            dy = player_pos[1] - projetil["y"]
+            distancia = math.hypot(dx, dy)
+
+            if distancia != 0:
+                dx /= distancia
+                dy /= distancia
+
+            velocidade = 8
+
+            projetil["vx"] = dx * velocidade
+            projetil["vy"] = dy * velocidade
+
+            projetil["x"] += projetil["vx"]
+            projetil["y"] += projetil["vy"]
+            projetil["lifetime"] -= 1
+
+            if projetil["lifetime"] <= 0:
+                self.projeteis.remove(projetil)
+
         self.atualizar_animacao()
 
-    def atualizar_animacao(self):
-        now = time.get_ticks()
-        frames = self.frames.get(self.estado, [])
-        if not frames:
-            return  # Evita erro
 
-        if now - self.last_update > self.animation_speed * 1000:
-            self.last_update = now
-            self.frame_index = (self.frame_index + 1) % len(frames)
-
-        self.current_frames = frames
-
-    def desenhar(self, tela, player_pos, offset=(0, 0)):
-        if not self.vivo or len(self.current_frames) == 0:
+    def desenhar(self, tela, playerpos, offset=(0, 0)):
+        if not self.vivo or not self.frames:
             return
-
-        if self.frame_index >= len(self.current_frames):
+        
+        if self.frame_index >= len(self.frames):
             self.frame_index = 0
 
-        offset_x_frame, offset_y_frame = self.offsets[self.estado][self.frame_index]
+        offset_x, offset_y = offset
+        draw_x = self.x + offset_x
+        draw_y = self.y + offset_y
 
-        draw_x = round(self.x) + offset[0] - offset_x_frame
-        draw_y = round(self.y) + offset[1] - offset_y_frame
+        self.desenhar_outline_mouseover(tela, self.hp, self.hp_max)
 
-        #HIT VERMELHO COLOCAR ISSO EM TODOS OS INIMIGOS NO METODO DESENHAR DE CADA UM
+        frame = self.frames[self.frame_index]
+
+        # Aplica efeito de hit, se necessário
         if self.anima_hit:
-            frame = self.aplicar_efeito_hit(self.current_frames[self.frame_index])
-        else:
-            frame = self.current_frames[self.frame_index]
+            frame = self.aplicar_efeito_hit(frame)
 
-        # Desenha o sprite
         tela.blit(frame, (draw_x, draw_y))
-
         self.desenhar_dano(tela, offset)
 
+        # Desenhar projéteis
+        for projetil in self.projeteis:
+            proj_sprite = transform.scale(self.asset_orb, (projetil["tamanho"], projetil["tamanho"]))
+            draw_x = projetil["x"] - projetil["tamanho"] // 2 + offset[0]
+            draw_y = projetil["y"] - projetil["tamanho"] // 2 + offset[1]
+            tela.blit(proj_sprite, (draw_x, draw_y))
 
-        self.desenhar_barra_boss(tela, tela.get_width())
-        now = time.get_ticks()
-        if hasattr(self, 'veneno_ativo') and self.veneno_ativo:
-            if now >= self.veneno_proximo_tick and self.veneno_ticks > 0:
-                self.hp -= self.veneno_dano_por_tick
-                self.veneno_ticks -= 1
-                self.veneno_proximo_tick = now + self.veneno_intervalo
-
-                # Inicia animação de hit como feedback visual (opcional)
-                self.anima_hit = True
-                self.time_last_hit_frame = now
-                self.ultimo_dano = self.veneno_dano_por_tick
-                self.ultimo_dano_tempo = time.get_ticks()
-
-            if self.veneno_ticks <= 0:
-                self.veneno_ativo = False
-
-    def desenhar_barra_boss(self, tela, largura_tela):
-        if not self.vivo:
-            return
-
-        tempo_apos_dano = time.get_ticks() - self.ultimo_dano_tempo
-        if tempo_apos_dano > 4000:
-            return  # só exibe a barra por 4 segundos após o dano
-
-        # Configurações da barra
-        largura_barra = 600
-        altura_barra = 20
-        x = (largura_tela - largura_barra) // 2
-        y = 225  # margem do topo
-
-        vida_maxima = getattr(self, "hp_max", self.hp)
-        porcentagem = max(0, min(self.hp / vida_maxima, 1))
-        largura_hp = int(porcentagem * largura_barra)
-
-        # Fundo
-        draw.rect(tela, (50, 50, 50), (x, y, largura_barra, altura_barra))
-        # Vida
-        draw.rect(tela, (180, 0, 0), (x, y, largura_hp, altura_barra))
-        # Moldura
-        draw.rect(tela, (255, 200, 0), (x, y, largura_barra, altura_barra), 2)
-
+        # draw.rect(tela,(255,0,0), self.get_hitbox(),1)
         
 
 
-
     def get_hitbox(self):
-        return Rect(self.x, self.y, self.largura-100, self.altura-100)
+        return Rect(self.x+100, self.y+120, self.largura-200, self.altura-240)
+    
+    def atirar_orbe(self, player_pos):
+        angle = math.atan2(player_pos[1] - self.y, player_pos[0] - self.x)
+        projetil = {
+            "x": self.x + self.largura // 2,
+            "y": self.y + self.altura // 2,
+            "vx": math.cos(angle) * 15,
+            "vy": math.sin(angle) * 15,
+            "dano": self.dano/2,
+            "lifetime": 100,
+            "tamanho": self.asset_orb_size,
+            "trail": []
+        }
+        self.projeteis.append(projetil)

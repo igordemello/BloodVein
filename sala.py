@@ -62,8 +62,8 @@ class Sala:
     def __init__(self, caminho_mapa, tela, player, gerenciador_andar, set_minimapa_callback):
         self.tela = tela
         self.gerenciador_andar = gerenciador_andar
-        #self.mapa = Mapa(caminho_mapa,self.tela,self.tela.get_width(),self.tela.get_height(),self.gerenciador_andar)
-        self.mapa = Mapa("andar1/1.tmx",self.tela,self.tela.get_width(),self.tela.get_height(),self.gerenciador_andar)
+        self.mapa = Mapa(caminho_mapa,self.tela,self.tela.get_width(),self.tela.get_height(),self.gerenciador_andar)
+        # self.mapa = Mapa("andar1/1.tmx",self.tela,self.tela.get_width(),self.tela.get_height(),self.gerenciador_andar)
 
         self.lista_mods = ListaMods()
         self.loots = []
@@ -224,15 +224,15 @@ class Sala:
             musica.tocar("BloodVein SCORE/OST/MusicaDoBoss.mp3")
             xboss,yboss= self.spawn_points[0]
             numero = self.gerenciador_andar.numero_andar
-            numero = 1
+            numero = 2
             if numero == 1:
                 boss = bossmod.MouthOrb(xboss, yboss, 192, 192)
                 boss.nome_base = "Mãe Orbe"
                 self.leve_atual = self.max_leves + 2
                 return[boss]
             elif numero == 2:
-                boss = NuvemBoss(xboss, yboss)
-                boss.nome_base = "Nuvem Sombria"
+                boss = NuvemBoss(xboss-200, yboss-200, 400,400)
+                boss.nome_base = "Visão Carmesim"
                 self.leve_atual = self.max_leves + 2
                 return[boss]
             elif numero == 3:
@@ -428,6 +428,8 @@ class Sala:
                     inimigo.atualizar(p_rect.center, self.tela, self.mapa.matriz, self.mapa.get_offset(), self.player)
                 elif isinstance(inimigo, bossmod.MouthOrb):
                     inimigo.atualizar(p_rect.center, self.tela, self)
+                elif isinstance(inimigo, NuvemBoss):
+                    inimigo.atualizar(p_rect.center, self.tela, self.player)
                 elif isinstance(inimigo, Orb):
                     inimigo.atualizar(p_rect.center, self.tela)
                 else:

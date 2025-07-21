@@ -7,10 +7,11 @@ from inimigos.orb import Orb
 from utils import resource_path 
 
 class MouthOrb(Inimigo):
-    def __init__(self, x, y, largura, altura, nome="Esfera Sangrenta", hp=3000, velocidade=3, dano=50):
+    def __init__(self, x, y, largura, altura, nome="Esfera Sangrenta", hp=3000, velocidade=4, dano=50):
         super().__init__(x, y, largura, altura, hp, velocidade, dano)
 
         self.nome = nome
+        self.ehboss = True
 
         self.sprites_idle = image.load(resource_path('./assets/Enemies/MouthOrb-IdleSheet-Sheet2.png')).convert_alpha() #12frames
         self.sprites_ataque = image.load(resource_path('./assets/Enemies/MouthOrb-AttackSheet.png')).convert_alpha() #4frames
