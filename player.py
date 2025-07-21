@@ -238,6 +238,12 @@ class Player():
         self.tempo_lentidao = 0
         self.velocidadeOld = self.velocidadeMov
 
+        self.envenenado = False
+        self.tempo_veneno = 0
+        self.duracao_veneno = 0
+        self.intervalo_veneno = 1000  # tempo entre cada dano em ms
+        self.proximo_tick_veneno = 0
+
     def set_hud(self, hud):
         self.hud = hud
 
@@ -507,6 +513,7 @@ class Player():
                 )
 
         self.atualizar_lentidao()
+        self.atualizar_veneno()
 
 
     def tratar_eventos(self, eventos):
@@ -1386,3 +1393,19 @@ class Player():
                 self.lentidao_ativa = False
                 self.velocidadeMov = self.velocidadeOld
 
+    def aplicar_veneno(self, duracao):
+        self.envenenado = True
+        self.duracao_veneno = duracao
+        self.tempo_veneno = pygame.time.get_ticks()
+        self.proximo_tick_veneno = self.tempo_veneno + self.intervalo_veneno
+
+    def atualizar_veneno(self):
+        if self.envenenado:
+            agora = pygame.time.get_ticks()
+            if agora >= self.proximo_tick_veneno:
+                self.proximo_tick_veneno += self.intervalo_veneno
+                self.hp -= self.venenoDano / 10  # Aplica dano periódico
+                if self.hp < 1:
+                    self.hp = 1  # evita que morra pelo veneno
+            if agora - self.tempo_veneno > self.duracao_veneno:
+                self.envenenado = False
