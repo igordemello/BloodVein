@@ -6,16 +6,15 @@ from inimigo import Inimigo
 from utils import resource_path 
 
 class NuvemBoss2(Inimigo):
-    def __init__(self, x, y, largura, altura, nome="Visão Carmesim", hp=15000, velocidade=4, dano=85):
+    def __init__(self, x, y, largura, altura, nome="Visão Ácida", hp=15000, velocidade=4, dano=85):
         super().__init__(x, y, largura, altura, hp, velocidade, dano)
 
         self.nome = nome
         self.ehboss = True
 
         self.sprites_idle = image.load(resource_path('./assets/Enemies/nuvem2_idle.png')).convert_alpha() #4frames
-        self.sprites_run = image.load(resource_path('./assets/Enemies/nuvem2_run.png')).convert_alpha() #8frames
         self.sprites_raio = image.load(resource_path('./assets/Enemies/nuvem2_raio.png')).convert_alpha() #4frames
-        self.sprites_campo_forca = image.load(resource_path('./assets/Enemies/nuvem2_campo_de_força.png')).convert_alpha() #5frames
+        self.sprites_campo_forca = image.load(resource_path('./assets/Enemies/nuvem_campo_de_força2.png')).convert_alpha() #5frames
 
         self.frame_width = 200
         self.frame_height = 200
@@ -28,7 +27,6 @@ class NuvemBoss2(Inimigo):
         self.asset_orb_size = 32
 
         self.frames_idle = self.carregar_frames(self.sprites_idle, 4)
-        self.frames_run = self.carregar_frames(self.sprites_run, 8)
         self.frames_raio = self.carregar_frames(self.sprites_raio, 4)
         self.frames_campo_forca = self.carregar_frames(self.sprites_campo_forca, 5)
 
@@ -91,8 +89,6 @@ class NuvemBoss2(Inimigo):
 
             if novo_estado == "idle":
                 self.frames = self.frames_idle
-            elif novo_estado == "run":
-                self.frames = self.frames_run
             elif novo_estado == "raio":
                 self.frames = self.frames_raio
             elif novo_estado == "chuva":
@@ -106,6 +102,28 @@ class NuvemBoss2(Inimigo):
             self.vx = 0
             self.vy = 0
             return
+        
+        for projetil in self.projeteis[:]:
+            # Atualiza direção em tempo real (teleguiado)
+            dx = player_pos[0] - projetil["x"]
+            dy = player_pos[1] - projetil["y"]
+            distancia = math.hypot(dx, dy)
+
+            if distancia != 0:
+                dx /= distancia
+                dy /= distancia
+
+            velocidade = 8
+
+            projetil["vx"] = dx * velocidade
+            projetil["vy"] = dy * velocidade
+
+            projetil["x"] += projetil["vx"]
+            projetil["y"] += projetil["vy"]
+            projetil["lifetime"] -= 1
+
+            if projetil["lifetime"] <= 0:
+                self.projeteis.remove(projetil)
         
         now = time.get_ticks()
         # Knockback
@@ -214,27 +232,7 @@ class NuvemBoss2(Inimigo):
 
 
         
-        for projetil in self.projeteis[:]:
-            # Atualiza direção em tempo real (teleguiado)
-            dx = player_pos[0] - projetil["x"]
-            dy = player_pos[1] - projetil["y"]
-            distancia = math.hypot(dx, dy)
-
-            if distancia != 0:
-                dx /= distancia
-                dy /= distancia
-
-            velocidade = 8
-
-            projetil["vx"] = dx * velocidade
-            projetil["vy"] = dy * velocidade
-
-            projetil["x"] += projetil["vx"]
-            projetil["y"] += projetil["vy"]
-            projetil["lifetime"] -= 1
-
-            if projetil["lifetime"] <= 0:
-                self.projeteis.remove(projetil)
+        
 
         self.atualizar_animacao()
 

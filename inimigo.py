@@ -192,8 +192,13 @@ class Inimigo:
             if not self.frames:
                 return
 
-            sprite = self.frames[self.frame_index]
-            mask = mask_from_surface(sprite)
+            try:
+                sprite = self.frames[self.frame_index]
+                mask = mask_from_surface(sprite)
+            except:
+                self.frame_index = 0
+                sprite = self.frames[self.frame_index]
+                mask = mask_from_surface(sprite)
 
             outline_size = 1
             outline_surf = Surface(

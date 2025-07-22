@@ -246,8 +246,7 @@ class Sala:
             self.leve_atual = self.max_leves + 2
             return []
 
-        # self.leve_atual = self.max_leves + 2
-        # return []
+        
 
         tempo_atual = time.get_ticks()
         if tempo_atual - self.tempo_entrada < self.cooldown_inicial and not self.inimigos_spawnados:
@@ -258,7 +257,6 @@ class Sala:
             musica.tocar("BloodVein SCORE/OST/MusicaDoBoss.mp3")
             xboss,yboss= self.spawn_points[0]
             numero = self.gerenciador_andar.numero_andar
-            numero = 4
             if numero == 1:
                 boss = bossmod.MouthOrb(xboss, yboss, 192, 192)
                 boss.nome_base = "Mãe Orbe"
@@ -272,7 +270,6 @@ class Sala:
             elif numero == 3:
                 boss = MouthOrb2(xboss, yboss,192, 192 )
                 boss.nome_base = "Vovó Orbe"
-                boss.player = self.player  # Define a referência ao jogador
                 self.leve_atual = self.max_leves + 2
                 return [boss]
             elif numero == 4:
@@ -282,6 +279,8 @@ class Sala:
                 return[boss]
 
 
+        # self.leve_atual = self.max_leves + 2
+        # return []
 
         self.inimigos_spawnados = True
 
@@ -872,7 +871,7 @@ class Sala:
 
             self.tela.blit(texto, texto_rect)
 
-        if self.gerenciador_andar.grafo.nodes[self.gerenciador_andar.sala_atual]["tipo"] == "boss" and self.porta_liberada:
+        if self.gerenciador_andar.grafo.nodes[self.gerenciador_andar.sala_atual]["tipo"] == "boss" and self.porta_liberada and self.gerenciador_andar.numero_andar != 4:
             offset_x, offset_y = screen_shaker.offset
             pos_x, pos_y = 1500 + offset_x, 600 + offset_y
             self.tela.blit(self.portal_img, (pos_x, pos_y))

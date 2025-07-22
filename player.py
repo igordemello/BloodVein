@@ -15,11 +15,10 @@ from som import som
 from som import GerenciadorDeMusica
 from som import musica
 from dificuldade import dificuldade_global
-from utils import resource_path 
 
 class Player():
-    def __init__(self, x, y, largura, altura,hud=None, hp=100000, st=100, velocidadeMov=2, sprite=resource_path('assets/player/hero.png'), arma=None):
-        # animações
+    def __init__(self, x, y, largura, altura,hud=None, hp=100, st=100, velocidadeMov=2, sprite=resource_path('assets/player/hero.png'), arma=None):
+        # animaçõesd
         self.hit_landed = None
         self.animacoes = {
             "baixo": self.carregar_animacao(resource_path('assets/Player/vampira_andando_frente.png')),

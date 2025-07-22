@@ -109,6 +109,28 @@ class NuvemBoss(Inimigo):
             self.vy = 0
             return
         
+        for projetil in self.projeteis[:]:
+            # Atualiza direção em tempo real (teleguiado)
+            dx = player_pos[0] - projetil["x"]
+            dy = player_pos[1] - projetil["y"]
+            distancia = math.hypot(dx, dy)
+
+            if distancia != 0:
+                dx /= distancia
+                dy /= distancia
+
+            velocidade = 8
+
+            projetil["vx"] = dx * velocidade
+            projetil["vy"] = dy * velocidade
+
+            projetil["x"] += projetil["vx"]
+            projetil["y"] += projetil["vy"]
+            projetil["lifetime"] -= 1
+
+            if projetil["lifetime"] <= 0:
+                self.projeteis.remove(projetil)
+        
         now = time.get_ticks()
         # Knockback
         if now - self.knockback_time < self.knockback_duration:
@@ -216,27 +238,7 @@ class NuvemBoss(Inimigo):
 
 
         
-        for projetil in self.projeteis[:]:
-            # Atualiza direção em tempo real (teleguiado)
-            dx = player_pos[0] - projetil["x"]
-            dy = player_pos[1] - projetil["y"]
-            distancia = math.hypot(dx, dy)
-
-            if distancia != 0:
-                dx /= distancia
-                dy /= distancia
-
-            velocidade = 8
-
-            projetil["vx"] = dx * velocidade
-            projetil["vy"] = dy * velocidade
-
-            projetil["x"] += projetil["vx"]
-            projetil["y"] += projetil["vy"]
-            projetil["lifetime"] -= 1
-
-            if projetil["lifetime"] <= 0:
-                self.projeteis.remove(projetil)
+        
 
         self.atualizar_animacao()
 
