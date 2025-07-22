@@ -222,8 +222,8 @@ class Sala:
 
 
         self.musicas_de_combate = [
-        "BloodVein SCORE/OST/MusicaDeCombate.mp3",
-        "BloodVein SCORE/OST/MusicaDeCombate2.mp3"
+        resource_path("BloodVein SCORE/OST/MusicaDeCombate.mp3"),
+        resource_path("BloodVein SCORE/OST/MusicaDeCombate2.mp3")
         ]
 
         self.musica_escolhida = choice(self.musicas_de_combate)
@@ -231,7 +231,7 @@ class Sala:
 
         self.save_manager = SaveManager()
         game_state = self.save_manager.generate_game_state(self.player, self.gerenciador_andar, self)
-        self.save_manager.save_game(game_state, "save_file.json")
+        self.save_manager.save_game(game_state, resource_path("save_file.json"))
 
         self.alagard = font.Font(resource_path('assets/fontes/alagard.ttf'), 25)
 
@@ -254,7 +254,7 @@ class Sala:
 
         if "boss" in tipo_sala:
             self.boss_musica = "suicidio"
-            musica.tocar("BloodVein SCORE/OST/MusicaDoBoss.mp3")
+            musica.tocar(resource_path("BloodVein SCORE/OST/MusicaDoBoss.mp3"))
             xboss,yboss= self.spawn_points[0]
             numero = self.gerenciador_andar.numero_andar
             if numero == 1:
@@ -625,7 +625,7 @@ class Sala:
             if self.boss_musica == 0:
                 musica.tocar(self.musica_escolhida, fade_ms=1000)
         elif self.boss_musica == 0 and (not self.loja or self.loja.musica == 0):
-            musica.tocar("BloodVein SCORE/OST/MapaForadoCombate.mp3", fade_ms=1000)
+            musica.tocar(resource_path("BloodVein SCORE/OST/MapaForadoCombate.mp3"), fade_ms=1000)
             self.musica_escolhida = choice(self.musicas_de_combate)
 
         for evento in eventos:
@@ -1056,7 +1056,7 @@ class Sala:
             # Pré-salva o andar atual (opcional)
             andar_num = self.gerenciador_andar.numero_andar
             import shutil
-            shutil.copy('data/andar_atual.json', f'data/backup_andar{andar_num}.json')
+            shutil.copy(resource_path('data/andar_atual.json'), resource_path(f'data/backup_andar{andar_num}.json'))
 
             # Avança para o próximo andar
             self.gerenciador_andar.numero_andar += 1

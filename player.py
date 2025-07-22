@@ -495,7 +495,7 @@ class Player():
         if self.hp == 0:
             if self.revives <= 0:
                 self.gameOver = True
-                musica.tocar("BloodVein SCORE/OST/Game Over.mp3")
+                musica.tocar(resource_path("BloodVein SCORE/OST/Game Over.mp3"))
             else:
                 self.hp += self.hpMax / 2
                 self.revives -= 1

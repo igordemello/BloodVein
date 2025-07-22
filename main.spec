@@ -17,6 +17,8 @@ datas = []
 datas += collect_data_folder_recursively("assets")
 datas += collect_data_folder_recursively("data")
 datas += collect_data_folder_recursively("mapas")
+datas += collect_data_folder_recursively("sons")
+datas += collect_data_folder_recursively("BloodVein SCORE")
 
 hiddenimports = collect_submodules("inimigos")
 a = Analysis(

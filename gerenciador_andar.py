@@ -16,7 +16,7 @@ class GerenciadorAndar:
     def carregar_andar(self):
 
         data_dir = os.path.join(os.path.dirname(__file__), "data")
-        andar_path = os.path.join(data_dir, "andar_atual.json")
+        andar_path = os.path.join(data_dir, resource_path("andar_atual.json"))
         
         try:
             if not os.path.exists(andar_path):

@@ -89,7 +89,7 @@ class Loja():
 
     def desenhar_loja(self, tela):
         self.musica = 1
-        musica.tocar("BloodVein SCORE/OST/Loja.mp3")
+        musica.tocar(resource_path("BloodVein SCORE/OST/Loja.mp3"))
         tela.fill((0, 0, 0))
         tela.blit(self.fundo,(0,0))
         tela.blit(self.personagem_img, (800, 50))
