@@ -111,7 +111,7 @@ class GerenciadorDeSom:
                 self.canais_ocupados.pop(canal_id)
 
 
-som = GerenciadorDeSom(volume=0) #0.3 dpeosi
+som = GerenciadorDeSom(volume=0.3) #0.3 dpeosi
 
 
 class GerenciadorDeMusica:
@@ -209,4 +209,4 @@ class GerenciadorDeMusica:
             mixer.music.set_volume(self.volume)
 
 
-musica = GerenciadorDeMusica(volume=0) #0.3 depiso
+musica = GerenciadorDeMusica(volume=0.3) #0.3 depiso

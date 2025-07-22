@@ -319,7 +319,9 @@ class Game:
                         self.bau_foi_aberto_esse_frame = False
 
         elif self.estado == EstadoDoJogo.PAUSADO:
+            print("PAUSE EVENT FRAME")  # Diagnóstico
             for ev in eventos:
+                print(f"Evento: {ev}")
                 if ev.type == KEYDOWN and ev.key == K_ESCAPE:
                     self.estado = EstadoDoJogo.JOGANDO
                 if ev.type == MOUSEBUTTONDOWN and ev.button == 1:
@@ -468,7 +470,12 @@ class Game:
 
 
         elif self.estado == EstadoDoJogo.PAUSADO:
-            self.pause.pauseFuncionamento(self.screen, self.imagem_fundo_pause)
+            try:
+                self.clock.tick(60)  # Garante que o loop anda mesmo travado
+                print("PAUSE FRAME OK")  # Ver se trava nesse print
+                self.pause.pauseFuncionamento(self.screen, self.imagem_fundo_pause)
+            except Exception as e:
+                print(f"[GAME DRAW PAUSE CRASH] {type(e).__name__}: {e}")
 
         elif self.estado == EstadoDoJogo.GAME_OVER:
             self.game_over.gameOverFuncionamento(self.screen)

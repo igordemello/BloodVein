@@ -868,11 +868,11 @@ class Player():
             self.player_rect.y += dy
         self.x, self.y = self.player_rect.topleft
 
-    def infoArma(self):
-        print(
-            f'Dano: {self.arma.dano}\nRapidez: {self.arma.velocidade}\nLife steal: {self.arma.lifeSteal}\nChance de Crítico: {self.arma.chanceCritico}\nDano do Crítico: {self.arma.danoCriticoMod * self.arma.dano}')
-        print("Nome: ", self.arma.nome)
-        print(self.atributos["forca"])
+    # def infoArma(self):
+    #     print(
+    #         f'Dano: {self.arma.dano}\nRapidez: {self.arma.velocidade}\nLife steal: {self.arma.lifeSteal}\nChance de Crítico: {self.arma.chanceCritico}\nDano do Crítico: {self.arma.danoCriticoMod * self.arma.dano}')
+    #     print("Nome: ", self.arma.nome)
+    #     print(self.atributos["forca"])
 
     def criar_efeito_sangue(self, x, y):
         for _ in range(5):
@@ -889,7 +889,6 @@ class Player():
     def ataque_espadaPrincipal(self, inimigos, mouse_pos, dt):
         if hasattr(self, 'tempo_descongelar'):
             return
-        print(self.efeitos)
         current_time = time.get_ticks()
         if self.arma.velocidade <= 0:
             self.arma.velocidade = 1

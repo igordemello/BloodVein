@@ -37,7 +37,6 @@ class AumentarAgilidade(Efeito):
 
     def aplicar(self, jogador):
         self.valor_original = jogador.atributos["agilidade"]
-        print(self.valor_original)
         jogador.atributos["agilidade"] += self.valor
         jogador.atualizar_atributos()
 
@@ -204,5 +203,4 @@ class ItemAtivo:
             for efeito in self.efeitos_ativos:
                 if hasattr(efeito, 'remover'):
                     efeito.remover(player)
-                    print(efeito.valor_original)
             self.efeitos_ativos = []

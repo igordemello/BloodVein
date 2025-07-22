@@ -564,7 +564,6 @@ class Inventario():
                 for botao in self.botoes_habilidades:
                     if botao.checkForInput(mouse_pos):
                         hab_nome = botao.value
-                        print(f"Habilidade selecionada: {hab_nome}")
                         return self.gerenciador_habilidades.desbloquear(self.player, hab_nome)
 
             teclas_para_verificar = [K_1, K_2, K_3, K_4]
@@ -594,7 +593,6 @@ class Inventario():
                     rect_item = Rect(x, y, 100, 100)
 
                     if rect_item.collidepoint(mouse_x, mouse_y):
-                        print(arma.raridade)
                         arma_antiga = self.player.arma
 
                         self.player.arma = arma

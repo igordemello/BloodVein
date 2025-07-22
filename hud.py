@@ -373,7 +373,6 @@ class Hud:
             # Draw the skill sprite if assigned
             if self.player.hotkeys[i] != 0:
                 hab_nome = self.player.hotkeys[i]
-                print(hab_nome)
                 # Get the skill sprite from the habilidades manager
 
                 hab_sprite = image.load(
