@@ -28,6 +28,8 @@ from inimigos.caveiradefogo import CaveiraDeFogo
 from inimigos.morcegopadrao import MorcegoPadrao
 from inimigos.furacao import Furacao
 from inimigos.nuvemBoss import NuvemBoss
+from inimigos.nuvemBoss2 import NuvemBoss2
+from inimigos.MouthOrbBoss2 import MouthOrb2
 from inimigos.Cachorro import Cerbero
 from inimigos.massa_de_olhos import Massa
 from inimigos.zombie import Zombie
@@ -166,18 +168,33 @@ class Sala:
 
             if numerodoandar == 1:
                 cenas = [
-                    {"imagem": transform.scale(image.load(resource_path('assets/cutscene/player.png')).convert_alpha(), (640,960)), "fala": "Por essa eu não esperava, agora tem um gigante ter um gigante desse olho maldito....", "lado": "esquerda"},
-                    {"imagem": transform.scale(image.load(resource_path('assets/cutscene/olhoBoss.png')).convert_alpha(), (840,840)), "fala": "Você realmente achou que iria assasinar meus filhos e ficar impune? Você sangra? VAI SANGRAR", "lado": "direita"}
+                    {"imagem": transform.scale(image.load(resource_path('assets/cutscene/player.png')).convert_alpha(), (640,960)), "fala": "Prepare-se para morrer", "lado": "esquerda"},
+                    {"imagem": transform.scale(image.load(resource_path('assets/cutscene/olhoBoss.png')).convert_alpha(), (840,840)), "fala": "Blaarr blar ble", "lado": "direita"}
                 ]
                 self.cutscene = Cutscene(cenas, fundo, self.tela.get_width(), self.tela.get_height())
 
             if numerodoandar == 2:
                 cenas = [
-                    {"imagem": transform.scale(image.load(resource_path('assets/cutscene/nuvemBoss.png')).convert_alpha(), (800,800)), "fala": "Matar aquele olho nojento é fácil, quero ver conseguir desviar de algo que está por todo canto!", "lado": "direita"},
-                    {"imagem": transform.scale(image.load(resource_path('assets/cutscene/player.png')).convert_alpha(), (640,960)), "fala": "Vai ser ez, eu nunca perderia pra uma nuvem", "lado": "esquerda"}
+                    {"imagem": transform.scale(image.load(resource_path('assets/cutscene/nuvemBoss.png')).convert_alpha(), (800,800)), "fala": "....", "lado": "direita"},
+                    {"imagem": transform.scale(image.load(resource_path('assets/cutscene/player.png')).convert_alpha(), (640,960)), "fala": "que nojo", "lado": "esquerda"}
 
                 ]
                 self.cutscene = Cutscene(cenas, fundo, self.tela.get_width(), self.tela.get_height())
+            if numerodoandar == 3:
+                cenas = [
+                    {"imagem": transform.scale(image.load(resource_path('assets/cutscene/player.png')).convert_alpha(), (800,800)), "fala": "Você está um pouco... diferente", "lado": "direita"},
+                    {"imagem": transform.scale(image.load(resource_path('assets/cutscene/olhoBoss2.png')).convert_alpha(), (640,960)), "fala": "BLAAR BLER MORRA", "lado": "esquerda"}
+
+                ]
+                self.cutscene = Cutscene(cenas, fundo, self.tela.get_width(), self.tela.get_height())
+            if numerodoandar == 4:
+                cenas = [
+                    {"imagem": transform.scale(image.load(resource_path('assets/cutscene/player.png')).convert_alpha(), (800,800)), "fala": "Eu vou te matar nuvem monstruosa", "lado": "direita"},
+                    {"imagem": transform.scale(image.load(resource_path('assets/cutscene/nuvemBoss3.png')).convert_alpha(), (640,960)), "fala": "..........", "lado": "esquerda"}
+
+                ]
+                self.cutscene = Cutscene(cenas, fundo, self.tela.get_width(), self.tela.get_height())
+
 
 
 
@@ -241,11 +258,16 @@ class Sala:
                 self.leve_atual = self.max_leves + 2
                 return[boss]
             elif numero == 3:
-                boss = Cerbero(xboss, yboss)
-                boss.nome_base = "Cerbero"
+                boss = MouthOrb2(xboss, yboss)
+                boss.nome_base = "Vovó Orbe"
                 boss.player = self.player  # Define a referência ao jogador
                 self.leve_atual = self.max_leves + 2
                 return [boss]
+            elif numero == 4:
+                boss = NuvemBoss2(xboss-200, yboss-200, 400,400)
+                boss.nome_base = "Visão Ácida"
+                self.leve_atual = self.max_leves + 2
+                return[boss]
 
 
 
@@ -281,11 +303,11 @@ class Sala:
         # tipos_disponiveis = ["furacao","caveiradefogo","morcegopadrao","orb","espectro","polvo", "esqueletogelo", "massa", "zombie","aranhalunar","esqueletogelo","ratodesangue", "aranhadosol","arqueiro", "vampirosol","magoelementar","esqueletopeconhento"]
         #tipos_disponiveis = ["furacao","caveiradefogo","morcegopadrao","orb","espectro","polvo", "esqueletogelo", "massa", "zombie","aranhalunar","esqueletogelo","ratodesangue", "aranhadosol","arqueiro", "vampirosol","magoelementar","esqueletopeconhento"]
 
-        geral = ["caveiradefogo", "furacao", "orb", "morcegopadrao", "zombie", "magoelementar"]
-        andar1 = geral + ["aranhalunar", "ratodesangue", "polvo"]
-        andar2 = geral + ["massa", "esqueletogelo", "esqueletopeconhento"]
-        andar3 = geral + ["arqueiro", "espectro", "aranhadosol"]
-        andar4 = geral + ["vampirosol"]
+        geral = ["espectro", "morcegopadrao", "ratodesangue",  "polvo","aranhalunar"]
+        andar1 = geral + ["orb", "esqueletogelo", "massa"]
+        andar2 = geral + ["furacao", "arqueiro", "esqueletopeconhento"]
+        andar3 = geral + ["caveiradefogo","magoelementar", "aranhadosol"]
+        andar4 = geral + ["vampirosol","aranhadosol"]
 
         andar_atual = self.gerenciador_andar.numero_andar
         if andar_atual == 1:
