@@ -170,10 +170,10 @@ class Loja():
             tela.blit(nome, (pos_x + 250, pos_y + 100))
 
             #Preço
-            preco = self.alagard(25).render(f"Price: {self.precos[item.raridade]}", True, (253, 246, 225))
+            preco = self.alagard(25).render(f"Preço: {self.precos[item.raridade]}", True, (253, 246, 225))
             tela.blit(preco, (pos_x + 250, pos_y+150))
             texto_width_price = almas.get_width()
-            tela.blit(self.img_alma(32), (pos_x + 250 + texto_width_price + 2.5, pos_y+150-8))
+            tela.blit(self.img_alma(32), (pos_x + 250 + 40+ texto_width_price + 2.5, pos_y+150-8))
 
             
 
