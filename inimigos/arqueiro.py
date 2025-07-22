@@ -57,6 +57,11 @@ class Arqueiro(Inimigo):
         return min(opcoes, key=lambda c: (c[0] - self.x)**2 + (c[1] - self.y)**2)
 
     def atualizar(self, player_pos, tela, matriz_colisao, offset):
+        if self.esta_atordoado() or self.hp <= 0:
+            self.vivo = False
+            self.vx = 0
+            self.vy = 0
+            return
         now = time.get_ticks()
 
         if self.hp <= 0:

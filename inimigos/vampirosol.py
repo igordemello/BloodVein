@@ -63,6 +63,11 @@ class VampiroSol(Inimigo):
         return frames
 
     def atualizar(self, player_pos, tela, matriz_colisao, offset_mapa):
+        if self.esta_atordoado() or self.hp <= 0:
+            self.vivo = False
+            self.vx = 0
+            self.vy = 0
+            return
         now = time.get_ticks()
         if self.hp <= 0:
             self.vivo = False
