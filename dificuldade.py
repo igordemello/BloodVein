@@ -5,8 +5,8 @@ class Dificuldade:
     def set_dificuldade(self, nivel):
         self.nivel = nivel
         if nivel == 'normal':
-            self.mult_dano_jogador = 1.2
-            self.mult_dano_inimigo = 0.8
+            self.mult_dano_jogador = 1.0
+            self.mult_dano_inimigo = 1.0
             self.levas = 1
         elif nivel == 'dificil':
             self.mult_dano_jogador = 1.5
