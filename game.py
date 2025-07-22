@@ -46,7 +46,8 @@ class EstadoDoJogo(Enum):
     LOJA = auto()
     BAU = auto()
     CUTSCENE = auto()
-
+    CONTROLES = auto()
+    CREDITOS = auto()
 
 class Game:
     def __init__(self):
@@ -97,6 +98,9 @@ class Game:
         self.foi_pra_jogo = 0
 
         self.imagem_fundo_pause = None
+
+        self.imagem_controles = image.load(resource_path('assets/tela_controles.png')).convert_alpha()
+        self.imagem_creditos = image.load(resource_path('assets/tela_creditos.png')).convert_alpha()
 
     def resetar_jogo(self, com_nova_run=False):
         self.player = Player(950, 400, 32 * 2, 48 * 2)
@@ -231,6 +235,11 @@ class Game:
                             self.player.atualizar_atributos()
                         except Exception as e:
                             print(f"Erro ao carregar jogo: {e}")
+
+                    elif escolha == "crecitos":
+                        self.estado = EstadoDoJogo.CREDITOS
+                    elif escolha == "controles":
+                        self.estado = EstadoDoJogo.CONTROLES
                     elif escolha == "sair":
                         quit()
                         sys.exit()
@@ -390,6 +399,11 @@ class Game:
                         self.estado = EstadoDoJogo.JOGANDO
                         self.foi_pra_jogo = time.get_ticks()
 
+        elif self.estado == EstadoDoJogo.CONTROLES or self.estado == EstadoDoJogo.CREDITOS:
+            for ev in eventos:
+                if ev.type == KEYDOWN and ev.key == K_ESCAPE:
+                    self.estado = EstadoDoJogo.MENU
+
         for ev in eventos:
             if ev.type == MOUSEBUTTONDOWN:
                 self.cursor_clicando = True
@@ -490,6 +504,12 @@ class Game:
         #    fps = int(self.clock.get_fps())
         #    self.fps_text = self.fps_font.render(f"FPS: {fps}", True, (255, 255, 255))
         #self.screen.blit(self.fps_text, (10 + offset_x, 10 + offset_y))
+
+        elif self.estado == EstadoDoJogo.CONTROLES:
+            self.screen.blit(self.imagem_controles, (0, 0))
+
+        elif self.estado == EstadoDoJogo.CREDITOS:
+            self.screen.blit(self.imagem_creditos, (0, 0))
 
         if self.mensagem_salvo and time.get_ticks() - self.tempo_mensagem_salvo < 2000:
             self.screen.blit(self.mensagem_salvo, (1920 // 2 - self.mensagem_salvo.get_width() // 2, 900))
