@@ -6,7 +6,7 @@ from inimigo import Inimigo
 from utils import resource_path 
 
 class NuvemBoss(Inimigo):
-    def __init__(self, x, y, largura, altura, nome="Visão Carmesim", hp=10000, velocidade=5, dano=70):
+    def __init__(self, x, y, largura, altura, nome="Visão Carmesim", hp=10000, velocidade=4, dano=70):
         super().__init__(x, y, largura, altura, hp, velocidade, dano)
 
         self.nome = nome
@@ -282,8 +282,8 @@ class NuvemBoss(Inimigo):
         projetil = {
             "x": self.x + self.largura // 2,
             "y": self.y + self.altura // 2,
-            "vx": math.cos(angle) * 15,
-            "vy": math.sin(angle) * 15,
+            "vx": math.cos(angle) * 10,
+            "vy": math.sin(angle) * 10,
             "dano": self.dano/2,
             "lifetime": 100,
             "tamanho": self.asset_orb_size,
