@@ -68,6 +68,8 @@ class Sala:
         self.lista_mods = ListaMods()
         self.loots = []
 
+        self.musica_atual = None
+
         self.player = player
         self.colisao = Colisao(self.mapa, self.player)
         self.colisao.adicionar_entidade(player)
@@ -585,14 +587,14 @@ class Sala:
             else:
                 self.fumaça_particula.clear()
 
-
-        if (any((inimigo.vivo for inimigo in self.inimigos)) or self.leve_atual < self.max_leves) and not self.gerenciador_andar.sala_foi_conquistada(self.gerenciador_andar.sala_atual):
+        if (any((inimigo.vivo for inimigo in
+                 self.inimigos)) or self.leve_atual < self.max_leves) and not self.gerenciador_andar.sala_foi_conquistada(
+                self.gerenciador_andar.sala_atual):
             if self.boss_musica == 0:
-                musica.tocar(self.musica_escolhida)
-        elif self.loja:
-            if self.boss_musica == 0 and self.loja.musica == 0:
-                musica.tocar("BloodVein SCORE/OST/MapaForadoCombate.mp3")
-                self.musica_escolhida = choice(self.musicas_de_combate)
+                musica.tocar(self.musica_escolhida, fade_ms=1000)
+        elif self.boss_musica == 0 and (not self.loja or self.loja.musica == 0):
+            musica.tocar("BloodVein SCORE/OST/MapaForadoCombate.mp3", fade_ms=1000)
+            self.musica_escolhida = choice(self.musicas_de_combate)
 
         for evento in eventos:
             if evento.type == MOUSEBUTTONDOWN and evento.button == 1:

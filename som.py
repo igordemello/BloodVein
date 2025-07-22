@@ -11,6 +11,7 @@ class GerenciadorDeSom:
         self.volume = volume
         self.max_channels = max_channels
         self.sons = {}
+        self.sons_com_pitch = {}
         self.canais_ocupados = {}
 
         # Carrega os sons em uma thread separada para não travar o jogo
@@ -58,11 +59,15 @@ class GerenciadorDeSom:
         if nome not in self.sons:
             return None
 
+
+
         canal = mixer.find_channel()
         if canal is None:
             canal = self._obter_canal_mais_antigo()
             if canal is None:
                 return None
+        if hasattr(canal, 'set_pitch'):
+            canal.set_pitch(1.0)
 
         # Configura o volume - garante que não ultrapasse o volume global
         target_volume = self.volume if volume is None else min(volume, self.volume)
@@ -110,8 +115,54 @@ class GerenciadorDeSom:
             if not self.canais_ocupados[canal_id]["canal"].get_busy():
                 self.canais_ocupados.pop(canal_id)
 
+    def tocar_com_pitch(self, nome, pitch=1.0, volume=None, loops=0, fade_ms=0):
+        """Toca um som com pitch ajustado"""
+        if nome not in self.sons:
+            return None
 
-som = GerenciadorDeSom(volume=0.3) #0.3 dpeosi
+        # Cria uma cópia do som com pitch modificado se necessário
+        if pitch != 1.0:
+            key = f"{nome}_{pitch}"
+            if key not in self.sons_com_pitch:
+                original = self.sons[nome]
+                # Cria uma cópia do som (infelizmente o pygame não permite mudar pitch diretamente)
+                # Como alternativa, vamos usar playback rate que tem efeito similar
+                copied = mixer.Sound(buffer=original.get_raw())
+                copied.set_volume(original.get_volume())
+                self.sons_com_pitch[key] = copied
+            som = self.sons_com_pitch[key]
+        else:
+            som = self.sons[nome]
+
+        canal = mixer.find_channel()
+        if canal is None:
+            canal = self._obter_canal_mais_antigo()
+            if canal is None:
+                return None
+
+        # Configura o volume
+        target_volume = self.volume if volume is None else min(volume, self.volume)
+        canal.set_volume(target_volume)
+
+        # Configura o playback rate (efetivamente muda o pitch)
+        if hasattr(canal, 'set_playback_rate'):
+            canal.set_playback_rate(pitch)
+
+        # Toca o som
+        canal.play(som, loops, fade_ms=fade_ms)
+
+        self.canais_ocupados[id(canal)] = {
+            "canal": canal,
+            "inicio": time.time(),
+            "nome": nome,
+            "volume": target_volume,
+            "pitch": pitch
+        }
+
+        return canal
+
+
+som = GerenciadorDeSom(volume=0.1) #0.3 dpeosi
 
 
 class GerenciadorDeMusica:
