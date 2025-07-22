@@ -807,22 +807,22 @@ class Sala:
             self.tela.blit(botao.image, botao.rect)
 
             mouse_pos = mouse.get_pos()
-            #if botao.rect.collidepoint(mouse_pos):
-            botao.changeColor(mouse_pos)
+            if botao.rect.collidepoint(mouse_pos):
+                botao.changeColor(mouse_pos)
 
-            texto_render = botao.font.render(botao.text_input, True, botao.hovering_color)
-            largura = texto_render.get_width() + 20
-            altura = texto_render.get_height() + 10
+                texto_render = botao.font.render(botao.text_input, True, botao.hovering_color)
+                largura = texto_render.get_width() + 20
+                altura = texto_render.get_height() + 10
 
-            texto_x = botao.x_pos - largura // 2
-            texto_y = botao.y_pos - 50
+                texto_x = botao.x_pos - largura // 2
+                texto_y = botao.y_pos - 50
 
-            fundo = Surface((largura, altura), SRCALPHA)
-            fundo.fill((0, 0, 0, 160))
-            self.tela.blit(fundo, (texto_x, texto_y))
+                fundo = Surface((largura, altura), SRCALPHA)
+                fundo.fill((0, 0, 0, 160))
+                self.tela.blit(fundo, (texto_x, texto_y))
 
-            # Texto
-            self.tela.blit(texto_render, (texto_x + 10, texto_y + 5))
+                # Texto
+                self.tela.blit(texto_render, (texto_x + 10, texto_y + 5))
         if time.get_ticks() - self.inventario_cheio_tempo < self.inventario_cheio_duracao and self.inventario_cheio_msg:
             font_msg = font.Font(resource_path('assets/fontes/alagard.ttf'), 36)
             texto = font_msg.render(self.inventario_cheio_msg, True, (255, 0, 0))

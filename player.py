@@ -84,6 +84,12 @@ class Player():
         self.mpModificador = 1
 
         self.efeitos = []
+
+        self.corrente_eletrica_ativa = False
+        self.trail_eletrico = []  # Lista de retângulos que representam a corrente elétrica
+        self.trail_timer = 0  # Timer para remover o trail após 4 segundos
+        self.dash_start_pos = None  # Posição inicial do dash
+
         self.tipo_colisao = 'obstaculo'
 
         # ARMA
@@ -275,13 +281,26 @@ class Player():
                 self.hud.mensagem_sem_stamina = True
                 self.hud.tempo_mensagem_stamina = current_time
                 return
+
+            # Verificar se a habilidade Corrente Elétrica está ativa
+            self.corrente_eletrica_ativa = "Corrente Elétrica" in self.habilidades
+
+            if self.corrente_eletrica_ativa:
+                self.dash_start_pos = (self.x, self.y)  # Guarda posição inicial
+
             self.last_dash_time = current_time
             self.is_dashing = True
             self.dash_direcao = direcao
             self.dash_duration = 0
 
         if self.is_dashing:
-            self.stamina -= self.custoDash 
+            if self.corrente_eletrica_ativa:
+                # Atualiza o timer do trail
+                self.trail_timer += dt
+                if self.trail_timer >= 4000:  # 4 segundos
+                    if self.trail_eletrico:
+                        self.trail_eletrico.pop(0)  # Remove o segmento mais antigo
+                    self.trail_timer = 0
 
         self.ultimo_uso = current_time
 
@@ -455,6 +474,15 @@ class Player():
             self.stamina += 0.7 * self.rateSt
         if self.stamina > self.staminaMaximo:
             self.stamina = self.staminaMaximo
+
+        if self.is_dashing and self.corrente_eletrica_ativa:
+            self.atualizar_trail_eletrico()
+
+            # Atualiza os timers dos trails existentes
+        for trail in self.trail_eletrico[:]:
+            trail['timer'] -= dt
+            if trail['timer'] <= 0:
+                self.trail_eletrico.remove(trail)
 
         if self.hp < 30:
            self.hp = 30
@@ -805,6 +833,26 @@ class Player():
         # Hitbox de ataque (debug)
         rotated_hitbox, rotated_rect = self.get_rotated_rect_ataque(mouse_pos)
         # tela.blit(rotated_hitbox, rotated_rect)
+
+        if self.corrente_eletrica_ativa and self.trail_eletrico:
+            for trail in self.trail_eletrico:
+                # Suaviza a transparência
+                alpha = min(200, trail['timer'] / 4000 * 200)
+
+                # Cria surface com transparência
+                trail_surface = Surface((trail['rect'].width, trail['rect'].height), SRCALPHA)
+
+                # Adiciona partículas aleatórias para efeito
+                for _ in range(3):
+                    px = randint(0, trail['rect'].width - 1)
+                    py = randint(0, trail['rect'].height - 1)
+                    size = randint(1, 3)
+                    brightness = randint(200, 255)
+                    draw.circle(trail_surface,
+                                (brightness, brightness, 255, alpha),
+                                (px, py), size)
+
+                tela.blit(trail_surface, trail['rect'].topleft)
 
         if hasattr(self, 'dano_recebido') and time.get_ticks() - self.dano_recebido_tempo < 500:
             if self.telaSangue_alpha > 0:
@@ -1436,3 +1484,17 @@ class Player():
         self.travado = True
         self.proibir_dash_ate = current_time + duracao  # Impede dash durante o congelamento
         self.tempo_descongelar = current_time + duracao  # Armazena quando deve descongelar
+
+    def atualizar_trail_eletrico(self):
+        if not self.corrente_eletrica_ativa or not self.is_dashing:
+            return
+
+        # Cria um novo segmento do trail
+        segment_width = 20  # Largura da linha elétrica
+        segment = Rect(self.x - segment_width / 2, self.y, segment_width, self.altura)
+
+        # Adiciona à lista de trails
+        self.trail_eletrico.append({
+            'rect': segment,
+            'timer': 4000  # 4 segundos de duração
+        })
