@@ -49,7 +49,7 @@ class Player():
             "sorte": 5,  # influencia CHANCE DE CRÍTICO E UM POUCO DE TUDO
         }
 
-        self.pontosHabilidade = 99
+        self.pontosHabilidade = 0
         self.habilidades = []
         self.hotkeys = [0,0,0,0]
         self.nevascaAtivada = False
@@ -59,7 +59,7 @@ class Player():
         self.lista_mods = ListaMods()
 
         self.gerenciador_habilidades = GerenciadorHabilidades()
-
+        '''
         self.inventario = [
             LaminaDaNoite("comum", self.lista_mods),
             Chigatana("incomum", self.lista_mods),
@@ -71,8 +71,8 @@ class Player():
             Arco("lendaria", self.lista_mods)
         ]
         for i in self.inventario: i.aplicaModificador()
-
-        # self.inventario = []
+        '''
+        self.inventario = []
         self.nivel = 1
         self.hp = hp
         self.hpMax = hp
@@ -155,7 +155,7 @@ class Player():
         self.stamina = self.staminaMaximo
 
 
-        self.almas = 999
+        self.almas = 0
 
         self.old_x = x
         self.old_y = y
@@ -484,10 +484,8 @@ class Player():
             if trail['timer'] <= 0:
                 self.trail_eletrico.remove(trail)
 
-        if self.hp < 30:
-           self.hp = 30
-        # if self.hp < 0:
-        #     self.hp = 0
+        if self.hp < 0:
+            self.hp = 0
         if self.hp > self.hpMax:
             self.hp = self.hpMax
         if self.mp < 0:
@@ -982,7 +980,7 @@ class Player():
                     inimigo.time_last_hit_frame = time.get_ticks()
                     self.hits += 1
                     self.tempo_ultimo_hit = current_time
-                    self.arma.comboMult = 1.0 + (0.1 * self.hits)
+                    self.arma.comboMult = 1.0 + 0.2 * math.log2(self.hits + 1)
                     self.arma.ataquePrincipal(inimigo)
                     inimigo.ultimo_dano_tempo = current_time
                     self.hp = min(self.hp + self.arma.lifeSteal, self.hpMax)
@@ -1199,7 +1197,7 @@ class Player():
             if arma_class:
                 self.arma = arma_class(data['arma']['raridade'], lista_mods)
                 self.arma.load_save_data(data['arma'], lista_mods)
-                self.arma.aplicaModificador()  # Adicione esta linha
+                # self.arma.aplicaModificador()  # Adicione esta linha
                 self.atualizar_arma()
 
         if 'inventario' in data:
@@ -1209,7 +1207,7 @@ class Player():
                 if arma_class:
                     arma = arma_class(arma_data['raridade'], lista_mods)
                     arma.load_save_data(arma_data, lista_mods)
-                    arma.aplicaModificador()
+                    # arma.aplicaModificador()
                     self.inventario.append(arma)
                     self.atualizar_arma()
 

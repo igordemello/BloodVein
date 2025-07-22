@@ -14,7 +14,7 @@ def grid_para_pixel(grid_x, grid_y, offset, tile_size_scaled):
     return x, y
 
 class RatoDeSangue(Inimigo):
-    def __init__(self, x, y, largura=24, altura=24, nome="Rato de Sangue", hp=60, velocidade=2.5, dano=8):
+    def __init__(self, x, y, largura=24, altura=24, nome="Rato de Sangue", hp=60, velocidade=2.5, dano=12):
         super().__init__(x, y, largura, altura, hp, velocidade, dano)
         self.rect.inflate_ip(10, 10)
         self.nome = nome
