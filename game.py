@@ -180,6 +180,9 @@ class Game:
         self.minimapa = novo
 
     def loop(self):
+        self.tela_intro()
+
+
         while True:
             dt = self.clock.tick(60)
             eventos = event.get()
@@ -506,3 +509,32 @@ class Game:
                     os.remove(os.path.join(data_dir, item))
                 except Exception as e:
                     print(f"Erro ao apagar arquivo em data/: {e}")
+
+    def tela_intro(self):
+        tela = self.screen
+        logo = image.load(resource_path('assets/tela_intro.png')).convert()
+        logo = transform.scale(logo, (1920, 1080))
+
+        fade_surface = Surface((1920, 1080))
+        fade_surface.fill((0, 0, 0))
+
+        # Fade in
+        for alpha in range(255, -1, -5):
+            tela.blit(logo, (0, 0))
+            fade_surface.set_alpha(alpha)
+            tela.blit(fade_surface, (0, 0))
+            display.update()
+            time.delay(30)
+
+        # Espera com a imagem por 1.5 segundos
+        tela.blit(logo, (0, 0))
+        display.update()
+        time.delay(500)
+
+        # Fade out
+        for alpha in range(0, 256, 5):
+            tela.blit(logo, (0, 0))
+            fade_surface.set_alpha(alpha)
+            tela.blit(fade_surface, (0, 0))
+            display.update()
+            time.delay(30)
