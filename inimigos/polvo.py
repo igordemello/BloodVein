@@ -7,7 +7,7 @@ from random import uniform, randint
 from utils import resource_path 
 
 class Polvo(Inimigo):
-    def __init__(self, x, y, largura, altura, nome="Polvo", hp=100, velocidade=2.3, dano=5):
+    def __init__(self, x, y, largura, altura, nome="Polvo", hp=100, velocidade=2.3, dano=30):
         super().__init__(x, y, largura, altura, hp, velocidade, dano)
         self.spritesheet = image.load(resource_path('./assets/Enemies/polvo_roxo-Andando.png')).convert_alpha()
         self.nome = nome

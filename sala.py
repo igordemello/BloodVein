@@ -124,7 +124,16 @@ class Sala:
             self.leve_atual = self.max_leves + 2 
         else:
             self.leve_atual = 0
-            self.max_leves = randint(2*dificuldade_global.levas,5*dificuldade_global.levas) #levas
+            if self.gerenciador_andar.numero_andar == 1:
+                self.max_leves = randint(1, 2)
+            elif self.gerenciador_andar.numero_andar == 2:
+                self.max_leves = randint(3, 4)
+            elif self.gerenciador_andar.numero_andar == 3:
+                self.max_leves = randint(4, 6)
+            elif self.gerenciador_andar.numero_andar == 4:
+                self.max_leves = randint(5, 7)
+            else:
+                self.max_leves = randint(5, 7)
         self.inimigos_por_leva = 1
         self.tempo_entrada = time.get_ticks()
         self.cooldown_inicial = 1000
@@ -303,35 +312,35 @@ class Sala:
 
 
         if tipo_escolhido == "furacao":
-            inimigo = Furacao(x, y, 64, 64, hp=200 if not elite else 300)
+            inimigo = Furacao(x, y, 64, 64, hp=75 if not elite else 300)
             inimigo.nome_base = "Furacão"
             inimigo.aplicar_modificadores(elite=elite)
 
 
         elif tipo_escolhido == "caveiradefogo":
-            inimigo = CaveiraDeFogo(x, y, 64, 64, hp=200 if not elite else 300)
+            inimigo = CaveiraDeFogo(x, y, 64, 64, hp=75 if not elite else 300)
             inimigo.nome_base = "Caveira de Fogo"
             inimigo.aplicar_modificadores(elite=elite)
 
 
         elif tipo_escolhido == "morcegopadrao":
-            inimigo = MorcegoPadrao(x, y, 64, 64, hp=200 if not elite else 300)
+            inimigo = MorcegoPadrao(x, y, 64, 64, hp=75 if not elite else 300)
             inimigo.nome_base = "Morcego Padrão"
             inimigo.aplicar_modificadores(elite=elite)
 
 
         elif tipo_escolhido == "orb":
-            inimigo = Orb(x, y, 64, 64, hp=200 if not elite else 300)
+            inimigo = Orb(x, y, 64, 64, hp=120 if not elite else 300)
             inimigo.nome_base = "Orb"
             inimigo.aplicar_modificadores(elite=elite)
 
         elif tipo_escolhido == "espectro":
-            inimigo = Espectro(x, y, 64, 64, hp=200 if not elite else 300)
+            inimigo = Espectro(x, y, 64, 64, hp=120 if not elite else 300)
             inimigo.nome_base = "Espectro"
             inimigo.aplicar_modificadores(elite=elite)
 
         elif tipo_escolhido == "polvo":
-            inimigo = Polvo(x, y, 64, 64, hp=200 if not elite else 300)
+            inimigo = Polvo(x, y, 64, 64, hp=120 if not elite else 300)
             inimigo.nome_base = "Polvo"
             inimigo.aplicar_modificadores(elite=elite)
 
@@ -346,7 +355,7 @@ class Sala:
             inimigo.aplicar_modificadores(elite=elite)
 
         elif tipo_escolhido == "aranhalunar":
-            inimigo = AranhaLunar(x, y, 50, 50, hp=200 if not elite else 300)
+            inimigo = AranhaLunar(x, y, 50, 50, hp=100 if not elite else 300)
             inimigo.nome_base = "Aranha Lunar"
             inimigo.aplicar_modificadores(elite=elite)
 
@@ -356,7 +365,7 @@ class Sala:
             inimigo.aplicar_modificadores(elite=elite)
 
         elif tipo_escolhido == "ratodesangue":
-            inimigo = RatoDeSangue(x, y, 64, 64, hp=100 if not elite else 300)
+            inimigo = RatoDeSangue(x, y, 64, 64, hp=75 if not elite else 300)
             inimigo.nome_base = "Rato De Sangue"
             inimigo.aplicar_modificadores(elite=elite)
 
@@ -366,22 +375,22 @@ class Sala:
             inimigo.aplicar_modificadores(elite=elite)
 
         elif tipo_escolhido == "aranhadosol":
-            inimigo = AranhaDoSol(x, y, 48, 48, hp=100 if not elite else 300)
+            inimigo = AranhaDoSol(x, y, 48, 48, hp=110 if not elite else 300)
             inimigo.nome_base = "Aranha Sol"
             inimigo.aplicar_modificadores(elite=elite)
 
         elif tipo_escolhido == "arqueiro":
-            inimigo = Arqueiro(x, y, 128, 128, hp=100 if not elite else 300)
+            inimigo = Arqueiro(x, y, 128, 128, hp=140 if not elite else 300)
             inimigo.nome_base = "Arqueiro"
             inimigo.aplicar_modificadores(elite=elite)
 
         elif tipo_escolhido == "vampirosol":
-            inimigo = VampiroSol(x, y, 96, 96, hp=100 if not elite else 300)
+            inimigo = VampiroSol(x, y, 96, 96, hp=250 if not elite else 300)
             inimigo.nome_base = "Vampiro Sol"
             inimigo.aplicar_modificadores(elite=elite)
 
         elif tipo_escolhido == "magoelementar":
-            inimigo = MagoElementar(x, y, 96, 96, hp=100 if not elite else 300)
+            inimigo = MagoElementar(x, y, 96, 96, hp=80 if not elite else 300)
             inimigo.nome_base = "Mago Elementar"
             inimigo.aplicar_modificadores(elite=elite)
 
