@@ -422,6 +422,9 @@ class EspadaDoTita(Arma):
         self.ehRanged = False
         self.ehAOE = False
 
+        self.pitch_minimo = 0.8  # Pitch quando chance crítica está no mínimo
+        self.pitch_maximo = 1.5
+
         self.spriteIcon = resource_path('assets/UI/espadadotita.png')
         self.sprite = resource_path('assets/player/espadadotita.png')
         self.carta = resource_path('assets/Itens/Carta_titã.png')
@@ -463,12 +466,18 @@ class EspadaDoTita(Arma):
             return
         if self.chanceCritico > 100 or player.mp <= 0:
             return
-        else:
-            som.tocar('carrega_critico')
-            self.chanceCritico = max(1, self.chanceCritico * 2)
-            self.danoCriticoMod *= 1.5
-            player.mp -= custo
 
+        # Calcula pitch baseado na chance crítica
+        chance_normalizada = (self.chanceCritico - self.criticoOg) / (100 - self.criticoOg)
+        pitch = self.pitch_minimo + (self.pitch_maximo - self.pitch_minimo) * min(1.0, chance_normalizada)
+
+        # Toca o som com pitch ajustado
+        som.tocar_com_pitch('carrega_critico', pitch=pitch)
+
+        # Aumenta a chance crítica
+        self.chanceCritico = min(100, self.chanceCritico * 2)  # Limita a 100%
+        self.danoCriticoMod *= 1.5
+        player.mp -= custo
 
 # [...] (continuação para MachadoDoInverno, EspadaEstelar, MarteloSolar, Arco com a mesma lógica)
 
