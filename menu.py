@@ -51,17 +51,20 @@ class Menu():
         return image.frombuffer(frame.tobytes(), frame.shape[1::-1], "RGB")
     
 
-    def run(self):  
-
+    def run(self):
         if self.showing_intro:
             ret, frame = self.intro_video.read()
             if ret and frame is not None:
                 frame = cv2.resize(frame, (self.screen_width, self.screen_height))
                 pygame_frame = self.cv2_to_pygame(frame)
+                self.ultimo_frame = pygame_frame  # Salva o último frame válido
                 self.screen.blit(pygame_frame, (0, 0))
             else:
                 self.showing_intro = False
                 self.intro_video.set(cv2.CAP_PROP_POS_FRAMES, 0)
+                # Continua mostrando o último frame até o próximo estar pronto
+                if hasattr(self, 'ultimo_frame'):
+                    self.screen.blit(self.ultimo_frame, (0, 0))
         else:
             ret, frame = self.loop_video.read()
             if not ret or frame is None:
