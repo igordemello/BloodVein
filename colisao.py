@@ -71,6 +71,8 @@ class Colisao:
             elif entidade.tipo_colisao == 'obstaculo':
                 self._colisao_entidade_mapa_contando_obstaculo(entidade)
 
+        if "Corrente Elétrica" in self.player.habilidades:
+            self._colisao_trail_eletrico()
 
         #self._colisao_entidade_mapa_contando_obstaculo(self.player)
         self._colisao_entidade_projetil()
@@ -347,4 +349,43 @@ class Colisao:
                             if projetil in inimigo.projeteis:
                                 inimigo.projeteis.remove(projetil)
                             break
+
+    def _colisao_trail_eletrico(self):
+        from player import Player
+
+        if not hasattr(self.player, 'trail_eletrico') or not self.player.trail_eletrico:
+            return
+
+        # Filtra apenas inimigos vivos
+        inimigos_vivos = [e for e in self.entidades if hasattr(e, 'vivo') and e.vivo]
+
+        for trail_segment in self.player.trail_eletrico[:]:  # Fazemos uma cópia com [:]
+            if 'hit_by' not in trail_segment:
+                trail_segment['hit_by'] = []
+
+            # Remove referências a inimigos que não existem mais
+            trail_segment['hit_by'] = [
+                inimigo for inimigo in trail_segment['hit_by']
+                if inimigo in self.entidades
+            ]
+
+            trail_rect = trail_segment['rect']
+
+            for inimigo in inimigos_vivos:
+                if isinstance(inimigo, Player):
+                    continue
+
+                if trail_rect.colliderect(inimigo.get_hitbox()):
+                    if inimigo not in trail_segment['hit_by']:
+                        inimigo.tomar_dano(40)
+                        #inimigo.stunar(0.5)
+                        if inimigo.hp <= 1:
+                            inimigo = None
+
+                        trail_segment['hit_by'].append(inimigo)
+                        screen_shaker.start(intensity=5, duration=100)
+
+            # Remove trail segment se o timer acabou
+            if trail_segment.get('timer', 0) <= 0:
+                self.player.trail_eletrico.remove(trail_segment)
 

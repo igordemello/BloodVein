@@ -150,6 +150,8 @@ class Inimigo:
         self.veneno_ativo = True
 
     def stunar(self, duracao_em_segundos):
+        if self.hp <= 0:
+            return
         self.stun_inicio = time.get_ticks()
         self.stun_duracao = duracao_em_segundos * 1000
         self.stun_ativo = True
