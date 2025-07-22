@@ -117,9 +117,12 @@ class Sala:
         self.cutscene = None
 
         self.spawn_points = self.mapa.get_inimigospawn()
-        self.leve_atual = 0
-        #self.max_leves = randint(2*dificuldade_global.levas,5*dificuldade_global.levas) #levas
-        self.max_leves = 3
+        if tipo == 'loja':
+            self.max_leves = 0
+            self.leve_atual = self.max_leves + 2 
+        else:
+            self.leve_atual = 0
+            self.max_leves = randint(2*dificuldade_global.levas,5*dificuldade_global.levas) #levas
         self.inimigos_por_leva = 1
         self.tempo_entrada = time.get_ticks()
         self.cooldown_inicial = 1000
@@ -799,8 +802,8 @@ class Sala:
         #     draw.rect(tela, (255,0,0), collider['rect'], 1)
         # draw.rect(tela, (0,255,0), self.player.player_rect, 2)
         for botao, arma in self.loots:
-            if len(self.loots) < 0:
-                print("cucucucucu")
+            # if len(self.loots) < 0:
+            #     print("cucucucucu")
             self.tela.blit(botao.image, botao.rect)
 
             mouse_pos = mouse.get_pos()

@@ -24,36 +24,43 @@ class Pause:
 
 
     def pauseFuncionamento(self, tela, imagem_fundo=None):
-        musica.pausar()
-        self.menu_ativo = True
+        try:
+            self.menu_ativo = True
 
-        if imagem_fundo:
-            tela.blit(imagem_fundo, (0, 0))
+            if imagem_fundo:
+                tela.blit(imagem_fundo, (0, 0))
 
-            overlay = Surface((1920, 1080), SRCALPHA)
-            overlay.fill((0, 0, 0, 180)) 
-            tela.blit(overlay, (0, 0))
+                overlay = Surface((1920, 1080), SRCALPHA)
+                overlay.fill((0, 0, 0, 180)) 
+                tela.blit(overlay, (0, 0))
 
-        # Título
-        pause_text = self.pause_font.render("PAUSADO", True, (228, 133, 40))
-        text_rect = pause_text.get_rect(center=(1920 // 2, 150))
-        tela.blit(pause_text, text_rect)
+            # Título
+            pause_text = self.pause_font.render("PAUSADO", True, (228, 133, 40))
+            text_rect = pause_text.get_rect(center=(1920 // 2, 150))
+            tela.blit(pause_text, text_rect)
 
-        # Hover e update dos botões
-        mouse_pos = mouse.get_pos()
-        for botao in self.botoes:
-            botao.changeColor(mouse_pos)
-            botao.update(tela)
+            # Hover e update dos botões
+            mouse_pos = mouse.get_pos()
+            for botao in self.botoes:
+                botao.changeColor(mouse_pos)
+                botao.update(tela)
+        except Exception as e:
+            print(f"[PAUSE CRASH] {type(e).__name__}: {e}")
+        
 
     def checar_clique_pause(self, mouse_pos,):
-        if not self.menu_ativo:
+        try:
+            if not self.menu_ativo:
+                return None
+            if self.botaocontinuar.checkForInput(mouse_pos):
+                musica.retomar()
+                self.menu_ativo = False
+                return "continuar"
+            if self.botaoopcoes.checkForInput(mouse_pos):
+                return "opcoes"
+            if self.botaosair.checkForInput(mouse_pos):
+                return "sair"
             return None
-        if self.botaocontinuar.checkForInput(mouse_pos):
-            musica.retomar()
-            self.menu_ativo = False
-            return "continuar"
-        if self.botaoopcoes.checkForInput(mouse_pos):
-            return "opcoes"
-        if self.botaosair.checkForInput(mouse_pos):
-            return "sair"
-        return None
+        except Exception as e:
+            print(f"[PAUSE CLICK CRASH] {type(e).__name__}: {e}")
+            return None
