@@ -18,7 +18,7 @@ from dificuldade import dificuldade_global
 from utils import resource_path 
 
 class Player():
-    def __init__(self, x, y, largura, altura,hud=None, hp=100, st=100, velocidadeMov=0.5, sprite=resource_path('assets/player/hero.png'), arma=None):
+    def __init__(self, x, y, largura, altura,hud=None, hp=100000, st=100, velocidadeMov=2, sprite=resource_path('assets/player/hero.png'), arma=None):
         # animações
         self.hit_landed = None
         self.animacoes = {

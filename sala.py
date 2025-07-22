@@ -255,7 +255,7 @@ class Sala:
             musica.tocar("BloodVein SCORE/OST/MusicaDoBoss.mp3")
             xboss,yboss= self.spawn_points[0]
             numero = self.gerenciador_andar.numero_andar
-            numero = 2
+            numero = 4
             if numero == 1:
                 boss = bossmod.MouthOrb(xboss, yboss, 192, 192)
                 boss.nome_base = "Mãe Orbe"
@@ -267,7 +267,7 @@ class Sala:
                 self.leve_atual = self.max_leves + 2
                 return[boss]
             elif numero == 3:
-                boss = MouthOrb2(xboss, yboss)
+                boss = MouthOrb2(xboss, yboss,192, 192 )
                 boss.nome_base = "Vovó Orbe"
                 boss.player = self.player  # Define a referência ao jogador
                 self.leve_atual = self.max_leves + 2
@@ -481,9 +481,9 @@ class Sala:
 
                 if isinstance(inimigo, (EsqueletoGelo, EsqueletoPeconhento)):
                     inimigo.atualizar(p_rect.center, self.tela, self.mapa.matriz, self.mapa.get_offset(), self.player)
-                elif isinstance(inimigo, bossmod.MouthOrb):
+                elif isinstance(inimigo, bossmod.MouthOrb, MouthOrb2 ):
                     inimigo.atualizar(p_rect.center, self.tela, self)
-                elif isinstance(inimigo, NuvemBoss):
+                elif isinstance(inimigo, NuvemBoss, NuvemBoss2):
                     inimigo.atualizar(p_rect.center, self.tela, self.player)
                 elif isinstance(inimigo, (Orb, Espectro, Massa, Furacao, CaveiraDeFogo, Polvo)):
                     inimigo.atualizar(p_rect.center, self.tela)

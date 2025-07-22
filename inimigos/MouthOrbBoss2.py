@@ -13,7 +13,7 @@ class MouthOrb2(Inimigo):
         self.nome = nome
         self.ehboss = True
 
-        self.sprites_idle = image.load(resource_path('./assets/Enemies/MouthOrb2-IdleSheet-Sheet2.png')).convert_alpha() #12frames
+        self.sprites_idle = image.load(resource_path('./assets/Enemies/MouthOrb-IdleSheet-Sheet2.png')).convert_alpha() #12frames
         self.sprites_ataque = image.load(resource_path('./assets/Enemies/MouthOrb2-AttackSheet.png')).convert_alpha() #4frames
         self.sprites_invocacao = image.load(resource_path('./assets/Enemies/MouthOrb2-SpawnSheet.png')).convert_alpha() #10frames
 
