@@ -483,9 +483,9 @@ class Sala:
 
                 if isinstance(inimigo, (EsqueletoGelo, EsqueletoPeconhento)):
                     inimigo.atualizar(p_rect.center, self.tela, self.mapa.matriz, self.mapa.get_offset(), self.player)
-                elif isinstance(inimigo, bossmod.MouthOrb, MouthOrb2 ):
+                elif isinstance(inimigo, (bossmod.MouthOrb, MouthOrb2)):
                     inimigo.atualizar(p_rect.center, self.tela, self)
-                elif isinstance(inimigo, NuvemBoss, NuvemBoss2):
+                elif isinstance(inimigo, (NuvemBoss, NuvemBoss2)):
                     inimigo.atualizar(p_rect.center, self.tela, self.player)
                 elif isinstance(inimigo, (Orb, Espectro, Massa, Furacao, CaveiraDeFogo, Polvo)):
                     inimigo.atualizar(p_rect.center, self.tela)
