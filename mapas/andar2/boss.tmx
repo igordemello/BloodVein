@@ -185,4 +185,7 @@
  <objectgroup id="25" name="esquerda">
   <object id="72" x="23.5" y="100.5" width="11" height="20" />
  </objectgroup>
+ <objectgroup id="39" name="range_trocar_andar">
+  <object id="235" x="419.496" y="169.412" width="21.2295" height="23.3525" />
+ </objectgroup>
 </map>

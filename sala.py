@@ -199,10 +199,12 @@ class Sala:
             if numerodoandar == 4:
                 cenas = [
                     {"imagem": transform.scale(image.load(resource_path('assets/cutscene/player.png')).convert_alpha(), (800,800)), "fala": "Eu vou te matar nuvem monstruosa", "lado": "direita"},
-                    {"imagem": transform.scale(image.load(resource_path('assets/cutscene/nuvemBoss3.png')).convert_alpha(), (640,960)), "fala": "..........", "lado": "esquerda"}
+                    {"imagem": transform.scale(image.load(resource_path('assets/cutscene/nuvemBoss2.png')).convert_alpha(), (640,960)), "fala": "..........", "lado": "esquerda"}
 
                 ]
                 self.cutscene = Cutscene(cenas, fundo, self.tela.get_width(), self.tela.get_height())
+
+        self.portal_img = transform.scale(image.load(resource_path('assets/TileSet/coisas/Portal.png')).convert_alpha(), (128, 128))
 
 
 
@@ -244,7 +246,8 @@ class Sala:
             self.leve_atual = self.max_leves + 2
             return []
 
-        
+        # self.leve_atual = self.max_leves + 2
+        # return []
 
         tempo_atual = time.get_ticks()
         if tempo_atual - self.tempo_entrada < self.cooldown_inicial and not self.inimigos_spawnados:
@@ -282,8 +285,7 @@ class Sala:
 
         self.inimigos_spawnados = True
 
-        #self.leve_atual = self.max_leves + 2
-        #return []
+        
 
         if not self.visitada:
             self.leve_atual = 0
@@ -869,6 +871,11 @@ class Sala:
             self.tela.blit(bg_surface, bg_rect)
 
             self.tela.blit(texto, texto_rect)
+
+        if self.gerenciador_andar.grafo.nodes[self.gerenciador_andar.sala_atual]["tipo"] == "boss" and self.porta_liberada:
+            offset_x, offset_y = screen_shaker.offset
+            pos_x, pos_y = 1500 + offset_x, 600 + offset_y
+            self.tela.blit(self.portal_img, (pos_x, pos_y))
 
 
         # # DEBUG: Desenhar grade e caminho

@@ -108,7 +108,7 @@
 </data>
  </layer>
  <objectgroup id="16" name="cima">
-  <object id="75" x="228.774" y="27.5" width="24.5" height="9.5" />
+  <object id="75" x="227.5" y="27.5" width="24.5" height="9.5" />
  </objectgroup>
  <layer id="27" name="porta_direita_aberta" width="15" height="8">
   <data encoding="csv">
@@ -162,7 +162,7 @@
 </data>
  </layer>
  <objectgroup id="24" name="baixo">
-  <object id="73" x="230.397" y="217.274" width="21.5" height="12.5" />
+  <object id="73" x="227" y="216" width="21.5" height="12.5" />
  </objectgroup>
  <layer id="29" name="porta_esquerda_aberta" width="15" height="8">
   <data encoding="csv">
@@ -189,6 +189,6 @@
 </data>
  </layer>
  <objectgroup id="25" name="esquerda">
-  <object id="72" x="26.4721" y="104.746" width="11" height="20" />
+  <object id="72" x="23.5" y="100.5" width="11" height="20" />
  </objectgroup>
 </map>

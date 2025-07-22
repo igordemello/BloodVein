@@ -1,6 +1,6 @@
-<?xml version='1.0' encoding='utf-8'?>
+<?xml version="1.0" encoding="UTF-8"?>
 <map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="right-down" width="15" height="8" tilewidth="32" tileheight="32" infinite="0" nextlayerid="40" nextobjectid="182">
- <tileset firstgid="1" source="Sprite_sheet_tiles.tsx" />
+ <tileset firstgid="1" source="Sprite_sheet_tiles.tsx"/>
  <layer id="11" name="chao e paredes" width="15" height="8">
   <data encoding="csv">
 2147483652,1,1,1,1,1,1,1,1,1,1,1,1,1,4,
@@ -64,9 +64,9 @@
  <layer id="17" name="caixa" width="15" height="8">
   <data encoding="csv">
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,55,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,55,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -74,16 +74,16 @@
 </data>
  </layer>
  <objectgroup id="36" name="inimigo_spawn">
-  <object id="172" x="121.75" y="33" width="19.5" height="17" />
-  <object id="173" x="117.25" y="204.5" width="19.5" height="17" />
-  <object id="174" x="309.75" y="47" width="19.5" height="17" />
-  <object id="175" x="313.25" y="175" width="19.5" height="17" />
+  <object id="172" x="130.666" y="59.3246" width="10.159" height="9.35736"/>
+  <object id="173" x="111.73" y="153.125" width="8.88523" height="7.659"/>
+  <object id="174" x="304.23" y="72.4755" width="7.18686" height="9.35736"/>
+  <object id="175" x="379.486" y="166.508" width="8.46064" height="6.38523"/>
  </objectgroup>
  <objectgroup id="15" name="colisor_obstaculo">
-  <object id="76" name="bau" x="356.5" y="34.4773" width="21.2386" height="21.1705" />
+  <object id="76" name="bau" x="356.5" y="34.4773" width="21.2386" height="21.1705"/>
  </objectgroup>
  <objectgroup id="33" name="range_bau">
-  <object id="77" x="351.875" y="32" width="32.125" height="32.125" />
+  <object id="77" x="351.875" y="32" width="32.125" height="32.125"/>
  </objectgroup>
  <layer id="26" name="porta_cima_aberta" width="15" height="8">
   <data encoding="csv">
@@ -110,7 +110,7 @@
 </data>
  </layer>
  <objectgroup id="16" name="cima">
-  <object id="75" x="227.5" y="27.5" width="24.5" height="9.5" />
+  <object id="75" x="227.5" y="27.5" width="24.5" height="9.5"/>
  </objectgroup>
  <layer id="27" name="porta_direita_aberta" width="15" height="8">
   <data encoding="csv">
@@ -137,7 +137,7 @@
 </data>
  </layer>
  <objectgroup id="20" name="direita">
-  <object id="74" x="444" y="101" width="9.5" height="25" />
+  <object id="74" x="444" y="101" width="9.5" height="25"/>
  </objectgroup>
  <layer id="28" name="porta_baixo_aberta" width="15" height="8">
   <data encoding="csv">
@@ -164,7 +164,7 @@
 </data>
  </layer>
  <objectgroup id="24" name="baixo">
-  <object id="73" x="227" y="216" width="21.5" height="12.5" />
+  <object id="73" x="227" y="216" width="21.5" height="12.5"/>
  </objectgroup>
  <layer id="29" name="porta_esquerda_aberta" width="15" height="8">
   <data encoding="csv">
@@ -191,6 +191,6 @@
 </data>
  </layer>
  <objectgroup id="25" name="esquerda">
-  <object id="72" x="23.5" y="100.5" width="11" height="20" />
+  <object id="72" x="23.5" y="100.5" width="11" height="20"/>
  </objectgroup>
 </map>
