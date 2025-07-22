@@ -1,6 +1,6 @@
-<?xml version='1.0' encoding='utf-8'?>
+<?xml version="1.0" encoding="UTF-8"?>
 <map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="right-down" width="15" height="8" tilewidth="32" tileheight="32" infinite="0" nextlayerid="40" nextobjectid="217">
- <tileset firstgid="1" source="Sprite_sheet_tiles.tsx" />
+ <tileset firstgid="1" source="Sprite_sheet_tiles.tsx"/>
  <layer id="11" name="chao e paredes" width="15" height="8">
   <data encoding="csv">
 2147483652,1,1,1,1,1,1,1,1,1,1,1,1,1,4,
@@ -74,14 +74,14 @@
 </data>
  </layer>
  <objectgroup id="36" name="inimigo_spawn">
-  <object id="194" x="133.25" y="80.5" width="19.5" height="17" />
-  <object id="210" x="301.75" y="109" width="19.5" height="17" />
+  <object id="194" x="96" y="96" width="19.5" height="17"/>
+  <object id="210" x="301.75" y="109" width="19.5" height="17"/>
  </objectgroup>
  <objectgroup id="15" name="colisor_obstaculo">
-  <object id="76" name="bau" x="356.5" y="34.4773" width="21.2386" height="21.1705" />
-  </objectgroup>
+  <object id="76" name="bau" x="356.5" y="34.4773" width="21.2386" height="21.1705"/>
+ </objectgroup>
  <objectgroup id="33" name="range_bau">
-  <object id="77" x="351.875" y="32" width="32.125" height="32.125" />
+  <object id="77" x="351.875" y="32" width="32.125" height="32.125"/>
  </objectgroup>
  <layer id="26" name="porta_cima_aberta" width="15" height="8">
   <data encoding="csv">
@@ -108,7 +108,7 @@
 </data>
  </layer>
  <objectgroup id="16" name="cima">
-  <object id="75" x="227.5" y="27.5" width="24.5" height="9.5" />
+  <object id="75" x="227.5" y="27.5" width="24.5" height="9.5"/>
  </objectgroup>
  <layer id="27" name="porta_direita_aberta" width="15" height="8">
   <data encoding="csv">
@@ -135,7 +135,7 @@
 </data>
  </layer>
  <objectgroup id="20" name="direita">
-  <object id="74" x="444" y="101" width="9.5" height="25" />
+  <object id="74" x="444" y="101" width="9.5" height="25"/>
  </objectgroup>
  <layer id="28" name="porta_baixo_aberta" width="15" height="8">
   <data encoding="csv">
@@ -162,7 +162,7 @@
 </data>
  </layer>
  <objectgroup id="24" name="baixo">
-  <object id="73" x="227" y="216" width="21.5" height="12.5" />
+  <object id="73" x="227" y="216" width="21.5" height="12.5"/>
  </objectgroup>
  <layer id="29" name="porta_esquerda_aberta" width="15" height="8">
   <data encoding="csv">
@@ -189,6 +189,6 @@
 </data>
  </layer>
  <objectgroup id="25" name="esquerda">
-  <object id="72" x="23.5" y="100.5" width="11" height="20" />
+  <object id="72" x="23.5" y="100.5" width="11" height="20"/>
  </objectgroup>
 </map>
