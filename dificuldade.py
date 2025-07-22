@@ -18,7 +18,7 @@ class Dificuldade:
             self.levas = 2
         elif nivel == 'lua de sangue':
             self.mult_dano_jogador = 3.0
-            self.mult_dano_inimigo = 2
+            self.mult_dano_inimigo = 0.1
             self.levas = 3
         else:
             self.mult_dano_jogador = 1.0
@@ -29,28 +29,28 @@ class Dificuldade:
         raridade = raridade.lower()
         chances = {
             'Normal': {
-                'comum': 70,
-                'incomum': 20,
-                'raro': 7,
-                'lendaria': 3
+                'comum': 85,  # Aumentado de 70
+                'incomum': 10,  # Reduzido de 20
+                'raro': 4,  # Reduzido de 7
+                'lendaria': 1  # Reduzido de 3
             },
             'Difícil': {
-                'comum': 60,
-                'incomum': 20,
-                'raro': 7,
-                'lendaria': 13
+                'comum': 75,  # Aumentado de 60
+                'incomum': 15,  # Reduzido de 20
+                'raro': 7,  # Mantido igual
+                'lendaria': 3  # Reduzido de 13
             },
             'Criança Da Noite': {
-                'comum': 50,
-                'incomum': 20,
-                'raro': 7,
-                'lendaria': 23
+                'comum': 65,  # Aumentado de 50
+                'incomum': 15,  # Reduzido de 20
+                'raro': 10,  # Aumentado de 7
+                'lendaria': 10  # Reduzido de 23
             },
             'Lua De Sangue': {
-                'comum': 40,
-                'incomum': 20,
-                'raro': 7,
-                'lendaria': 33
+                'comum': 55,  # Aumentado de 40
+                'incomum': 15,  # Reduzido de 20
+                'raro': 15,  # Aumentado de 7
+                'lendaria': 15  # Reduzido de 33
             }
         }
 

@@ -13,7 +13,7 @@ from utils import resource_path
 # raridade
 RARIDADES = {
     "comum": 1,
-    "incomum": 2,
+    "incomun": 2,
     "raro": 3,
     "lendaria": 4
 }
@@ -37,7 +37,6 @@ class Arma(ABC):
 
     def ataqueSecundario(self, inimigo):
         pass
-    
 
     def get_save_data(self):
         return {
@@ -99,13 +98,13 @@ class Rapida(Modificador):
         self.nome = "Rapida"
 
     def aplicarMod(self, arma):
-        arma.velocidade = max(0.2, self.valor)  # Velocidade mínima de 0.2
+        arma.velocidade = max(0.2, min(2.0, self.valor))  # Velocidade entre 0.2 e 2.0
         arma.dano = max(1, arma.dano - self.valor)  # Dano mínimo de 1
 
 
 class Afiada(Modificador):
     def __init__(self, arma):
-        self.valor = arma.dano * 0.5 + arma.raridade * 5
+        self.valor = arma.dano * 0.3 + arma.raridade * 3  # Reduzido de 0.5 para 0.3 e de 5 para 3
         self.nome = "Afiada"
 
     def aplicarMod(self, arma):
@@ -114,7 +113,7 @@ class Afiada(Modificador):
 
 class Precisa(Modificador):
     def __init__(self, arma):
-        self.valor = 5 * arma.raridade
+        self.valor = 3 * arma.raridade  # Reduzido de 5 para 3
         self.nome = "Precisa"
 
     def aplicarMod(self, arma):
@@ -123,7 +122,7 @@ class Precisa(Modificador):
 
 class Impactante(Modificador):
     def __init__(self, arma):
-        self.valor = arma.raridade
+        self.valor = arma.raridade * 0.5  # Reduzido impacto
         self.nome = "Impactante"
 
     def aplicarMod(self, arma):
@@ -132,7 +131,7 @@ class Impactante(Modificador):
 
 class Sangrenta(Modificador):
     def __init__(self, arma):
-        self.valor = arma.lifeSteal / 2
+        self.valor = arma.lifeSteal / 3  # Reduzido de /2 para /3
         self.nome = "Sangrenta"
 
     def aplicarMod(self, arma):
@@ -141,32 +140,32 @@ class Sangrenta(Modificador):
 
 class Pesada(Modificador):
     def __init__(self, arma):
-        self.valor = arma.dano
+        self.valor = arma.dano * 0.8  # Reduzido de 1.0 para 0.8
         self.nome = "Pesada"
 
     def aplicarMod(self, arma):
         arma.dano = max(1, arma.dano + self.valor)  # Dano mínimo de 1
-        arma.velocidade = max(0.2, arma.velocidade * 0.8)  # Velocidade mínima de 0.2
+        arma.velocidade = max(0.2, arma.velocidade * 0.7)  # Velocidade mínima de 0.2
 
 
 class Sortuda(Modificador):
     def __init__(self, arma):
-        self.valor = arma.chanceCritico * 4
+        self.valor = arma.chanceCritico * 2  # Reduzido de 4 para 2
         self.nome = "Sortuda"
 
     def aplicarMod(self, arma):
         arma.chanceCritico = max(1, arma.chanceCritico + self.valor)  # Chance crítica mínima de 1%
-        arma.danoCriticoMod *= 0.8
+        arma.danoCriticoMod *= 0.9  # Reduzido impacto negativo de 0.8 para 0.9
 
 
 class Potente(Modificador):
     def __init__(self, arma):
-        self.valor = 2 * arma.raridade
+        self.valor = 1 * arma.raridade  # Reduzido de 2 para 1
         self.nome = "Potente"
 
     def aplicarMod(self, arma):
         arma.danoCriticoMod += self.valor
-        arma.chanceCritico = max(1, arma.chanceCritico * 0.5)  # Chance crítica mínima de 1%
+        arma.chanceCritico = max(1, arma.chanceCritico * 0.7)  # Chance crítica mínima de 1%
 
 
 class ListaMods:
@@ -197,16 +196,17 @@ class LaminaDaNoite(Arma):
         self.ataqueTipo = "melee"
         self.raridadeStr = raridadeStr
         self.raridade = RARIDADES.get(self.raridadeStr, 1)
-        self.dano = max(1, 10 + randint(5 * self.raridade, 10 * self.raridade))  # Dano mínimo de 1
-        self.velocidade = max(0.2, 1)  # Velocidade mínima de 0.2
+        # Base damage reduced from 10 to 8, and range reduced
+        self.dano = max(1, 8 + randint(3 * self.raridade, 6 * self.raridade))  # Dano mínimo de 1
+        self.velocidade = max(0.2, 1.0)  # Velocidade mínima de 0.2
         self.cooldown = max(100, 400)  # Cooldown mínimo de 100
         self.range = (40, 90)  # hitbox arma
         self.radius = 100
         self.efeitos = None
-        self.lifeSteal = max(1, self.dano / 2)  # Life steal mínimo de 1
+        self.lifeSteal = max(1, self.dano / 3)  # Life steal reduzido de /2 para /3
         self.lifeStealMod = 2
         self.chanceCritico = max(1, 8)  # Chance crítica mínima de 1%
-        self.danoCriticoMod = 2
+        self.danoCriticoMod = 1.5  # Reduzido de 2 para 1.5
         self.comboMult = 1
         self.clock = time.Clock()
 
@@ -228,7 +228,7 @@ class LaminaDaNoite(Arma):
         self.modificador.aplicarMod(self)
         # Garante os valores mínimos após aplicar modificadores
         self.dano = max(1, self.dano)
-        self.velocidade = max(0.2, self.velocidade)
+        self.velocidade = max(0.2, min(2.0, self.velocidade))  # Limite máximo de velocidade
         self.chanceCritico = max(1, self.chanceCritico)
 
     def ataquePrincipal(self, inimigo):
@@ -259,16 +259,15 @@ class LaminaDaNoite(Arma):
             player.last_dash_time = current_time
 
 
-# [...] (continuação com as outras classes de armas, aplicando a mesma lógica de valores mínimos)
-
 class Chigatana(Arma):
     def __init__(self, raridadeStr: str, listaMods: ListaMods):
         self.tipoDeArma = "Chigatana"
         self.ataqueTipo = "melee"
         self.raridadeStr = raridadeStr
         self.raridade = RARIDADES.get(self.raridadeStr, 1)
-        self.dano = max(1, 10 + randint(5 * self.raridade, 10 * self.raridade))
-        self.velocidade = max(0.2, 2)
+        # Base damage reduced from 10 to 7
+        self.dano = max(1, 7 + randint(3 * self.raridade, 6 * self.raridade))
+        self.velocidade = max(0.2, 1.8)  # Reduzida de 2.0 para 1.8
         self.cooldown = max(100, 400)
         self.range = (35, 90)
         self.radius = 100
@@ -276,7 +275,7 @@ class Chigatana(Arma):
         self.lifeSteal = max(1, self.dano / 4)
         self.lifeStealMod = 4
         self.chanceCritico = max(1, 5)
-        self.danoCriticoMod = 2
+        self.danoCriticoMod = 1.5  # Reduzido de 2 para 1.5
         self.comboMult = 1
         self.clock = time.Clock()
 
@@ -293,12 +292,12 @@ class Chigatana(Arma):
         mod_classe = listaMods.getMod(self.raridadeStr)
         self.modificador = mod_classe(self)
         self.nome = f"{self.tipoDeArma} {self.modificador.nome} {self.raridadeStr}"
-        self.valorSangramento = 2.2 * self.raridade
+        self.valorSangramento = 1.8 * self.raridade  # Reduzido de 2.2 para 1.8
 
     def aplicaModificador(self):
         self.modificador.aplicarMod(self)
         self.dano = max(1, self.dano)
-        self.velocidade = max(0.2, self.velocidade)
+        self.velocidade = max(0.2, min(2.0, self.velocidade))  # Limite máximo de velocidade
         self.chanceCritico = max(1, self.chanceCritico)
 
     def ataquePrincipal(self, inimigo):
@@ -328,16 +327,15 @@ class Chigatana(Arma):
             inimigo.sangrando = True
 
 
-# [...] (as demais classes de armas seguem o mesmo padrão, garantindo os valores mínimos)
-
 class Karambit(Arma):
     def __init__(self, raridadeStr: str, listaMods: ListaMods):
         self.tipoDeArma = "Adaga"
         self.ataqueTipo = "melee"
         self.raridadeStr = raridadeStr
         self.raridade = RARIDADES.get(self.raridadeStr, 1)
-        self.dano = max(1, 5 + randint(5 * self.raridade, 10 * self.raridade))
-        self.velocidade = max(0.2, 2)
+        # Base damage reduced from 5 to 4
+        self.dano = max(1, 4 + randint(3 * self.raridade, 6 * self.raridade))
+        self.velocidade = max(0.2, 2.0)
         self.cooldown = max(100, 300)
         self.range = (50, 50)
         self.radius = 80
@@ -345,7 +343,7 @@ class Karambit(Arma):
         self.lifeSteal = max(1, self.dano / 2)
         self.lifeStealMod = 2
         self.chanceCritico = max(1, 5)
-        self.danoCriticoMod = 2
+        self.danoCriticoMod = 1.5  # Reduzido de 2 para 1.5
         self.comboMult = 1
         self.clock = time.Clock()
 
@@ -366,7 +364,7 @@ class Karambit(Arma):
     def aplicaModificador(self):
         self.modificador.aplicarMod(self)
         self.dano = max(1, self.dano)
-        self.velocidade = max(0.2, self.velocidade)
+        self.velocidade = max(0.2, min(2.5, self.velocidade))  # Limite máximo de velocidade para adagas
         self.chanceCritico = max(1, self.chanceCritico)
 
     def ataquePrincipal(self, inimigo):
@@ -395,16 +393,15 @@ class Karambit(Arma):
             inimigo.envenenar(5, self.dano)
 
 
-# [...] (continuação para as outras classes de armas - EspadaDoTita, MachadoDoInverno, EspadaEstelar, MarteloSolar, Arco)
-
 class EspadaDoTita(Arma):
     def __init__(self, raridadeStr: str, listaMods: ListaMods):
         self.tipoDeArma = "Espada do Tita"
         self.ataqueTipo = "melee"
         self.raridadeStr = raridadeStr
         self.raridade = RARIDADES.get(self.raridadeStr, 1)
-        self.dano = max(1, 25 + randint(15 * self.raridade, 25 * self.raridade))
-        self.velocidade = max(0.2, 0.5)
+        # Base damage reduced from 25 to 20, range reduced
+        self.dano = max(1, 20 + randint(10 * self.raridade, 15 * self.raridade))
+        self.velocidade = max(0.2, 0.4)  # Reduzida de 0.5 para 0.4 (arma mais lenta)
         self.cooldown = max(100, 400)
         self.range = (40, 115)
         self.radius = 100
@@ -412,7 +409,7 @@ class EspadaDoTita(Arma):
         self.lifeSteal = max(1, self.dano / 2)
         self.lifeStealMod = 2
         self.chanceCritico = max(1, 12)
-        self.danoCriticoMod = 3
+        self.danoCriticoMod = 2.5  # Reduzido de 3 para 2.5
         self.comboMult = 1
         self.clock = time.Clock()
         self.criticoOg = self.chanceCritico
@@ -438,7 +435,7 @@ class EspadaDoTita(Arma):
     def aplicaModificador(self):
         self.modificador.aplicarMod(self)
         self.dano = max(1, self.dano)
-        self.velocidade = max(0.2, self.velocidade)
+        self.velocidade = max(0.2, min(0.6, self.velocidade))  # Limite máximo de velocidade para armas pesadas
         self.chanceCritico = max(1, self.chanceCritico)
         self.criticoOg = self.chanceCritico
         self.danoCritOg = self.danoCriticoMod
@@ -479,7 +476,6 @@ class EspadaDoTita(Arma):
         self.danoCriticoMod *= 1.5
         player.mp -= custo
 
-# [...] (continuação para MachadoDoInverno, EspadaEstelar, MarteloSolar, Arco com a mesma lógica)
 
 class MachadoDoInverno(Arma):
     def __init__(self, raridadeStr: str, listaMods: ListaMods):
@@ -487,8 +483,9 @@ class MachadoDoInverno(Arma):
         self.ataqueTipo = "melee"
         self.raridadeStr = raridadeStr
         self.raridade = RARIDADES.get(self.raridadeStr, 1)
-        self.dano = max(1, 15 + randint(15 * self.raridade, 25 * self.raridade))
-        self.velocidade = max(0.2, 0.7)
+        # Base damage reduced from 15 to 12, range reduced
+        self.dano = max(1, 12 + randint(10 * self.raridade, 15 * self.raridade))
+        self.velocidade = max(0.2, 0.5)  # Reduzida de 0.7 para 0.5 (arma mais lenta)
         self.cooldown = max(100, 400)
         self.range = (40, 80)
         self.radius = 100
@@ -496,7 +493,7 @@ class MachadoDoInverno(Arma):
         self.lifeSteal = max(1, self.dano / 2)
         self.lifeStealMod = 2
         self.chanceCritico = max(1, 15)
-        self.danoCriticoMod = 1.5
+        self.danoCriticoMod = 1.8  # Reduzido de 2.5 para 1.8
         self.comboMult = 1
         self.clock = time.Clock()
         self.criticoOg = self.chanceCritico
@@ -519,7 +516,7 @@ class MachadoDoInverno(Arma):
     def aplicaModificador(self):
         self.modificador.aplicarMod(self)
         self.dano = max(1, self.dano)
-        self.velocidade = max(0.2, self.velocidade)
+        self.velocidade = max(0.2, min(0.7, self.velocidade))  # Limite máximo de velocidade para armas pesadas
         self.chanceCritico = max(1, self.chanceCritico)
         self.criticoOg = self.chanceCritico
         self.danoCritOg = self.danoCriticoMod
@@ -566,7 +563,8 @@ class EspadaEstelar(Arma):
         self.ataqueTipo = "melee"
         self.raridadeStr = raridadeStr
         self.raridade = RARIDADES.get(self.raridadeStr, 1)
-        self.dano = max(1, 20 + randint(10 * self.raridade, 20 * self.raridade))
+        # Base damage reduced from 20 to 15
+        self.dano = max(1, 15 + randint(6 * self.raridade, 12 * self.raridade))
         self.velocidade = max(0.2, 0.8)
         self.cooldown = max(100, 400)
         self.range = (40, 90)
@@ -575,7 +573,7 @@ class EspadaEstelar(Arma):
         self.lifeSteal = max(1, self.dano / 2)
         self.lifeStealMod = 2
         self.chanceCritico = max(1, 10)
-        self.danoCriticoMod = 2
+        self.danoCriticoMod = 1.8  # Reduzido de 2 para 1.8
         self.comboMult = 1
         self.clock = time.Clock()
 
@@ -596,7 +594,7 @@ class EspadaEstelar(Arma):
     def aplicaModificador(self):
         self.modificador.aplicarMod(self)
         self.dano = max(1, self.dano)
-        self.velocidade = max(0.2, self.velocidade)
+        self.velocidade = max(0.2, min(1.5, self.velocidade))  # Limite máximo de velocidade
         self.chanceCritico = max(1, self.chanceCritico)
 
     def ataquePrincipal(self, inimigo):
@@ -621,7 +619,7 @@ class EspadaEstelar(Arma):
         if player.mp <= 0:
             return
         else:
-            player.criar_projetil(mouse_pos, (max(1, self.dano / 2.5)), cor=(24, 212, 59))
+            player.criar_projetil(mouse_pos, (max(1, self.dano / 3)), cor=(24, 212, 59))  # Reduzido de /2.5 para /3
             player.mp -= custo
             player.last_dash_time = current_time
 
@@ -632,8 +630,9 @@ class MarteloSolar(Arma):
         self.ataqueTipo = "melee"
         self.raridadeStr = raridadeStr
         self.raridade = RARIDADES.get(self.raridadeStr, 1)
-        self.dano = max(1, 15 + randint(15 * self.raridade, 25 * self.raridade))
-        self.velocidade = max(0.2, 0.5)
+        # Base damage reduced from 15 to 12
+        self.dano = max(1, 12 + randint(10 * self.raridade, 15 * self.raridade))
+        self.velocidade = max(0.2, 0.4)  # Reduzida de 0.5 para 0.4 (arma mais lenta)
         self.cooldown = max(100, 400)
         self.range = (52, 80)
         self.radius = 100
@@ -641,14 +640,14 @@ class MarteloSolar(Arma):
         self.lifeSteal = max(1, self.dano / 2)
         self.lifeStealMod = 2
         self.chanceCritico = max(1, 13)
-        self.danoCriticoMod = 2
+        self.danoCriticoMod = 1.8  # Reduzido de 2 para 1.8
         self.comboMult = 1
         self.clock = time.Clock()
 
         self.secEhAtaque = True
         self.ehRanged = True
         self.ehAOE = True
-        self.danoAOE = max(1, self.dano * 0.8)
+        self.danoAOE = max(1, self.dano * 0.6)  # Reduzido de 0.8 para 0.6
 
         self.spriteIcon = resource_path('assets/UI/martelo_icone.png')
         self.sprite = resource_path('assets/player/martelo_solar.png')
@@ -663,9 +662,9 @@ class MarteloSolar(Arma):
     def aplicaModificador(self):
         self.modificador.aplicarMod(self)
         self.dano = max(1, self.dano)
-        self.velocidade = max(0.2, self.velocidade)
+        self.velocidade = max(0.2, min(0.6, self.velocidade))  # Limite máximo de velocidade para armas pesadas
         self.chanceCritico = max(1, self.chanceCritico)
-        self.danoAOE = max(1, self.dano * 0.8)
+        self.danoAOE = max(1, self.dano * 0.6)  # Reduzido de 0.8 para 0.6
 
     def ataquePrincipal(self, inimigo):
         dano_final = max(1,
@@ -704,16 +703,17 @@ class Arco(Arma):
         self.ataqueTipo = "ranged"
         self.raridadeStr = raridadeStr
         self.raridade = RARIDADES.get(self.raridadeStr, 1)
-        self.dano = max(1, 20 + randint(10 * self.raridade, 20 * self.raridade))
-        self.velocidade = max(0.2, 1)
+        # Base damage significantly reduced from 20 to 12
+        self.dano = max(1, 12 + randint(5 * self.raridade, 10 * self.raridade))
+        self.velocidade = max(0.2, 1.0)
         self.cooldown = max(100, 400)
         self.range = (40, 90)
         self.radius = 90
         self.efeitos = None
-        self.lifeSteal = max(1, self.dano / 2)
+        self.lifeSteal = max(1, self.dano / 3)  # Reduzido de /2 para /3
         self.lifeStealMod = 2
-        self.chanceCritico = max(1, 10)
-        self.danoCriticoMod = 2
+        self.chanceCritico = max(1, 8)  # Reduzido de 10 para 8
+        self.danoCriticoMod = 1.8  # Reduzido de 2 para 1.8
         self.comboMult = 1
         self.clock = time.Clock()
 
@@ -734,7 +734,7 @@ class Arco(Arma):
     def aplicaModificador(self):
         self.modificador.aplicarMod(self)
         self.dano = max(1, self.dano)
-        self.velocidade = max(0.2, self.velocidade)
+        self.velocidade = max(0.2, min(1.5, self.velocidade))  # Limite máximo de velocidade para arcos
         self.chanceCritico = max(1, self.chanceCritico)
 
     def ataquePrincipal(self, player, mouse_pos):

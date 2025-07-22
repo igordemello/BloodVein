@@ -7,7 +7,7 @@ from random import uniform, randint
 from utils import resource_path 
 
 class Orb(Inimigo):
-    def __init__(self, x, y, largura, altura, nome="Orb", hp=100, velocidade=2, dano=10):
+    def __init__(self, x, y, largura, altura, nome="Orb", hp=100, velocidade=2, dano=25):
         super().__init__(x, y, largura, altura, hp, velocidade, dano)
         self.spritesheet = image.load(resource_path('./assets/Enemies/EyeOrbSprite.png')).convert_alpha()
         self.nome = nome

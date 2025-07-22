@@ -6,7 +6,7 @@ import random
 from utils import resource_path 
 
 class MorcegoPadrao(Inimigo):
-    def __init__(self, x, y, largura=64, altura=64, hp=80, velocidade=2, dano=15):
+    def __init__(self, x, y, largura=64, altura=64, hp=80, velocidade=2, dano=20):
         super().__init__(x, y, largura, altura, hp, velocidade, dano)
 
         self.sprites_idle = image.load(resource_path('./assets/Enemies/morcego_idle.png')).convert_alpha()
