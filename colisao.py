@@ -337,7 +337,7 @@ class Colisao:
                         self.player.tomar_dano(projetil.get("dano", 0))
 
                         if projetil.get("congelar", False):
-                            self.player.congelar(2000)
+                            self.player.congelar(800)
 
                         inimigo.projeteis.remove(projetil)
                         break  # sai do loop de projéteis após o primeiro hit

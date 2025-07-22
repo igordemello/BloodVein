@@ -80,7 +80,7 @@ class Parrudo(ModificadorInimigo):
         return "Parrudo"
 
     def aplicar(self, inimigo):
-        inimigo.hp_max *= 2.0
+        inimigo.hp_max *= 1.4
         inimigo.dano *= 0.7
         inimigo.hp = inimigo.hp_max
 

@@ -11,7 +11,7 @@ def grid_para_pixel(grid_x, grid_y, offset, tile_size_scaled):
     return offset[0] + (grid_x * tile_size_scaled), offset[1] + (grid_y * tile_size_scaled)
 
 class AranhaLunar(Inimigo):
-    def __init__(self, x, y, largura=50, altura=50, nome="AranhaLunar", hp=100, velocidade=2.3, dano=16):
+    def __init__(self, x, y, largura=50, altura=50, nome="AranhaLunar", hp=100, velocidade=2.3, dano=8):
         super().__init__(x, y, largura, altura, hp, velocidade, dano)
         self.nome = nome
 
