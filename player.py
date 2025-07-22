@@ -1197,7 +1197,7 @@ class Player():
             if arma_class:
                 self.arma = arma_class(data['arma']['raridade'], lista_mods)
                 self.arma.load_save_data(data['arma'], lista_mods)
-                self.arma.aplicaModificador()  # Adicione esta linha
+                # self.arma.aplicaModificador()  # Adicione esta linha
                 self.atualizar_arma()
 
         if 'inventario' in data:
@@ -1207,7 +1207,7 @@ class Player():
                 if arma_class:
                     arma = arma_class(arma_data['raridade'], lista_mods)
                     arma.load_save_data(arma_data, lista_mods)
-                    arma.aplicaModificador()
+                    # arma.aplicaModificador()
                     self.inventario.append(arma)
                     self.atualizar_arma()
 

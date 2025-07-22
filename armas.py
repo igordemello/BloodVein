@@ -67,7 +67,7 @@ class Arma(ABC):
             if data.get('modificador_detalhes'):
                 self.modificador.valor = data['modificador_detalhes']['valor']
 
-        self.aplicaModificador()
+        # self.aplicaModificador()
 
 
 # MODIFICADORES:
