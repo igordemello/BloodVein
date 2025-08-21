@@ -1,6 +1,7 @@
 # Game G3
 
-> Jogo 2d em desenvolvimento para o projeto final da disciplina Práticas de Programação
+> BloodVein é um roguelike-rpd 2d desenvolvido em pygame. Essa é a primeira versão estável e jogável
+> itch.io: <a href="https://nandinteractive.itch.io/blood-vein">CLIQUE AQUI PARA BAIXAR O .EXE</a>
 
 ---
 
